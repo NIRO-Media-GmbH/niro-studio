@@ -1,7 +1,8 @@
-# Projekt-Laufzeitdaten
+# Client-/Arbeitsdaten pro Dreh (Audio, Konzepte, Cache, Ausgabe) — nicht versionieren
+projects/
 cache/
 output/
-audio/*.wav
+*.wav
 .DS_Store
 .superpowers/
 
