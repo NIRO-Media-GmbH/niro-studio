@@ -1,0 +1,14 @@
+global:
+  wiederverwendung: exklusiv   # exklusiv | mehrfach
+  anzahl_videos: 5
+videos:
+  - titel: "Video 1 — Einstieg & Ausbildung"
+    fokus: "Warum der Betrieb ein guter Start ins Berufsleben ist"
+    person: durchmischen
+    ziel_laenge_sek: 90
+  - titel: "Video 3 — Nachhaltigkeit"
+    fokus: "Nachhaltigkeit in der Fertigung"
+    person: "Milena"
+    ziel_laenge_sek: 85
+    dramaturgie: "Problem-Agitate-Solve"
+    tonalitaet: "sachlich, glaubwürdig"
