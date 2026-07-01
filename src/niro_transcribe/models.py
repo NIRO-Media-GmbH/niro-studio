@@ -9,13 +9,14 @@ class Word:
     text: str
     start: float
     end: float
+    speaker: str | None = None
 
     def to_dict(self) -> dict:
-        return {"text": self.text, "start": self.start, "end": self.end}
+        return {"text": self.text, "start": self.start, "end": self.end, "speaker": self.speaker}
 
     @classmethod
     def from_dict(cls, d: dict) -> "Word":
-        return cls(text=d["text"], start=d["start"], end=d["end"])
+        return cls(text=d["text"], start=d["start"], end=d["end"], speaker=d.get("speaker"))
 
 
 @dataclass
