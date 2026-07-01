@@ -34,6 +34,7 @@ def test_transcribe_scribe_parses_words(tmp_path):
     t = transcribe_scribe(wav, "key123", poster=fake_poster)
     assert calls["headers"]["xi-api-key"] == "key123"
     assert calls["data"]["model_id"] == "scribe_v1"
+    assert calls["data"]["language_code"] == "deu"
     assert t.engine == "scribe"
     assert t.text == "hallo welt"
     assert [w.text for w in t.words] == ["hallo", "welt"]

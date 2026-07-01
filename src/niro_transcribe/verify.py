@@ -19,6 +19,12 @@ def verify_statement(stmt: Statement, transcript: Transcript, *, min_overlap_wor
         if stmt.von <= mid <= stmt.bis:
             overlap += 1
     if overlap < min_overlap_words:
-        problems.append("kein Transkript-Wort liegt im Intervall [von, bis]")
+        if overlap == 0:
+            problems.append("kein Transkript-Wort liegt im Intervall [von, bis]")
+        else:
+            problems.append(
+                f"nur {overlap} Transkript-Wort(e) im Intervall [von, bis], "
+                f"mindestens {min_overlap_words} erwartet"
+            )
 
     return problems

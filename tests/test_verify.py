@@ -29,3 +29,9 @@ def test_out_of_bounds_flagged():
 def test_no_overlapping_words_flagged():
     probs = verify_statement(_stmt(0.0, 0.05), _tr())
     assert any("kein" in p.lower() for p in probs)
+
+
+def test_too_few_overlapping_words_flagged():
+    # interval covers only "zwei" (1 word), but we require 2
+    probs = verify_statement(_stmt(0.9, 2.1), _tr(), min_overlap_words=2)
+    assert any("mindestens 2" in p for p in probs)
