@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from niro_transcribe.footage import mover
 from niro_transcribe.footage.move_plan import Move, MovePlan
 from niro_transcribe.footage.mover import execute_move, execute_plan, undo
 
@@ -101,3 +102,30 @@ def test_execute_plan_refuses_incomplete_manifest(tmp_path):
     assert not dst_a.exists()
     # no log file content written
     assert not log.exists() or log.read_text().strip() == ""
+
+
+def test_execute_move_rolls_back_clip_when_sidecar_move_fails(tmp_path, monkeypatch):
+    src = tmp_path / "src" / "clip.mp4"
+    src.parent.mkdir()
+    src.write_bytes(b"video")
+    (tmp_path / "src" / "clipM01.xml").write_bytes(b"<m/>")
+    dst = tmp_path / "out" / "clip.mp4"
+
+    real_move_one = mover._move_one
+    calls = {"n": 0}
+
+    def flaky(s, d, *, force_copy=False):
+        calls["n"] += 1
+        if calls["n"] == 2:  # the sidecar move — fail it
+            raise RuntimeError("boom")
+        return real_move_one(s, d, force_copy=force_copy)
+
+    monkeypatch.setattr(mover, "_move_one", flaky)
+
+    with pytest.raises(RuntimeError):
+        execute_move(Move(str(src), str(dst)))
+
+    # Clip rolled back to source, destination clean, sidecar untouched at source
+    assert src.exists()
+    assert not dst.exists()
+    assert (tmp_path / "src" / "clipM01.xml").exists()
