@@ -54,7 +54,7 @@ def execute_move(move: Move, *, dry_run: bool = False, force_copy: bool = False)
     if not src.exists():
         raise FileNotFoundError(f"Quelle fehlt: {src}")
     sc_src = find_sidecar(src)
-    sc_dst = (dst.parent / (dst.stem + sc_src.stem[len(src.stem):] + sc_src.suffix)) if sc_src else None
+    sc_dst = (dst.parent / sc_src.name) if sc_src else None
     size = src.stat().st_size
     if dry_run:
         method = "rename" if (not force_copy and _same_filesystem(src, dst)) else "copy"
@@ -66,22 +66,38 @@ def execute_move(move: Move, *, dry_run: bool = False, force_copy: bool = False)
         raise FileExistsError(f"Sidecar-Ziel existiert bereits, wird nicht überschrieben: {sc_dst}")
     method = _move_one(src, dst, force_copy=force_copy)
     if sc_src and sc_dst:
-        _move_one(sc_src, sc_dst, force_copy=force_copy)
+        try:
+            _move_one(sc_src, sc_dst, force_copy=force_copy)
+        except Exception:
+            _move_one(dst, src, force_copy=force_copy)  # Clip zurückrollen
+            raise
     return MoveResult(str(src), str(dst), method, size,
                       str(sc_src) if sc_src else None, str(sc_dst) if sc_dst else None)
 
 
-def execute_plan(plan: MovePlan, log_path: str | Path, *, dry_run: bool = False) -> list[MoveResult]:
+def execute_plan(plan: MovePlan, log_path: str | Path, *, discovered_srcs: list[str],
+                 dry_run: bool = False) -> list[MoveResult]:
+    problems = plan.validate(discovered_srcs)
+    if problems:
+        raise ValueError(
+            "Manifest unvollständig/inkonsistent — es wird NICHTS verschoben:\n" + "\n".join(problems)
+        )
     log = Path(log_path)
     log.parent.mkdir(parents=True, exist_ok=True)
     results: list[MoveResult] = []
-    with open(log, "a", encoding="utf-8") as fh:
-        for move in plan.moves:
-            res = execute_move(move, dry_run=dry_run)
-            results.append(res)
-            if not dry_run:
-                fh.write(json.dumps(asdict(res), ensure_ascii=False) + "\n")
-                fh.flush()
+    try:
+        with open(log, "a", encoding="utf-8") as fh:
+            for move in plan.moves:
+                res = execute_move(move, dry_run=dry_run)
+                results.append(res)
+                if not dry_run:
+                    fh.write(json.dumps(asdict(res), ensure_ascii=False) + "\n")
+                    fh.flush()
+    except Exception as e:
+        raise RuntimeError(
+            f"Verschieben bei einem Fehler abgebrochen. Bereits erfolgte Moves stehen im Log; "
+            f"mit undo('{log}') rückgängig machen. Ursache: {e}"
+        ) from e
     return results
 
 

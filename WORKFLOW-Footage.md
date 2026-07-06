@@ -15,5 +15,8 @@ Script-Kopie) im Repo unter `projects/<Name>/`.
 4. **Plan + Manifest.** `zuordnungsplan.md` (Review) und `manifest.json`
    (`MovePlan`). `validate()` muss leer sein.
 5. **Review.** David prüft `zuordnungsplan.md`. Bis hier nichts bewegt.
-6. **Verschieben (nach „go").** `execute_plan(plan, log)` → `_verschiebe_log.md`
-   (JSONL). Bilanz prüfen. Rückgängig via `undo(log)`.
+6. **Verschieben (nach „go").** `execute_plan(plan, log, discovered_srcs=[...])` → `_verschiebe_log.md`
+   (JSONL). `execute_plan` prüft vor dem ersten Move selbständig die Vollständigkeit des Manifests
+   (`validate()`); sind Probleme vorhanden, wird NICHTS verschoben. Bei einem Fehler mittendrin
+   bricht die Funktion ab — bereits erfolgte Moves stehen im Log und können mit `undo(log)`
+   rückgängig gemacht werden. Bilanz prüfen. Rückgängig via `undo(log)`.

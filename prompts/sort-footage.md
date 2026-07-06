@@ -43,8 +43,10 @@ transkribierten **Ton**, nicht über Dateinamen. Kein Footage geht verloren.
    `{src, dst}`. `MovePlan.validate(discovered_srcs)` MUSS `[]` liefern, bevor
    irgendetwas bewegt wird.
 7. **Review-Gate:** David prüft `zuordnungsplan.md` im Chat. NICHTS wurde bewegt.
-8. **Erst nach „go":** `execute_plan(plan, log_path)` (same-fs → atomarer
-   rename). Danach Bilanz aus dem Log bestätigen. Bei Bedarf `undo(log_path)`.
+8. **Erst nach „go":** `execute_plan(plan, log_path, discovered_srcs=[...])` (same-fs → atomarer
+   rename). `execute_plan` verweigert das Verschieben, solange `validate()` nicht leer ist —
+   `discovered_srcs` muss die vollständige Liste aller gefundenen Clips enthalten. Danach Bilanz
+   aus dem Log bestätigen. Bei Bedarf `undo(log_path)`.
 
 ## Regeln
 - Original-Dateinamen NIE ändern. Struktur entsteht nur über Ordner.

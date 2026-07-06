@@ -78,9 +78,26 @@ def test_execute_plan_logs_and_undo_restores(tmp_path):
     (tmp_path / "footage" / "clip.xml").write_bytes(b"<m/>")
     dst = tmp_path / "sortiert" / "V1" / "clip.mp4"
     log = tmp_path / "move_log.jsonl"
-    execute_plan(MovePlan(moves=[Move(str(src), str(dst))]), log)
+    execute_plan(MovePlan(moves=[Move(str(src), str(dst))]), log, discovered_srcs=[str(src)])
     assert dst.exists() and not src.exists()
     assert len(log.read_text().strip().splitlines()) == 1
     undo(log)
     assert src.exists() and not dst.exists()
     assert (src.parent / "clip.xml").exists()
+
+
+def test_execute_plan_refuses_incomplete_manifest(tmp_path):
+    footage = tmp_path / "footage"
+    footage.mkdir()
+    a = footage / "a.mp4"; _clip(a)
+    b = footage / "b.mp4"; _clip(b)
+    dst_a = tmp_path / "sortiert" / "a.mp4"
+    plan = MovePlan(moves=[Move(str(a), str(dst_a))])
+    log = tmp_path / "move_log.jsonl"
+    with pytest.raises(ValueError):
+        execute_plan(plan, log, discovered_srcs=[str(a), str(b)])
+    # a.mp4 must NOT have been moved
+    assert a.exists()
+    assert not dst_a.exists()
+    # no log file content written
+    assert not log.exists() or log.read_text().strip() == ""

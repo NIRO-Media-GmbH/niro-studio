@@ -44,4 +44,7 @@ class MovePlan:
             if m.dst in dsts:
                 problems.append(f"Ziel kollidiert (zwei Clips auf denselben Pfad): {m.dst}")
             dsts.add(m.dst)
+        for m in self.moves:
+            if Path(m.dst).name != Path(m.src).name:
+                problems.append(f"Dateiname geändert (Originalname muss erhalten bleiben): {m.src} -> {m.dst}")
         return problems
