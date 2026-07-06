@@ -7,6 +7,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 
 from ..cache import file_hash
+from .discover import find_sidecar
 from .move_plan import Move, MovePlan
 
 
@@ -18,13 +19,6 @@ class MoveResult:
     size: int
     sidecar_src: str | None
     sidecar_dst: str | None
-
-
-def _sidecar(video: Path) -> Path | None:
-    for cand in video.parent.iterdir() if video.parent.exists() else []:
-        if cand.suffix.lower() == ".xml" and cand.stem == video.stem:
-            return cand
-    return None
 
 
 def _existing_ancestor(p: Path) -> Path:
@@ -59,13 +53,17 @@ def execute_move(move: Move, *, dry_run: bool = False, force_copy: bool = False)
     dst = Path(move.dst)
     if not src.exists():
         raise FileNotFoundError(f"Quelle fehlt: {src}")
-    sc_src = _sidecar(src)
-    sc_dst = (dst.parent / f"{dst.stem}{sc_src.suffix}") if sc_src else None
+    sc_src = find_sidecar(src)
+    sc_dst = (dst.parent / (dst.stem + sc_src.stem[len(src.stem):] + sc_src.suffix)) if sc_src else None
     size = src.stat().st_size
     if dry_run:
         method = "rename" if (not force_copy and _same_filesystem(src, dst)) else "copy"
         return MoveResult(str(src), str(dst), method, size,
                           str(sc_src) if sc_src else None, str(sc_dst) if sc_dst else None)
+    if dst.exists():
+        raise FileExistsError(f"Ziel existiert bereits, wird nicht überschrieben: {dst}")
+    if sc_dst is not None and sc_dst.exists():
+        raise FileExistsError(f"Sidecar-Ziel existiert bereits, wird nicht überschrieben: {sc_dst}")
     method = _move_one(src, dst, force_copy=force_copy)
     if sc_src and sc_dst:
         _move_one(sc_src, sc_dst, force_copy=force_copy)
