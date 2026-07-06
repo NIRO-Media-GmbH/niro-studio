@@ -21,3 +21,6 @@ pip install -e ".[dev]"
 python -m pytest -q
 ```
 Alle Tests müssen grün sein.
+
+## 5. ffmpeg
+- ffmpeg installieren (für den Footage-Sortierer): `brew install ffmpeg`
