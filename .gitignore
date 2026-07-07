@@ -1,0 +1,4 @@
+# Sub-Repos und Projektdaten sind nicht Teil des Master-Repos
+tools/
+projects/
+.DS_Store
