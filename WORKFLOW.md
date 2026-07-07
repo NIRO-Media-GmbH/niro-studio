@@ -29,3 +29,5 @@ Voraussetzung: Setup abgeschlossen (siehe SETUP.md), `.env` gefüllt.
    `render_overview()` → `Ergebnisse/O-Ton-Pläne/uebersicht.md`. Optional PDF-Export.
 9. **Zusammenfassen** im Chat: was wurde erzeugt, worauf achten
    (z. B. unsichere Datei-Interpretationen, ungenutzte starke Aussagen).
+10. **Protokoll.** `Protokoll.md` im Chargen-Ordner fortschreiben (bei erster
+    Session anlegen): Datum, was gemacht, erzeugte Pläne, Entscheidungen/Offenes.

@@ -29,5 +29,7 @@ Ablauf (läuft ohne Halt durch; Sicherheit über Undo-Log):
 5. **Verschieben.** `execute_plan(plan, log, discovered_srcs=[str(c.path) for c in clips])`
    → verschiebt sofort, schreibt `_verschiebe_log.jsonl` (Undo).
 6. **Bilanz melden.** Quelle==Ziel bestätigen; Undo-Hinweis: `undo(log)`.
+7. **Protokoll.** `Protokoll.md` im Chargen-Ordner fortschreiben (bei erster
+   Session anlegen): Datum, sortierte Clips (Bilanz), Sonderfälle/Offenes.
 
 Rückgängig: `from niro_transcribe.footage.mover import undo; undo(log_path)`.
