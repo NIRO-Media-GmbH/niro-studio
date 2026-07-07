@@ -9,6 +9,11 @@ Konventionen:
 - Kompositionen + `brand.json` pro Kunde: `src/clients/<kunde>/`
   (kebab-case). Neuer Kunde: `npm run new:client`; neues Projekt:
   `npm run new:project`.
+- **CI zuerst:** Existiert `src/clients/<kunde>/brand.json` noch nicht, vor
+  allem anderen den Kunden anlegen und die CI vollständig einpflegen —
+  Markenfarben, Fonts, Logo. Quellen: vom Nutzer erfragen bzw. von der
+  Kunden-Website/Logo-Dateien ableiten (Werte im Chat kurz bestätigen lassen).
+  Logo-Assets nach `public/clients/<kunde>/`.
 - **Inputs** liegen beim Projekt: `../../projects/<Kunde>/<Projekt>/<Charge>/Material/Video/`.
   Für Remotion per Symlink erreichbar machen:
   `ln -s "../../../../projects/<Kunde>/<Projekt>/<Charge>/Material/Video" "public/projects/<kunde>-<projekt>"`
@@ -28,3 +33,5 @@ Ablauf:
    vor Final-Render) — Pflicht.
 4. Rendern in `projects/<Kunde>/<Projekt>/<Charge>/Ergebnisse/Renders/`.
 5. Im Chat bilanzieren: was gerendert wurde, wohin, Auffälligkeiten.
+6. `Protokoll.md` im Chargen-Ordner fortschreiben (bei erster Session anlegen):
+   Datum, was animiert, gelieferte Renders, CI-/Design-Entscheidungen, Offenes.
