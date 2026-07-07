@@ -36,7 +36,7 @@ def test_transcribe_all_resilient_and_writes_index(tmp_path):
     assert by["GOOD.mp4"]["duration_s"] == 1.0
     assert by["BAD.mp4"]["ok"] is False and "boom" in by["BAD.mp4"]["error"]
     # Index-Datei geschrieben und vollständig
-    idx = json.loads((proj / "transcripts_index.json").read_text(encoding="utf-8"))
+    idx = json.loads((proj / "_intern" / "transcripts_index.json").read_text(encoding="utf-8"))
     assert len(idx) == 2
     # WAV des erfolgreichen Clips wurde aufgeräumt
-    assert not (proj / "work" / "GOOD.wav").exists()
+    assert not (proj / "_intern" / "work" / "GOOD.wav").exists()

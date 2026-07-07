@@ -15,9 +15,10 @@ def transcribe_all(footage_root, project_dir, *, api_key=None, diarize=True,
                    extractor=extract_audio, transcriber=transcribe_scribe,
                    log=print) -> list[dict]:
     project_dir = Path(project_dir)
-    cache = TranscriptCache(project_dir / "cache")
-    work = project_dir / "work"
-    index_path = project_dir / "transcripts_index.json"
+    intern = project_dir / "_intern"
+    cache = TranscriptCache(intern / "cache")
+    work = intern / "work"
+    index_path = intern / "transcripts_index.json"
     if api_key is None:
         api_key = Config.load().elevenlabs_api_key
 
