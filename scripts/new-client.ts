@@ -7,11 +7,11 @@
  * Was passiert:
  *   1. Erstellt Ordner src/clients/<slug>/
  *   2. Erstellt brand.json mit Platzhalter-Werten
- *   3. Erstellt assets/ Ordner fuer Logo etc.
+ *   3. Erstellt public/clients/<slug>/ fuer Logo & Brand-Assets
  *
- * Danach:
- *   → brand.json oeffnen und Farben/Fonts anpassen
- *   → Logo in assets/ ablegen
+ * Danach (CI-zuerst, siehe WORKFLOW-Motion.md):
+ *   → brand.json oeffnen und Farben/Fonts einpflegen
+ *   → Logo nach public/clients/<slug>/ legen und Pfad in brand.json eintragen
  */
 
 import fs from "fs";
@@ -46,7 +46,8 @@ if (fs.existsSync(clientDir)) {
 }
 
 // --- Ordner erstellen ---
-fs.mkdirSync(path.join(clientDir, "assets"), { recursive: true });
+const publicAssetsDir = path.join(__dirname, "..", "public", "clients", slug);
+fs.mkdirSync(publicAssetsDir, { recursive: true });
 fs.mkdirSync(path.join(clientDir, "projects"), { recursive: true });
 
 // --- brand.json erstellen ---
@@ -75,7 +76,7 @@ fs.writeFileSync(
   JSON.stringify(brand, null, 2) + "\n"
 );
 
-fs.writeFileSync(path.join(clientDir, "assets", ".gitkeep"), "");
+fs.writeFileSync(path.join(publicAssetsDir, ".gitkeep"), "");
 fs.writeFileSync(path.join(clientDir, "projects", ".gitkeep"), "");
 
 console.log(`
@@ -102,7 +103,10 @@ console.log(`
        }
      }
 
-  2. (Optional) Logo als SVG in src/clients/${slug}/assets/ ablegen
+  2. Logo nach public/clients/${slug}/ legen (SVG bevorzugt) und in
+     brand.json eintragen: "logo": "clients/${slug}/logo.svg"
+     (CI-zuerst-Regel: brand.json muss VOR der ersten Komposition
+     vollstaendig sein — siehe WORKFLOW-Motion.md)
 
   3. Neues Projekt anlegen:
      npm run new:project -- --client ${slug} --name "mein-projekt"

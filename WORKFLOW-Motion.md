@@ -21,9 +21,9 @@ Konventionen:
 - **Renders** gehen direkt ins Projekt (nicht nach `out/`):
   `npx remotion render src/index.ts <CompId> "../../projects/<Kunde>/<Projekt>/<Charge>/Ergebnisse/Renders/<name>.mov" --image-format=png --pixel-format=yuva444p10le --codec=prores --prores-profile=4444`
   (Web-Varianten: `--codec=h264 --crf=18`.)
-- Alte `render:*`-Scripts in package.json gelten für Bestandsprojekte
-  (Ausgabe nach `out/`); neue Projekte bekommen KEINE neuen package.json-
-  Scripts mehr, sondern direkte render-Kommandos mit Projektpfad.
+- `out/` ist stillgelegt und bleibt leer; es gibt keine projektspezifischen
+  package.json-Render-Scripts mehr. Alle Renders laufen als direkte
+  render-Kommandos mit Projektpfad (auch bei Bestandskunden).
 
 Ablauf:
 1. Projektordner prüfen/anlegen (`<Charge>/Material/Video/`, `<Charge>/Ergebnisse/Renders/`),

@@ -118,16 +118,6 @@ export const scaleTextSchema = z.object({
   fontWeight: z.string(),
 });
 
-export const kineticTextSchema = z.object({
-  text: zTextarea(),
-  wobbleIntensity: z.number().min(0).max(50),
-  stagger: staggerSchema,
-  fontSizeRatio: z.number().min(0.01).max(0.2),
-  color: zColor().optional(),
-  fontWeight: z.string(),
-  seed: z.string(),
-});
-
 // --- Background Component Schemas ---
 
 export const gradientBackgroundSchema = z.object({
@@ -202,19 +192,6 @@ export const logoRevealSchema = z.object({
   delay: z.number().min(0).max(120),
   size: z.number().min(0.05).max(0.8),
   springDamping: z.number().min(1).max(50),
-});
-
-export const circleWipeSchema = z.object({
-  color: zColor(),
-  delay: z.number().min(0).max(120),
-  originX: z.number().min(0).max(100),
-  originY: z.number().min(0).max(100),
-});
-
-export const glowEffectSchema = z.object({
-  color: zColor().optional(),
-  intensity: z.number().min(0).max(50),
-  pulseSpeed: z.number().min(0.01).max(1),
 });
 
 // --- Template Schemas ---

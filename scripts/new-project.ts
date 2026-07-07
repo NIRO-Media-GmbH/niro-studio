@@ -113,6 +113,7 @@ import { projectPropsSchema } from "../../../../core/schemas";
 import { GradientBackground } from "../../../../components/backgrounds/GradientBackground";
 import { FadeInText } from "../../../../components/text/FadeInText";
 import { LogoReveal } from "../../../../components/effects/LogoReveal";
+import { ReviewOverlay } from "../../../../components/layout/ReviewOverlay";
 import brandJson from "../../brand.json";
 
 const ci = loadBrand("${clientSlug}", brandJson as any);
@@ -128,6 +129,7 @@ export const ${componentName}: React.FC<Props> = ({
   headline = "Deine Headline",
   bodyText = "Dein Text hier",
   transparent = false,
+  review,
 }) => {
   const { durationInFrames, height } = useVideoConfig();
 
@@ -169,6 +171,16 @@ export const ${componentName}: React.FC<Props> = ({
         >
           <LogoReveal mode="scale" size={0.2} />
         </Sequence>
+
+        {review?.showGuides && (
+          <ReviewOverlay
+            showSafeZone={review.showSafeZone ?? true}
+            showFaceZone={review.showFaceZone ?? true}
+            showGrid={review.showGrid ?? false}
+            faceZone={review.faceZone}
+            guideOpacity={review.guideOpacity ?? 0.35}
+          />
+        )}
       </AbsoluteFill>
     </CIProvider>
   );

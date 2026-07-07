@@ -8,20 +8,17 @@ export { FadeInText } from "./text/FadeInText";
 export { TypewriterText } from "./text/TypewriterText";
 export { SlideInText } from "./text/SlideInText";
 export { ScaleText } from "./text/ScaleText";
-export { KineticText } from "./text/KineticText";
 
 // Shapes
 export { AnimatedCircle } from "./shapes/AnimatedCircle";
 export { AnimatedRect } from "./shapes/AnimatedRect";
 export { PathDraw } from "./shapes/PathDraw";
-export { ShapeMorph } from "./shapes/ShapeMorph";
 
 // Layout
 export { FadeIn } from "./layout/FadeIn";
 export { SpringIn } from "./layout/SpringIn";
 export { SlideIn } from "./layout/SlideIn";
 export { StaggerChildren } from "./layout/StaggerChildren";
-export { ParallaxLayer } from "./layout/ParallaxLayer";
 export { SafeZone } from "./layout/SafeZone";
 export { ReviewOverlay } from "./layout/ReviewOverlay";
 
@@ -33,5 +30,3 @@ export { WaveBackground } from "./backgrounds/WaveBackground";
 
 // Effects
 export { LogoReveal } from "./effects/LogoReveal";
-export { CircleWipe } from "./effects/CircleWipe";
-export { GlowEffect } from "./effects/GlowEffect";
