@@ -9,6 +9,7 @@ Chargen-Name: `JJJJ-MM Beschreibung` (z. B. „2026-07 Erster Dreh") — die
 Chargen-Ebene existiert immer, auch bei nur einer Charge.
 
     projects/<Kunde>/<Projekt>/<Charge>/
+    ├── Protokoll.md        Kurzprotokoll pro Session
     ├── Material/           was reinkommt
     │   ├── Audio/             Interview-WAVs
     │   ├── Konzept/           Konzept-PDF
@@ -21,6 +22,11 @@ Chargen-Ebene existiert immer, auch bei nur einer Charge.
 
 Rohes Drehmaterial bleibt auf externen SSDs; hier liegen nur Arbeits- und
 Ergebnisdateien. Unterordner nur anlegen, wenn die Funktion genutzt wird.
+
+**Protokoll-Pflicht:** Bei jeder Arbeit an einer Charge (egal welche Funktion)
+`Protokoll.md` im Chargen-Ordner fortschreiben — pro Session ein kurzer
+Eintrag: Datum, was gemacht, was geliefert (Dateien), Entscheidungen/Offenes.
+Datei bei der ersten Session anlegen.
 
 ## Die drei Funktionen (Trigger)
 
