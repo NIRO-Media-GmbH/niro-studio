@@ -26,10 +26,10 @@ class MovePlan:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
         return cls(moves=[Move(**m) for m in data["moves"]])
 
-    def validate(self, discovered_srcs: list[str]) -> list[str]:
+    def validate(self, discovered_srcs: list) -> list[str]:
         problems: list[str] = []
-        discovered = set(discovered_srcs)
-        srcs = [m.src for m in self.moves]
+        discovered = {str(s) for s in discovered_srcs}
+        srcs = [str(m.src) for m in self.moves]
         seen: set[str] = set()
         for s in srcs:
             if s in seen:
@@ -41,10 +41,11 @@ class MovePlan:
             problems.append(f"Quelle fehlt im Manifest (würde verloren gehen): {d}")
         dsts: set[str] = set()
         for m in self.moves:
-            if m.dst in dsts:
-                problems.append(f"Ziel kollidiert (zwei Clips auf denselben Pfad): {m.dst}")
-            dsts.add(m.dst)
+            dst = str(m.dst)
+            if dst in dsts:
+                problems.append(f"Ziel kollidiert (zwei Clips auf denselben Pfad): {dst}")
+            dsts.add(dst)
         for m in self.moves:
-            if Path(m.dst).name != Path(m.src).name:
+            if Path(str(m.dst)).name != Path(str(m.src)).name:
                 problems.append(f"Dateiname geändert (Originalname muss erhalten bleiben): {m.src} -> {m.dst}")
         return problems

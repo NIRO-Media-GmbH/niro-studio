@@ -20,9 +20,11 @@ Review-Halt durch; Fehl-Zuordnungen sind per `undo(log)` umkehrbar.
      aus Transkript, sonst `_ohne_Namen`. A/B-Winkel je Kamera getrennt.
    - **broll** — kein verwertbarer O-Ton / nur Ambiente/Regie / „Hook C ohne Text".
    - **unsure** — nicht sicher.
-5. **Plan bauen.** `build_move_plan(clips, classifications, script, sort_root,
+5. **Plan bauen.** `clips = discover_clips(footage_root)` — liefert die Clip-Liste
+   für `build_move_plan` und `execute_plan`.
+   `build_move_plan(clips, classifications, script, sort_root,
    aliases=...)`; `PlanResult.plan.validate(discovered)` MUSS `[]` sein.
-6. **Verschieben.** `execute_plan(plan, log, discovered_srcs=[c.path for c in clips])`
+6. **Verschieben.** `execute_plan(plan, log, discovered_srcs=[str(c.path) for c in clips])`
    → sofort, mit Undo-Log. Danach Bilanz bestätigen.
 
 ## Regeln

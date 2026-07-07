@@ -33,3 +33,11 @@ def test_validate_flags_renamed_filename():
     plan = MovePlan(moves=[Move("/f/a.mp4", "/s/V1/01/b.mp4")])
     problems = plan.validate(discovered)
     assert any("Dateiname geändert" in p for p in problems)
+
+
+def test_validate_accepts_path_objects_as_discovered():
+    from pathlib import Path
+    from niro_transcribe.footage.move_plan import Move, MovePlan
+    plan = MovePlan(moves=[Move("/f/a.mp4", "/s/V1/01/a.mp4")])
+    # discovered passed as Path objects (as the docs' `c.path` yields)
+    assert plan.validate([Path("/f/a.mp4")]) == []

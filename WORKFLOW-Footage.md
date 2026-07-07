@@ -19,11 +19,13 @@ Ablauf (läuft ohne Halt durch; Sicherheit über Undo-Log):
 3. **Klassifizieren.** Per Fan-out-Agenten (nach `prompts/sort-footage.md`) jeden
    Clip gegen die Struktur → `classifications` (category scripted|interview|broll|
    unsure, + video_nr/row_id/person). Kameramann via Diarisation ignorieren.
-4. **Plan bauen.** `build_move_plan(clips, classifications, script, sort_root,
+4. **Plan bauen.** `clips = discover_clips(footage_root)` — liefert die Clip-Liste
+   für `build_move_plan` und `execute_plan`.
+   `build_move_plan(clips, classifications, script, sort_root,
    aliases=...)` → `PlanResult` (Manifest + `zuordnungsplan.md`-Text). `validate()`
    muss leer sein, sonst STOPP und melden.
-5. **Verschieben.** `execute_plan(plan, log, discovered_srcs=...)` → verschiebt
-   sofort, schreibt `_verschiebe_log.jsonl` (Undo).
+5. **Verschieben.** `execute_plan(plan, log, discovered_srcs=[str(c.path) for c in clips])`
+   → verschiebt sofort, schreibt `_verschiebe_log.jsonl` (Undo).
 6. **Bilanz melden.** Quelle==Ziel bestätigen; Undo-Hinweis: `undo(log)`.
 
 Rückgängig: `from niro_transcribe.footage.mover import undo; undo(log_path)`.
