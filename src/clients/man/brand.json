@@ -1,0 +1,19 @@
+{
+  "name": "MAN Truck & Bus",
+  "colors": {
+    "primary": "#E30045",
+    "secondary": "#720022",
+    "accent": "#FFFFFF",
+    "background": "#12000A",
+    "text": "#FFFFFF"
+  },
+  "fonts": {
+    "heading": "MAN Global Cond",
+    "body": "MAN Global"
+  },
+  "logo": "clients/man/logo-weiss.png",
+  "style": {
+    "borderRadius": 12,
+    "animationSpeed": "fast"
+  }
+}

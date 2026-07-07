@@ -1,0 +1,29 @@
+{
+  "name": "WTN — Werkzeugtechnik Niederstetten",
+  "colors": {
+    "primary": "#D8DD53",
+    "secondary": "#254478",
+    "accent": "#7A90A8",
+    "background": "#131F32",
+    "text": "#F6F7ED"
+  },
+  "palette": {
+    "lime": "#D8DD53",
+    "lightBlue": "#7A90A8",
+    "blue": "#254478",
+    "darkBlue": "#131F32",
+    "offBlack": "#0A121F",
+    "offWhite": "#F6F7ED"
+  },
+  "fonts": {
+    "heading": "Robout",
+    "body": "Robout"
+  },
+  "logo": "wtn/logo.svg",
+  "claim": "Know-how perfektioniert.",
+  "values": ["Persönlich", "Direkt", "Innovativ"],
+  "style": {
+    "borderRadius": 12,
+    "animationSpeed": "punchy"
+  }
+}

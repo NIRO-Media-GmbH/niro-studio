@@ -1,0 +1,19 @@
+{
+  "name": "NIRO",
+  "colors": {
+    "primary": "#A2C73D",
+    "secondary": "#1A211D",
+    "accent": "#85CFF4",
+    "background": "#FFFFFF",
+    "text": "#1A211D"
+  },
+  "fonts": {
+    "heading": "Meutas",
+    "body": "Roboto"
+  },
+  "logo": "",
+  "style": {
+    "borderRadius": 12,
+    "animationSpeed": "normal"
+  }
+}

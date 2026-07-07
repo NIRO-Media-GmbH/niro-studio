@@ -1,0 +1,19 @@
+{
+  "name": "Bremsen Schneider",
+  "colors": {
+    "primary": "#006BBB",
+    "secondary": "#F0D309",
+    "accent": "#FFE34D",
+    "background": "#004A82",
+    "text": "#FFFFFF"
+  },
+  "fonts": {
+    "heading": "Inter",
+    "body": "Inter"
+  },
+  "logo": "clients/bremsen-schneider/logo.png",
+  "style": {
+    "borderRadius": 6,
+    "animationSpeed": "normal"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+.DS_Store
+*.mp4
+*.webm
+*.mov
+*.gif
+*.tsbuildinfo
+Videos/
+Video inputs/
+public/projects/

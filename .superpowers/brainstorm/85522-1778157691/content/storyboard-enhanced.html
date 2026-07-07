@@ -1,0 +1,395 @@
+<h2>REM Storyboard &mdash; ENHANCED Edition</h2>
+<p class="subtitle">"Krank" Level: <span style="color:#D83C31;">&#9608;&#9608;&#9608;&#9608;&#9608;</span> MAXIMUM &bull; Neue Effekte pro Szene markiert mit &#10024;</p>
+
+<div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+
+  <!-- SCENE 1 ENHANCED -->
+  <div style="background: #111827; border-radius: 10px; overflow: hidden; border: 1px solid rgba(216,60,49,0.2);">
+    <div style="padding: 12px 16px; background: linear-gradient(90deg, rgba(216,60,49,0.15), transparent); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 13px; font-weight: 700; color: #D83C31;">SZENE 1 &mdash; Dach + Wetter (0&ndash;5s)</span>
+      <span style="font-size: 11px; color: rgba(255,255,255,0.3);">150 Frames</span>
+    </div>
+    <div style="padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+
+      <!-- Visual preview -->
+      <div style="height: 180px; position: relative; overflow: hidden; background: radial-gradient(ellipse at center, #0a0f1a 0%, #030508 100%); border-radius: 8px;">
+        <svg viewBox="0 0 320 180" style="width: 100%; height: 100%;">
+          <!-- Ambient dust particles -->
+          <circle cx="30" cy="20" r="0.8" fill="white" opacity="0.1"/>
+          <circle cx="80" cy="40" r="0.5" fill="white" opacity="0.08"/>
+          <circle cx="180" cy="15" r="0.6" fill="white" opacity="0.12"/>
+          <circle cx="250" cy="35" r="0.7" fill="white" opacity="0.09"/>
+          <circle cx="290" cy="60" r="0.5" fill="white" opacity="0.07"/>
+
+          <!-- Volumetric light beams from sun -->
+          <polygon points="280,8 200,80 210,80" fill="url(#sunbeam)" opacity="0.06"/>
+          <polygon points="280,8 230,100 240,100" fill="url(#sunbeam)" opacity="0.04"/>
+          <defs>
+            <linearGradient id="sunbeam" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFD700" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#FFD700" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Ground shadow -->
+          <ellipse cx="160" cy="145" rx="120" ry="14" fill="rgba(0,0,0,0.3)"/>
+
+          <!-- 3D Roof -->
+          <polygon points="45,115 270,115 295,55 70,55" fill="#8B6914" stroke="#6B4F0A" stroke-width="1.5"/>
+          <polygon points="70,55 295,55 300,48 75,48" fill="#9a7818" stroke="#7a5e10" stroke-width="0.8"/>
+          <polygon points="270,115 295,55 300,48 275,108" fill="#7a5e10" stroke="#6B4F0A" stroke-width="0.8"/>
+          <!-- Tile grooves -->
+          <line x1="95" y1="55" x2="70" y2="115" stroke="#5a4008" stroke-width="0.7" opacity="0.5"/>
+          <line x1="130" y1="55" x2="105" y2="115" stroke="#5a4008" stroke-width="0.7" opacity="0.5"/>
+          <line x1="165" y1="55" x2="140" y2="115" stroke="#5a4008" stroke-width="0.7" opacity="0.5"/>
+          <line x1="200" y1="55" x2="175" y2="115" stroke="#5a4008" stroke-width="0.7" opacity="0.5"/>
+          <line x1="235" y1="55" x2="210" y2="115" stroke="#5a4008" stroke-width="0.7" opacity="0.5"/>
+          <line x1="270" y1="55" x2="245" y2="115" stroke="#5a4008" stroke-width="0.7" opacity="0.5"/>
+          <line x1="53" y1="75" x2="278" y2="75" stroke="#5a4008" stroke-width="0.4" opacity="0.4"/>
+          <line x1="58" y1="95" x2="274" y2="95" stroke="#5a4008" stroke-width="0.4" opacity="0.4"/>
+
+          <!-- Rain drops - many, varied -->
+          <ellipse cx="80" cy="15" rx="1.2" ry="5" fill="#4a9eff" opacity="0.7"/>
+          <ellipse cx="120" cy="8" rx="1" ry="4" fill="#4a9eff" opacity="0.5"/>
+          <ellipse cx="160" cy="20" rx="1.5" ry="6" fill="#4a9eff" opacity="0.8"/>
+          <ellipse cx="200" cy="12" rx="1.3" ry="5" fill="#4a9eff" opacity="0.6"/>
+          <ellipse cx="240" cy="5" rx="1" ry="4" fill="#4a9eff" opacity="0.4"/>
+          <ellipse cx="100" cy="30" rx="0.8" ry="3.5" fill="#4a9eff" opacity="0.5"/>
+          <ellipse cx="180" cy="35" rx="1.4" ry="5.5" fill="#4a9eff" opacity="0.65"/>
+
+          <!-- Splash rings on roof surface -->
+          <ellipse cx="130" cy="68" rx="8" ry="3" fill="none" stroke="#4a9eff" stroke-width="0.5" opacity="0.3"/>
+          <ellipse cx="130" cy="68" rx="4" ry="1.5" fill="none" stroke="#4a9eff" stroke-width="0.8" opacity="0.5"/>
+          <ellipse cx="210" cy="85" rx="6" ry="2.5" fill="none" stroke="#4a9eff" stroke-width="0.5" opacity="0.25"/>
+
+          <!-- Wind streaks -->
+          <line x1="20" y1="40" x2="60" y2="38" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+          <line x1="40" y1="55" x2="90" y2="52" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+
+          <!-- Sun glow -->
+          <circle cx="290" cy="12" r="15" fill="none" stroke="#FFD700" stroke-width="0.5" opacity="0.2"/>
+          <circle cx="290" cy="12" r="8" fill="#FFD700" opacity="0.15"/>
+
+          <!-- Lightning flash -->
+          <path d="M40,5 L45,20 L38,22 L48,42" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.3"/>
+
+          <!-- Frost crystal -->
+          <text x="15" y="140" font-size="16" fill="#a0d0ff" opacity="0.3">&#10052;</text>
+          <text x="280" y="165" font-size="12" fill="#a0d0ff" opacity="0.2">&#10052;</text>
+        </svg>
+      </div>
+
+      <!-- Effects list -->
+      <div>
+        <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">ALLE EFFEKTE</p>
+        <div style="display: grid; gap: 6px;">
+          <div style="padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 10px; color: rgba(255,255,255,0.6);">
+            &#9997; <strong>PathDraw</strong> &mdash; Dach zeichnet sich Linie f&uuml;r Linie
+          </div>
+          <div style="padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 10px; color: rgba(255,255,255,0.6);">
+            &#127783; <strong>ParticleField</strong> &mdash; 80+ Regentropfen mit Gravit&auml;t
+          </div>
+          <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+            &#10024; <strong>NEU: Splash-Ringe</strong> &mdash; Konzentrische Kreise wo Tropfen auftreffen
+          </div>
+          <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+            &#10024; <strong>NEU: Volumetrische Lichtstrahlen</strong> &mdash; Sonnenstrahlen als transparente Keile
+          </div>
+          <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+            &#10024; <strong>NEU: Blitz-Flash</strong> &mdash; Kurzer Lightning-Strike mit Screen-Flash
+          </div>
+          <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+            &#10024; <strong>NEU: Ambient Dust</strong> &mdash; Feine Staub-Partikel schweben im Hintergrund
+          </div>
+          <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+            &#10024; <strong>NEU: Wind-Streaks</strong> &mdash; Horizontale Windlinien f&uuml;r Dynamik
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 2 ENHANCED -->
+  <div style="background: #111827; border-radius: 10px; overflow: hidden; border: 1px solid rgba(216,60,49,0.2);">
+    <div style="padding: 12px 16px; background: linear-gradient(90deg, rgba(216,60,49,0.15), transparent); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 13px; font-weight: 700; color: #D83C31;">SZENE 2 &mdash; Verwitterung (5&ndash;10s)</span>
+      <span style="font-size: 11px; color: rgba(255,255,255,0.3);">150 Frames</span>
+    </div>
+    <div style="padding: 16px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">EFFEKTE</p>
+          <div style="display: grid; gap: 6px;">
+            <div style="padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 10px; color: rgba(255,255,255,0.6);">
+              &#127912; <strong>Color Shift</strong> &mdash; Ziegel-Farbe morpht smooth von Gold &rarr; Grau
+            </div>
+            <div style="padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 10px; color: rgba(255,255,255,0.6);">
+              &#9997; <strong>PathDraw Cracks</strong> &mdash; Risse zeichnen sich animiert &uuml;ber die Ziegel
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Riss-Staub</strong> &mdash; Feine Partikel spritzen aus jedem neuen Riss
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Kamera-Shake</strong> &mdash; Leichtes Zittern bei jedem Frost-Impact
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Noise-Textur</strong> &mdash; Perlin-Noise f&auml;hrt hoch = Rauigkeit sichtbar
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Ziegel-Spl&uuml;cker</strong> &mdash; Kleine St&uuml;cke brechen ab und fallen
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Wasser-Pfeile</strong> &mdash; Animierte Tropfen sickern durch die Risse ins Dach
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">ANIMATIONS-FLOW</p>
+          <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 10px; color: rgba(255,255,255,0.5); line-height: 2;">
+            <div>Frame 0: Ziegel noch warm-golden</div>
+            <div>&darr; <span style="color:#D83C31">interpolate()</span> Color-Shift startet</div>
+            <div>Frame 40: Erste Risse erscheinen (PathDraw)</div>
+            <div>&darr; Staub-Partikel bei jedem Riss</div>
+            <div>Frame 80: Frost-Impact &mdash; Kamera-Shake!</div>
+            <div>&darr; Noise-Textur intensity 0 &rarr; 0.6</div>
+            <div>Frame 120: Ziegel komplett vergraut</div>
+            <div>&darr; Wasser sickert sichtbar durch Risse</div>
+            <div>Frame 150: &Uuml;bergang zu Szene 3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 3 ENHANCED -->
+  <div style="background: #111827; border-radius: 10px; overflow: hidden; border: 1px solid rgba(216,60,49,0.2);">
+    <div style="padding: 12px 16px; background: linear-gradient(90deg, rgba(216,60,49,0.15), transparent); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 13px; font-weight: 700; color: #D83C31;">SZENE 3 &mdash; Bewuchs (10&ndash;17s)</span>
+      <span style="font-size: 11px; color: rgba(255,255,255,0.3);">210 Frames</span>
+    </div>
+    <div style="padding: 16px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">EFFEKTE</p>
+          <div style="display: grid; gap: 6px;">
+            <div style="padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 10px; color: rgba(255,255,255,0.6);">
+              &#127793; <strong>ShapeMorph</strong> &mdash; Moos-Inseln wachsen von Punkt zu Blob
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Ranken-Adern</strong> &mdash; Feine gr&uuml;ne Linien kriechen entlang Fugen
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Pulsierendes Atmen</strong> &mdash; Moos "atmet" leicht (scale 1.0 &harr; 1.02)
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Sporen-Partikel</strong> &mdash; Gr&uuml;ne Sporen schweben vom Moos auf
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Flechten-Kruste</strong> &mdash; Gelbliche Kreise breiten sich langsam aus
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Danger-Vignette</strong> &mdash; Roter Glow am Bildrand pulst bedrohlich
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Gr&uuml;ner Glow</strong> &mdash; Moos-Inseln leuchten subtil gr&uuml;n (toxic feel)
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">MOOS-GROWTH CHOREOGRAFIE</p>
+          <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 10px; color: rgba(255,255,255,0.5); line-height: 2;">
+            <div>Frame 0: Erste Moos-Insel &mdash; Mitte oben</div>
+            <div>Frame 30: Zweite Insel + Ranken breiten aus</div>
+            <div>Frame 60: Dritte, vierte Insel staggered</div>
+            <div>Frame 90: Ranken verbinden sich</div>
+            <div>Frame 120: Flechten-Krusten erscheinen</div>
+            <div>Frame 150: Sporen-Partikel steigen auf</div>
+            <div>Frame 180: Dach zu 70% bedeckt</div>
+            <div>Frame 210: Maximum &mdash; Danger-Vignette intensiv</div>
+          </div>
+          <div style="margin-top: 12px; padding: 8px; background: rgba(74,124,63,0.1); border-radius: 4px; border-left: 3px solid #4a7c3f;">
+            <p style="margin: 0; font-size: 10px; color: #6a9c5f;">Das Moos f&uuml;hlt sich lebendig an &mdash; es w&auml;chst, atmet, und breitet sich aus wie ein Organismus. Eklig aber faszinierend.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 4 ENHANCED - THE MONEY SHOT -->
+  <div style="background: #111827; border-radius: 10px; overflow: hidden; border: 2px solid rgba(216,60,49,0.4);">
+    <div style="padding: 12px 16px; background: linear-gradient(90deg, rgba(216,60,49,0.25), rgba(216,60,49,0.05)); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 13px; font-weight: 700; color: #D83C31;">&#11088; SZENE 4 &mdash; Beschichtungs-Wipe / THE MONEY SHOT (17&ndash;24s)</span>
+      <span style="font-size: 11px; color: rgba(255,255,255,0.3);">210 Frames</span>
+    </div>
+    <div style="padding: 16px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">EFFEKTE (MAXIMUM KRANK)</p>
+          <div style="display: grid; gap: 6px;">
+            <div style="padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 10px; color: rgba(255,255,255,0.6);">
+              &#127912; <strong>Clip-Path Wipe</strong> &mdash; Beschichtung revealed von links nach rechts
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Glow-Wipe-Line</strong> &mdash; Die Kante gl&uuml;ht wei&szlig;-hot mit Bloom-Effekt
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Sparkle-Explosion</strong> &mdash; 30+ Partikel spritzen von der Wipe-Kante
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Moos-Disintegration</strong> &mdash; Moos zerf&auml;llt in Pixel/Partikel beim Wipe
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Shockwave-Ring</strong> &mdash; Energiewelle breitet sich beim Start aus
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Slow-Mo Feel</strong> &mdash; Wipe startet langsam, beschleunigt dann
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Lichtbrechung</strong> &mdash; Frisch beschichtete Seite reflektiert Licht
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Hintergrund-Shift</strong> &mdash; BG wechselt von fast-schwarz zu dunkelblau
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">DRAMATURGISCHER FLOW</p>
+          <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 10px; color: rgba(255,255,255,0.5); line-height: 2;">
+            <div>Frame 0: <span style="color: #D83C31;">&#9889; Shockwave-Ring</span> am linken Rand</div>
+            <div>Frame 15: Wipe startet LANGSAM (ease-in)</div>
+            <div>&darr; Glow-Linie leuchtet wei&szlig;</div>
+            <div>Frame 60: Wipe beschleunigt (emphasized easing)</div>
+            <div>&darr; Moos zerf&auml;llt in Partikel</div>
+            <div>&darr; Sparkles explodieren entlang der Kante</div>
+            <div>Frame 150: Wipe 75% &mdash; fast komplett</div>
+            <div>&darr; Beschichtete Fl&auml;che gl&auml;nzt</div>
+            <div>Frame 180: Wipe fertig! Dach komplett <span style="color:#D83C31">ROT</span></div>
+            <div>Frame 210: Afterglow &mdash; Shine sweept &uuml;ber die Fl&auml;che</div>
+          </div>
+          <div style="margin-top: 12px; padding: 8px; background: rgba(216,60,49,0.1); border-radius: 4px; border-left: 3px solid #D83C31;">
+            <p style="margin: 0; font-size: 10px; color: #D83C31; font-weight: 600;">DAS ist der Moment, an dem der Zuschauer "Whoa" sagt. Die Animation muss hier am meisten knallen. Befriedigend wie ein Powerwash-Video.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 5 ENHANCED -->
+  <div style="background: #111827; border-radius: 10px; overflow: hidden; border: 1px solid rgba(24,99,220,0.2);">
+    <div style="padding: 12px 16px; background: linear-gradient(90deg, rgba(24,99,220,0.12), transparent); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 13px; font-weight: 700; color: #D83C31;">SZENE 5 &mdash; Wasser perlt ab + Dampf (24&ndash;31s)</span>
+      <span style="font-size: 11px; color: rgba(255,255,255,0.3);">210 Frames</span>
+    </div>
+    <div style="padding: 16px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">EFFEKTE</p>
+          <div style="display: grid; gap: 6px;">
+            <div style="padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 10px; color: rgba(255,255,255,0.6);">
+              &#128167; <strong>Wasser-Perlen</strong> &mdash; 3D-Tropfen auf der Oberfl&auml;che
+            </div>
+            <div style="padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 10px; color: rgba(255,255,255,0.6);">
+              &#9729; <strong>Dampf-Partikel</strong> &mdash; Aufsteigende Nebel-Str&ouml;me
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Tropfen-Physik</strong> &mdash; Wasser sammelt, formt Tropfen, gleitet ab
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Specular Sweep</strong> &mdash; Lichtstreifen gleitet &uuml;ber die Fl&auml;che
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Tropfen-Splash unten</strong> &mdash; Spritz-Effekt wenn Tropfen von Kante fallen
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Dampf-S&auml;ulen</strong> &mdash; 5-7 S&auml;ulen mit Perlin-Noise Wellenbewegung
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>NEU: Regenbogen-Brechung</strong> &mdash; Subtiler Prisma-Effekt in Wassertropfen
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">ZWEI PARALLELE SYSTEME</p>
+          <div style="padding: 12px; background: rgba(74,158,255,0.05); border-radius: 6px; border-left: 3px solid #4a9eff; margin-bottom: 10px;">
+            <p style="margin: 0 0 4px; font-size: 10px; color: #4a9eff; font-weight: 600;">WASSER (nach unten)</p>
+            <p style="margin: 0; font-size: 10px; color: rgba(255,255,255,0.5);">Regen f&auml;llt &rarr; trifft Oberfl&auml;che &rarr; formt Perlen &rarr; gleitet ab &rarr; f&auml;llt von Kante &rarr; Splash am Boden</p>
+          </div>
+          <div style="padding: 12px; background: rgba(255,255,255,0.02); border-radius: 6px; border-left: 3px solid rgba(255,255,255,0.2);">
+            <p style="margin: 0 0 4px; font-size: 10px; color: rgba(255,255,255,0.6); font-weight: 600;">DAMPF (nach oben)</p>
+            <p style="margin: 0; font-size: 10px; color: rgba(255,255,255,0.5);">Gleichzeitig steigt Dampf auf &rarr; zeigt Atmungsaktivit&auml;t. Wasser geht ab, Dampf geht durch &rarr; das Dach "atmet"</p>
+          </div>
+          <div style="margin-top: 10px; padding: 8px; background: rgba(216,60,49,0.06); border-radius: 4px;">
+            <p style="margin: 0; font-size: 10px; color: rgba(255,255,255,0.4);">Die zwei gegenl&auml;ufigen Bewegungen (Wasser &#8595; + Dampf &#8593;) erzeugen visuell die Botschaft: wasserabweisend aber atmungsaktiv.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 6 ENHANCED -->
+  <div style="background: #111827; border-radius: 10px; overflow: hidden; border: 1px solid rgba(216,60,49,0.2);">
+    <div style="padding: 12px 16px; background: linear-gradient(90deg, rgba(216,60,49,0.15), transparent); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 13px; font-weight: 700; color: #D83C31;">SZENE 6 &mdash; Perfektes Dach / Outro (31&ndash;37s)</span>
+      <span style="font-size: 11px; color: rgba(255,255,255,0.3);">180 Frames</span>
+    </div>
+    <div style="padding: 16px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">EFFEKTE</p>
+          <div style="display: grid; gap: 6px;">
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>Pulsierender Glow</strong> &mdash; Rote Aura um das Dach herum
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>Sparkle-Sterne</strong> &mdash; 5-8 Sterne blinken nacheinander auf
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>Slow Zoom-In</strong> &mdash; Kamera zoomt langsam in die Oberfl&auml;che
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>Licht-Orbs</strong> &mdash; Sanfte Lichtpunkte schweben im Hintergrund
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>Crescendo-Glow</strong> &mdash; Glow-Intensit&auml;t steigt bis zum letzten Frame
+            </div>
+            <div style="padding: 6px 10px; background: rgba(216,60,49,0.08); border-radius: 4px; font-size: 10px; color: #D83C31;">
+              &#10024; <strong>Lens Flare</strong> &mdash; Subtiler Lens-Flare &uuml;ber die gl&auml;nzende Fl&auml;che
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;">FEEL</p>
+          <div style="padding: 16px; background: rgba(216,60,49,0.05); border-radius: 6px; text-align: center;">
+            <div style="font-size: 24px; font-weight: 900; color: #D83C31; letter-spacing: 3px; margin-bottom: 8px;">SATISFACTION</div>
+            <p style="font-size: 10px; color: rgba(255,255,255,0.4); margin: 0; line-height: 1.6;">
+              Das Dach strahlt. Alles ist perfekt.<br/>
+              Kein Text, kein Logo. Nur das makellose Dach.<br/>
+              Der Zuschauer sp&uuml;rt: "So soll es sein."<br/>
+              <span style="color: #D83C31;">Letzter Frame = Meisterwerk.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Summary -->
+<div style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, rgba(216,60,49,0.08), rgba(24,99,220,0.05)); border-radius: 10px; border: 1px solid rgba(216,60,49,0.15);">
+  <h3 style="color: #D83C31; margin-top: 0;">Effekt-Z&auml;hler</h3>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center;">
+    <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+      <div style="font-size: 28px; font-weight: 900; color: #D83C31;">38+</div>
+      <div style="font-size: 10px; color: rgba(255,255,255,0.4);">Einzelne Effekte</div>
+    </div>
+    <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+      <div style="font-size: 28px; font-weight: 900; color: #D83C31;">6</div>
+      <div style="font-size: 10px; color: rgba(255,255,255,0.4);">Szenen</div>
+    </div>
+    <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+      <div style="font-size: 28px; font-weight: 900; color: #D83C31;">1110</div>
+      <div style="font-size: 10px; color: rgba(255,255,255,0.4);">Frames @ 30fps</div>
+    </div>
+  </div>
+</div>

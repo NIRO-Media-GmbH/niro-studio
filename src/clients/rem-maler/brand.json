@@ -1,0 +1,19 @@
+{
+  "name": "REM Malerfachbetrieb",
+  "colors": {
+    "primary": "#D83C31",
+    "secondary": "#1A1A2E",
+    "accent": "#F05545",
+    "background": "#0D0D1A",
+    "text": "#FFFFFF"
+  },
+  "fonts": {
+    "heading": "Inter",
+    "body": "Inter"
+  },
+  "logo": "",
+  "style": {
+    "borderRadius": 0,
+    "animationSpeed": "fast"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Sauber Entsorgen",
+  "colors": {
+    "primary": "#3B5998",
+    "secondary": "#9CA3AF",
+    "accent": "#5B86D6",
+    "background": "#FFFFFF",
+    "text": "#2B3140"
+  },
+  "fonts": {
+    "heading": "Inter",
+    "body": "Inter"
+  },
+  "logo": "clients/sauber-entsorgen/logo.svg",
+  "style": {
+    "borderRadius": 14,
+    "animationSpeed": "normal"
+  }
+}
