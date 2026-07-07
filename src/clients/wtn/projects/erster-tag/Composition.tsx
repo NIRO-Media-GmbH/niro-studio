@@ -42,7 +42,7 @@ export const WTNErsterTag: React.FC<ErsterTagProps> = ({
 }) => {
   return (
     <AbsoluteFill>
-      <VoicePreview src="wtn/vo/01-erster-tag.wav" enabled={previewVoice} />
+      <VoicePreview src="projects/wtn-5x-ads/01-erster-tag.wav" enabled={previewVoice} />
       <SceneRenderer
         scenes={SCENES}
         timeOffsetSec={timeOffsetSec}

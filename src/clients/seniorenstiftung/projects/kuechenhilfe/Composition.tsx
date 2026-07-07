@@ -40,7 +40,7 @@ export const KuechenhilfeOverlay: React.FC<KuechenhilfeProps> = ({
   return (
     <AbsoluteFill>
       <FootagePreview
-        src="seniorenstiftung/proxy/kuechenhilfe.mp4"
+        src="projects/seniorenstiftung-recruiting/proxy/kuechenhilfe.mp4"
         enabled={previewFootage}
       />
       <SceneRenderer

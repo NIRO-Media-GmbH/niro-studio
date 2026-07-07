@@ -43,7 +43,7 @@ export const PflegefachkraftOverlay: React.FC<PflegefachkraftProps> = ({
   return (
     <AbsoluteFill>
       <FootagePreview
-        src="seniorenstiftung/proxy/pflegefachkraft.mp4"
+        src="projects/seniorenstiftung-recruiting/proxy/pflegefachkraft.mp4"
         enabled={previewFootage}
       />
       <SceneRenderer

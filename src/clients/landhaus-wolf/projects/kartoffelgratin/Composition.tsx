@@ -50,7 +50,7 @@ export const LandhausWolfKartoffelgratinPart1: React.FC<Props> = ({
         {!transparent && (
           <AbsoluteFill>
             <OffthreadVideo
-              src={staticFile("kartoffelgratin-part1.mov")}
+              src={staticFile("projects/landhaus-wolf-kochvideos/kartoffelgratin-part1.mov")}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </AbsoluteFill>
@@ -210,7 +210,7 @@ export const LandhausWolfKartoffelgratinPart2: React.FC<Props> = ({
         {!transparent && (
           <AbsoluteFill>
             <OffthreadVideo
-              src={staticFile("kartoffelgratin-part2.mov")}
+              src={staticFile("projects/landhaus-wolf-kochvideos/kartoffelgratin-part2.mov")}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </AbsoluteFill>

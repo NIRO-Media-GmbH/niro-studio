@@ -756,7 +756,7 @@ export const PraktikantReel: React.FC<Props> = ({
         {!transparent && (
           <AbsoluteFill>
             <OffthreadVideo
-              src={staticFile("praktikant-reel.mov")}
+              src={staticFile("projects/niro-demos/praktikant-reel.mov")}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <AbsoluteFill style={{ backgroundColor: "rgba(0,0,0,0.1)" }} />

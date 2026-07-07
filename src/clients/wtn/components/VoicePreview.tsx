@@ -11,7 +11,7 @@ import React from "react";
 import { Audio, staticFile, getRemotionEnvironment } from "remotion";
 
 interface VoicePreviewProps {
-  /** Path under public/, e.g. "wtn/vo/erster-tag.wav" */
+  /** Path under public/, e.g. "projects/wtn-5x-ads/erster-tag.wav" */
   src: string;
   enabled?: boolean;
 }

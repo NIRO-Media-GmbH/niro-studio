@@ -23,7 +23,7 @@ export const Logo: React.FC<LogoProps> = ({
 }) => {
   return (
     <Img
-      src={staticFile("wtn/logo.svg")}
+      src={staticFile("clients/wtn/logo.svg")}
       style={{
         width,
         height: "auto",

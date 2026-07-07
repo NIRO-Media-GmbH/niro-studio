@@ -14,7 +14,7 @@ interface LogoProps {
 export const Logo: React.FC<LogoProps> = ({ width = 520, style }) => {
   return (
     <Img
-      src={staticFile("seniorenstiftung/logo.svg")}
+      src={staticFile("clients/seniorenstiftung/logo.svg")}
       style={{ width, height: "auto", display: "block", ...style }}
     />
   );

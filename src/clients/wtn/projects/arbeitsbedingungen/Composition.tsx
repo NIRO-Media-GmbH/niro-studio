@@ -43,7 +43,7 @@ export const WTNArbeitsbedingungen: React.FC<ArbeitsbedingungenProps> = ({
   return (
     <AbsoluteFill>
       <VoicePreview
-        src="wtn/vo/04-arbeitsbedingungen.wav"
+        src="projects/wtn-5x-ads/04-arbeitsbedingungen.wav"
         enabled={previewVoice}
       />
       <SceneRenderer

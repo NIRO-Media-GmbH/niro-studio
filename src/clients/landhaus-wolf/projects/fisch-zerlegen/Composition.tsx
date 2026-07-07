@@ -42,7 +42,7 @@ export const LandhausWolfFischZerlegen: React.FC<Props> = ({
         {!transparent && (
           <AbsoluteFill>
             <OffthreadVideo
-              src={staticFile("fisch-zerlegen.mov")}
+              src={staticFile("projects/landhaus-wolf-kochvideos/fisch-zerlegen.mov")}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </AbsoluteFill>

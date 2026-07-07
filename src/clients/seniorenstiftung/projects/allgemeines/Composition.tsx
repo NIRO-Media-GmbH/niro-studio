@@ -40,7 +40,7 @@ export const AllgemeinesOverlay: React.FC<AllgemeinesProps> = ({
   return (
     <AbsoluteFill>
       <FootagePreview
-        src="seniorenstiftung/proxy/allgemeines.mp4"
+        src="projects/seniorenstiftung-recruiting/proxy/allgemeines.mp4"
         enabled={previewFootage}
       />
       <SceneRenderer

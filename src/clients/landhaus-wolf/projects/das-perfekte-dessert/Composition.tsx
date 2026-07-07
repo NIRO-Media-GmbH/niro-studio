@@ -37,7 +37,7 @@ export const LandhausWolfDasPerfekteDessert: React.FC<Props> = ({
         {!transparent && (
           <AbsoluteFill>
             <OffthreadVideo
-              src={staticFile("das-perfekte-dessert.mov")}
+              src={staticFile("projects/landhaus-wolf-kochvideos/das-perfekte-dessert.mov")}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </AbsoluteFill>

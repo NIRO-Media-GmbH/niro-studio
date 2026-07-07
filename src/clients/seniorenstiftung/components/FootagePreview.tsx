@@ -15,7 +15,7 @@ import {
 } from "remotion";
 
 interface FootagePreviewProps {
-  /** Path under public/, e.g. "seniorenstiftung/proxy/pflegefachkraft.mp4" */
+  /** Path under public/, e.g. "projects/seniorenstiftung-recruiting/proxy/pflegefachkraft.mp4" */
   src: string;
   enabled?: boolean;
 }

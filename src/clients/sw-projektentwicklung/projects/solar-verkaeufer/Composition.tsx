@@ -823,7 +823,7 @@ export const SWSolarVerkaeufer: React.FC<Props> = ({
         {!transparent && (
           <AbsoluteFill>
             <OffthreadVideo
-              src={staticFile("solar-verkaeufer.mov")}
+              src={staticFile("projects/sw-projektentwicklung-solar-verkaeufer/solar-verkaeufer.mov")}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <AbsoluteFill style={{ backgroundColor: "rgba(0,0,0,0.15)" }} />

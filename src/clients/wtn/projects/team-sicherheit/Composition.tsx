@@ -42,7 +42,7 @@ export const WTNTeamSicherheit: React.FC<TeamSicherheitProps> = ({
 }) => {
   return (
     <AbsoluteFill>
-      <VoicePreview src="wtn/vo/03-team-sicherheit.wav" enabled={previewVoice} />
+      <VoicePreview src="projects/wtn-5x-ads/03-team-sicherheit.wav" enabled={previewVoice} />
       <SceneRenderer
         scenes={SCENES}
         timeOffsetSec={timeOffsetSec}

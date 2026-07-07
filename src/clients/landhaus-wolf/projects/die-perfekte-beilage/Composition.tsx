@@ -37,7 +37,7 @@ export const LandhausWolfDiePerfekteBeilage: React.FC<Props> = ({
         {!transparent && (
           <AbsoluteFill>
             <OffthreadVideo
-              src={staticFile("die-perfekte-beilage.mov")}
+              src={staticFile("projects/landhaus-wolf-kochvideos/die-perfekte-beilage.mov")}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </AbsoluteFill>

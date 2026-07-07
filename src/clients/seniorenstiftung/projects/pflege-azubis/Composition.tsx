@@ -40,7 +40,7 @@ export const PflegeAzubisOverlay: React.FC<PflegeAzubisProps> = ({
   return (
     <AbsoluteFill>
       <FootagePreview
-        src="seniorenstiftung/proxy/pflege-azubis.mp4"
+        src="projects/seniorenstiftung-recruiting/proxy/pflege-azubis.mp4"
         enabled={previewFootage}
       />
       <SceneRenderer

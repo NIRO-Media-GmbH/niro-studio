@@ -43,7 +43,7 @@ export const WTNMotivationAufstieg: React.FC<MotivationAufstiegProps> = ({
   return (
     <AbsoluteFill>
       <VoicePreview
-        src="wtn/vo/05-motivation-aufstieg.wav"
+        src="projects/wtn-5x-ads/05-motivation-aufstieg.wav"
         enabled={previewVoice}
       />
       <SceneRenderer

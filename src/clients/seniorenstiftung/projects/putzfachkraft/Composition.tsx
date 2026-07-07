@@ -40,7 +40,7 @@ export const PutzfachkraftOverlay: React.FC<PutzfachkraftProps> = ({
   return (
     <AbsoluteFill>
       <FootagePreview
-        src="seniorenstiftung/proxy/putzfachkraft.mp4"
+        src="projects/seniorenstiftung-recruiting/proxy/putzfachkraft.mp4"
         enabled={previewFootage}
       />
       <SceneRenderer

@@ -42,7 +42,7 @@ export const WTNTechnik: React.FC<TechnikProps> = ({
 }) => {
   return (
     <AbsoluteFill>
-      <VoicePreview src="wtn/vo/02-technik.wav" enabled={previewVoice} />
+      <VoicePreview src="projects/wtn-5x-ads/02-technik.wav" enabled={previewVoice} />
       <SceneRenderer
         scenes={SCENES}
         timeOffsetSec={timeOffsetSec}
