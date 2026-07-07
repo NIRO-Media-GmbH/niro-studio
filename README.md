@@ -1,5 +1,9 @@
 # NIRO Transcribe
 
+Teil von **NIRO Studio** (`~/NIRO Studio/`): Master-Einstieg und Projektordner
+(`projects/<Kunde>/<Projekt>/`) liegen dort, siehe `../../CLAUDE.md`. Dieses
+Tool liefert die Interview-Pipeline und den Footage-Sortierer.
+
 Chat-gesteuertes Werkzeug: aus WAV-Interviews + PDF-Skript + Briefs pro Ziel-Video
 entstehen dramaturgisch/marketingpsychologisch sortierte O-Ton-Übersichten mit
 von–bis-Timestamps für DaVinci.

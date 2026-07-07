@@ -6,9 +6,9 @@ in `WORKFLOW.md` und bleibt davon unberührt.)
 
 Voraussetzung: `.env` (ELEVENLABS_API_KEY) geladen, ffmpeg im PATH, SSD gemountet.
 
-Konvention: Rohmaterial `<Projekt>/01_Footage/<Kamera>/…`; Ausgabe →
-`<Projekt>/sortiert/`. Arbeitsdateien (cache, index, plan, manifest, log) im Repo
-unter `projects/<Name>/`.
+Konvention: Rohmaterial `<Projekt-SSD>/01_Footage/<Kamera>/…`; Ausgabe →
+`<Projekt-SSD>/sortiert/`. Arbeitsdateien (cache, index, plan, manifest, log)
+in der NIRO-Studio-Wurzel unter `projects/<Kunde>/<Projekt>/footage/`.
 
 Ablauf (läuft ohne Halt durch; Sicherheit über Undo-Log):
 1. **Konzept lesen.** Das angehängte PDF/Sheet in der Session lesen und in die

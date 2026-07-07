@@ -1,9 +1,12 @@
 # Setup (einmalig)
 
+Dieses Tool liegt unter `~/NIRO Studio/tools/transcribe/`; die venv heißt
+`venv/` und liegt im Tool-Ordner.
+
 ## 1. Python-Umgebung
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv venv
+source venv/bin/activate
 pip install -e ".[dev]"
 ```
 

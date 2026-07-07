@@ -2,9 +2,9 @@
 
 Voraussetzung: Setup abgeschlossen (siehe SETUP.md), `.env` gefüllt.
 
-   Ordnerkonvention pro Dreh: `projects/<Name>/audio/` (WAVs) und
-   `projects/<Name>/script/` (Konzept-PDF mit echtem Namen). Ausgabe →
-   `projects/<Name>/output/`, Cache → `projects/<Name>/cache/`.
+   Ordnerkonvention pro Dreh (NIRO-Studio-Wurzel): `projects/<Kunde>/<Projekt>/audio/`
+   (WAVs) und `projects/<Kunde>/<Projekt>/script/` (Konzept-PDF mit echtem Namen).
+   Ausgabe → `…/output/`, Cache → `…/cache/`.
 
 1. **Projekt öffnen.** Mit den Ordnerpfaden aus der Konvention arbeiten
    (`cache/` und `output/` bei Bedarf anlegen). WAVs liegen bereits in `audio/`;
