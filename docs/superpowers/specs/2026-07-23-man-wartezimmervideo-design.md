@@ -49,9 +49,12 @@ nur Arbeits- und Ergebnisdateien (Transkripte, Pläne, Kontaktbögen, Renders).
 
 1. Struktur-Scan aller vier Drehs (ffprobe: Pfad, Größe, Dauer, Auflösung, Audio).
 2. Interview-Kandidatenliste (größte Dateien pro Dreh, plausibilisiert über Dauer/Tonspur).
-3. **Gate: David bestätigt Kandidatenliste vor Transkription** (Kostenkontrolle).
-4. Audio extrahieren → ElevenLabs-Transkription → O-Ton-Plan mit Standort-Image-Fokus
-   (Workflow `tools/transcribe/WORKFLOW.md`), Ergebnis in `Ergebnisse/O-Ton-Pläne/`.
+3. **Gate: David bestätigt Kandidatenliste vor Transkription** (Kostenkontrolle);
+   dabei auch klären, welche Kamera den Ton trägt.
+4. Interview-Clips direkt transkribieren (`transcribe_clip` + `build_utterances.py`
+   nach `tools/transcribe/WORKFLOW-Schnittplan.md`, eine Transkription für O-Ton-Auswahl
+   UND spätere Schnittplan-Zitate) → thematische O-Ton-Auswahl mit Standort-Image-Fokus
+   in `Ergebnisse/O-Ton-Pläne/`.
 
 ### Phase 2 — Konzept
 
