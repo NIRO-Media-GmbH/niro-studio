@@ -20,6 +20,7 @@ Länge flexibel 1–3 Minuten. Animierte, grafische Elemente ausdrücklich erwü
 | Gesprochenes | O-Töne aus den Interviews der Drehs. Dieselben Aussagen werden in der stummen Fassung zu animierten Untertiteln/Inserts. |
 | Deliverable | Cutter-Paket: Konzept, O-Ton-Plan, B-Roll-Auswahl, 2 Schnittplan-PDFs, Animations-Renders. Finalschnitt + Musik beim Cutter. |
 | Transkriptions-Umfang | Nur Interviews, aus allen vier Drehs. Erkennung: Interviews sind die jeweils größten Dateien pro Dreh. Keine B-Roll-Transkription. |
+| Format | Sämtliches Footage ist 9:16 (Hochkant). Ausgabe 16:9 (Wartezimmer-TV): Footage läuft in Fenstern (einzeln, versetzt oder Duo-Split), animierte MAN-Grafik füllt die restliche Leinwand — Logo, Farbflächen, Untertitel-Bereiche. Das entspricht der Kundenmail („grafische Elemente, um diese ansprechend zu füllen"). |
 
 ## Material
 
@@ -33,7 +34,8 @@ Quelle (bleibt auf dem NAS, wird nicht kopiert):
 | 03 Frauen in der Werkstatt | 706 GB |
 | 04 Lagerlogistik | 176 GB |
 
-Hinweis: ältere Drehs sind intern unsortiert — Interview-Erkennung über Dateigröße/-dauer, nicht über Ordnernamen.
+Hinweise: ältere Drehs sind intern unsortiert — Interview-Erkennung über
+Dateigröße/-dauer, nicht über Ordnernamen. Sämtliches Material ist 9:16.
 
 ## Projektstruktur
 
@@ -54,9 +56,10 @@ nur Arbeits- und Ergebnisdateien (Transkripte, Pläne, Kontaktbögen, Renders).
 ### Phase 2 — Konzept
 
 Ein Konzept für beide Fassungen: Kapitel-Struktur (Ziel ~90–120 s), pro Kapitel
-O-Ton-Zitate + B-Roll-Bedarf + Grafik-Elemente. Ton-Fassung = Musik + O-Töne;
-stumme Fassung = gleiche Struktur, O-Ton-Aussagen als animierte Untertitel, nur
-selbsterklärende Szenen. **Gate: Freigabe David (pitchbar an MAN).**
+O-Ton-Zitate + B-Roll-Bedarf + Layout-Typ (Solo-Fenster, versetzt oder Duo-Split)
++ Grafik-Elemente. Ton-Fassung = Musik + O-Töne; stumme Fassung = gleiche
+Struktur, O-Ton-Aussagen als animierte Untertitel, nur selbsterklärende Szenen.
+**Gate: Freigabe David (pitchbar an MAN).**
 
 ### Phase 3 — Cutter-Paket
 
@@ -64,8 +67,11 @@ selbsterklärende Szenen. **Gate: Freigabe David (pitchbar an MAN).**
   (ffmpeg), konkrete Clips mit Ordner + Timecode, Ergebnis in `Ergebnisse/Sortierung/`.
 - 2 Schnittplan-PDFs nach Davids Standard (stumm + Ton, je max. 2 Seiten + Übersicht,
   Quellen dreiteilig; Workflow `tools/transcribe/WORKFLOW-Schnittplan.md`).
-- Remotion-Animationen im MAN-Look (`tools/motion/src/clients/man/brand.json` vorhanden):
-  Opener, Untertitel-/Insert-Templates, Kapitel-Trenner, Endcard (ohne Job-CTA).
+- Remotion-Layout-System im MAN-Look (`tools/motion/src/clients/man/brand.json`
+  vorhanden): 16:9-Frame-Templates mit Fenstern fürs 9:16-Footage (Solo, versetzt,
+  Duo-Split) und animierten Grafikflächen; dazu Opener, Untertitel-/Insert-Templates,
+  Kapitel-Trenner, Endcard (ohne Job-CTA). Frame-Renders als ProRes 4444 mit
+  Alphakanal, damit der Cutter das Footage hinter die Fenster legt.
   Renders in `Ergebnisse/Renders/`.
 
 ## Nicht im Umfang
@@ -78,5 +84,3 @@ selbsterklärende Szenen. **Gate: Freigabe David (pitchbar an MAN).**
 
 - Größte-Datei-Heuristik kann einzelne Interviews verfehlen (z. B. gesplittete
   Aufnahmen) → Gate in Phase 1 fängt das ab, David kennt die Drehs.
-- TikTok-Dreh 2023 ist Hochformat — für 16:9-Wartezimmer nur eingeschränkt nutzbar;
-  Entscheidung fällt im Konzept.
