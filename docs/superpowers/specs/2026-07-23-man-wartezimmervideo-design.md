@@ -87,3 +87,20 @@ Struktur, O-Ton-Aussagen als animierte Untertitel, nur selbsterklärende Szenen.
 
 - Größte-Datei-Heuristik kann einzelne Interviews verfehlen (z. B. gesplittete
   Aufnahmen) → Gate in Phase 1 fängt das ab, David kennt die Drehs.
+
+## Update 2026-07-24 — 16:9-Master aus fertigem 9:16-Schnitt
+
+David hat die Ton-Fassung selbst in 9:16 geschnitten (2:14, reines
+Footage + O-Töne). Damit ändert sich Phase 3: Statt Alpha-Frame-Renders für
+den Premiere-Composite **rendert Remotion das komplette 16:9-Master** —
+`OffthreadVideo` bettet den fertigen Schnitt ein, die Grafik-Bühne läuft
+inhaltssynchron aus der doppelt transkribierten, verifizierten Timeline
+(`_intern/final-16x9/timeline.json`, Scribe + Whisper). Die stumme Fassung
+wird ein Render-Flag derselben Komposition (gemeinsame sync-plan.json).
+
+Detail-Konzept (Geometrie, Ablauf, Motion-Grammatik, Guardrails):
+`projects/MAN/Wartezimmervideo/2026-07 Erste Fassung/Ergebnisse/Animations-Konzept-16x9.md`
+— Richtung von David freigegeben (Passepartout-System, Endcard angehängt),
+adversariell geprüft (Timing/Vorgaben/Baubarkeit). Die Alpha-Frame-Renders
+aus Phase 3 bleiben als Bausteine erhalten, sind für diese Charge aber
+obsolet.
