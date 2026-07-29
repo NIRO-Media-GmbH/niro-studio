@@ -1103,6 +1103,10 @@
    "frame": 4125,
    "fullscreen": true,
    "kartentext": "GROSSES BEWEGEN **MIT MAN**",
+   "zeilen": [
+    "GROSSES BEWEGEN",
+    "**MIT MAN**"
+   ],
    "cta": "JETZT BEWERBEN",
    "qr": {
     "asset": "qr-jobs-man-eu.png",
@@ -1113,7 +1117,7 @@
     "variante": "dunkel",
     "seite": "links"
    },
-   "hinweis": "CTA-Recruiting-Endcard: 8 s Standzeit für QR-Scan. Löwe rechtsblickend, dunkel, links. m/w/d-Pflicht (David-Regel 2026-07-15)."
+   "hinweis": "CTA-Recruiting-Endcard: 8 s Standzeit für QR-Scan. Löwe rechtsblickend, dunkel, links. m/w/d-Pflicht (David-Regel 2026-07-15). zeilen: expliziter Zweizeiler (Testframe-Kalibrierung 2026-07-29)."
   },
   {
    "typ": "ausklang",

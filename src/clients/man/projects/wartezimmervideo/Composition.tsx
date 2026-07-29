@@ -851,6 +851,7 @@ interface EndcardEvent169 {
   frame: number;
   fullscreen?: boolean;
   kartentext?: string;
+  zeilen?: string[];
   cta?: string;
   qr?: { asset: string; url: string; groesse: number };
   loewe?: { variante: string; seite?: string };
@@ -1446,12 +1447,13 @@ const M_QR_Y = (1080 - M_QR_GROESSE) / 2 - 40;
 
 const EndcardCta169: React.FC<{
   kartentext: string;
+  zeilen?: string[];
   cta: string;
   qrUrl: string;
   /** Sekunden ab Sequence-Start, ab denen in die Dunkelfläche ausgeklungen wird. */
   ausklangVon: number;
   ausklangDauer: number;
-}> = ({ kartentext, cta, qrUrl, ausklangVon, ausklangDauer }) => {
+}> = ({ kartentext, zeilen, cta, qrUrl, ausklangVon, ausklangDauer }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const bgIn = interpolate(frame, [0, 10], [0, 1], CLAMP);
@@ -1505,7 +1507,11 @@ const EndcardCta169: React.FC<{
             textTransform: "uppercase",
           }}
         >
-          <Markup169 text={kartentext} />
+          {(zeilen ?? [kartentext]).map((z, i) => (
+            <div key={i} style={{ whiteSpace: "nowrap" }}>
+              <Markup169 text={z} />
+            </div>
+          ))}
         </div>
         <div
           style={{
@@ -1591,7 +1597,7 @@ const Untertitel169: React.FC<{ u: UntertitelPlan169 }> = ({ u }) => {
             fontSize: 30,
             lineHeight: 1.25,
             color: WHITE,
-            textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 0 14px rgba(0,0,0,0.6)",
+            textShadow: "0 1px 4px rgba(0,0,0,0.95), 0 0 18px rgba(0,0,0,0.8)",
           }}
         >
           {z}
@@ -1875,9 +1881,9 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    height: 150,
+                    height: 200,
                     background:
-                      "linear-gradient(rgba(11,17,23,0), rgba(11,17,23,0.55))",
+                      "linear-gradient(rgba(11,17,23,0), rgba(11,17,23,0.8))",
                     pointerEvents: "none",
                   }}
                 />
@@ -1966,6 +1972,7 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
             >
               <EndcardCta169
                 kartentext={heroEv.kartentext ?? "GROSSES BEWEGEN **MIT MAN**"}
+                zeilen={heroEv.zeilen}
                 cta={heroEv.cta ?? "JETZT BEWERBEN"}
                 qrUrl={heroEv.qr?.url ?? "JOBS.MAN.EU"}
                 ausklangVon={ausklangVon}
