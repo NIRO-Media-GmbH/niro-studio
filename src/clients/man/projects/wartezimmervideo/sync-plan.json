@@ -8,7 +8,7 @@
    "Nr. 3 Takeaway steht die ganze Blockdauer (Ein +0,4 s, Aus am Blockende); v4: Pausen entstehen durch Verzögern des NEUEN Takeaways, nie durch Kürzen des alten",
    "Nr. 5 festes Rollen-Schema per Vorname",
    "Nr. 6 Plaketten/Takeaways sequenziell mit Pause >= 0,8 s (Ziel 1,0 s)",
-   "Nr. 7 Fenster-Ausblendung 134,0–134,6, Fullscreen-Hero ab 135,0, Ausklang 140,0–142,0, Loop aus der Dunkelfläche",
+   "Nr. 7 (überholt in v9): Endcard jetzt 165,0–173,0 aus der Schwarzblende, Ausklang bis 175,0",
    "Nr. 8 neue Takeaway-Texte",
    "Nr. 9 Spotlights text- UND logofrei (Branding-Beat deaktiviert)",
    "Nr. 10 Werkzeug-Silhouetten-Regen in den Spotlights",
@@ -1344,7 +1344,13 @@
    "OFFENES FENSTER (akzeptiert): 107.90–117.10 s (9.20 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
    "OFFENES FENSTER (akzeptiert): 117.60–133.36 s (15.76 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
    "OFFENES FENSTER (akzeptiert): 165.00–173.00 s (8.00 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
-   "Untertitel: 46 Segmente"
+   "UT-Kappung: Block 7 'Man wird einfach rei' ende 64.52 -> 64.40 s (Quer-Deadline 64.40)",
+   "UT-Kappung: Block 12 'Im LKW-Bereich wird ' ende 133.62 -> 133.36 s (Quer-Deadline 133.36)",
+   "UT-Merge: Block 4 'Finde ich jetzt' + 'dran.' → ein Segment (41.12–44.20 s, Mindeststand nicht erreichbar)",
+   "UT-Merge: Block 5 'Wir haben ja ke' + 'nicht.' → ein Segment (46.44–50.65 s, Mindeststand nicht erreichbar)",
+   "UT-Merge: Block 10 'Das sind schon ' + 'jeden Fall.' → ein Segment (103.90–107.40 s, Mindeststand nicht erreichbar)",
+   "UT-Merge: Block 11 'neugierig und d' + 'habe.' → ein Segment (114.96–118.50 s, Mindeststand nicht erreichbar)",
+   "Untertitel: 42 Segmente"
   ]
  },
  "taktCheck": {
@@ -1406,9 +1412,9 @@
     "viel Wert und das ist einer von"
    ],
    "start": 0.08,
-   "ende": 3.14,
+   "ende": 3.2,
    "frameVon": 2,
-   "frameBis": 78
+   "frameBis": 80
   },
   {
    "block": 1,
@@ -1418,10 +1424,10 @@
     "den größten Grundsätzen, die",
     "uns in der Ausbildung schon"
    ],
-   "start": 3.22,
-   "ende": 5.38,
-   "frameVon": 80,
-   "frameBis": 134
+   "start": 3.28,
+   "ende": 5.42,
+   "frameVon": 82,
+   "frameBis": 136
   },
   {
    "block": 1,
@@ -1430,10 +1436,10 @@
    "zeilen": [
     "beigebracht worden sind."
    ],
-   "start": 5.46,
-   "ende": 6.66,
-   "frameVon": 136,
-   "frameBis": 166
+   "start": 5.5,
+   "ende": 6.7,
+   "frameVon": 138,
+   "frameBis": 168
   },
   {
    "block": 1,
@@ -1443,9 +1449,9 @@
     "Von Anfang an hundert",
     "Prozent und nichts anderes."
    ],
-   "start": 6.56,
+   "start": 6.78,
    "ende": 9.26,
-   "frameVon": 164,
+   "frameVon": 170,
    "frameBis": 232
   },
   {
@@ -1457,9 +1463,9 @@
     "ist überragend."
    ],
    "start": 22.3,
-   "ende": 23.92,
+   "ende": 23.96,
    "frameVon": 558,
-   "frameBis": 598
+   "frameBis": 599
   },
   {
    "block": 2,
@@ -1469,9 +1475,9 @@
     "Also wir sind eine",
     "kleine Familie."
    ],
-   "start": 24.0,
+   "start": 24.04,
    "ende": 25.82,
-   "frameVon": 600,
+   "frameVon": 601,
    "frameBis": 646
   },
   {
@@ -1483,7 +1489,7 @@
     "vernünftig und es wird auch"
    ],
    "start": 25.98,
-   "ende": 28.46,
+   "ende": 28.48,
    "frameVon": 650,
    "frameBis": 712
   },
@@ -1494,7 +1500,7 @@
    "zeilen": [
     "angenommen."
    ],
-   "start": 28.54,
+   "start": 28.56,
    "ende": 29.94,
    "frameVon": 714,
    "frameBis": 748
@@ -1508,7 +1514,7 @@
     "uns sehr offen — ständiger"
    ],
    "start": 30.0,
-   "ende": 32.78,
+   "ende": 32.82,
    "frameVon": 750,
    "frameBis": 820
   },
@@ -1519,8 +1525,8 @@
    "zeilen": [
     "Verbesserungsweg."
    ],
-   "start": 32.86,
-   "ende": 34.06,
+   "start": 32.9,
+   "ende": 34.1,
    "frameVon": 822,
    "frameBis": 852
   },
@@ -1546,9 +1552,9 @@
     "besser, als wenn man jetzt nur in"
    ],
    "start": 36.28,
-   "ende": 38.8,
+   "ende": 38.86,
    "frameVon": 907,
-   "frameBis": 970
+   "frameBis": 972
   },
   {
    "block": 4,
@@ -1558,35 +1564,23 @@
     "die Arbeit kommt, dann arbeitet",
     "man, geht wieder nach Hause."
    ],
-   "start": 38.88,
+   "start": 38.94,
    "ende": 40.9,
-   "frameVon": 972,
+   "frameVon": 974,
    "frameBis": 1022
   },
   {
    "block": 4,
    "person": "Alexander Roth",
-   "text": "Finde ich jetzt nicht so, du solltest schon deinen Spaß haben",
+   "text": "Finde ich jetzt nicht so, du solltest schon deinen Spaß haben dran.",
    "zeilen": [
-    "Finde ich jetzt nicht so, du",
-    "solltest schon deinen Spaß haben"
+    "Finde ich jetzt nicht so, du solltest",
+    "schon deinen Spaß haben dran."
    ],
    "start": 41.12,
-   "ende": 42.96,
+   "ende": 44.2,
    "frameVon": 1028,
-   "frameBis": 1074
-  },
-  {
-   "block": 4,
-   "person": "Alexander Roth",
-   "text": "dran.",
-   "zeilen": [
-    "dran."
-   ],
-   "start": 43.04,
-   "ende": 44.24,
-   "frameVon": 1076,
-   "frameBis": 1106
+   "frameBis": 1105
   },
   {
    "block": 5,
@@ -1604,27 +1598,15 @@
   {
    "block": 5,
    "person": "Tobi",
-   "text": "Wir haben ja keine Meisterhierarchie, gibt's bei uns überhaupt",
+   "text": "Wir haben ja keine Meisterhierarchie, gibt's bei uns überhaupt nicht.",
    "zeilen": [
     "Wir haben ja keine Meisterhierarchie,",
-    "gibt's bei uns überhaupt"
+    "gibt's bei uns überhaupt nicht."
    ],
    "start": 46.44,
-   "ende": 49.92,
+   "ende": 50.65,
    "frameVon": 1161,
-   "frameBis": 1248
-  },
-  {
-   "block": 5,
-   "person": "Tobi",
-   "text": "nicht.",
-   "zeilen": [
-    "nicht."
-   ],
-   "start": 50.0,
-   "ende": 51.2,
-   "frameVon": 1250,
-   "frameBis": 1280
+   "frameBis": 1266
   },
   {
    "block": 6,
@@ -1673,7 +1655,7 @@
     "ist, wie man sich dann wirklich"
    ],
    "start": 59.02,
-   "ende": 60.86,
+   "ende": 60.9,
    "frameVon": 1476,
    "frameBis": 1522
   },
@@ -1685,8 +1667,8 @@
     "weiterentwickelt,",
     "wenn man arbeitet."
    ],
-   "start": 60.94,
-   "ende": 62.14,
+   "start": 60.98,
+   "ende": 62.18,
    "frameVon": 1524,
    "frameBis": 1554
   },
@@ -1698,10 +1680,10 @@
     "Man wird einfach reifer,",
     "man wird erwachsener."
    ],
-   "start": 61.76,
-   "ende": 64.52,
-   "frameVon": 1544,
-   "frameBis": 1613
+   "start": 62.26,
+   "ende": 64.4,
+   "frameVon": 1556,
+   "frameBis": 1610
   },
   {
    "block": 8,
@@ -1725,9 +1707,9 @@
     "macht einfach einen Haufen"
    ],
    "start": 92.0,
-   "ende": 93.88,
+   "ende": 93.91,
    "frameVon": 2300,
-   "frameBis": 2347
+   "frameBis": 2348
   },
   {
    "block": 8,
@@ -1736,10 +1718,10 @@
    "zeilen": [
     "Spaß."
    ],
-   "start": 93.96,
-   "ende": 95.16,
-   "frameVon": 2349,
-   "frameBis": 2379
+   "start": 93.99,
+   "ende": 95.19,
+   "frameVon": 2350,
+   "frameBis": 2380
   },
   {
    "block": 9,
@@ -1763,9 +1745,9 @@
     "ich halt mit LKWs immer groß"
    ],
    "start": 97.88,
-   "ende": 101.04,
+   "ende": 101.08,
    "frameVon": 2447,
-   "frameBis": 2526
+   "frameBis": 2527
   },
   {
    "block": 9,
@@ -1774,10 +1756,10 @@
    "zeilen": [
     "geworden."
    ],
-   "start": 101.12,
-   "ende": 102.32,
-   "frameVon": 2528,
-   "frameBis": 2558
+   "start": 101.16,
+   "ende": 102.36,
+   "frameVon": 2529,
+   "frameBis": 2559
   },
   {
    "block": 9,
@@ -1787,35 +1769,23 @@
     "Da habe ich direkt gesagt:",
     "„Muss ich mich hier bewerben.“"
    ],
-   "start": 101.13,
+   "start": 102.44,
    "ende": 104.17,
-   "frameVon": 2528,
+   "frameVon": 2561,
    "frameBis": 2604
   },
   {
    "block": 10,
    "person": "Hannes Husslein",
-   "text": "Das sind schon sehr große Maschinen, sehr beeindruckend auf",
+   "text": "Das sind schon sehr große Maschinen, sehr beeindruckend auf jeden Fall.",
    "zeilen": [
-    "Das sind schon sehr große",
-    "Maschinen, sehr beeindruckend auf"
+    "Das sind schon sehr große Maschinen,",
+    "sehr beeindruckend auf jeden Fall."
    ],
    "start": 103.9,
-   "ende": 106.16,
+   "ende": 107.4,
    "frameVon": 2598,
-   "frameBis": 2654
-  },
-  {
-   "block": 10,
-   "person": "Hannes Husslein",
-   "text": "jeden Fall.",
-   "zeilen": [
-    "jeden Fall."
-   ],
-   "start": 106.24,
-   "ende": 107.44,
-   "frameVon": 2656,
-   "frameBis": 2686
+   "frameBis": 2685
   },
   {
    "block": 11,
@@ -1826,7 +1796,7 @@
     "immer wenn er einen MAN sieht,"
    ],
    "start": 107.5,
-   "ende": 109.98,
+   "ende": 110.02,
    "frameVon": 2688,
    "frameBis": 2750
   },
@@ -1838,10 +1808,10 @@
     "schreit er: „Papa, schau, da",
     "ist ein MAN.“ Manchmal kann ich"
    ],
-   "start": 110.06,
-   "ende": 112.5,
+   "start": 110.1,
+   "ende": 112.54,
    "frameVon": 2752,
-   "frameBis": 2812
+   "frameBis": 2814
   },
   {
    "block": 11,
@@ -1851,35 +1821,23 @@
     "auch sagen, ich habe ihn repariert",
     "und dann ist er immer sehr"
    ],
-   "start": 112.58,
-   "ende": 114.84,
-   "frameVon": 2814,
-   "frameBis": 2871
+   "start": 112.62,
+   "ende": 114.88,
+   "frameVon": 2816,
+   "frameBis": 2872
   },
   {
    "block": 11,
    "person": "Marcel Mauer",
-   "text": "neugierig und dann erzähle ich stolz davon, was ich gemacht",
+   "text": "neugierig und dann erzähle ich stolz davon, was ich gemacht habe.",
    "zeilen": [
     "neugierig und dann erzähle ich",
-    "stolz davon, was ich gemacht"
+    "stolz davon, was ich gemacht habe."
    ],
-   "start": 114.92,
-   "ende": 117.36,
-   "frameVon": 2873,
-   "frameBis": 2934
-  },
-  {
-   "block": 11,
-   "person": "Marcel Mauer",
-   "text": "habe.",
-   "zeilen": [
-    "habe."
-   ],
-   "start": 117.44,
-   "ende": 118.64,
-   "frameVon": 2936,
-   "frameBis": 2966
+   "start": 114.96,
+   "ende": 118.5,
+   "frameVon": 2874,
+   "frameBis": 2962
   },
   {
    "block": 12,
@@ -1890,9 +1848,9 @@
     "der MAN und speziell im"
    ],
    "start": 118.58,
-   "ende": 120.38,
+   "ende": 120.43,
    "frameVon": 2964,
-   "frameBis": 3010
+   "frameBis": 3011
   },
   {
    "block": 12,
@@ -1902,10 +1860,10 @@
     "Nutzfahrzeugbereich ist, dass",
     "die Fahrzeuge halt einfach nicht"
    ],
-   "start": 120.46,
-   "ende": 122.5,
-   "frameVon": 3012,
-   "frameBis": 3062
+   "start": 120.51,
+   "ende": 122.56,
+   "frameVon": 3013,
+   "frameBis": 3064
   },
   {
    "block": 12,
@@ -1914,10 +1872,10 @@
    "zeilen": [
     "von der Stange sind."
    ],
-   "start": 122.58,
-   "ende": 123.78,
-   "frameVon": 3064,
-   "frameBis": 3094
+   "start": 122.64,
+   "ende": 123.84,
+   "frameVon": 3066,
+   "frameBis": 3096
   },
   {
    "block": 12,
@@ -1926,10 +1884,10 @@
    "zeilen": [
     "Die sind einfach besonders."
    ],
-   "start": 123.24,
-   "ende": 124.52,
-   "frameVon": 3081,
-   "frameBis": 3113
+   "start": 123.92,
+   "ende": 125.12,
+   "frameVon": 3098,
+   "frameBis": 3128
   },
   {
    "block": 12,
@@ -1939,10 +1897,10 @@
     "Macht's natürlich unabdinglich,",
     "dass die Mitarbeiter, die dann"
    ],
-   "start": 124.6,
-   "ende": 126.78,
-   "frameVon": 3115,
-   "frameBis": 3170
+   "start": 125.2,
+   "ende": 126.83,
+   "frameVon": 3130,
+   "frameBis": 3171
   },
   {
    "block": 12,
@@ -1952,9 +1910,9 @@
     "daran arbeiten und die Azubis,",
     "die dann dort ausgebildet werden,"
    ],
-   "start": 126.86,
+   "start": 126.91,
    "ende": 129.56,
-   "frameVon": 3172,
+   "frameVon": 3173,
    "frameBis": 3239
   },
   {
@@ -1979,9 +1937,9 @@
     "wirklich noch repariert."
    ],
    "start": 131.82,
-   "ende": 133.62,
+   "ende": 133.36,
    "frameVon": 3296,
-   "frameBis": 3340
+   "frameBis": 3334
   }
  ]
 }
