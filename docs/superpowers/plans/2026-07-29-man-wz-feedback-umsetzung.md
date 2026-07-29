@@ -427,11 +427,15 @@ PY
 
 Expected: `PLAN-ASSERTS OK — <N> UT-Segmente`.
 
-- [ ] **Step 9: Commit** (nur falls Generator-Kopie im Repo läge — liegt er nicht; `sync-plan.json` unter `tools/motion/src/...` IST im Repo):
+- [ ] **Step 9: Commit — im MOTION-SUB-REPO** (`tools/` ist ein eigenständiges Git-Repo und im Studio-Repo per .gitignore ausgeschlossen; NIE `git update-index`-Tricks im Studio-Repo):
 
 ```bash
-cd "/Users/jansantos/NIRO Studio" && git add tools/motion/src/clients/man/projects/wartezimmervideo/sync-plan.json && git commit -m "feat(man-wz): sync-plan v9 — Quer-Strecken, CTA-Endcard, Löwe rechtsblickend, Untertitel, Master 175s"
+cd "/Users/jansantos/NIRO Studio/tools/motion" && git add src/clients/man/projects/wartezimmervideo/sync-plan.json && git commit -m "feat(man-wz): sync-plan v9 — Quer-Strecken, CTA-Endcard, Löwe rechtsblickend, Untertitel, Master 175s"
 ```
+
+> Korrektur 2026-07-29 während der Ausführung: ursprünglich stand hier ein
+> Commit ins Studio-Repo — falsch, dort ist `tools/` ignoriert. Erledigt via
+> Baseline-Commit `6e8ce08` im Sub-Repo (enthält sync-plan v9).
 
 ---
 
@@ -726,8 +730,13 @@ Expected: tsc sauber; F1620 = Blende halb offen mit Quer-Inhalt (rote TGX-Front)
 - [ ] **Step 10: Commit**
 
 ```bash
-cd "/Users/jansantos/NIRO Studio" && git add tools/motion/src/clients/man/projects/wartezimmervideo/Composition.tsx tools/motion/src/Root.tsx && git commit -m "feat(man-wz): V2-Master 175s — Quer-Blende, Löwe rechtsblickend links, CTA-Endcard mit QR, Untertitel stumm"
+cd "/Users/jansantos/NIRO Studio/tools/motion" && git add src/clients/man/projects/wartezimmervideo/Composition.tsx && git commit -m "feat(man-wz): V2-Master 175s — Quer-Blende, Löwe rechtsblickend links, CTA-Endcard mit QR, Untertitel stumm"
 ```
+
+> Hinweis: Commit im MOTION-SUB-REPO (`tools/motion` hat eigenes Git).
+> `src/Root.tsx` NICHT mit committen — die Datei trägt ungecommittete Änderungen
+> fremder Kundenprojekte; unsere Duration-Änderung liegt in `manWz169MasterDefaults`
+> (Composition.tsx), Root.tsx bleibt unangetastet.
 
 ---
 
