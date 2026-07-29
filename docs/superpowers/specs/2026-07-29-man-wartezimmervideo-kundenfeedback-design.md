@@ -1,39 +1,83 @@
-# MAN Wartezimmervideo — Kundenfeedback Runde 1 (Design)
+# MAN Wartezimmervideo — Kundenfeedback Runde 1+2 (Design)
 
-**Datum:** 2026-07-29
+**Datum:** 2026-07-29 (v2 — nach zweiter MAN-Mail und Lieferung der V2-Schnittdateien)
 **Charge:** `projects/MAN/Wartezimmervideo/2026-07 Erste Fassung/`
-**Anlass:** Feedback MAN zur ausgelieferten Ton-Fassung (16:9-Master, 142 s)
 
-MAN hat die erste Fassung freigegeben („gefällt uns schon sehr gut") und
-13 Änderungswünsche geschickt. Fünf betreffen den Bildschnitt, sieben die
-Grafikebene, einer ist eine zusätzliche Fassung.
+MAN hat die erste Fassung gelobt und in zwei Mails nachgesteuert: 13 Wünsche in
+Mail 1 (Szenen, Texte, CTA-Endcard, Untertitel-Fassung, Löwe), 2 in Mail 2
+(Produktszenen im vollen Querformat; Löwe doch erlaubt, aber nur mit Blick nach
+rechts). Davids Schnitt V2 liegt vor und ist verifiziert.
 
-## 1. Grundannahme: die Tonspur bleibt
+## 1. Quellmaterial V2 — geliefert und geprüft
 
-David tauscht in Premiere nur Bilder, ohne Längen zu ändern. Damit bleibt
-`_intern/final-16x9/timeline.json` (12 Blöcke, 134,0 s) unverändert gültig, und
-sämtliche Animations-Timings im sync-plan behalten ihre Sekundenwerte. Es wird
-weder neu transkribiert noch die Timeline neu abgeleitet.
+`Material/V2 Videodateien/`, beide HEVC 10-bit BT.709, 25 fps:
 
-**Prüfschritt vor der Umsetzung:** Die neue 9:16-Datei per ffprobe gegen die
-alte vergleichen (Dauer, Framezahl, Audio-Stream). Weicht die Dauer um mehr als
-±0,04 s (1 Frame) ab, ist die Annahme verletzt — dann Stopp und Rückfrage, statt
-die Grafik auf eine verschobene Tonspur zu legen.
-
-## 2. Schnitt (David, Premiere) — nicht Teil dieser Umsetzung
-
-| TC | Wunsch | Kontext in der Timeline |
+| Datei | Format | Inhalt |
 |---|---|---|
-| 0:11 | Szene unterm Truck raus | Spotlight-Lücke 1 (9,5–22,3 s), kein O-Ton |
-| 0:47 | Szene unterm Truck raus | Tobi-Block (44,3–50,2 s), Ton läuft weiter |
-| 1:33 | Szene unterm Truck raus | Louis-Block (89,9–94,3 s) |
-| 2:03 | andere Produktszene einbauen | Ciattei-Block (118,6–133,6 s) |
-| 2:06 | Szene unterm Truck raus | Ciattei-Block |
+| `…_V2 Haupt.mp4` | 2160×3840 (9:16), 4124 F, AAC 48 kHz | Schnitt + Ton; Quer-Strecken schwarz |
+| `…_V2 Quer.mp4` | 3840×2160 (16:9), 4123 F, ohne Ton | nur die Quer-Strecken, sonst schwarz |
+
+**Verifiziert (blackdetect/volumedetect/Frame-Sichtung):**
+
+- Quer-Strecke 1: **64,56–76,56 s** (Frames 1614–1913, exakt 12,0 s) — dunkle
+  Studio-Produktshots (rote TGX-Front, Interieur, Halle). Passt tonal zur
+  dunklen Bühne.
+- Quer-Strecke 2 (Finale): **133,52–164,92 s** (Frames 3338–4122, 31,4 s) —
+  Fahraufnahmen (Alpenstraße, Busse, E-Trucks, Lenkrad, Abendlicht),
+  Schwarzblende 163,92–164,92, Ton blendet mit.
+- **Timeline steht.** Strecke 1 liegt vollständig in der alten 25,3-s-Musiklücke
+  (64,6–89,9), Strecke 2 hängt hinter Ciattei (Alt-Ende 133,96) an. Kein
+  O-Ton-Block verschiebt sich: Nico steht bei 64,4 im Bild (Blockende 64,5),
+  Louis bei 91 (Block 89,9–94,3); Gesamtdauer 164,92 = 133,96 − 0,44 + 31,4.
+  timeline.json und alle Block-Zeiten bleiben gültig, keine Neu-Transkription.
+- **Musik ist eingearbeitet** (Lücken ≈ −17 dB statt Stille). Der frühere
+  Offen-Punkt „Musik legt David später drunter" entfällt.
+- Haupt blendet 133,52–133,92 ab; in diesem Fenster liegt bereits die
+  Quer-Ebene darüber — ohne Wirkung.
+- Die 5 Szenentausche aus Mail 1 (unterm Truck raus, Produktszene 2:03) sind
+  im V2 drin (Stichproben 11/47/93/126 s).
+
+**Offen:** Herkunft/native Auflösung des Quer-Materials bestätigen (Brandportal
+oder Upscale?) — entscheidet, ob das 4K-Master uneingeschränkt sauber ist.
+
+## 2. Architektur: zwei Ebenen, eine Blende
+
+Die Komposition bekommt eine zweite Videoebene:
+
+- **Haupt** (9:16): liefert Ton und den Fensterinhalt — wie bisher.
+- **Quer** (16:9): liegt bildschirmfüllend UNTER der Grafikbühne, stumm, nur in
+  den zwei Strecken gemountet.
+
+**Der Übergang ist eine Blende, kein Schnitt:** Das Passepartout-Fenster wird
+zur Maske. Beim Öffnen wächst das Fenster von 540×960 auf 1920×1080; darunter
+läuft das Quer-Video bildschirmfest und wird durch die wachsende Öffnung
+freigegeben. Der harte Materialwechsel in den Dateien liegt exakt auf dem
+Cut-Frame — die Weichheit macht die Maske, deshalb sind Davids fixe Frames kein
+Problem, sondern Voraussetzung. An den V2-Dateien ist nichts zu ändern.
+
+Zeiten (25 fps):
+
+| Moment | Zeit | Verhalten |
+|---|---|---|
+| Öffnung 1 | 64,56 → 65,16 (15 F, easeOut) | Fenster x1200 → Vollbild; roter Kantenbalken wandert mit der linken Kante und blendet aus |
+| Vollbild 1 | 65,16 – 75,96 | reine Produktstrecke, keine Grafik, kein Text |
+| Schließen 1 | 75,96 → 76,56 (15 F) | Maske schrumpft auf die ZENTRIERTE Fensterposition (x690, Spotlight-Stand); am Cut-Frame 76,56 wechselt der Fensterinhalt aufs Hochformat — unsichtbar, weil im geschlossenen Fenster |
+| Rest-Spotlight | 76,56 – 89,9 (13,3 s) | Abdunklung/Glow wie gehabt, Löwe links, Werkzeuge rechts; Fenster gleitet 89,3–89,9 zurück nach rechts zum Louis-Start |
+| Öffnung 2 | 133,52 → 134,12 | gleiche Blende, bleibt offen; Finale läuft 31,4 s |
+| Schwarz | 163,92 – 164,92 | im Material (Bild + Ton) |
+| Endcard | 165,0 – 173,0 | CTA + QR aus dem Schwarz (8 s) |
+| Ausklang | 173,0 – 175,0 | in die Dunkelfläche; Loop-Naht Frame 4374 ≙ 0 |
+
+**Master neu: 175,0 s / 4375 Frames** (vorher 142,0/3550). Optionaler
+Feinschliff am Testframe: minimaler Scale-Settle (103→100 %) im Quer-Video
+während der Öffnung.
+
+Für den Render werden ProRes-Arbeitskopien transkodiert (HEVC 10-bit ist als
+OffthreadVideo-Quelle zäh); Maße je Render-Pfad im Umsetzungsplan.
 
 ## 3. Texte (Generator `build_sync_plan.py`)
 
-Alle sichtbaren Texte entstehen im Generator und landen über `sync-plan.json` in
-der Komposition. Es wird an keiner Stelle Text in `Composition.tsx` gepflegt.
+Wortlaut-Änderungen aus Mail 1 (alle Texte entstehen im Generator):
 
 | Element | Zeit | Ist | Soll |
 |---|---|---|---|
@@ -43,142 +87,97 @@ der Komposition. Es wird an keiner Stelle Text in `Composition.tsx` gepflegt.
 | Headline Kapitel 3 | 89,9 s | `FASZINATION **NUTZFAHRZEUG**` | `FASZINATION **NUTZFAHRZEUGE**` |
 | Takeaway Block 10 | 104,3 s | `GROSSE MASCHINEN. GROSSER **EINDRUCK**.` | `GROSSE FAHRZEUGE. **GROSSES BEWEGEN**.` |
 
-„Azubi" fällt ausschließlich bei Nico. Louis, Lara und Hannes behalten
-`Azubi Nutzfahrzeugmechatronik` — MAN hat nur Nico genannt, und die
-Azubi-Perspektive ist für einen Recruiting-Film ein Aktivposten.
+„Azubi" fällt nur bei Nico; Louis/Lara/Hannes behalten ihre Rollen.
+Breitenprüfung (fontTools, 964 px) für die zwei neuen Takeaways erneut laufen
+lassen.
 
-Die Breitenprüfung des Generators (fontTools gegen 964 px nutzbare Spalte) muss
-für die zwei neuen Takeaways erneut laufen. `AUF AUGENHÖHE. FLACHE
-HIERARCHIESTUFEN.` ist der bislang längste Takeaway und der wahrscheinlichste
-Kandidat für die Ausnahmestufe 46 px.
+**Neue Anschluss-Regeln wegen der Blenden:**
 
-## 4. Löwe raus
+- Headline K2, Nicos Takeaway und Plakette sind bis **64,4 s komplett
+  unsichtbar** (Austritt vorziehen; bisher 64,8/64,9) — die Öffnung startet
+  direkt von Nicos letztem Wort.
+- Headline K4 und die Ciattei-Elemente sind bis **133,4 s komplett unsichtbar**
+  (bisher 133,8) — dann öffnet das Finale.
 
-MAN darf den Löwen nicht verwenden. Er muss an allen drei Stellen weg:
+## 4. Löwe: zurück, mit Blick-Regel
 
-1. dauerhaft dunkel hinter dem Fenster (ganze Laufzeit, `Composition.tsx:1661`)
-2. rot in beiden Spotlights (0:09,5–0:22,3 und 1:04,6–1:29,9, `:1406`)
-3. weiß auf der Endcard (`:1467`)
+MAN in Mail 2: Der Löwe darf verwendet werden, **muss aber immer nach rechts
+schauen.** Die vorhandenen Assets (`loewe-links-*.png`) blicken nach links und
+werden gespiegelt (`loewe-rechts-*.png`). Blick nach rechts heißt gestalterisch:
+Der Löwe gehört an den LINKEN Bildrand, angeschnitten, damit er ins Bild schaut.
 
-Die Komponente `Loewe169` (`:1029`) und die PNGs `loewe-links-*.png` entfallen
-ersatzlos, ebenso der Schlüssel `loewe` im sync-plan.
+Auftritte (Entscheidung David — nur Musikparts und Endcard, Seiten getauscht):
 
-**Ersatz (Entscheidung David):** kein neues Motiv. Die Spotlights tragen allein
-der Werkzeug-Regen plus die bestehende Licht-Choreografie (Abdunklung,
-Vignette, roter Glow, Fenster-Glide zur Mitte).
+1. **Spotlight 1** (9,5–22,3): Löwe links am Rand, Werkzeug-Regen rechts
+   (Zone spiegelt sich; über dem zentrierten Fenster max. 40 % Deckkraft).
+2. **Rest-Spotlight** (76,56–89,9): dito, kürzerer Auftritt (Enter ~77,2,
+   Exit ~89,3).
+3. **Endcard:** Löwe links angeschnitten, Ton-in-Ton dunkel hinter der
+   Textspalte (Kontrastband 8–14 % wie beim bisherigen dunklen Löwen), Blick
+   nach rechts führt zu Claim und QR.
 
-Damit wird der Werkzeug-Regen vom Beiwerk zum einzigen Motiv und muss kräftiger
-werden: Deckkraft von `0,04–0,09` auf `0,12–0,18`, Größenkorridor von
-`70–180 px` auf `110–260 px`, Anzahl 9 → 12. Die Zone bleibt die Grafikfläche
-links (x 0–1100). Die Werte sind ein Startpunkt, kein Dogma — sie werden am
-Testframe kalibriert.
+In Sprech-Blöcken bleibt die Fläche löwenfrei (Davids Linie „clean").
+Der alte Guardrail „Blick zur Bildmitte" ist damit ersetzt durch:
+**Blick immer nach rechts ⇒ Platzierung immer links.**
 
-**Bekanntes Risiko:** Die sprechfreie Lücke bei 1:04,6–1:29,9 dauert 25,3 s und
-lebte bisher wesentlich vom roten Löwen. Ob der verstärkte Werkzeug-Regen sie
-allein trägt, entscheidet sich am Testframe — nicht im Endrender. Falls die
-Fläche leer statt ruhig wirkt, ist die naheliegende Reserve der MAN-Halbbogen
-aus `MANlogoWeiss.png` als großes angeschnittenes Artwork (freigabesicher, da
-reiner Schriftzug ohne Löwen).
+## 5. Endcard: CTA mit QR (Variante A)
 
-## 5. Endcard: Standort-Abbinder wird CTA
+135,0→165,0 verschoben, Inhalt wie in Runde 1 entschieden:
 
-Bisher: `IHR **MAN SERVICE-TEAM**`, Logo links, weißer Löwe rechts, 135,0–140,0 s.
+- Links: MAN-Logo (Bilddatei), `GROSSES BEWEGEN **MIT MAN**`, roter
+  Trennstrich, `JETZT BEWERBEN`.
+- Rechts: QR-Code 480 px als weiße Platte, darunter `JOBS.MAN.EU` als Klartext.
+- Dahinter links der dunkle Löwe (Abschnitt 4).
+- Kein Berufstitel ⇒ m/w/d-Pflicht greift nicht.
 
-Neu (Variante A), Layout auf 1920×1080:
+QR-Ziel `https://jobs.man.eu/` (offizielle Jobbörse; Karriereseiten-Claim-Pfad
+bestätigt das Wording). Erzeugung einmalig als Asset nach
+`tools/motion/public/clients/man/wz/`, Fehlerkorrektur M, Quiet Zone 4 Module,
+vor Einbau mit echtem Handy gegen die Ziel-URL getestet. Tracking-Parameter von
+MAN wären besser — nachfragen, nicht blockierend.
 
-- **Links** (auf dem Versatz-Panel): MAN-Logo als Bilddatei, darunter der Claim
-  `GROSSES BEWEGEN **MIT MAN**`, roter Trennstrich, darunter `JETZT BEWERBEN`.
-- **Rechts** (der Platz, den der Löwe räumt): QR-Code als weiße Platte mit
-  dunklen Modulen, Kantenlänge 480 px, darunter das Ziel als Klartext
-  `JOBS.MAN.EU`.
-
-**QR-Ziel:** `https://jobs.man.eu/` — die offizielle Jobbörse der MAN Truck &
-Bus SE und Truck & Bus Deutschland GmbH. Kurze URLs ergeben grobe Raster; die
-Scan-Distanz skaliert grob mit dem Zehnfachen der Kantenlänge, also braucht ein
-Wartezimmer mit ~3 m Sitzabstand rund 30 cm auf dem Schirm — auf einem
-55-Zoll-Gerät entspricht das den 480 px im 1920er Bild. Die lange
-Karriereseiten-URL (`man.eu/de/de/…/grosses-bewegen-mit-man.html`) verlinkt
-ohnehin auf dieselbe Jobbörse und würde das Raster nur verdichten.
-
-Der Pfad dieser Karriereseite bestätigt nebenbei den Wortlaut: „Großes bewegen
-mit MAN" ist MANs eigener Employer-Claim. Zusammen mit dem neuen Takeaway bei
-1:45 klammert er das Video.
-
-**Standzeit:** Der Hero steht künftig 8,0 s statt 5,0 s (135,0–143,0 s), damit
-ein QR im Wartezimmer tatsächlich gescannt und nicht nur gesehen wird. Der
-Ausklang in die Dunkelfläche verschiebt sich auf 143,0–145,0 s, die
-Master-Dauer von 142,0 s auf 145,0 s (3550 → 3625 Frames). Die Loop-Naht bleibt
-das Konstruktionsprinzip: Frame 3624 entspricht Frame 0.
-
-**Kein Berufstitel auf der Endcard**, damit greift die m/w/d-Pflicht hier nicht.
-Sobald ein Titel dazukommt, muss `(m/w/d)` daran.
-
-**QR-Erzeugung:** einmalig als Asset nach `tools/motion/public/clients/man/wz/`
-gerendert, nicht zur Laufzeit. Fehlerkorrektur-Level M, Quiet Zone 4 Module.
-Der erzeugte Code wird vor dem Einbau mit einem echten Handy gegen die Ziel-URL
-geprüft — ein QR, der im Wartezimmer ins Leere führt, ist schlimmer als keiner.
+**Ton unter der Endcard:** wie bisher still (der alte Master hatte ebenfalls
+einen stillen 8-s-Abbinder). Option für David: Musik-Outro ~10 s unter dem
+Schwarz verlängern und Datei neu liefern — dann bitte nur Audio ändern, Bild
+nicht anfassen.
 
 ## 6. Stumme Fassung mit Untertiteln
 
-Der Flag `fassung: "stumm"` existiert bereits und schaltet das Video stumm
-(`Composition.tsx:1774`), bewirkt bei den Texten aber nichts — `endeStumm` und
-`endeTon` sind im aktuellen Plan überall identisch. Die stumme Fassung ist bis
-heute nie gerendert worden.
+Wie in Runde 1 entschieden: Untertitel klassisch unten im Videofenster
+(460 px Textbreite, MAN Global Regular ~30 px, max. 2 Zeilen, ≥1,2 s,
+dezenter Verlauf; Stärke am Testframe). Quelle: Wort-Timings aus
+`transcript.scribe.json`, Wortlaute aus `timeline.json`, Segmentierung im
+Generator. In den Quer-Strecken gibt es keine Sprache, also keine Untertitel.
 
-MAN will eine Fassung für stumme Wiedergabe. Untertitel laufen deshalb
-**klassisch unten im Videofenster** (Entscheidung David), nicht auf der
-Grafikfläche:
+**Lara-Textsperre entfällt** (CTA macht das Video zum Recruiting-Film; die
+Sperre wäre eine Lücke mitten im Satz). `endeStumm` Block 9 zieht auf das
+Blockende nach.
 
-- **Zone:** unteres Fensterdrittel, Fenster HD x 1200–1740 / y 60–1020,
-  40 px Innenabstand → 460 px Textbreite.
-- **Typo:** MAN Global Regular ~30 px, Zeilenhöhe 1,25, weiß, zentriert,
-  Gemischtschreibung (keine Versalien — Fließtext, nicht Headline).
-- **Umbruch:** maximal 2 Zeilen, ~32 Zeichen je Zeile, minimale Standzeit 1,2 s,
-  Segmentgrenzen an Satzzeichen und Sprechpausen.
-- **Lesbarkeit:** dezenter dunkler Verlauf unter dem Band, damit heller Footage
-  den Text nicht frisst. Bewusst zurückhaltend — Davids Linie ist „sehr clean";
-  die Stärke wird am Testframe festgelegt.
-- **Quelle:** Wort-Timings aus `_intern/final-16x9/transcript.scribe.json`, die
-  Wortlaute aus `timeline.json`. Die Segmentierung erzeugt der Generator, damit
-  Untertitel und Takeaways aus derselben Wahrheit stammen.
+**Risiko unverändert:** Headline + Takeaway + Plakette + Untertitel gleichzeitig
+— Dichte am Testframe prüfen; falls zu viel, wird die Takeaway-Ebene
+ausgedünnt, nicht der Untertitel.
 
-**Die Lara-Textsperre entfällt.** Der Satz „Da habe ich direkt gesagt: muss ich
-mich hier bewerben" (101,0–103,8 s) war gesperrt, weil das Video ausdrücklich
-ohne Recruiting-Botschaft geplant war. Mit dem CTA ist das Video ein
-Recruiting-Film; die Sperre wäre jetzt eine sinnentstellende Lücke mitten im
-Satz. `endeStumm` für Takeaway 9 zieht entsprechend auf das Blockende nach.
+## 7. Lieferung
 
-**Bekanntes Risiko:** In der stummen Fassung stehen künftig Headline, Takeaway,
-Plakette und Untertitel gleichzeitig im Bild. Das ist deutlich mehr Text als in
-der Ton-Fassung. Wird am Testframe geprüft; falls es zu dicht wird, ist die
-Takeaway-Ebene der Kandidat zum Ausdünnen, nicht der Untertitel — den hat MAN
-bestellt.
+Je Fassung (Ton/stumm) ProRes 422 HQ in 1920×1080 und 3840×2160 plus
+H.264-Preview — acht Dateien, ~14 GB bei 175 s. Falls die stumme Fassung nur
+auf dem Wartezimmer-Schirm läuft, reicht dort HD — Davids Entscheidung vor dem
+Rendern. 4K-Fenster trifft die 9:16-Quelle jetzt mit 2160×3840 nativ
+(Downscale statt Upscale — Gewinn gegenüber Runde 1).
 
-## 7. Nicht Teil dieser Runde
+## 8. Offene Punkte
 
-- **Musik** legt David in Premiere unter die Ton-Fassung (Akt-Wechsel 0:17 und
-  1:16), Shortlist liegt in `Ergebnisse/Musik-Empfehlungen.md`.
-- **MAN-Freigabe 2023er Material (Ciattei):** gilt als erteilt. MAN hat den
-  Block bei 2:03 und 2:06 kommentiert und dabei nur Szenen beanstandet, nicht
-  die Person. Der Fallback-Flag `ohneCiattei` bleibt vorhanden.
-
-## 8. Lieferung
-
-Je Fassung vier Dateien nach `Ergebnisse/Renders/`, wie bei der ersten Runde:
-ProRes 422 HQ in 1920×1080 und 3840×2160, dazu je ein H.264-Preview (CRF 18).
-Die 4K-Fassung entsteht über `--scale=2`; das Videofenster misst dann exakt
-1080×1920 und trifft die ProRes-Arbeitskopie pixelgenau.
-
-Acht Dateien sind zusammen rund 12 GB. Falls die stumme Fassung nur auf einem
-Wartezimmer-Schirm läuft, reicht dort HD — das entscheidet David vor dem
-Rendern.
+1. Herkunft/Auflösung Quer-Material (Brandportal? nativ 4K?) — David.
+2. QR-Ziel `jobs.man.eu` von MAN bestätigen lassen (Tracking?) — nicht blockierend.
+3. Stumme Fassung 4K oder nur HD — David.
+4. Optional Musik-Outro unter der Endcard — David.
 
 ## 9. Reihenfolge
 
-1. David schneidet, liefert die neue 9:16-Datei.
-2. ffprobe-Abgleich gegen die alte Datei (Gate: Dauer identisch).
-3. Generator-Änderungen (Texte, Untertitel-Segmente, Werkzeug-Werte, Endcard).
-4. Komposition (Löwe raus, Endcard neu, Untertitel-Ebene, Master 145 s).
-5. Testframes — Look-Review mit David, insbesondere Spotlight-2 ohne Löwe,
-   neue Endcard, Untertitel-Dichte in der stummen Fassung.
-6. Erst nach Freigabe rendern.
+1. ~~V2-Dateien prüfen~~ → erledigt (Abschnitt 1).
+2. Umsetzungsplan (writing-plans), dann: ProRes-Arbeitskopien, Generator,
+   Komposition (Quer-Ebene + Blende, Löwe gespiegelt, Endcard, Untertitel),
+   Master 175 s.
+3. Testframes: Öffnung 1 mitten in der Bewegung, Vollbild, Schließen auf
+   Spotlight-Stand, Löwe links, Endcard mit QR, Untertitel-Dichte stumm.
+4. Look-Review David, erst danach Render.
