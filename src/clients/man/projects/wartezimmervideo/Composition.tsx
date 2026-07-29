@@ -1398,8 +1398,19 @@ const Spotlight169: React.FC<{ s: SpotlightPlan169 }> = ({ s }) => {
           allein, ohne visuellen Akzent. Der Plan-Eintrag vom Typ „flare" bleibt
           als Dokumentation im sync-plan, wird aber nicht mehr gerendert. */}
       {/* Werkzeug-Regen RECHTS (v9 2026-07-29): Werkzeuge auf der rechten
-          Grafikfläche neben dem Fenster, Löwe steht links. */}
-      <div style={{ position: "absolute", left: BASE_W - M_WERKZEUG_ZONE_W, top: 0 }}>
+          Grafikfläche neben dem Fenster, Löwe steht links.
+          WICHTIG: Werkzeuge füllt den Elternbereich (inset 0, overflow hidden) —
+          der Wrapper braucht EXPLIZITE Maße, sonst kollabiert er auf 0×0 und
+          clippt alles weg (Bug-Befund David 2026-07-29: „Werkzeuge fehlen"). */}
+      <div
+        style={{
+          position: "absolute",
+          left: BASE_W - M_WERKZEUG_ZONE_W,
+          top: 0,
+          width: M_WERKZEUG_ZONE_W,
+          height: BASE_H,
+        }}
+      >
         <Werkzeuge
           progress={tLok / dauer}
           opacity={werkzeugOp * env}
