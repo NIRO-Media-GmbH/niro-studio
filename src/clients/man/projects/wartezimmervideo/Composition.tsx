@@ -758,7 +758,7 @@ export const ManWzEndcard: React.FC<ManWzEndcardProps> = ({ claim, review }) => 
 // 142,0 — Frame 3549 ≙ Frame 0 (Fenster-Fade-in 0,0–0,5 s).
 // =============================================================
 
-// --- sync-plan Typen (Struktur aus build_sync_plan.py, Stand 2026-07-24) ---
+// --- sync-plan Typen (v9, 2026-07-29) ---
 interface PlakettePlan169 {
   block: number;
   person: string; // nur Vorname (David Nr. 1)
@@ -821,14 +821,37 @@ interface BrandingPlan169 {
   eyebrow: string;
   zeilen: string[];
 }
+interface UntertitelPlan169 {
+  block: number;
+  person: string;
+  text: string;
+  zeilen: string[];
+  start: number;
+  ende: number;
+  frameVon: number;
+  frameBis: number;
+}
+interface QuerStrecke169 {
+  id: string;
+  start: number;
+  ende: number;
+  frameVon: number;
+  frameBis: number;
+  oeffnungDauer: number;
+  schliessen: { start: number; dauer: number; ziel: string } | null;
+  bleibtOffen: boolean;
+  schwarzAb: number | null;
+}
 interface EndcardEvent169 {
-  typ: string; // "freeze" | "fenster-aus" | "hero" | "ausklang"
+  typ: string; // "blende-auf" | "schwarz" | "hero" | "ausklang"
   start: number;
   ende: number;
   frame: number;
   fullscreen?: boolean;
   kartentext?: string;
-  loewe?: { variante: string; drift?: boolean };
+  cta?: string;
+  qr?: { asset: string; url: string; groesse: number };
+  loewe?: { variante: string; seite?: string };
 }
 interface SyncPlan169 {
   meta: {
@@ -836,9 +859,6 @@ interface SyncPlan169 {
     masterDauer: number;
     masterFrames: number;
     videoFrames: number;
-    freezeBis: number;
-    endcardStart: number;
-    fensterAusEnde: number;
   };
   fenster: {
     x: number;
@@ -846,11 +866,17 @@ interface SyncPlan169 {
     breite: number;
     hoehe: number;
     einblendung: { start: number; dauer: number };
-    ausblendung: { start: number; dauer: number };
+    ausblendung: null;
     schatten: {
       stufe1: { blur: number; y: number; deckkraft: number };
       stufe2: { blur: number; y: number; deckkraft: number };
     };
+  };
+  querStrecken: QuerStrecke169[];
+  loewe: {
+    blick: "links" | "rechts";
+    auftritte: { id: string; start: number; ende: number; seite: string }[];
+    endcard: { variante: string; seite: string };
   };
   plaketten: PlakettePlan169[];
   takeaways: TakeawayPlan169[];
@@ -859,6 +885,7 @@ interface SyncPlan169 {
   branding: BrandingPlan169;
   dichte: { t: number; amp: number; phase: string }[];
   endcard: EndcardEvent169[];
+  untertitel: UntertitelPlan169[];
   zwischenBeats: { start: number; dauer: number; typ: string; frame: number }[];
 }
 
@@ -1018,34 +1045,39 @@ const Markup169: React.FC<{ text: string }> = ({ text }) => (
   </>
 );
 
-// --- Vektor-Löwen (Phase 1, David Nr. 7) ---
-// PNGs 1200×2400 mit großem Transparenz-Rand; sichtbare Silhouette
-// (Alpha-BBox) 199–1094 × 506–1895, Kopf mit offenem Maul oben LINKS —
-// alle loewe-links-Varianten blicken nach links = zur Bildmitte, wenn
-// rechts platziert (David Nr. 3). Platzierung daher über die SICHTBARE
-// Box (visX/visY/visH), nicht über die PNG-Leinwand.
-const LION_VIS = { left: 199 / 1200, top: 506 / 2400, w: 895 / 1200, h: 1389 / 2400 };
+// --- Vektor-Löwen (v9, 2026-07-29: rechtsblickend) ---
+// PNGs 1200×2400 mit großem Transparenz-Rand. Zwei Varianten:
+//   loewe-links-*.png  → Kopf oben LINKS  (blick="links",  Tier schaut nach links)
+//   loewe-rechts-*.png → Kopf oben RECHTS (blick="rechts", Tier schaut nach rechts)
+// Platzierung über sichtbare BBox (visX/visY/visH), nicht über PNG-Leinwand.
+// Gemessene BBoxen (Task 2):
+//   Links:  Alpha-BBox 199–1094 × 506–1895  → LION_VIS_L
+//   Rechts: Alpha-BBox 107–1002 × 507–1895  → LION_VIS_R (Task 2-Messung)
+const LION_VIS_L = { left: 199 / 1200, top: 506 / 2400, w: 895 / 1200, h: 1389 / 2400 };
+const LION_VIS_R = { left: 107 / 1200, top: 507 / 2400, w: 895 / 1200, h: 1388 / 2400 };
 
 const Loewe169: React.FC<{
   variante: "dunkel" | "rot" | "weiss";
+  blick?: "links" | "rechts"; // MAN 2026-07-29: IMMER "rechts" verwenden
   visX: number; // Canvas-x der sichtbaren linken Silhouetten-Kante
   visY: number; // Canvas-y der sichtbaren Oberkante
   visH: number; // sichtbare Silhouetten-Höhe
   shiftX?: number;
   opacity?: number;
   filter?: string; // z. B. "brightness(0.82)" für tieferes Rot
-}> = ({ variante, visX, visY, visH, shiftX = 0, opacity = 1, filter }) => {
-  const imgH = visH / LION_VIS.h;
+}> = ({ variante, blick = "rechts", visX, visY, visH, shiftX = 0, opacity = 1, filter }) => {
+  const vis = blick === "rechts" ? LION_VIS_R : LION_VIS_L;
+  const imgH = visH / vis.h;
   const imgW = imgH * 0.5; // PNG-Leinwand 1200×2400
   return (
     <Img
-      src={staticFile(`clients/man/wz/loewe-links-${variante}.png`)}
+      src={staticFile(`clients/man/wz/loewe-${blick}-${variante}.png`)}
       style={{
         position: "absolute",
         width: imgW,
         height: imgH,
-        left: visX - imgW * LION_VIS.left,
-        top: visY - imgH * LION_VIS.top,
+        left: visX - imgW * vis.left,
+        top: visY - imgH * vis.top,
         transform: `translateX(${shiftX}px)`,
         opacity,
         filter,
@@ -1280,18 +1312,13 @@ const SPOT_STREIFEN = [
   { x0: 1600, v: -38, w: 40, farbe: MAN_RED, op: 0.18 },
 ];
 
-// Spotlight-Löwe (Review 2 Nr. 1): Basis-x bei voller Hüllkurve, Weg-Zuschlag
-// solange das Fenster noch rechts steht, symmetrische Drift-Amplitude.
-// Review 3 Nr. 4: mit 540×960 endet das Versatz-Panel im Spotlight bei
-// 960 + (24 + 540 − 270)·1,04 ≈ 1266, mit Panel-Blur (26 px) ≈ 1292.
-const M_SPOT_LOEWE_X = 1380; // env=1 → sichtbare Kante 1350…1410 ⇒ ≥ 58 px Luft
-const M_SPOT_LOEWE_WEG = 420; // env=0 → 1800 (Panel-Rechtskante dann 1764 + Blur)
+// Spotlight-Löwe (v9 2026-07-29): Löwe LINKS, blick="rechts" (schaut ins Bild).
+// Sichtbare Kante visX=-240 schneidet Rumpf links an; Kopf (rechte 55 % der
+// Rechts-Silhouette) bleibt vollständig im Bild. Drift ± 30 px über Dauer.
 const M_SPOT_LOEWE_DRIFT = 30; // ± Drift über die Spotlight-Dauer
 
-// Werkzeug-Regen: der Plan schreibt die Zone „Grafikfläche links (x 0–1100)"
-// vor. `breite` staucht die (deterministische) Instanz-Tabelle aus
-// Werkzeuge.tsx genau in dieses Fenster — so bleibt die rechte Bildhälfte mit
-// dem Löwen frei und die Teile fallen nur hinter Grafikfläche und Fenster.
+// Werkzeug-Regen: Zone „Grafikfläche rechts" (x 820–1920), `left`-Offset
+// positioniert Werkzeuge rechts. Löwe steht links, Werkzeuge rechts.
 const M_WERKZEUG_ZONE_W = 1100;
 
 const Spotlight169: React.FC<{ s: SpotlightPlan169 }> = ({ s }) => {
@@ -1367,45 +1394,25 @@ const Spotlight169: React.FC<{ s: SpotlightPlan169 }> = ({ s }) => {
           durchgehend gleichmäßig; der Aktwechsel der Musik trägt den Moment
           allein, ohne visuellen Akzent. Der Plan-Eintrag vom Typ „flare" bleibt
           als Dokumentation im sync-plan, wird aber nicht mehr gerendert. */}
-      {/* Werkzeug-Regen (Review 2 Nr. 10): sehr langsam herabsinkende
-          Silhouetten, Deckkraft 4–9 %, weich mit der Spotlight-Hüllkurve
-          ein-/ausgeblendet. Liegt IM Spotlight-Layer, also im z-Stack unter
-          der Fenster-Einheit. Deterministisch (feste Instanz-Tabelle in
-          Werkzeuge.tsx), `zyklen = dauer/26` hält das Tempo in beiden
-          Spotlights identisch; am Wrap-Punkt ist jedes Teil ausgeblendet
-          UND außerhalb des Bildes → kein Loop-Sprung. */}
-      <Werkzeuge
-        progress={tLok / dauer}
-        opacity={werkzeugOp * env}
-        farbe={WHITE}
-        zyklen={dauer / 26}
-        breite={M_WERKZEUG_ZONE_W}
-        hoehe={BASE_H}
-      />
-      {/* Roter Vektor-Löwe: EDEL zurückgenommen (Kalibrierung 2026-07-24,
-          David: „subtil dahinter", vorher wirkte er als aufgeklebter Sticker).
-          — kein volles #E30045 mehr: 24 % Deckkraft auf dem abgedunkelten
-            Grund (≈ #44172D, tiefes Dunkelrot), am Flare 76,0 kurz max 44 %;
-          — REVIEW 2 Nr. 1: die LINKE Kante mit dem Kopf darf nie angeschnitten
-            werden. Vorher stand visX=1195 hinter der Fenster-Einheit (deren
-            rechte Panel-Kante im Spotlight bei ≈ 1280 liegt) → Kopf halb
-            verdeckt. Jetzt wandert der Löwe mit der Fenster-Hüllkurve:
-            visX = 1330 bei env=1 (20 px rechts der Panel-Kante 1280 + 30 px
-            Drift-Reserve), und schiebt sich bei kleinerem env um bis zu
-            470 px nach rechts, weil das Fenster dann noch weiter rechts steht
-            (Panel-Rechtskante ≈ 1760 − 480·env). Mit shiftX ∈ [−30, +30]
-            bleibt die sichtbare Silhouetten-Kante IMMER ≥ 1300 — Kopf/Maul
-            (linke 55 % der Breite) stehen jederzeit frei. Rechts läuft er
-            bewusst aus dem Bild (Silhouette ≈ 760 px breit ⇒ bis x ≈ 2060);
-          — Größe bewusst NICHT hochgezogen: bei visH ≫ 1200 wird der Kopf
-            oben angeschnitten und die Silhouette kippt in eine amorphe
-            Masse, die das Bild dominiert. visH 1180 hält Kopf/Maul komplett
-            im Bild, unten leichter Anschnitt;
-          — blur(3px): nimmt die harte Vektorkante raus, der Löwe liest als
-            unscharfe Tiefen-Ebene HINTER dem Fenster statt als Aufkleber. */}
+      {/* Werkzeug-Regen RECHTS (v9 2026-07-29): Werkzeuge auf der rechten
+          Grafikfläche neben dem Fenster, Löwe steht links. */}
+      <div style={{ position: "absolute", left: BASE_W - M_WERKZEUG_ZONE_W, top: 0 }}>
+        <Werkzeuge
+          progress={tLok / dauer}
+          opacity={werkzeugOp * env}
+          farbe={WHITE}
+          zyklen={dauer / 26}
+          breite={M_WERKZEUG_ZONE_W}
+          hoehe={BASE_H}
+        />
+      </div>
+      {/* Roter Löwe LINKS am Rand, Blick nach rechts (v9 2026-07-29).
+          Silhouette läuft links aus dem Bild (Anschnitt), Kopf zeigt ins Bild.
+          Kalibrierung (Deckkraft 0,24, brightness 0,82, blur 3) unverändert. */}
       <Loewe169
         variante="rot"
-        visX={M_SPOT_LOEWE_X + (1 - env) * M_SPOT_LOEWE_WEG}
+        blick="rechts"
+        visX={-240 + (1 - env) * -200}
         visY={20}
         visH={1180}
         shiftX={-M_SPOT_LOEWE_DRIFT + 2 * M_SPOT_LOEWE_DRIFT * (tLok / dauer)}
@@ -1421,39 +1428,34 @@ const Spotlight169: React.FC<{ s: SpotlightPlan169 }> = ({ s }) => {
 // Beide Spotlights sind vollständig text- UND logofrei — auch das Zone-A-Logo
 // blendet dort aus. Der Generator liefert `branding.aktiv = false` als Stub.
 
-// --- Endcard-Hero: FULLSCREEN (Review 2 Nr. 7) -------------------------------
-// Ab 134,6 s existiert kein Fenster mehr (kein Rahmen, kein Kantenbalken, kein
-// Versatz-Panel, kein Schatten). Der Endscreen bespielt die ganze 1920×1080-
-// Fläche: bündige Spalte links bei x=160 (Logo → Claim → roter Balken), Löwe
-// WEISS rechts. Kein CTA (Guardrail 4). Der Löwe hält die Regel aus Nr. 1 ein:
-// linke Kante mit Kopf vollständig im Bild, Anschnitt nur rechts/unten.
-// Ausklang 140,0–142,0 in die Dunkelfläche ⇒ Frame 3549 ≙ Frame 0.
-// Endcard (David 2026-07-26): Löwe BÜNDIG an der rechten Bildkante, Logo +
-// Claim mittig in der verbleibenden Fläche links davon.
-const M_HERO_LOEWE_H = 780; // Unterkante exakt 1080
-const M_HERO_LOEWE_W = Math.round((M_HERO_LOEWE_H * 895) / 1389); // 503 (Alpha-BBox-Verhältnis)
-const M_HERO_LOEWE_X = BASE_W - M_HERO_LOEWE_W; // 1417 → rechte Kante exakt 1920
-const M_HERO_LOEWE_Y = 300;
-const M_HERO_FREI_W = M_HERO_LOEWE_X; // 1417 nutzbare Breite links vom Löwen
-const M_HERO_LOGO_Y = 322;
-const M_HERO_LOGO_W = 300; // 300×173
-const M_HERO_CLAIM_Y = 560;
-const M_HERO_CLAIM_PX = 88;
-const M_HERO_BAR_Y = 712;
-const M_HERO_BAR_W = 440;
+// --- CTA-Endcard (v9, 2026-07-29): Logo + Claim links, QR rechts, Löwe dunkel
+// links (Blick nach rechts, Ton-in-Ton). Ausklang 173–175 s in die Dunkelfläche.
+const M_CTA_X = 160;
+const M_CTA_LOGO_Y = 250;
+const M_CTA_LOGO_W = 300;
+const M_CTA_CLAIM_Y = 470;
+const M_CTA_CLAIM_PX = 96;
+const M_CTA_BAR_Y = 700;
+const M_CTA_BAR_W = 320;
+const M_CTA_CTA_Y = 748;
+const M_QR_GROESSE = 480;
+const M_QR_X = 1920 - 180 - M_QR_GROESSE; // rechte Spalte, Rand 180
+const M_QR_Y = (1080 - M_QR_GROESSE) / 2 - 40;
 
-const EndcardHero169: React.FC<{
+const EndcardCta169: React.FC<{
   kartentext: string;
-  loewe?: { variante: string; drift?: boolean };
-  drift: number;
+  cta: string;
+  qrUrl: string;
   /** Sekunden ab Sequence-Start, ab denen in die Dunkelfläche ausgeklungen wird. */
   ausklangVon: number;
   ausklangDauer: number;
-}> = ({ kartentext, loewe, drift, ausklangVon, ausklangDauer }) => {
+}> = ({ kartentext, cta, qrUrl, ausklangVon, ausklangDauer }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const logoIn = spring({ frame, fps, config: SMOOTH, durationInFrames: 18 });
-  const textIn = spring({ frame: frame - 8, fps, config: SMOOTH, durationInFrames: 20 });
+  const bgIn = interpolate(frame, [0, 10], [0, 1], CLAMP);
+  const logoIn = spring({ frame: frame - 6, fps, config: SMOOTH, durationInFrames: 18 });
+  const textIn = spring({ frame: frame - 14, fps, config: SMOOTH, durationInFrames: 20 });
+  const qrIn = spring({ frame: frame - 22, fps, config: SMOOTH, durationInFrames: 20 });
   const ausVon = Math.round(ausklangVon * fps);
   const ausBis = Math.round((ausklangVon + ausklangDauer) * fps);
   const exit = interpolate(frame, [ausVon, ausBis], [1, 0], {
@@ -1461,65 +1463,138 @@ const EndcardHero169: React.FC<{
     easing: Easing.inOut(Easing.cubic),
   });
   return (
-    <div style={{ position: "absolute", inset: 0, opacity: exit }}>
-      {/* Löwe bündig an der rechten Bildkante — bewusst OHNE Drift, sonst
-          öffnet sich am Rand ein Spalt (David 2026-07-26). */}
-      {loewe && (
-        <Loewe169
-          variante={loewe.variante === "rot" ? "rot" : "weiss"}
-          visX={M_HERO_LOEWE_X}
-          visY={M_HERO_LOEWE_Y}
-          visH={M_HERO_LOEWE_H}
-          shiftX={0}
-          opacity={0.92 * logoIn}
-        />
-      )}
-      {/* Logo + Claim + Balken mittig in der Fläche links vom Löwen */}
-      <div
-        style={{
-          position: "absolute",
-          left: 0,
-          top: M_HERO_LOGO_Y,
-          width: M_HERO_FREI_W,
-          display: "flex",
-          justifyContent: "center",
-          opacity: logoIn,
-          transform: `translateY(${(1 - logoIn) * 18}px)`,
-        }}
-      >
-        <ManLogo width={M_HERO_LOGO_W} />
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: 0,
-          top: M_HERO_CLAIM_Y,
-          width: M_HERO_FREI_W,
-          textAlign: "center",
-          opacity: textIn,
-          transform: `translateY(${(1 - textIn) * 20}px)`,
-          fontFamily: FONT_TITLE,
-          fontWeight: 700,
-          fontSize: M_HERO_CLAIM_PX,
-          letterSpacing: 2,
-          lineHeight: 1.08,
-          color: WHITE,
-          textTransform: "uppercase",
-          whiteSpace: "nowrap",
-        }}
-      >
-        <Markup169 text={kartentext} />
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: (M_HERO_FREI_W - M_HERO_BAR_W * textIn) / 2,
-          top: M_HERO_BAR_Y,
-          width: M_HERO_BAR_W * textIn,
-          height: 6,
-          background: MAN_RED,
-        }}
+    <AbsoluteFill style={{ backgroundColor: ANTHRAZIT, opacity: bgIn }}>
+      {/* Dunkler Löwe LINKS hinter der Textspalte, Blick nach rechts → führt
+          zu Claim + QR. Ton-in-Ton (Kontrast ≈ 13 %), Text bleibt lesbar. */}
+      <Loewe169
+        variante="dunkel"
+        blick="rechts"
+        visX={-160}
+        visY={140}
+        visH={1150}
+        opacity={0.68 * logoIn * exit}
       />
+      <div style={{ opacity: exit }}>
+        <div
+          style={{
+            position: "absolute",
+            left: M_CTA_X,
+            top: M_CTA_LOGO_Y,
+            opacity: logoIn,
+            transform: `translateY(${(1 - logoIn) * 18}px)`,
+          }}
+        >
+          <ManLogo width={M_CTA_LOGO_W} />
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: M_CTA_X,
+            top: M_CTA_CLAIM_Y,
+            width: 1000,
+            opacity: textIn,
+            transform: `translateY(${(1 - textIn) * 20}px)`,
+            fontFamily: FONT_TITLE,
+            fontWeight: 700,
+            fontSize: M_CTA_CLAIM_PX,
+            letterSpacing: 2,
+            lineHeight: 1.08,
+            color: WHITE,
+            textTransform: "uppercase",
+          }}
+        >
+          <Markup169 text={kartentext} />
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: M_CTA_X,
+            top: M_CTA_BAR_Y,
+            width: M_CTA_BAR_W * textIn,
+            height: 6,
+            background: MAN_RED,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: M_CTA_X,
+            top: M_CTA_CTA_Y,
+            opacity: textIn,
+            fontFamily: FONT_TITLE,
+            fontWeight: 700,
+            fontSize: 54,
+            letterSpacing: 3,
+            color: WHITE,
+            textTransform: "uppercase",
+          }}
+        >
+          {cta}
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: M_QR_X,
+            top: M_QR_Y,
+            opacity: qrIn,
+            transform: `translateY(${(1 - qrIn) * 16}px)`,
+          }}
+        >
+          <Img
+            src={staticFile("clients/man/wz/qr-jobs-man-eu.png")}
+            style={{ width: M_QR_GROESSE, height: M_QR_GROESSE, display: "block" }}
+          />
+          <div
+            style={{
+              marginTop: 18,
+              textAlign: "center",
+              fontFamily: FONT_TITLE,
+              fontWeight: 700,
+              fontSize: 30,
+              letterSpacing: 4,
+              color: WHITE,
+            }}
+          >
+            {qrUrl}
+          </div>
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// Untertitel-Ebene (stumme Fassung, v9 2026-07-29)
+const Untertitel169: React.FC<{ u: UntertitelPlan169 }> = ({ u }) => {
+  const frame = useCurrentFrame();
+  const total = Math.max(6, u.frameBis - u.frameVon);
+  const ein = interpolate(frame, [0, 5], [0, 1], CLAMP);
+  const aus = interpolate(frame, [total - 4, total - 1], [1, 0], CLAMP);
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 40,
+        right: 40,
+        bottom: 34,
+        textAlign: "center",
+        opacity: ein * aus,
+      }}
+    >
+      {u.zeilen.map((z, i) => (
+        <div
+          key={i}
+          style={{
+            fontFamily: FONT_BODY,
+            fontWeight: 400,
+            fontSize: 30,
+            lineHeight: 1.25,
+            color: WHITE,
+            textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 0 14px rgba(0,0,0,0.6)",
+          }}
+        >
+          {z}
+        </div>
+      ))}
     </div>
   );
 };
@@ -1535,7 +1610,7 @@ export type ManWz169MasterProps = z.infer<typeof manWz169MasterSchema>;
 export const manWz169MasterDefaults: ManWz169MasterProps = {
   format: "landscape" as const,
   fps: 25 as const,
-  durationInSeconds: 142,
+  durationInSeconds: 175,
   transparent: false,
   review: {
     showGuides: false,
@@ -1561,74 +1636,77 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
   // --- Ambient-Ebene (ROOT, außerhalb aller Sequences; ganze Loop-Perioden) ---
   const amp = ampAt169(t);
   const phasePanel = useLoopPhase(6); // Panel-Modulation, 6 ganze Perioden
-  const phaseDrift = useLoopPhase(2); // Löwen-/Element-Drift, 2 ganze Perioden
-  // Review 2 Nr. 7 + 12 (v4): die rote Ambient-Wanderlinie ist ERSATZLOS raus.
-  // Sie lief als 2-px-Strich über die volle Bildhöhe durch JEDEN Frame und
-  // stand auf dem Fullscreen-Endscreen als verbotener Kantenbalken im Bild
-  // (x≈1677). Ambient-Leben tragen jetzt nur noch Panel-Modulation und
-  // Löwen-Drift — beide bewegen nichts Hartkantiges.
   const panelMod = amp * 0.05 * (0.5 + 0.5 * Math.sin(phasePanel));
-  const drift = Math.sin(phaseDrift) * 14 * amp;
 
   // --- Fenster: fest rechts; nur der Spotlight-Glide bewegt es (David Nr. 8) ---
   const spot = spotEnvAt169(t);
   const winX = M_WIN_X + (M_WIN_X_SPOT - M_WIN_X) * spot;
-  const winScale = 1 + (M_SPOT_SCALE - 1) * spot;
 
-  // --- Review 2 Nr. 2: KEINE beat-getriebene Text-Bewegung mehr.
-  //     'typo-akzent' und 'zeilen-shift' sind im Generator ersatzlos entfernt;
-  //     der verbliebene 'licht-akzent' moduliert AUSSCHLIESSLICH die
-  //     Streifen-Opazität im Spotlight (siehe Spotlight169) und bewegt nichts.
-
-  // --- Fenster-Hüllkurve (Review 2 Nr. 7): Fade-in aus der Dunkelfläche
-  //     (0,0–0,5 s, Loop-Naht) und vollständige Ausblendung 134,0–134,6 s.
-  //     Danach existiert rechts NICHTS mehr — kein Dimmen, kein Restrahmen. ---
+  // --- Fenster-Hüllkurve (v9): nur noch Fade-in; Ausblendung durch Quer-Blende ersetzt ---
   const fensterEin = PLAN169.fenster.einblendung;
-  const fensterAus = PLAN169.fenster.ausblendung;
-  const winOp = Math.min(
-    interpolate(t, [fensterEin.start, fensterEin.start + fensterEin.dauer], [0, 1], {
-      ...CLAMP,
-      easing: Easing.out(Easing.cubic),
-    }),
-    interpolate(t, [fensterAus.start, fensterAus.start + fensterAus.dauer], [1, 0], {
-      ...CLAMP,
-      easing: Easing.inOut(Easing.cubic),
-    }),
+  const winOp = interpolate(
+    t,
+    [fensterEin.start, fensterEin.start + fensterEin.dauer],
+    [0, 1],
+    { ...CLAMP, easing: Easing.out(Easing.cubic) },
   );
 
-  // --- Endcard-Events ---
+  // --- Quer-Blende: Fensterrechteck ↔ Vollbild ---
+  type Rect = { x: number; y: number; w: number; h: number };
+  const lerpRect = (a: Rect, b: Rect, p: number): Rect => ({
+    x: a.x + (b.x - a.x) * p,
+    y: a.y + (b.y - a.y) * p,
+    w: a.w + (b.w - a.w) * p,
+    h: a.h + (b.h - a.h) * p,
+  });
+  const RECT_FULL: Rect = { x: 0, y: 0, w: BASE_W, h: BASE_H };
+  let offen = 0; // 0 = Fenster, 1 = Vollbild
+  let querAktiv: QuerStrecke169 | null = null;
+  for (const q of PLAN169.querStrecken) {
+    // bleibtOffen: Strecke bleibt bis Master-Ende aktiv (keine t>q.ende-Grenze)
+    if (q.bleibtOffen) {
+      if (t < q.start - 0.02) continue;
+    } else {
+      if (t < q.start - 0.02 || t > q.ende + 1e-6) continue;
+    }
+    querAktiv = q;
+    const auf = interpolate(
+      t,
+      [q.start, q.start + q.oeffnungDauer],
+      [0, 1],
+      { ...CLAMP, easing: Easing.out(Easing.cubic) },
+    );
+    const zu = q.schliessen
+      ? interpolate(
+          t,
+          [q.schliessen.start, q.schliessen.start + q.schliessen.dauer],
+          [1, 0],
+          { ...CLAMP, easing: Easing.inOut(Easing.cubic) },
+        )
+      : 1;
+    offen = Math.min(auf, zu);
+  }
+  const RECT_WIN: Rect = { x: winX, y: M_WIN_Y, w: M_WIN_W, h: M_WIN_H };
+  const boxRect = lerpRect(RECT_WIN, RECT_FULL, offen);
+  // Spotlight-Scale nur im Fensterzustand (Vollbild-Footage nie skalieren)
+  const effScale = 1 + (M_SPOT_SCALE - 1) * spot * (1 - offen);
+
+  // --- Logo: weg im Spotlight UND im Vollbild-Modus ---
+  const logoOp = winOp * (1 - spot) * (1 - offen);
+
+  // --- Endcard-Events (v9) ---
   const heroEv = PLAN169.endcard.find((e) => e.typ === "hero");
   const ausklangEv = PLAN169.endcard.find((e) => e.typ === "ausklang");
-  const heroStart = heroEv ? heroEv.start : 135.0;
+  const heroStart = heroEv ? heroEv.start : 165.0;
   const heroLoopEnde = ausklangEv ? ausklangEv.ende : PLAN169.meta.masterDauer;
-  // Ausklang beginnt am Hero-Ende und ist 0,6 s vor dem Loop-Ende fertig,
-  // damit die letzten Frames exakt die Dunkelfläche von Frame 0 zeigen.
-  const ausklangVon = (ausklangEv ? ausklangEv.start : 140.0) - heroStart;
-  const ausklangDauer = Math.max(0.4, heroLoopEnde - (ausklangEv ? ausklangEv.start : 140.0) - 0.6);
+  // Ausklang: 173,0–175,0 s → 8 s Standzeit für QR-Scan, 2 s Ausklang
+  const ausklangVon = 173.0 - heroStart; // = 8,0 s ab Sequence-Start
+  const ausklangDauer = 1.6; // Elemente weg bei 174,6; 0,4 s Reserve zur Naht
 
-  // --- Logo Zone A: fährt mit dem Fenster hoch/runter, ist in beiden
-  //     Spotlights AUS (Review 2 Nr. 9 — Spotlights sind text- UND logofrei)
-  //     und ab der Endcard komplett weg (der Endscreen bringt sein eigenes). ---
-  const logoOp = winOp * (1 - spot);
+  const videoSrc = staticFile("clients/man/wz/wz-v2-haupt-1080.mov");
+  const videoFrames = PLAN169.meta.videoFrames; // 4124
 
-  // --- Dauerhafter dunkler Löwe: blendet für den Fullscreen-Endscreen aus und
-  //     ist bis 141,6 s wieder da ⇒ Frame 3549 zeigt exakt den Zustand von
-  //     Frame 0 (Dunkelfläche + Schattenriss-Löwe; die Wanderlinie, die früher
-  //     Teil der Loop-Naht war, existiert nicht mehr). ---
-  const heroMask = interpolate(
-    t,
-    [fensterAus.start, fensterAus.start + 0.8, heroLoopEnde - 1.4, heroLoopEnde - 0.4],
-    [0, 1, 1, 0],
-    CLAMP,
-  );
-
-  const schatten = PLAN169.fenster.schatten;
-  const videoSrc = staticFile("clients/man/wz/wz-master-1080.mov");
-  const videoFrames = PLAN169.meta.videoFrames; // 3349 (echte Framezahl der ProRes)
-  const freezeBisF = fr169(PLAN169.meta.freezeBis); // 3365 = 134,6 s (Ende der Fenster-Ausblendung)
-
-  // Face-Zone: feste Fensterposition rechts (nur noch rechts, David Nr. 8);
-  // Relativwerte gelten im 576×1024-FENSTERRAUM (rechts gespiegelt).
+  // Face-Zone: feste Fensterposition rechts
   const faceZone169 = {
     left: (M_WIN_X + (1 - 0.37) * M_WIN_W) / BASE_W,
     right: (M_WIN_X + (1 - 0.07) * M_WIN_W) / BASE_W,
@@ -1640,35 +1718,8 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
     <CIProvider ci={ci}>
       <AbsoluteFill style={{ backgroundColor: ANTHRAZIT }}>
         <Stage>
-          {/* ---------- Ambient-Wanderlinie: ENTFERNT (Review 2 Nr. 7 + 12, v4).
-               Kein hartkantiges Element mehr über der Bühne — insbesondere
-               nicht auf dem Fullscreen-Endscreen. ---------- */}
-
-          {/* ---------- Dunkler Vektor-Löwe: dauerhaft subtil, TEILWEISE hinter
-               Versatz-Panel+Fenster (Kalibrierung 2026-07-24, David: „dauerhaft
-               subtil dahinter"). Vorher stand visX=1142 fast komplett unter dem
-               Fenster (nur 22 px Rest) → in den Sprech-Blöcken gar nicht sichtbar.
-               Jetzt visX=620: der KOMPLETTE Kopf mit Maul (0–55 % der Breite,
-               0–22 % der Höhe der Silhouette) liegt frei auf der Grafikfläche,
-               Rumpf/Läufe laufen ab x=1192 (Kantenbalken, Review 3 Nr. 4)
-               hinter Fenster+Panel durch — die Silhouette endet bei 1425,
-               also ≈233 px Überlappung — und unten aus dem Bild:
-               „dahinter", nicht „daneben".
-               visY=330 hält ihn unter der Headline (endet ~y 320) und rechts der
-               Takeaways/Plakette, er berührt keinen Text.
-               Ton-in-Ton: PNG #252F3A bei 68 % auf #2E3A46 ⇒ ≈ #29333F,
-               ~13 % Kontrast zur Fläche — Schattenriss, nie Grafikelement. ---------- */}
-          <Loewe169
-            variante="dunkel"
-            visX={620}
-            visY={330}
-            visH={1250}
-            shiftX={Math.sin(phaseDrift) * 10}
-            opacity={0.68 * (1 - heroMask)}
-          />
-
           {/* ---------- Spotlight-Momente (Abdunkelung, Vignette, Streifen,
-               Glow, Werkzeug-Regen, roter Löwe) — unter der Fenster-Einheit ---------- */}
+               Glow, Werkzeug-Regen, roter Löwe links) — unter der Fenster-Einheit ---------- */}
           {PLAN169.spotlights.map((s) => (
             <Sequence
               key={s.id}
@@ -1680,39 +1731,33 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
             </Sequence>
           ))}
 
-          {/* ---------- Fenster-Einheit: Schatten + Versatz-Panel + Kantenbalken
-               + Video — gleitet/skaliert im Spotlight als Ganzes.
-               Review 2 Nr. 7: `winOp` blendet die KOMPLETTE Einheit ein (0,0–0,5 s,
-               Loop-Naht) und ab 134,0 s in 0,6 s vollständig aus. ---------- */}
+          {/* ---------- Fenster-Einheit (v9): Blenden-Geometrie — boxRect
+               interpoliert zwischen Fenster-Rect und Vollbild.
+               winOp kontrolliert Fade-in am Anfang; Ausblendung durch offen≥1. ---------- */}
           <div
             style={{
               position: "absolute",
-              left: winX,
-              top: M_WIN_Y,
-              width: M_WIN_W,
-              height: M_WIN_H,
-              transform: `scale(${winScale})`,
+              left: boxRect.x,
+              top: boxRect.y,
+              width: boxRect.w,
+              height: boxRect.h,
+              transform: `scale(${effScale})`,
               transformOrigin: "center center",
               opacity: winOp,
             }}
           >
-            {/* Kein Schlagschatten mehr (David 2026-07-26): Die Fläche liegt nur
-                noch als dunkler Grund unter dem Video, damit beim Ein-/Ausblenden
-                nichts durchscheint. Tiefe entsteht allein über das weiche
-                Versatz-Panel. */}
+            {/* Dunkler Grund (#0B1117) */}
             <div
               style={{
                 position: "absolute",
                 left: 0,
                 top: 0,
-                width: M_WIN_W,
-                height: M_WIN_H,
+                width: boxRect.w,
+                height: boxRect.h,
                 background: "#0B1117",
               }}
             />
-            {/* Versatz-Panel (#222C36, +24/+24) — jetzt WEICH: blur(26px) nimmt
-                die harte Kante raus, das Panel liest als Tiefen-Ebene statt als
-                zweiter Schlagschatten. Trägt weiter die Ambient-Modulation. */}
+            {/* Versatz-Panel: nur im Fensterzustand sichtbar (blendet mit offen aus) */}
             <div
               style={{
                 position: "absolute",
@@ -1722,11 +1767,9 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
                 height: M_WIN_H,
                 background: ANTHRAZIT_TIEF,
                 filter: "blur(26px)",
-                opacity: 0.85,
+                opacity: 0.85 * (1 - offen),
               }}
             >
-              {/* dunkle Ambient-Modulation (max ~6 %) — KEIN weißes Aufhellen
-                  (Davids Linie: nichts pulsiert weiß) */}
               <div
                 style={{
                   position: "absolute",
@@ -1736,54 +1779,114 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
                 }}
               />
             </div>
-            {/* Kantenbalken: IMMER konstant rot, Innenkante (links vom Fenster) */}
+            {/* Kantenbalken: Innenkante links, blendet im Vollbild aus */}
             <div
               style={{
                 position: "absolute",
                 left: -8,
                 top: 0,
                 width: 8,
-                height: M_WIN_H,
+                height: boxRect.h,
                 background: MAN_RED,
+                opacity: 1 - offen,
               }}
             />
-            {/* Video-Fenster 540×960 (9:16 exakt), scharfkantig */}
+            {/* Video-Inhalt: overflow hidden für saubere Kanten */}
             <div
               style={{
                 position: "absolute",
                 left: 0,
                 top: 0,
-                width: M_WIN_W,
-                height: M_WIN_H,
+                width: boxRect.w,
+                height: boxRect.h,
                 overflow: "hidden",
                 background: "#0B1117",
                 borderRadius: 0,
               }}
             >
-              {/* Kein Freeze-Layer mehr (David 2026-07-26): Der frühere
-                  <Freeze> hinter dem Videoende zeigte den ERSTEN Frame (Julia)
-                  statt des letzten — die Freeze-Frame-Nummer war gegenüber der
-                  verschobenen Sequence-Zeitachse außerhalb des gültigen
-                  Bereichs. Jetzt endet der Video-Layer exakt mit dem Material;
-                  die Fenster-Hüllkurve (winOp) blendet ihn über 1,0 s
-                  (133,0–134,0 s) zu transparent ab, sodass nie ein Frame ohne
-                  Quelle gezeigt wird. */}
-              <Sequence durationInFrames={videoFrames}>
-                <OffthreadVideo
-                  src={videoSrc}
-                  muted={stumm}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              {/* Hochformat (Haupt) — überall außer in den Quer-Strecken */}
+              {!querAktiv && (
+                <Sequence durationInFrames={videoFrames}>
+                  <OffthreadVideo
+                    src={videoSrc}
+                    muted
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                </Sequence>
+              )}
+              {/* Quer-Ebene: bildschirmfestes 1920×1080-Video, von der Box
+                  maskiert — Kompensation hebt die Box-Position auf. */}
+              {querAktiv && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: -boxRect.x,
+                    top: -boxRect.y,
+                    width: BASE_W,
+                    height: BASE_H,
+                  }}
+                >
+                  <Sequence
+                    from={fr169(querAktiv.start)}
+                    durationInFrames={fr169(querAktiv.ende) - fr169(querAktiv.start)}
+                  >
+                    <OffthreadVideo
+                      src={staticFile(
+                        querAktiv.id === "quer-1"
+                          ? "clients/man/wz/wz-v2-quer-a-2160.mov"
+                          : "clients/man/wz/wz-v2-quer-b-2160.mov",
+                      )}
+                      muted
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  </Sequence>
+                </div>
+              )}
+              {/* Untertitel-Ebene (nur stumme Fassung, nur im Fensterinhalt) */}
+              {stumm &&
+                !querAktiv &&
+                offen < 0.5 &&
+                PLAN169.untertitel.map((u, i) => (
+                  <Sequence
+                    key={`ut-${i}`}
+                    name={`UT ${u.block}`}
+                    from={u.frameVon}
+                    durationInFrames={Math.max(6, u.frameBis - u.frameVon)}
+                  >
+                    <Untertitel169 u={u} />
+                  </Sequence>
+                ))}
+              {/* Verlaufs-Band hinter den Untertiteln */}
+              {stumm && !querAktiv && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 150,
+                    background:
+                      "linear-gradient(rgba(11,17,23,0), rgba(11,17,23,0.55))",
+                    pointerEvents: "none",
+                  }}
                 />
-              </Sequence>
+              )}
             </div>
           </div>
 
-          {/* ---------- Logo Zone A (IMMER Bilddatei, Guardrail 9).
-               Review 2 Nr. 4: LINKSBÜNDIG bei x=64 (statt zentriert), 200 px
-               statt 240 px, Oberkante y 72 → Unterkante ≈ 187. Darunter 165 px
-               Luft bis zur Headline. `logoOp` = Fenster-Hüllkurve × (1−spot):
-               blendet mit dem Fenster ein, ist in beiden Spotlights aus
-               (Nr. 9) und ab der Endcard-Ausblendung komplett weg. ---------- */}
+          {/* ---------- Ton-Träger: läuft IMMER (auch während der Quer-Strecken),
+               Bild 1×1 px unsichtbar — damit der O-Ton durchgehend abgespielt wird.
+               Der Haupt-OffthreadVideo in der Box ist immer muted. ---------- */}
+          {!stumm && (
+            <Sequence durationInFrames={videoFrames}>
+              <OffthreadVideo
+                src={videoSrc}
+                style={{ width: 1, height: 1, opacity: 0 }}
+              />
+            </Sequence>
+          )}
+
+          {/* ---------- Logo Zone A ---------- */}
           <div
             style={{
               position: "absolute",
@@ -1795,7 +1898,7 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
             <ManLogo width={M_LOGO_W} opacity={0.95} />
           </div>
 
-          {/* ---------- Kapitel-Headlines (dauerhaft, Slide+Fade — keine Wipes) ---------- */}
+          {/* ---------- Kapitel-Headlines ---------- */}
           {PLAN169.headlines.map((h) => (
             <Sequence
               key={h.id}
@@ -1807,9 +1910,7 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
             </Sequence>
           ))}
 
-          {/* ---------- Takeaways (ohne Ciattei — der hängt hinter dem Flag).
-               Jedes Takeaway kennt die Zeilenzahl seiner Kapitel-Headline und
-               setzt daraus Oberkante + Schriftgrad (Review 2 Nr. 12). ---------- */}
+          {/* ---------- Takeaways (ohne Ciattei) ---------- */}
           {PLAN169.takeaways
             .filter((tw) => !tw.ciattei)
             .map((tw) => (
@@ -1845,22 +1946,17 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
               </Sequence>
             ))}
 
-          {/* ---------- Review 2 Nr. 9: KEIN Branding-Beat mehr — die Spotlights
-               sind text- und logofrei (der Generator liefert branding.aktiv=false). */}
-
-          {/* ---------- Endcard-Hero FULLSCREEN (Review 2 Nr. 7, kein CTA —
-               Guardrail 4). Läuft ab 135,0 s bis zum Loop-Ende 142,0 s: Hero
-               steht bis 140,0 s, klingt dann in die Dunkelfläche aus. ---------- */}
+          {/* ---------- CTA-Endcard (v9: Logo + Claim + QR + Löwe dunkel links) ---------- */}
           {heroEv && (
             <Sequence
-              name="Endcard Hero (Fullscreen)"
+              name="Endcard CTA"
               from={fr169(heroStart)}
               durationInFrames={Math.max(8, fr169(heroLoopEnde) - fr169(heroStart))}
             >
-              <EndcardHero169
-                kartentext={heroEv.kartentext ?? "IHR **MAN SERVICE-TEAM**"}
-                loewe={heroEv.loewe}
-                drift={drift}
+              <EndcardCta169
+                kartentext={heroEv.kartentext ?? "GROSSES BEWEGEN **MIT MAN**"}
+                cta={heroEv.cta ?? "JETZT BEWERBEN"}
+                qrUrl={heroEv.qr?.url ?? "JOBS.MAN.EU"}
                 ausklangVon={ausklangVon}
                 ausklangDauer={ausklangDauer}
               />
@@ -1907,10 +2003,7 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
         {review?.showGuides && (
           <ReviewOverlay
             showSafeZone={review.showSafeZone ?? true}
-            /* Face-Zone nur solange das Fenster existiert (Review 2 Nr. 7) —
-               ab 134,6 s ist der Endscreen fullscreen, es gibt kein Gesicht
-               und keine Fenster-Geometrie mehr, auf die sich die Zone bezieht. */
-            showFaceZone={(review.showFaceZone ?? true) && winOp > 0.01}
+            showFaceZone={(review.showFaceZone ?? true) && winOp > 0.01 && offen < 0.5}
             showGrid={review.showGrid ?? false}
             faceZone={review.faceZone ?? faceZone169}
             guideOpacity={review.guideOpacity ?? 0.35}
