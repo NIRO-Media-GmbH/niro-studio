@@ -732,7 +732,7 @@ export const ManWzEndcard: React.FC<ManWzEndcardProps> = ({ claim, review }) => 
 };
 
 // =============================================================
-// 6) 16:9-MASTER — ManWz169Master (sync-plan-getrieben)
+// 6) 16:9-MASTER — ManWz169Master (sync-plan-getrieben, v9 2026-07-29)
 // Umbau 2026-07-24 (Davids Entscheidungen) + REVIEW 2 (12 Punkte, nachts)
 // + REVIEW 3 (2026-07-25, 4 Restbefunde):
 //   Nr. 1 EIN fester Takeaway-Grad 54 px (eine Ausnahmestufe 46 px),
@@ -753,9 +753,11 @@ export const ManWzEndcard: React.FC<ManWzEndcardProps> = ({ claim, review }) => 
 // Kante mit dem Kopf IMMER frei rechts der Fenster-Einheit steht (Nr. 1).
 // Spotlights sind text- UND logofrei (Nr. 9 — Branding-Beat entfernt).
 // Fenster-Schatten weich/zweistufig statt hart (Nr. 11).
-// Endcard (Nr. 7): Fenster blendet 134,0–134,6 KOMPLETT aus, danach
-// Fullscreen-Endscreen 135,0–140,0, Ausklang in die Dunkelfläche bis
-// 142,0 — Frame 3549 ≙ Frame 0 (Fenster-Fade-in 0,0–0,5 s).
+// Quer-Blenden (v9): 64,56–76,56 s (F1614–F1913, schließt wieder auf Fenster)
+//   + 133,52 s–Ende (F3338–, bleibtOffen, Schwarzblende im Material 163,92–164,92).
+// CTA-Endcard: 165,0–173,0 s (Anthrazit-Vollbild, QR, Löwe).
+// Ausklang: 173,0–175,0 s (Elemente aus, dunkle Fläche).
+// LOOP-NAHT: Frame 4374 ≙ Frame 0 (reines Anthrazit, kein Fenster, kein Logo).
 // =============================================================
 
 // --- sync-plan Typen (v9, 2026-07-29) ---
@@ -1662,12 +1664,14 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
   const RECT_FULL: Rect = { x: 0, y: 0, w: BASE_W, h: BASE_H };
   let offen = 0; // 0 = Fenster, 1 = Vollbild
   let querAktiv: QuerStrecke169 | null = null;
+  const fNow = frame; // framebasierte Boundary (verhindert 1-Frame-Dropout an Naht)
   for (const q of PLAN169.querStrecken) {
-    // bleibtOffen: Strecke bleibt bis Master-Ende aktiv (keine t>q.ende-Grenze)
+    // Framebasierte Aktiv-Boundary: frameBis ist exklusiv (≙ erste Frame NACH der Strecke).
+    // bleibtOffen: Strecke endet nicht — nur Untergrenze prüfen.
     if (q.bleibtOffen) {
-      if (t < q.start - 0.02) continue;
+      if (fNow < q.frameVon) continue;
     } else {
-      if (t < q.start - 0.02 || t > q.ende + 1e-6) continue;
+      if (fNow < q.frameVon || fNow >= q.frameBis) continue;
     }
     querAktiv = q;
     const auf = interpolate(
@@ -1746,7 +1750,8 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
               opacity: winOp,
             }}
           >
-            {/* Dunkler Grund (#0B1117) */}
+            {/* Dunkler Grund (#0B1117); schwarz ab Ende der bleibtOffen-Video-Sequence
+                (verhindert Near-Black-Pop wenn Quer-2-Material endet und Box noch offen ist) */}
             <div
               style={{
                 position: "absolute",
@@ -1754,7 +1759,10 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
                 top: 0,
                 width: boxRect.w,
                 height: boxRect.h,
-                background: "#0B1117",
+                background:
+                  querAktiv?.bleibtOffen && frame >= querAktiv.frameBis
+                    ? "#000000"
+                    : "#0B1117",
               }}
             />
             {/* Versatz-Panel: nur im Fensterzustand sichtbar (blendet mit offen aus) */}
@@ -1800,7 +1808,10 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
                 width: boxRect.w,
                 height: boxRect.h,
                 overflow: "hidden",
-                background: "#0B1117",
+                background:
+                  querAktiv?.bleibtOffen && frame >= querAktiv.frameBis
+                    ? "#000000"
+                    : "#0B1117",
                 borderRadius: 0,
               }}
             >
