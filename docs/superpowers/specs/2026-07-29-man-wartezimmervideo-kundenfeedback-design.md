@@ -37,8 +37,8 @@ rechts). Davids Schnitt V2 liegt vor und ist verifiziert.
 - Die 5 Szenentausche aus Mail 1 (unterm Truck raus, Produktszene 2:03) sind
   im V2 drin (Stichproben 11/47/93/126 s).
 
-**Offen:** Herkunft/native Auflösung des Quer-Materials bestätigen (Brandportal
-oder Upscale?) — entscheidet, ob das 4K-Master uneingeschränkt sauber ist.
+**Bestätigt (David 2026-07-29):** Quer-Material stammt aus dem MAN-Brandportal,
+nativ 4K — das 4K-Master ist damit durchgehend sauber.
 
 ## 2. Architektur: zwei Ebenen, eine Blende
 
@@ -136,10 +136,9 @@ bestätigt das Wording). Erzeugung einmalig als Asset nach
 vor Einbau mit echtem Handy gegen die Ziel-URL getestet. Tracking-Parameter von
 MAN wären besser — nachfragen, nicht blockierend.
 
-**Ton unter der Endcard:** wie bisher still (der alte Master hatte ebenfalls
-einen stillen 8-s-Abbinder). Option für David: Musik-Outro ~10 s unter dem
-Schwarz verlängern und Datei neu liefern — dann bitte nur Audio ändern, Bild
-nicht anfassen.
+**Ton unter der Endcard:** still — von David bestätigt (2026-07-29): „Endcard
+kommt ganz zum Schluss ohne Musik." Kein Audio-Nachschub nötig, die V2-Datei
+ist final.
 
 ## 6. Stumme Fassung mit Untertiteln
 
@@ -167,10 +166,11 @@ Rendern. 4K-Fenster trifft die 9:16-Quelle jetzt mit 2160×3840 nativ
 
 ## 8. Offene Punkte
 
-1. Herkunft/Auflösung Quer-Material (Brandportal? nativ 4K?) — David.
-2. QR-Ziel `jobs.man.eu` von MAN bestätigen lassen (Tracking?) — nicht blockierend.
-3. Stumme Fassung 4K oder nur HD — David.
-4. Optional Musik-Outro unter der Endcard — David.
+1. QR-Ziel `jobs.man.eu` von MAN bestätigen lassen (Tracking?) — nicht blockierend.
+2. Stumme Fassung 4K oder nur HD — David, spätestens vor dem Render.
+
+Erledigt: Quer-Material = MAN-Brandportal nativ 4K; Endcard ohne Musik
+(beides David 2026-07-29).
 
 ## 9. Reihenfolge
 
