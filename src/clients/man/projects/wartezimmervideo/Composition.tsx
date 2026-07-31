@@ -1724,7 +1724,10 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
   const ausklangVon = 173.0 - heroStart; // = 8,0 s ab Sequence-Start
   const ausklangDauer = 1.6; // Elemente weg bei 174,6; 0,4 s Reserve zur Naht
 
-  const videoSrc = staticFile("clients/man/wz/wz-v2-haupt-1080.mov");
+  // Haupt-Quelle seit 2026-07-31: Davids UT_V1 mit EINGEBRANNTEN Untertiteln
+  // (ersetzt die Remotion-UT-Ebene; `fassung: "stumm"` samt PLAN169.untertitel
+  // bleibt als ungenutzter Fallback). Fassung ohne UT: wz-v2-haupt-1080.mov.
+  const videoSrc = staticFile("clients/man/wz/wz-v2-haupt-ut-1080.mov");
   const videoFrames = PLAN169.meta.videoFrames; // 4124
 
   // Face-Zone: feste Fensterposition rechts
