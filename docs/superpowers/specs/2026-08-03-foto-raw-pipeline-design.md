@@ -126,3 +126,18 @@ Profil-Dateien und erzeugt neue Ausgabedateien.
   Lightroom-Nacharbeit an den Kunden geben.
 - **Beim Piloten festzulegen:** benötigte Social-/Web-Zielformate (4:5, 1:1,
   9:16, Website-Breiten) — wird als Export-Preset im Look-Ordner hinterlegt.
+
+## Addendum (2026-08-03, nach Pilot-Setup): Engine-Wechsel
+
+RawTherapee (und ART/darktable) sind auf macOS Tahoe nur als Casks verfügbar,
+deren Quarantäne-Flag den headless CLI-Start mit SIGTRAP in der
+Sandbox-Initialisierung killt; das Flag ist ohne GUI-Erststart nicht entfernbar
+(auch nicht unsandboxed — verifiziert 2026-08-03, Crash-Reports 18:41–18:46).
+Produktive Engine daher: **libraw/dcraw_emu (Homebrew-Formula) für die
+RAW-Stufe + ImageMagick für das komplette Grading**, mit dem Kunden-Look als
+HALD-CLUT (`tools/photo/looks/<kunde>/*.png`) plus bildabhängigen Stufen
+(Auto-Gain, Clarity, Vignette) in `develop_batch.sh`. Das erfüllt den
+Kerngedanken der Engine-Wahl (jeder Parameter Klartext-steuerbar,
+Feedback-Loop) vollständig; pp3-Bezüge in dieser Spec gelten als durch die
+LUT-Architektur ersetzt. RawTherapee bleibt installiert und wird als
+Qualitäts-Upgrade-Pfad nutzbar, sobald die App einmal regulär geöffnet wurde.
