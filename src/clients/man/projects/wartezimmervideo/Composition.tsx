@@ -754,7 +754,11 @@ export const ManWzEndcard: React.FC<ManWzEndcardProps> = ({ claim, review }) => 
 // Spotlights sind text- UND logofrei (Nr. 9 — Branding-Beat entfernt).
 // Fenster-Schatten weich/zweistufig statt hart (Nr. 11).
 // Quer-Blenden (v9): 64,56–76,56 s (F1614–F1913, schließt wieder auf Fenster)
-//   + 133,52 s–Ende (F3338–, bleibtOffen, Schwarzblende im Material 163,92–164,92).
+//   + 133,52 s–Ende (F3338–, bleibtOffen; Quer-Datei V3 seit v10 2026-08-07:
+//   hartes Schwarz ab 160,2 s, Ton-Ausblende im Haupt-Material 163,92–164,92).
+// Standard-Abbinder (v10, MAN-CI Film-Ending): weißes Logo zentriert über der
+//   letzten Fahrszene ab 157,52; Dimmer blendet 158,92–160,2 zu Schwarz
+//   (verdeckt den V3-Material-Cut); Logo-Aus 163,92–164,92 synchron zum Ton.
 // CTA-Endcard: 165,0–173,0 s (Anthrazit-Vollbild, QR, Löwe).
 // Ausklang: 173,0–175,0 s (Elemente aus, dunkle Fläche).
 // LOOP-NAHT: Frame 4374 ≙ Frame 0 (reines Anthrazit, kein Fenster, kein Logo).
@@ -845,7 +849,7 @@ interface QuerStrecke169 {
   schwarzAb: number | null;
 }
 interface EndcardEvent169 {
-  typ: string; // "blende-auf" | "schwarz" | "hero" | "ausklang"
+  typ: string; // "blende-auf" | "abbinder" | "schwarz" | "hero" | "ausklang"
   start: number;
   ende: number;
   frame: number;
@@ -855,6 +859,17 @@ interface EndcardEvent169 {
   cta?: string;
   qr?: { asset: string; url: string; groesse: number };
   loewe?: { variante: string; seite?: string };
+  // v10: Standard-Abbinder (MAN-CI Film-Ending)
+  logo?: {
+    einStart: number;
+    einEnde: number;
+    ausStart: number;
+    ausEnde: number;
+    breite: number;
+    asset: string;
+  };
+  dimm?: { einStart: number; einEnde: number };
+  schwarzVoll?: number;
 }
 interface SyncPlan169 {
   meta: {
@@ -1582,6 +1597,54 @@ const EndcardCta169: React.FC<{
   );
 };
 
+// Standard-Abbinder (v10 2026-08-07, MAN-CI Film-Ending): weißes MAN-Logo
+// erscheint zentriert über der letzten Fahrszene, der Dimmer übernimmt die
+// CI-"Überblendung zum schwarzen Hintergrund" (und verdeckt den harten
+// V3-Material-Cut bei 160,2 s), das Logo blendet synchron zur Ton-Ausblende
+// aus. CI-Vorgabe: Logo ändert zu keiner Zeit Position oder Größe — hier
+// animiert ausschließlich die Opacity.
+const Abbinder169: React.FC<{ ev: EndcardEvent169; absStartFrame: number }> = ({
+  ev,
+  absStartFrame,
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const tAbs = (absStartFrame + frame) / fps;
+  const logo = ev.logo;
+  const dimm = ev.dimm;
+  if (!logo || !dimm) return null;
+  const logoEin = interpolate(tAbs, [logo.einStart, logo.einEnde], [0, 1], {
+    ...CLAMP,
+    easing: Easing.out(Easing.cubic),
+  });
+  const logoAus = interpolate(tAbs, [logo.ausStart, logo.ausEnde], [1, 0], {
+    ...CLAMP,
+    easing: Easing.inOut(Easing.cubic),
+  });
+  const dimmOp = interpolate(tAbs, [dimm.einStart, dimm.einEnde], [0, 1], {
+    ...CLAMP,
+    easing: Easing.inOut(Easing.cubic),
+  });
+  return (
+    <AbsoluteFill>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "#000000",
+          opacity: dimmOp,
+        }}
+      />
+      <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>
+        <Img
+          src={staticFile(logo.asset)}
+          style={{ width: logo.breite, opacity: logoEin * logoAus }}
+        />
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
 // Untertitel-Ebene (stumme Fassung, v9 2026-07-29)
 const Untertitel169: React.FC<{ u: UntertitelPlan169 }> = ({ u }) => {
   const frame = useCurrentFrame();
@@ -1718,6 +1781,7 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
   // --- Endcard-Events (v9) ---
   const heroEv = PLAN169.endcard.find((e) => e.typ === "hero");
   const ausklangEv = PLAN169.endcard.find((e) => e.typ === "ausklang");
+  const abbinderEv = PLAN169.endcard.find((e) => e.typ === "abbinder");
   const heroStart = heroEv ? heroEv.start : 165.0;
   const heroLoopEnde = ausklangEv ? ausklangEv.ende : PLAN169.meta.masterDauer;
   // Ausklang: 173,0–175,0 s → 8 s Standzeit für QR-Scan, 2 s Ausklang
@@ -1864,8 +1928,8 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
                     <OffthreadVideo
                       src={staticFile(
                         querAktiv.id === "quer-1"
-                          ? "clients/man/wz/wz-v2-quer-a-2160.mov"
-                          : "clients/man/wz/wz-v2-quer-b-2160.mov",
+                          ? "clients/man/wz/wz-v3-quer-a-2160.mov"
+                          : "clients/man/wz/wz-v3-quer-b-2160.mov",
                       )}
                       muted
                       style={{ width: "100%", height: "100%" }}
@@ -1904,6 +1968,21 @@ export const ManWz169Master: React.FC<ManWz169MasterProps> = ({
               )}
             </div>
           </div>
+
+          {/* ---------- Standard-Abbinder (v10): MAN-Logo + Dimmer über dem
+               Vollbild-Finale, endet an der CTA-Endcard ---------- */}
+          {abbinderEv && (
+            <Sequence
+              name="Abbinder MAN-Logo"
+              from={fr169(abbinderEv.start)}
+              durationInFrames={Math.max(
+                8,
+                fr169(abbinderEv.ende) - fr169(abbinderEv.start),
+              )}
+            >
+              <Abbinder169 ev={abbinderEv} absStartFrame={fr169(abbinderEv.start)} />
+            </Sequence>
+          )}
 
           {/* ---------- Ton-Träger: läuft IMMER (auch während der Quer-Strecken),
                Bild 1×1 px unsichtbar — damit der O-Ton durchgehend abgespielt wird.

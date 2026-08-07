@@ -13,7 +13,8 @@
    "Nr. 9 Spotlights text- UND logofrei (Branding-Beat deaktiviert)",
    "Nr. 10 Werkzeug-Silhouetten-Regen in den Spotlights",
    "Nr. 12 Takeaways kleiner (56/52 px)",
-   "v9 2026-07-29: Quer-Strecken + CTA-Endcard + Löwe rechtsblickend + Untertitel"
+   "v9 2026-07-29: Quer-Strecken + CTA-Endcard + Löwe rechtsblickend + Untertitel",
+   "v10 2026-08-07: Quer-Datei V3 (Kunden-Schnitt: mehr TGE, weniger Winter/E-Truck, Schwertransporter raus, hartes Schwarz ab 160,2) + Standard-Abbinder (MAN-CI Film-Ending) im Finale vor der Endcard — Master bleibt 175,0 s"
   ],
   "fps": 25,
   "masterDauer": 175.0,
@@ -37,7 +38,7 @@
   ],
   "loopHinweis": "LOOP-NAHT: Die Endcard klingt 173.0–175.0 s in eine dunkle Fläche aus (kein Fenster, kein Rahmen, kein Logo). Frame 0 startet aus exakt derselben Dunkelfläche; das Fenster blendet 0,0–0.5 s ein. Frame 4374 ≙ Frame 0 — die Schleife läuft ohne sichtbaren Sprung.",
   "hinweis": "Zeiten in Sekunden (Video-Zeit), frame* = 25-fps-Frames. endeTon/endeStumm = Moment, in dem der Text vollständig unsichtbar ist (Exit-Fade eingerechnet). travels/wische/kapitelMarken/bridge/morphs sind LEER (nur Alt-Kompatibilität) — neue Wahrheit: fenster, querStrecken, headlines, spotlights, loewe, endcard, untertitel. branding.aktiv=false -> NICHT rendern (Review 2 Nr. 9). fenster.ausblendung=null: durch Quer-Blende ersetzt (v9).",
-  "eintraege": 56
+  "eintraege": 57
  },
  "fenster": {
   "x": 1200,
@@ -106,7 +107,7 @@
    "schliessen": null,
    "bleibtOffen": true,
    "schwarzAb": 163.92,
-   "hinweis": "Quer-Strecke 2 (Finale): bleibt offen — kein Schließen. Schwarzblende im Material bei 163.92 s (Bild + Ton). Ab 165.0 s CTA-Endcard."
+   "hinweis": "Quer-Strecke 2 (Finale, V3-Datei): bleibt offen — kein Schließen. V3 schneidet bei 160,2 s hart auf Schwarz (Abbinder-Dimmer verdeckt den Cut); Ton-Ausblende im Haupt-Material bei 163.92 s. Ab 165.0 s CTA-Endcard."
   }
  ],
  "travels": [],
@@ -1090,11 +1091,31 @@
    "hinweis": "Quer-2 öffnet sich über 0.6 s zum Vollbild (133,52–134,12 s). Danach läuft das Video im Vollbild bis zur Schwarzblende."
   },
   {
+   "typ": "abbinder",
+   "start": 157.52,
+   "ende": 165.0,
+   "frame": 3938,
+   "logo": {
+    "einStart": 157.52,
+    "einEnde": 158.72,
+    "ausStart": 163.92,
+    "ausEnde": 164.92,
+    "breite": 700,
+    "asset": "clients/man/logo-weiss.png"
+   },
+   "dimm": {
+    "einStart": 158.92,
+    "einEnde": 160.2
+   },
+   "schwarzVoll": 160.2,
+   "hinweis": "Standard-Abbinder (MAN-CI Film-Ending, Kundenmail 2026-08-07): weißes MAN-Logo erscheint zentriert über der letzten Fahrszene (Position/Größe konstant), der Dimmer übernimmt die CI-Überblendung zu Schwarz und verdeckt den harten V3-Material-Cut bei 160,2 s; Logo steht 3,7 s auf Schwarz und blendet synchron zur Ton-Ausblende (163,92–164,92) aus. Endcard ab 165,0 unverändert."
+  },
+  {
    "typ": "schwarz",
    "start": 163.92,
    "ende": 164.92,
    "frame": 4098,
-   "hinweis": "Schwarzblende im Material ab 163.92 s (Bild + Ton). Dauer ca. 1 s bis ENDCARD_HERO."
+   "hinweis": "Ton-Ausblende im Haupt-Material ab 163.92 s. Das V3-Quer-Bild ist bereits ab 160,2 s schwarz (Abbinder-Dimmer); das Abbinder-Logo blendet synchron mit dem Ton aus. Dauer ca. 1 s bis ENDCARD_HERO."
   },
   {
    "typ": "hero",
@@ -1176,17 +1197,17 @@
  ],
  "beatCheck": {
   "regel": "Zielwert: kein Fenster > 5,0 s ohne Content-Event (Basis Fassung 'ton'; geprüft mit UND ohne Ciattei-Elemente). Füller ist seit Review 2 Nr. 2 AUSSCHLIESSLICH 'licht-akzent' (Licht-Opazität, bewegt nichts) — 'typo-akzent' und 'zeilen-shift' sind ersatzlos entfernt. Fenster ohne Spotlight werden NICHT gefüllt, sondern in offeneFenster dokumentiert.",
-  "geprueft": "0,0–175,0 s (Quer-Strecken ausgenommen: Vollbild IST Bewegtbild)",
-  "contentEvents": 64,
-  "contentEventsOhneCiattei": 60,
-  "maxFensterVorher": 30.4,
-  "maxFensterVorherOhneCiattei": 30.4,
+  "geprueft": "0,0–175.0 s (Quer-Strecken ausgenommen: Vollbild IST Bewegtbild)",
+  "contentEvents": 68,
+  "contentEventsOhneCiattei": 64,
+  "maxFensterVorher": 24.0,
+  "maxFensterVorherOhneCiattei": 24.0,
   "eingefuegteBeats": 4,
   "beatTypen": [
    "licht-akzent"
   ],
-  "maxFensterNachher": 30.4,
-  "maxFensterNachherOhneCiattei": 30.4,
+  "maxFensterNachher": 24.0,
+  "maxFensterNachherOhneCiattei": 24.0,
   "offeneFenster": [
    {
     "von": 0.5,
