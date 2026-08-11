@@ -1,0 +1,21 @@
+# Client-/Arbeitsdaten pro Dreh (Audio, Konzepte, Cache, Ausgabe) — nicht versionieren
+projects/
+cache/
+output/
+*.wav
+.DS_Store
+.superpowers/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+
+# Secrets (API-Keys) — niemals committen
+.env
