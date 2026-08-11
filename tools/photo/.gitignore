@@ -1,0 +1,6 @@
+bin/
+.DS_Store
+
+# HALD-LUTs sind je ~10 MB und aus scripts/make_look_lut.sh reproduzierbar —
+# versioniert wird das Rezept (NOTES.md + Skript-Parameter), nicht das Ergebnis.
+looks/**/*.png
