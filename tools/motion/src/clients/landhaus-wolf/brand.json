@@ -1,0 +1,19 @@
+{
+  "name": "Landhaus Wolf",
+  "colors": {
+    "primary": "#C2995C",
+    "secondary": "#21252B",
+    "accent": "#9D7D3F",
+    "background": "#FFFFFF",
+    "text": "#21252B"
+  },
+  "fonts": {
+    "heading": "Bitter",
+    "body": "Montserrat"
+  },
+  "logo": "",
+  "style": {
+    "borderRadius": 4,
+    "animationSpeed": "normal"
+  }
+}

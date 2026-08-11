@@ -1,0 +1,1974 @@
+{
+ "meta": {
+  "projekt": "MAN Wartezimmervideo — 16:9-Master",
+  "quelle": "timeline.json (12 Blöcke, 11 Lücken, 134,0 s)",
+  "konzept": "Animations-Konzept-16x9.md v2.2, überstimmt durch Davids Umbau-Entscheidungen 2026-07-24 und REVIEW 2 (2026-07-24 nachts, 12 Punkte)",
+  "review2": [
+   "Nr. 2 typo-akzent + zeilen-shift ersatzlos raus (keine Text-Bewegung); v4: Headline-Wechsel ohne X-Versatz UND sequenziell (K3 endet vor K4, keine Doppel-Headline mehr)",
+   "Nr. 3 Takeaway steht die ganze Blockdauer (Ein +0,4 s, Aus am Blockende); v4: Pausen entstehen durch Verzögern des NEUEN Takeaways, nie durch Kürzen des alten",
+   "Nr. 5 festes Rollen-Schema per Vorname",
+   "Nr. 6 Plaketten/Takeaways sequenziell mit Pause >= 0,8 s (Ziel 1,0 s)",
+   "Nr. 7 (überholt in v9): Endcard jetzt 165,0–173,0 aus der Schwarzblende, Ausklang bis 175,0",
+   "Nr. 8 neue Takeaway-Texte",
+   "Nr. 9 Spotlights text- UND logofrei (Branding-Beat deaktiviert)",
+   "Nr. 10 Werkzeug-Silhouetten-Regen in den Spotlights",
+   "Nr. 12 Takeaways kleiner (56/52 px)",
+   "v9 2026-07-29: Quer-Strecken + CTA-Endcard + Löwe rechtsblickend + Untertitel",
+   "v10 2026-08-07: Quer-Datei V3 (Kunden-Schnitt: mehr TGE, weniger Winter/E-Truck, Schwertransporter raus, hartes Schwarz ab 160,2) + Standard-Abbinder (MAN-CI Film-Ending) im Finale vor der Endcard — Master bleibt 175,0 s"
+  ],
+  "fps": 25,
+  "masterDauer": 175.0,
+  "masterFrames": 4375,
+  "videoFrames": 4124,
+  "querStrecken": [
+   {
+    "id": "quer-1",
+    "start": 64.56,
+    "ende": 76.56
+   },
+   {
+    "id": "quer-2",
+    "start": 133.52,
+    "ende": 164.92
+   }
+  ],
+  "fassungen": [
+   "ton",
+   "stumm"
+  ],
+  "loopHinweis": "LOOP-NAHT: Die Endcard klingt 173.0–175.0 s in eine dunkle Fläche aus (kein Fenster, kein Rahmen, kein Logo). Frame 0 startet aus exakt derselben Dunkelfläche; das Fenster blendet 0,0–0.5 s ein. Frame 4374 ≙ Frame 0 — die Schleife läuft ohne sichtbaren Sprung.",
+  "hinweis": "Zeiten in Sekunden (Video-Zeit), frame* = 25-fps-Frames. endeTon/endeStumm = Moment, in dem der Text vollständig unsichtbar ist (Exit-Fade eingerechnet). travels/wische/kapitelMarken/bridge/morphs sind LEER (nur Alt-Kompatibilität) — neue Wahrheit: fenster, querStrecken, headlines, spotlights, loewe, endcard, untertitel. branding.aktiv=false -> NICHT rendern (Review 2 Nr. 9). fenster.ausblendung=null: durch Quer-Blende ersetzt (v9).",
+  "eintraege": 57
+ },
+ "fenster": {
+  "x": 1200,
+  "y": 60,
+  "breite": 540,
+  "hoehe": 960,
+  "randRechts": 180,
+  "seite": "rechts",
+  "einblendung": {
+   "start": 0.0,
+   "dauer": 0.5,
+   "hinweis": "Loop-Naht: Fenster kommt aus der Dunkelfläche (Review 2 Nr. 7)"
+  },
+  "ausblendung": null,
+  "randOben": 60,
+  "randUnten": 60,
+  "schatten": {
+   "art": "weich, großflächig, zweistufig, rundum auslaufend",
+   "stufe1": {
+    "blur": 70,
+    "y": 6,
+    "deckkraft": 0.34
+   },
+   "stufe2": {
+    "blur": 120,
+    "y": 0,
+    "deckkraft": 0.2
+   },
+   "reichweiteOben": 60,
+   "reichweiteUnten": 60,
+   "hinweis": "Review 2 Nr. 11: harter Schatten raus; Review 3 Nr. 4: Reichweite an den 60-px-Rand angepasst, kein Abriss oben/unten mehr"
+  },
+  "hinweis": "FEST — kein Seitenwechsel/Travel (David 2026-07-24, Nr. 8). Grafikfläche dauerhaft links, Radius 0."
+ },
+ "fensterSeiten": [
+  {
+   "von": 0.0,
+   "bis": 133.52,
+   "seite": "rechts"
+  }
+ ],
+ "querStrecken": [
+  {
+   "id": "quer-1",
+   "start": 64.56,
+   "ende": 76.56,
+   "frameVon": 1614,
+   "frameBis": 1914,
+   "oeffnungDauer": 0.6,
+   "schliessen": {
+    "start": 75.96,
+    "dauer": 0.6,
+    "ziel": "zentriert"
+   },
+   "bleibtOffen": false,
+   "schwarzAb": null,
+   "hinweis": "Quer-Strecke 1: Fenster öffnet Vollbild, schließt wieder auf zentrierte Position. Grafik-Fläche vorher textfrei (Deadline 64,40 s). Enter-Rampe für rest-spotlight 75,5–76,4 liegt unsichtbar unter dem Vollbild."
+  },
+  {
+   "id": "quer-2",
+   "start": 133.52,
+   "ende": 164.92,
+   "frameVon": 3338,
+   "frameBis": 4123,
+   "oeffnungDauer": 0.6,
+   "schliessen": null,
+   "bleibtOffen": true,
+   "schwarzAb": 163.92,
+   "hinweis": "Quer-Strecke 2 (Finale, V3-Datei): bleibt offen — kein Schließen. V3 schneidet bei 160,2 s hart auf Schwarz (Abbinder-Dimmer verdeckt den Cut); Ton-Ausblende im Haupt-Material bei 163.92 s. Ab 165.0 s CTA-Endcard."
+  }
+ ],
+ "travels": [],
+ "loewe": {
+  "blick": "rechts",
+  "auftritte": [
+   {
+    "id": "auftritt-1",
+    "start": 9.5,
+    "ende": 22.3,
+    "seite": "links"
+   },
+   {
+    "id": "auftritt-2",
+    "start": 75.5,
+    "ende": 89.9,
+    "seite": "links"
+   }
+  ],
+  "endcard": {
+   "variante": "dunkel",
+   "seite": "links"
+  }
+ },
+ "plakettenRegeln": {
+  "anzeige": "nur Vorname (erstes Wort von person) + Rolle (David 2026-07-24, Nr. 1)",
+  "lage": "komplett auf der Grafikfläche — kein Pixel über dem Video (Nr. 2)",
+  "takt": "Review 2 Nr. 6: alte Plakette fährt VOLLSTÄNDIG aus, dann Pause (Ziel 1.0 s, Minimum 0.8 s), erst dann fährt die neue ein. Nie zwei Plaketten gleichzeitig sichtbar. pauseVorher = gemessene Pause vor dieser Einblendung.",
+  "rollenSchema": "fest per Vorname (Review 2 Nr. 5), Standortfilter als Sicherheitsnetz"
+ },
+ "plaketten": [
+  {
+   "block": 1,
+   "person": "Julia",
+   "personVoll": "Julia",
+   "rolle": "Nutzfahrzeugmechatronikerin",
+   "seite": "links",
+   "eintritt": {
+    "start": 0.1,
+    "dauer": 0.6,
+    "art": "kaltstart"
+   },
+   "austritt": {
+    "start": 9.3,
+    "dauer": 0.5
+   },
+   "pauseVorher": null,
+   "vorgezogen": false,
+   "standzeit": 8.6,
+   "frameVon": 2,
+   "frameBis": 245,
+   "ciattei": false
+  },
+  {
+   "block": 2,
+   "person": "Marcel",
+   "personVoll": "Marcel Mauer",
+   "rolle": "Nutzfahrzeugmechatroniker",
+   "seite": "links",
+   "eintritt": {
+    "start": 22.3,
+    "dauer": 0.6,
+    "art": "enter-nach-spotlight"
+   },
+   "austritt": {
+    "start": 28.5,
+    "dauer": 0.5
+   },
+   "pauseVorher": 12.5,
+   "vorgezogen": true,
+   "standzeit": 5.6,
+   "frameVon": 558,
+   "frameBis": 725,
+   "ciattei": false
+  },
+  {
+   "block": 3,
+   "person": "Markus",
+   "personVoll": "Markus",
+   "rolle": "Betriebsleiter Servicebetrieb",
+   "seite": "links",
+   "eintritt": {
+    "start": 30.0,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 33.0,
+    "dauer": 0.5
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": true,
+   "standzeit": 2.4,
+   "frameVon": 750,
+   "frameBis": 838,
+   "ciattei": false
+  },
+  {
+   "block": 4,
+   "person": "Alexander",
+   "personVoll": "Alexander Roth",
+   "rolle": "Teilelager & Teileverkauf",
+   "seite": "links",
+   "eintritt": {
+    "start": 34.5,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 42.8,
+    "dauer": 0.5
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": true,
+   "standzeit": 7.7,
+   "frameVon": 862,
+   "frameBis": 1082,
+   "ciattei": false
+  },
+  {
+   "block": 5,
+   "person": "Tobi",
+   "personVoll": "Tobi",
+   "rolle": "Nutzfahrzeugmechatroniker",
+   "seite": "links",
+   "eintritt": {
+    "start": 44.3,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 49.25,
+    "dauer": 0.5
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": true,
+   "standzeit": 4.35,
+   "frameVon": 1108,
+   "frameBis": 1244,
+   "ciattei": false
+  },
+  {
+   "block": 6,
+   "person": "Julia",
+   "personVoll": "Julia",
+   "rolle": "Nutzfahrzeugmechatronikerin",
+   "seite": "links",
+   "eintritt": {
+    "start": 50.75,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 57.5,
+    "dauer": 0.5
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": true,
+   "standzeit": 6.15,
+   "frameVon": 1269,
+   "frameBis": 1450,
+   "ciattei": false
+  },
+  {
+   "block": 7,
+   "person": "Nico",
+   "personVoll": "Nico",
+   "rolle": "Teilelager & Teileverkauf",
+   "seite": "links",
+   "eintritt": {
+    "start": 59.0,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 63.9,
+    "dauer": 0.5
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": false,
+   "standzeit": 4.9,
+   "frameVon": 1475,
+   "frameBis": 1610,
+   "ciattei": false
+  },
+  {
+   "block": 8,
+   "person": "Louis",
+   "personVoll": "Louis Endres",
+   "rolle": "Azubi Nutzfahrzeugmechatronik",
+   "seite": "links",
+   "eintritt": {
+    "start": 89.9,
+    "dauer": 0.6,
+    "art": "enter-nach-spotlight"
+   },
+   "austritt": {
+    "start": 94.3,
+    "dauer": 0.5
+   },
+   "pauseVorher": 24.9,
+   "vorgezogen": false,
+   "standzeit": 3.8,
+   "frameVon": 2248,
+   "frameBis": 2370,
+   "ciattei": false
+  },
+  {
+   "block": 9,
+   "person": "Lara",
+   "personVoll": "Lara",
+   "rolle": "Azubi Nutzfahrzeugmechatronik",
+   "seite": "links",
+   "eintritt": {
+    "start": 95.6,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 102.4,
+    "dauer": 0.5
+   },
+   "pauseVorher": 0.8,
+   "vorgezogen": true,
+   "standzeit": 6.2,
+   "frameVon": 2390,
+   "frameBis": 2572,
+   "ciattei": false
+  },
+  {
+   "block": 10,
+   "person": "Hannes",
+   "personVoll": "Hannes Husslein",
+   "rolle": "Azubi Nutzfahrzeugmechatronik",
+   "seite": "links",
+   "eintritt": {
+    "start": 103.9,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 106.0,
+    "dauer": 0.5
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": true,
+   "standzeit": 1.5,
+   "frameVon": 2598,
+   "frameBis": 2662,
+   "ciattei": false
+  },
+  {
+   "block": 11,
+   "person": "Marcel",
+   "personVoll": "Marcel Mauer",
+   "rolle": "Nutzfahrzeugmechatroniker",
+   "seite": "links",
+   "eintritt": {
+    "start": 107.5,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 117.1,
+    "dauer": 0.5
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": true,
+   "standzeit": 9.0,
+   "frameVon": 2688,
+   "frameBis": 2940,
+   "ciattei": false
+  },
+  {
+   "block": 12,
+   "person": "Mark",
+   "personVoll": "Mark Ciattei",
+   "rolle": "Betriebsleiter Servicebetrieb",
+   "seite": "links",
+   "eintritt": {
+    "start": 118.6,
+    "dauer": 0.6,
+    "art": "enter"
+   },
+   "austritt": {
+    "start": 132.86,
+    "dauer": 0.5
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": false,
+   "standzeit": 13.66,
+   "frameVon": 2965,
+   "frameBis": 3334,
+   "ciattei": true
+  }
+ ],
+ "morphs": [],
+ "takeawayRegeln": {
+  "timing": "Review 2 Nr. 3: Einblendung block.start + 0.4 s, Ausblendung startet am Blockende — Takeaway steht, solange die Aussage läuft. Keine Lesezeit-Kappung mehr.",
+  "takt": "Pause Ziel 1.0 s / Minimum 0.8 s zwischen Aus-Ende und nächstem Ein-Start (Review 2 Nr. 6). Anders als bei den Plaketten wird die Pause NICHT durch Kürzen des alten Takeaways erzeugt, sondern durch Verzögern des neuen — das Aus-Ende bleibt am Blockende (Review 2 Nr. 3).",
+  "groesse": "Review 3 Nr. 1: EIN fester Grad 54 px für ALLE Takeaways (vorher 56/52/48 — die Versalhöhe sprang zwischen 38 und 42 px). Genau EINE Ausnahmestufe 46 px, und nur wenn eine Zeile in MAN Global Bold Condensed breiter als 964 px würde. Kein stufenloses Auto-Fit in der Composition.",
+  "breitenMessung": {
+   "spaltePx": 964,
+   "gemessen": "fontTools",
+   "zeilenbreitePx": {
+    "1": 586.8,
+    "2": 467.9,
+    "3": 639.9,
+    "4": 553.1,
+    "5": 638.9,
+    "6": 651.9,
+    "7": 655.8,
+    "8": 595.9,
+    "9": 418.2,
+    "10": 467.2,
+    "11": 612.9,
+    "12": 549.8
+   },
+   "ausnahmestufe": []
+  },
+  "stumm": "endeStumm == endeTon (Blockdauer gilt in beiden Fassungen)"
+ },
+ "takeaways": [
+  {
+   "block": 1,
+   "person": "Julia",
+   "kartentext": "**100 %** — VON ANFANG AN",
+   "zeilen": [
+    "**100 %** — VON ANFANG AN"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 0.5,
+   "endeTon": 9.7,
+   "endeStumm": 9.7,
+   "austritt": {
+    "start": 9.3,
+    "dauer": 0.4
+   },
+   "pauseVorher": null,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 9.3,
+   "deckungBlockende": 0.0,
+   "standzeit": 8.3,
+   "blockdauer": 9.2,
+   "revealDauer": 0.5,
+   "zeichen": 21,
+   "frameVon": 12,
+   "frameBisTon": 242,
+   "frameBisStumm": 242,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 2,
+   "person": "Marcel Mauer",
+   "kartentext": "**FAMILIÄRES** UMFELD",
+   "zeilen": [
+    "**FAMILIÄRES** UMFELD"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 22.7,
+   "endeTon": 29.6,
+   "endeStumm": 29.6,
+   "austritt": {
+    "start": 29.2,
+    "dauer": 0.4
+   },
+   "pauseVorher": 13.0,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 29.2,
+   "deckungBlockende": 0.0,
+   "standzeit": 6.0,
+   "blockdauer": 6.9,
+   "revealDauer": 0.5,
+   "zeichen": 17,
+   "frameVon": 568,
+   "frameBisTon": 740,
+   "frameBisStumm": 740,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 3,
+   "person": "Markus",
+   "kartentext": "JEDEN TAG **BESSER** WERDEN",
+   "zeilen": [
+    "JEDEN TAG **BESSER** WERDEN"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 30.4,
+   "endeTon": 34.0,
+   "endeStumm": 34.0,
+   "austritt": {
+    "start": 33.6,
+    "dauer": 0.4
+   },
+   "pauseVorher": 0.8,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 33.6,
+   "deckungBlockende": 0.0,
+   "standzeit": 2.7,
+   "blockdauer": 3.6,
+   "revealDauer": 0.5,
+   "zeichen": 23,
+   "frameVon": 760,
+   "frameBisTon": 850,
+   "frameBisStumm": 850,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 4,
+   "person": "Alexander Roth",
+   "kartentext": "**TEAMGEIST** — AUCH NACH FEIERABEND",
+   "zeilen": [
+    "**TEAMGEIST** —",
+    "AUCH NACH FEIERABEND"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 34.9,
+   "endeTon": 43.7,
+   "endeStumm": 43.7,
+   "austritt": {
+    "start": 43.3,
+    "dauer": 0.4
+   },
+   "pauseVorher": 0.9,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 43.3,
+   "deckungBlockende": 0.0,
+   "standzeit": 7.9,
+   "blockdauer": 8.8,
+   "revealDauer": 0.5,
+   "zeichen": 32,
+   "frameVon": 872,
+   "frameBisTon": 1092,
+   "frameBisStumm": 1092,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 5,
+   "person": "Tobi",
+   "kartentext": "AUF **AUGENHÖHE**. FLACHE HIERARCHIESTUFEN.",
+   "zeilen": [
+    "AUF **AUGENHÖHE**.",
+    "FLACHE HIERARCHIESTUFEN."
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 44.7,
+   "endeTon": 50.6,
+   "endeStumm": 50.6,
+   "austritt": {
+    "start": 50.2,
+    "dauer": 0.4
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 50.2,
+   "deckungBlockende": 0.0,
+   "standzeit": 5.0,
+   "blockdauer": 5.9,
+   "revealDauer": 0.5,
+   "zeichen": 39,
+   "frameVon": 1118,
+   "frameBisTon": 1265,
+   "frameBisStumm": 1265,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 6,
+   "person": "Julia",
+   "kartentext": "**ZUSAMMENHALT**, DER TRÄGT",
+   "zeilen": [
+    "**ZUSAMMENHALT**, DER TRÄGT"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 51.6,
+   "endeTon": 58.2,
+   "endeStumm": 58.2,
+   "austritt": {
+    "start": 57.8,
+    "dauer": 0.4
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": false,
+   "verzoegert": true,
+   "blockEnde": 57.8,
+   "deckungBlockende": 0.0,
+   "standzeit": 5.7,
+   "blockdauer": 7.05,
+   "revealDauer": 0.5,
+   "zeichen": 23,
+   "frameVon": 1290,
+   "frameBisTon": 1455,
+   "frameBisStumm": 1455,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 7,
+   "person": "Nico",
+   "kartentext": "ARBEIT, DIE **WACHSEN** LÄSST",
+   "zeilen": [
+    "ARBEIT, DIE **WACHSEN** LÄSST"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 59.4,
+   "endeTon": 64.4,
+   "endeStumm": 64.4,
+   "austritt": {
+    "start": 64.0,
+    "dauer": 0.4
+   },
+   "pauseVorher": 1.2,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 64.5,
+   "deckungBlockende": 0.0,
+   "standzeit": 4.6,
+   "blockdauer": 5.5,
+   "revealDauer": 0.5,
+   "zeichen": 25,
+   "frameVon": 1485,
+   "frameBisTon": 1610,
+   "frameBisStumm": 1610,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 8,
+   "person": "Louis Endres",
+   "kartentext": "**LKW-LIEBE** VON KLEIN AUF",
+   "zeilen": [
+    "**LKW-LIEBE** VON KLEIN AUF"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 90.3,
+   "endeTon": 94.7,
+   "endeStumm": 94.7,
+   "austritt": {
+    "start": 94.3,
+    "dauer": 0.4
+   },
+   "pauseVorher": 25.4,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 94.3,
+   "deckungBlockende": 0.0,
+   "standzeit": 3.5,
+   "blockdauer": 4.4,
+   "revealDauer": 0.5,
+   "zeichen": 23,
+   "frameVon": 2258,
+   "frameBisTon": 2368,
+   "frameBisStumm": 2368,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 9,
+   "person": "Lara",
+   "kartentext": "MIT **VATERS** LKW GROSS GEWORDEN",
+   "zeilen": [
+    "MIT **VATERS** LKW",
+    "GROSS GEWORDEN"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 96.0,
+   "endeTon": 101.0,
+   "endeStumm": 104.2,
+   "austritt": {
+    "start": 100.6,
+    "dauer": 0.4
+   },
+   "pauseVorher": 1.3,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 103.8,
+   "deckungBlockende": -3.2,
+   "standzeit": 4.1,
+   "blockdauer": 8.2,
+   "revealDauer": 0.5,
+   "zeichen": 29,
+   "frameVon": 2400,
+   "frameBisTon": 2525,
+   "frameBisStumm": 2605,
+   "ciattei": false,
+   "hinweise": [
+    "Guardrail 1: Lara-Sperre — Text ist um 101.0 s vollständig ausgeblendet, nichts vom Bewerbungs-Satz"
+   ]
+  },
+  {
+   "block": 10,
+   "person": "Hannes Husslein",
+   "kartentext": "GROSSE FAHRZEUGE. **GROSSES BEWEGEN**.",
+   "zeilen": [
+    "GROSSE FAHRZEUGE.",
+    "**GROSSES BEWEGEN**."
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 104.3,
+   "endeTon": 107.0,
+   "endeStumm": 107.0,
+   "austritt": {
+    "start": 106.6,
+    "dauer": 0.4
+   },
+   "pauseVorher": 3.3,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 106.6,
+   "deckungBlockende": 0.0,
+   "standzeit": 1.8,
+   "blockdauer": 2.7,
+   "revealDauer": 0.5,
+   "zeichen": 34,
+   "frameVon": 2608,
+   "frameBisTon": 2675,
+   "frameBisStumm": 2675,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 11,
+   "person": "Marcel Mauer",
+   "kartentext": "MEIN SOHN WEISS: »DEN HAB ICH **REPARIERT**.«",
+   "zeilen": [
+    "MEIN SOHN WEISS:",
+    "»DEN HAB ICH **REPARIERT**.«"
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 107.9,
+   "endeTon": 118.0,
+   "endeStumm": 118.0,
+   "austritt": {
+    "start": 117.6,
+    "dauer": 0.4
+   },
+   "pauseVorher": 0.9,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 117.6,
+   "deckungBlockende": 0.0,
+   "standzeit": 9.2,
+   "blockdauer": 10.1,
+   "revealDauer": 0.5,
+   "zeichen": 41,
+   "frameVon": 2698,
+   "frameBisTon": 2950,
+   "frameBisStumm": 2950,
+   "ciattei": false,
+   "hinweise": []
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "kartentext": "NICHT VON DER STANGE. ECHTE **SPEZIALKRÄFTE**.",
+   "zeilen": [
+    "NICHT VON DER STANGE.",
+    "ECHTE **SPEZIALKRÄFTE**."
+   ],
+   "seite": "links",
+   "groessePx": 54,
+   "start": 119.0,
+   "endeTon": 133.36,
+   "endeStumm": 133.36,
+   "austritt": {
+    "start": 132.96,
+    "dauer": 0.4
+   },
+   "pauseVorher": 1.0,
+   "vorgezogen": false,
+   "verzoegert": false,
+   "blockEnde": 133.6,
+   "deckungBlockende": -0.64,
+   "standzeit": 13.46,
+   "blockdauer": 15.0,
+   "revealDauer": 0.5,
+   "zeichen": 42,
+   "frameVon": 2975,
+   "frameBisTon": 3334,
+   "frameBisStumm": 3334,
+   "ciattei": true,
+   "hinweise": [
+    "Guardrail 7: Ciattei nur in abtrennbarer Sequence (ohneCiattei)"
+   ]
+  }
+ ],
+ "headlines": [
+  {
+   "id": "headline-1",
+   "typ": "headline",
+   "kapitel": 1,
+   "kartentext": "QUALITÄT OHNE **KOMPROMISSE**",
+   "zeilen": [
+    "QUALITÄT OHNE",
+    "**KOMPROMISSE**"
+   ],
+   "seite": "links",
+   "groessePx": 92,
+   "start": 0.4,
+   "ende": 9.8,
+   "endeGeplant": 9.8,
+   "einDauer": 0.6,
+   "exitDauer": 0.6,
+   "wechsel": "fade",
+   "vorgezogen": false,
+   "pauseVorher": null,
+   "frameVon": 10,
+   "frameBis": 260,
+   "hinweis": "steht dauerhaft im Kapitel; darunter wechseln Takeaways + Plaketten. KEINE Positions-Akzente und KEIN X-Versatz mehr (Review 2 Nr. 2); Wechsel sequenziell — nie zwei Headlines gleichzeitig"
+  },
+  {
+   "id": "headline-2",
+   "typ": "headline",
+   "kapitel": 2,
+   "kartentext": "EIN STARKES **TEAM**",
+   "zeilen": [
+    "EIN STARKES **TEAM**"
+   ],
+   "seite": "links",
+   "groessePx": 92,
+   "start": 21.8,
+   "ende": 63.8,
+   "endeGeplant": 64.4,
+   "einDauer": 0.6,
+   "exitDauer": 0.6,
+   "wechsel": "fade",
+   "vorgezogen": true,
+   "pauseVorher": 11.4,
+   "frameVon": 545,
+   "frameBis": 1610,
+   "hinweis": "steht dauerhaft im Kapitel; darunter wechseln Takeaways + Plaketten. KEINE Positions-Akzente und KEIN X-Versatz mehr (Review 2 Nr. 2); Wechsel sequenziell — nie zwei Headlines gleichzeitig"
+  },
+  {
+   "id": "headline-3",
+   "typ": "headline",
+   "kapitel": 3,
+   "kartentext": "FASZINATION **NUTZFAHRZEUGE**",
+   "zeilen": [
+    "FASZINATION",
+    "**NUTZFAHRZEUGE**"
+   ],
+   "seite": "links",
+   "groessePx": 92,
+   "start": 89.9,
+   "ende": 106.2,
+   "endeGeplant": 107.0,
+   "einDauer": 0.6,
+   "exitDauer": 0.6,
+   "wechsel": "fade",
+   "vorgezogen": true,
+   "pauseVorher": 24.9,
+   "frameVon": 2248,
+   "frameBis": 2670,
+   "hinweis": "steht dauerhaft im Kapitel; darunter wechseln Takeaways + Plaketten. KEINE Positions-Akzente und KEIN X-Versatz mehr (Review 2 Nr. 2); Wechsel sequenziell — nie zwei Headlines gleichzeitig"
+  },
+  {
+   "id": "headline-4",
+   "typ": "headline",
+   "kapitel": 4,
+   "kartentext": "MIT **HERZ** DABEI",
+   "zeilen": [
+    "MIT **HERZ** DABEI"
+   ],
+   "seite": "links",
+   "groessePx": 92,
+   "start": 107.3,
+   "ende": 132.76,
+   "endeGeplant": 133.36,
+   "einDauer": 0.6,
+   "exitDauer": 0.6,
+   "wechsel": "fade",
+   "vorgezogen": true,
+   "pauseVorher": 0.5,
+   "frameVon": 2682,
+   "frameBis": 3334,
+   "hinweis": "steht dauerhaft im Kapitel; darunter wechseln Takeaways + Plaketten. KEINE Positions-Akzente und KEIN X-Versatz mehr (Review 2 Nr. 2); Wechsel sequenziell — nie zwei Headlines gleichzeitig"
+  }
+ ],
+ "spotlights": [
+  {
+   "id": "spotlight-1",
+   "typ": "spotlight",
+   "start": 9.5,
+   "ende": 22.3,
+   "frameVon": 238,
+   "frameBis": 558,
+   "textfrei": true,
+   "logofrei": true,
+   "beats": [],
+   "werkzeugRegen": {
+    "aktiv": true,
+    "formen": [
+     "schraubenschluessel",
+     "sechskant-mutter",
+     "zahnrad",
+     "schraube",
+     "ringschluessel",
+     "maulschluessel"
+    ],
+    "anzahl": 9,
+    "opazitaet": [
+     0.12,
+     0.18
+    ],
+    "fallzeitSek": [
+     14.0,
+     26.0
+    ],
+    "groessePx": [
+     70,
+     180
+    ],
+    "rotationGradProSek": [
+     -4.0,
+     4.0
+    ],
+    "blurPx": 1.5,
+    "zone": "Grafikfläche rechts (x 820–1920); über dem zentrierten Fenster max. 40 % der Opazität",
+    "hinweis": "Review 2 Nr. 10: sehr dezent, nie ablenkend; weich ein-/ausblenden mit der Spotlight-Hüllkurve"
+   },
+   "hinweis": "sprechfreie Lücke 1 (9,5–22,3); Headline-K1-Exit 9,8, K2-Enter 21,8 überlappen weich. Review 2 Nr. 9: KEIN Branding-Text, KEIN Logo. Löwe: linke Seite mit Kopf vollständig sichtbar (Nr. 1)"
+  },
+  {
+   "id": "rest-spotlight",
+   "typ": "spotlight",
+   "start": 75.5,
+   "ende": 89.9,
+   "frameVon": 1888,
+   "frameBis": 2248,
+   "textfrei": true,
+   "logofrei": true,
+   "beats": [],
+   "werkzeugRegen": {
+    "aktiv": true,
+    "formen": [
+     "schraubenschluessel",
+     "sechskant-mutter",
+     "zahnrad",
+     "schraube",
+     "ringschluessel",
+     "maulschluessel"
+    ],
+    "anzahl": 9,
+    "opazitaet": [
+     0.12,
+     0.18
+    ],
+    "fallzeitSek": [
+     14.0,
+     26.0
+    ],
+    "groessePx": [
+     70,
+     180
+    ],
+    "rotationGradProSek": [
+     -4.0,
+     4.0
+    ],
+    "blurPx": 1.5,
+    "zone": "Grafikfläche rechts (x 820–1920); über dem zentrierten Fenster max. 40 % der Opazität",
+    "hinweis": "Review 2 Nr. 10: sehr dezent, nie ablenkend; weich ein-/ausblenden mit der Spotlight-Hüllkurve"
+   },
+   "hinweis": "Rest der Ex-Lücke 7 nach der Quer-Strecke: Enter-Rampe 75,5–76,4 liegt UNSICHTBAR unter dem Vollbild, damit die Blende bei 76,56 auf die zentrierte Position schließt. Löwe links, Werkzeuge rechts."
+  }
+ ],
+ "branding": {
+  "aktiv": false,
+  "start": 13.0,
+  "ende": 17.0,
+  "frameVon": 325,
+  "frameBis": 425,
+  "eyebrow": "",
+  "kartentext": "",
+  "zeilen": [],
+  "logo": "keins",
+  "seite": "links",
+  "hinweis": "Review 2 Nr. 9: »WILLKOMMEN BEI IHREM MAN SERVICE« UND das Logo in Spotlight 1 ERSATZLOS entfernt — beide Spotlights sind vollständig text- UND logofrei. Feld nur noch Stub für die Composition (aktiv=false -> NICHT rendern)."
+ },
+ "kapitelMarken": [],
+ "bridge": [],
+ "wische": [],
+ "dichte": [
+  {
+   "t": 0.0,
+   "amp": 0.3,
+   "phase": "loop-start aus der Dunkelfläche"
+  },
+  {
+   "t": 2.0,
+   "amp": 0.4,
+   "phase": "kaltstart"
+  },
+  {
+   "t": 9.5,
+   "amp": 0.8,
+   "phase": "spotlight-1"
+  },
+  {
+   "t": 22.3,
+   "amp": 0.6,
+   "phase": "team-strecke"
+  },
+  {
+   "t": 64.56,
+   "amp": 0.9,
+   "phase": "quer-1-vollbild"
+  },
+  {
+   "t": 75.5,
+   "amp": 0.8,
+   "phase": "rest-spotlight"
+  },
+  {
+   "t": 89.9,
+   "amp": 0.55,
+   "phase": "faszination"
+  },
+  {
+   "t": 107.5,
+   "amp": 0.25,
+   "phase": "sohn-story-ruhigste-phase"
+  },
+  {
+   "t": 118.6,
+   "amp": 0.5,
+   "phase": "ciattei-stolz"
+  },
+  {
+   "t": 133.52,
+   "amp": 0.35,
+   "phase": "quer-2-finale"
+  },
+  {
+   "t": 164.92,
+   "amp": 0.3,
+   "phase": "schwarzblende"
+  },
+  {
+   "t": 165.0,
+   "amp": 0.45,
+   "phase": "fullscreen-hero"
+  },
+  {
+   "t": 173.0,
+   "amp": 0.3,
+   "phase": "ausklang in die Dunkelflaeche"
+  },
+  {
+   "t": 175.0,
+   "amp": 0.3,
+   "phase": "loop-ende (= Frame 0)"
+  }
+ ],
+ "endcard": [
+  {
+   "typ": "blende-auf",
+   "start": 133.52,
+   "ende": 134.12,
+   "frame": 3338,
+   "hinweis": "Quer-2 öffnet sich über 0.6 s zum Vollbild (133,52–134,12 s). Danach läuft das Video im Vollbild bis zur Schwarzblende."
+  },
+  {
+   "typ": "abbinder",
+   "start": 157.52,
+   "ende": 165.0,
+   "frame": 3938,
+   "logo": {
+    "einStart": 157.52,
+    "einEnde": 158.72,
+    "ausStart": 163.92,
+    "ausEnde": 164.92,
+    "breite": 700,
+    "asset": "clients/man/logo-weiss.png"
+   },
+   "dimm": {
+    "einStart": 158.92,
+    "einEnde": 160.2
+   },
+   "schwarzVoll": 160.2,
+   "hinweis": "Standard-Abbinder (MAN-CI Film-Ending, Kundenmail 2026-08-07): weißes MAN-Logo erscheint zentriert über der letzten Fahrszene (Position/Größe konstant), der Dimmer übernimmt die CI-Überblendung zu Schwarz und verdeckt den harten V3-Material-Cut bei 160,2 s; Logo steht 3,7 s auf Schwarz und blendet synchron zur Ton-Ausblende (163,92–164,92) aus. Endcard ab 165,0 unverändert."
+  },
+  {
+   "typ": "schwarz",
+   "start": 163.92,
+   "ende": 164.92,
+   "frame": 4098,
+   "hinweis": "Ton-Ausblende im Haupt-Material ab 163.92 s. Das V3-Quer-Bild ist bereits ab 160,2 s schwarz (Abbinder-Dimmer); das Abbinder-Logo blendet synchron mit dem Ton aus. Dauer ca. 1 s bis ENDCARD_HERO."
+  },
+  {
+   "typ": "hero",
+   "start": 165.0,
+   "ende": 173.0,
+   "frame": 4125,
+   "fullscreen": true,
+   "kartentext": "GROSSES BEWEGEN **MIT MAN**",
+   "zeilen": [
+    "GROSSES BEWEGEN",
+    "**MIT MAN**"
+   ],
+   "cta": "JETZT BEWERBEN",
+   "qr": {
+    "asset": "qr-jobs-man-eu.png",
+    "url": "JOBS.MAN.EU",
+    "groesse": 480
+   },
+   "loewe": {
+    "variante": "dunkel",
+    "seite": "links"
+   },
+   "hinweis": "CTA-Recruiting-Endcard: 8 s Standzeit für QR-Scan. Löwe rechtsblickend, dunkel, links. m/w/d-Pflicht (David-Regel 2026-07-15). zeilen: expliziter Zweizeiler (Testframe-Kalibrierung 2026-07-29)."
+  },
+  {
+   "typ": "ausklang",
+   "start": 173.0,
+   "ende": 175.0,
+   "frame": 4325,
+   "hinweis": "Hero klingt in die DUNKELFLÄCHE aus (Logo/Claim/Löwe weg). Bei 175.0 s steht exakt derselbe Zustand wie bei Frame 0 — Loop-Naht."
+  }
+ ],
+ "loop": {
+  "frame0": {
+   "zustand": "Dunkelfläche (identisch mit 175.0 s)",
+   "fensterEin": {
+    "start": 0.0,
+    "dauer": 0.5
+   },
+   "logo": "zone-a, blendet mit dem Fenster ein (0,2–0,8 s)",
+   "ambientPhase": 0.0,
+   "hinweis": "Block 1 startet bei 0,1 s; Headline K1 ab 0,4 s, Takeaway 1 ab 0,5 s"
+  },
+  "frame4374": {
+   "zustand": "Dunkelfläche — kein Fenster, kein Rahmen, kein Logo",
+   "ambientPhase": "== 0 (ganze Loop-Perioden)"
+  },
+  "naht": "Review 2 Nr. 7: Endcard klingt in eine dunkle Fläche aus, Frame 0 startet aus derselben Dunkelfläche mit 0.5 s Fenster-Fade-in — die Schleife bleibt nahtlos."
+ },
+ "zwischenBeats": [
+  {
+   "start": 13.8,
+   "dauer": 0.8,
+   "typ": "licht-akzent",
+   "frame": 345,
+   "fuellt": "Fenster 9.80–21.80 s (12.00 s, Variante mit-ciattei)"
+  },
+  {
+   "start": 17.8,
+   "dauer": 0.8,
+   "typ": "licht-akzent",
+   "frame": 445,
+   "fuellt": "Fenster 9.80–21.80 s (12.00 s, Variante mit-ciattei)"
+  },
+  {
+   "start": 81.01,
+   "dauer": 0.8,
+   "typ": "licht-akzent",
+   "frame": 2025,
+   "fuellt": "Fenster 76.56–89.90 s (13.34 s, Variante mit-ciattei)"
+  },
+  {
+   "start": 85.45,
+   "dauer": 0.8,
+   "typ": "licht-akzent",
+   "frame": 2136,
+   "fuellt": "Fenster 76.56–89.90 s (13.34 s, Variante mit-ciattei)"
+  }
+ ],
+ "beatCheck": {
+  "regel": "Zielwert: kein Fenster > 5,0 s ohne Content-Event (Basis Fassung 'ton'; geprüft mit UND ohne Ciattei-Elemente). Füller ist seit Review 2 Nr. 2 AUSSCHLIESSLICH 'licht-akzent' (Licht-Opazität, bewegt nichts) — 'typo-akzent' und 'zeilen-shift' sind ersatzlos entfernt. Fenster ohne Spotlight werden NICHT gefüllt, sondern in offeneFenster dokumentiert.",
+  "geprueft": "0,0–175.0 s (Quer-Strecken ausgenommen: Vollbild IST Bewegtbild)",
+  "contentEvents": 68,
+  "contentEventsOhneCiattei": 64,
+  "maxFensterVorher": 24.0,
+  "maxFensterVorherOhneCiattei": 24.0,
+  "eingefuegteBeats": 4,
+  "beatTypen": [
+   "licht-akzent"
+  ],
+  "maxFensterNachher": 24.0,
+  "maxFensterNachherOhneCiattei": 24.0,
+  "offeneFenster": [
+   {
+    "von": 0.5,
+    "bis": 9.3,
+    "dauer": 8.8,
+    "variante": "mit-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 22.7,
+    "bis": 28.5,
+    "dauer": 5.8,
+    "variante": "mit-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 34.9,
+    "bis": 42.8,
+    "dauer": 7.9,
+    "variante": "mit-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 51.6,
+    "bis": 57.5,
+    "dauer": 5.9,
+    "variante": "mit-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 107.9,
+    "bis": 117.1,
+    "dauer": 9.2,
+    "variante": "mit-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 119.0,
+    "bis": 132.76,
+    "dauer": 13.76,
+    "variante": "mit-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 165.0,
+    "bis": 173.0,
+    "dauer": 8.0,
+    "variante": "mit-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 0.5,
+    "bis": 9.3,
+    "dauer": 8.8,
+    "variante": "ohne-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 22.7,
+    "bis": 28.5,
+    "dauer": 5.8,
+    "variante": "ohne-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 34.9,
+    "bis": 42.8,
+    "dauer": 7.9,
+    "variante": "ohne-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 51.6,
+    "bis": 57.5,
+    "dauer": 5.9,
+    "variante": "ohne-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 107.9,
+    "bis": 117.1,
+    "dauer": 9.2,
+    "variante": "ohne-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 117.6,
+    "bis": 132.76,
+    "dauer": 15.16,
+    "variante": "ohne-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   },
+   {
+    "von": 165.0,
+    "bis": 173.0,
+    "dauer": 8.0,
+    "variante": "ohne-ciattei",
+    "grund": "kein Licht-Trägerfenster (kein Spotlight) — Textbewegung als Füller ist seit Review 2 Nr. 2 verboten",
+    "akzeptiert": true,
+    "hinweis": "dauerhafte Kapitel-Headline steht in diesem Fenster — Fläche ist nie leer (David: akzeptabel)"
+   }
+  ],
+  "warnungen": [],
+  "bestanden": true,
+  "log": [
+   "Plakette 12: Ausblendung auf 132.86 s gezogen (muss vor Quer-2-Blende 133.36 s draußen sein)",
+   "Plakette plakette-2: Ausblendung 29.20 -> 28.50 s vorgezogen (Pause vorher 0.30 s, jetzt 1.00 s)",
+   "Plakette plakette-3: Ausblendung 33.60 -> 33.00 s vorgezogen (Pause vorher 0.40 s, jetzt 1.00 s)",
+   "Plakette plakette-4: Ausblendung 43.30 -> 42.80 s vorgezogen (Pause vorher 0.50 s, jetzt 1.00 s)",
+   "Plakette plakette-5: Ausblendung 50.20 -> 49.25 s vorgezogen (Pause vorher 0.05 s, jetzt 1.00 s)",
+   "Plakette plakette-6: Ausblendung 57.80 -> 57.50 s vorgezogen (Pause vorher 0.70 s, jetzt 1.00 s)",
+   "Plakette plakette-9: Ausblendung 103.80 -> 102.40 s vorgezogen (Pause vorher -0.40 s, jetzt 1.00 s)",
+   "Plakette plakette-10: Ausblendung 106.60 -> 106.00 s vorgezogen (Pause vorher 0.40 s, jetzt 1.00 s)",
+   "Plakette plakette-11: Ausblendung 117.60 -> 117.10 s vorgezogen (Pause vorher 0.50 s, jetzt 1.00 s)",
+   "Takeaway 12: Ausblendung auf 132.96 s gezogen (muss vor Quer-2-Blende 133.36 s draußen sein)",
+   "Takeaway takeaway-6: Einblendung 51.15 -> 51.60 s verzögert (Pause vorher 0.55 s, jetzt 1.00 s) — Aus-Ende von takeaway-5 bleibt bei 50.60 s (Review 2 Nr. 3)",
+   "Headline headline-3: Ausblendung 107.00 -> 106.20 s vorgezogen (Pause vorher -0.30 s, jetzt 0.50 s)",
+   "Headline K2: Ausblendung 64.40 → 63.80 s vorgezogen (muss vor Quer-Blende 64.56 s KOMPLETT draußen sein; Deadline=64.40, HEAD_AUS_DAUER=0.60) [vorgezogen]",
+   "Headline K4: Ausblendung 133.36 → 132.76 s vorgezogen (muss vor Quer-Blende 133.52 s KOMPLETT draußen sein; Deadline=133.36, HEAD_AUS_DAUER=0.60) [vorgezogen]",
+   "OFFENES FENSTER (akzeptiert): 0.50–9.30 s (8.80 s, Variante mit-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "Zwischen-Beat licht-akzent bei 13.80 s eingefügt (Fenster 9.80–21.80 s = 12.00 s > 5 s, Variante mit-ciattei)",
+   "Zwischen-Beat licht-akzent bei 17.80 s eingefügt (Fenster 9.80–21.80 s = 12.00 s > 5 s, Variante mit-ciattei)",
+   "OFFENES FENSTER (akzeptiert): 22.70–28.50 s (5.80 s, Variante mit-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 34.90–42.80 s (7.90 s, Variante mit-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 51.60–57.50 s (5.90 s, Variante mit-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "Zwischen-Beat licht-akzent bei 81.01 s eingefügt (Fenster 76.56–89.90 s = 13.34 s > 5 s, Variante mit-ciattei)",
+   "Zwischen-Beat licht-akzent bei 85.45 s eingefügt (Fenster 76.56–89.90 s = 13.34 s > 5 s, Variante mit-ciattei)",
+   "OFFENES FENSTER (akzeptiert): 107.90–117.10 s (9.20 s, Variante mit-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 119.00–132.76 s (13.76 s, Variante mit-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 165.00–173.00 s (8.00 s, Variante mit-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 0.50–9.30 s (8.80 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 22.70–28.50 s (5.80 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 34.90–42.80 s (7.90 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 51.60–57.50 s (5.90 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 107.90–117.10 s (9.20 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 117.60–132.76 s (15.16 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "OFFENES FENSTER (akzeptiert): 165.00–173.00 s (8.00 s, Variante ohne-ciattei) ohne Content-Event — kein Spotlight, also KEIN Füller; Headline steht",
+   "UT-Kappung: Block 7 'Man wird einfach rei' ende 64.52 -> 64.40 s (Quer-Deadline 64.40)",
+   "UT-Kappung: Block 12 'Im LKW-Bereich wird ' ende 133.62 -> 133.36 s (Quer-Deadline 133.36)",
+   "UT-Merge: Block 4 'Finde ich jetzt' + 'dran.' → ein Segment (41.12–44.20 s, Mindeststand nicht erreichbar)",
+   "UT-Merge: Block 5 'Wir haben ja ke' + 'nicht.' → ein Segment (46.44–50.65 s, Mindeststand nicht erreichbar)",
+   "UT-Merge: Block 10 'Das sind schon ' + 'jeden Fall.' → ein Segment (103.90–107.40 s, Mindeststand nicht erreichbar)",
+   "UT-Merge: Block 11 'neugierig und d' + 'habe.' → ein Segment (114.96–118.50 s, Mindeststand nicht erreichbar)",
+   "Untertitel: 42 Segmente"
+  ]
+ },
+ "taktCheck": {
+  "regel": "Review 2 Nr. 6: zwischen Ausblende-Ende der alten und Einblende-Start der neuen mindestens 0.8 s (Ziel 1.0 s); nie zwei gleichzeitig sichtbar. Headlines mit eigenem, kürzerem Takt (min 0.4 s / Ziel 0.5 s), aber derselben Nicht-Überlappungs-Regel (Review 2 Nr. 2, v4).",
+  "plaketten": {
+   "min": 0.8,
+   "max": 24.9
+  },
+  "takeaways": {
+   "min": 0.8,
+   "max": 25.4
+  },
+  "headlines": {
+   "min": 0.5,
+   "max": 24.9
+  },
+  "plakettenVorgezogen": [
+   2,
+   3,
+   4,
+   5,
+   6,
+   9,
+   10,
+   11
+  ],
+  "takeawaysVorgezogen": [],
+  "takeawaysVerzoegert": [
+   6
+  ],
+  "headlinesVorgezogen": [
+   2,
+   3,
+   4
+  ],
+  "takeawayDeckungBlockende": {
+   "regel": "Review 2 Nr. 3: Ausblendung startet am Blockende (Δ = 0,00). Ausnahmen: Block 9 (Lara-Sperre 101,0 s) und der letzte Block (Quer-2-Kappung 133,36 s).",
+   "delta": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 0.0,
+    "6": 0.0,
+    "7": 0.0,
+    "8": 0.0,
+    "9": -3.2,
+    "10": 0.0,
+    "11": 0.0,
+    "12": -0.64
+   }
+  }
+ },
+ "untertitel": [
+  {
+   "block": 1,
+   "person": "Julia",
+   "text": "Auf die Qualität legen wir sehr viel Wert und das ist einer von",
+   "zeilen": [
+    "Auf die Qualität legen wir sehr",
+    "viel Wert und das ist einer von"
+   ],
+   "start": 0.08,
+   "ende": 3.2,
+   "frameVon": 2,
+   "frameBis": 80
+  },
+  {
+   "block": 1,
+   "person": "Julia",
+   "text": "den größten Grundsätzen, die uns in der Ausbildung schon",
+   "zeilen": [
+    "den größten Grundsätzen, die",
+    "uns in der Ausbildung schon"
+   ],
+   "start": 3.28,
+   "ende": 5.42,
+   "frameVon": 82,
+   "frameBis": 136
+  },
+  {
+   "block": 1,
+   "person": "Julia",
+   "text": "beigebracht worden sind.",
+   "zeilen": [
+    "beigebracht worden sind."
+   ],
+   "start": 5.5,
+   "ende": 6.7,
+   "frameVon": 138,
+   "frameBis": 168
+  },
+  {
+   "block": 1,
+   "person": "Julia",
+   "text": "Von Anfang an hundert Prozent und nichts anderes.",
+   "zeilen": [
+    "Von Anfang an hundert",
+    "Prozent und nichts anderes."
+   ],
+   "start": 6.78,
+   "ende": 9.26,
+   "frameVon": 170,
+   "frameBis": 232
+  },
+  {
+   "block": 2,
+   "person": "Marcel Mauer",
+   "text": "Hier das Arbeitsklima ist überragend.",
+   "zeilen": [
+    "Hier das Arbeitsklima",
+    "ist überragend."
+   ],
+   "start": 22.3,
+   "ende": 23.96,
+   "frameVon": 558,
+   "frameBis": 599
+  },
+  {
+   "block": 2,
+   "person": "Marcel Mauer",
+   "text": "Also wir sind eine kleine Familie.",
+   "zeilen": [
+    "Also wir sind eine",
+    "kleine Familie."
+   ],
+   "start": 24.04,
+   "ende": 25.82,
+   "frameVon": 601,
+   "frameBis": 646
+  },
+  {
+   "block": 2,
+   "person": "Marcel Mauer",
+   "text": "Man kann offen miteinander reden, vernünftig und es wird auch",
+   "zeilen": [
+    "Man kann offen miteinander reden,",
+    "vernünftig und es wird auch"
+   ],
+   "start": 25.98,
+   "ende": 28.48,
+   "frameVon": 650,
+   "frameBis": 712
+  },
+  {
+   "block": 2,
+   "person": "Marcel Mauer",
+   "text": "angenommen.",
+   "zeilen": [
+    "angenommen."
+   ],
+   "start": 28.56,
+   "ende": 29.94,
+   "frameVon": 714,
+   "frameBis": 748
+  },
+  {
+   "block": 3,
+   "person": "Markus",
+   "text": "Also die Fehlerkultur ist bei uns sehr offen — ständiger",
+   "zeilen": [
+    "Also die Fehlerkultur ist bei",
+    "uns sehr offen — ständiger"
+   ],
+   "start": 30.0,
+   "ende": 32.82,
+   "frameVon": 750,
+   "frameBis": 820
+  },
+  {
+   "block": 3,
+   "person": "Markus",
+   "text": "Verbesserungsweg.",
+   "zeilen": [
+    "Verbesserungsweg."
+   ],
+   "start": 32.9,
+   "ende": 34.1,
+   "frameVon": 822,
+   "frameBis": 852
+  },
+  {
+   "block": 4,
+   "person": "Alexander Roth",
+   "text": "Wir machen privat viel, gehen was essen.",
+   "zeilen": [
+    "Wir machen privat",
+    "viel, gehen was essen."
+   ],
+   "start": 34.5,
+   "ende": 36.06,
+   "frameVon": 862,
+   "frameBis": 902
+  },
+  {
+   "block": 4,
+   "person": "Alexander Roth",
+   "text": "Das Teambuilding ist dann viel besser, als wenn man jetzt nur in",
+   "zeilen": [
+    "Das Teambuilding ist dann viel",
+    "besser, als wenn man jetzt nur in"
+   ],
+   "start": 36.28,
+   "ende": 38.86,
+   "frameVon": 907,
+   "frameBis": 972
+  },
+  {
+   "block": 4,
+   "person": "Alexander Roth",
+   "text": "die Arbeit kommt, dann arbeitet man, geht wieder nach Hause.",
+   "zeilen": [
+    "die Arbeit kommt, dann arbeitet",
+    "man, geht wieder nach Hause."
+   ],
+   "start": 38.94,
+   "ende": 40.9,
+   "frameVon": 974,
+   "frameBis": 1022
+  },
+  {
+   "block": 4,
+   "person": "Alexander Roth",
+   "text": "Finde ich jetzt nicht so, du solltest schon deinen Spaß haben dran.",
+   "zeilen": [
+    "Finde ich jetzt nicht so, du solltest",
+    "schon deinen Spaß haben dran."
+   ],
+   "start": 41.12,
+   "ende": 44.2,
+   "frameVon": 1028,
+   "frameBis": 1105
+  },
+  {
+   "block": 5,
+   "person": "Tobi",
+   "text": "Bei uns wird jeder gleich behandelt.",
+   "zeilen": [
+    "Bei uns wird jeder",
+    "gleich behandelt."
+   ],
+   "start": 44.26,
+   "ende": 45.94,
+   "frameVon": 1106,
+   "frameBis": 1148
+  },
+  {
+   "block": 5,
+   "person": "Tobi",
+   "text": "Wir haben ja keine Meisterhierarchie, gibt's bei uns überhaupt nicht.",
+   "zeilen": [
+    "Wir haben ja keine Meisterhierarchie,",
+    "gibt's bei uns überhaupt nicht."
+   ],
+   "start": 46.44,
+   "ende": 50.65,
+   "frameVon": 1161,
+   "frameBis": 1266
+  },
+  {
+   "block": 6,
+   "person": "Julia",
+   "text": "Ja, wir haben ja hier ein super Team, einen super Umgang und",
+   "zeilen": [
+    "Ja, wir haben ja hier ein super",
+    "Team, einen super Umgang und"
+   ],
+   "start": 50.94,
+   "ende": 53.7,
+   "frameVon": 1274,
+   "frameBis": 1342
+  },
+  {
+   "block": 6,
+   "person": "Julia",
+   "text": "ohne das Team würde es definitiv nicht gehen.",
+   "zeilen": [
+    "ohne das Team würde es",
+    "definitiv nicht gehen."
+   ],
+   "start": 53.78,
+   "ende": 55.92,
+   "frameVon": 1344,
+   "frameBis": 1398
+  },
+  {
+   "block": 6,
+   "person": "Julia",
+   "text": "Das macht einen Riesenteil aus.",
+   "zeilen": [
+    "Das macht einen Riesenteil aus."
+   ],
+   "start": 56.3,
+   "ende": 57.82,
+   "frameVon": 1408,
+   "frameBis": 1446
+  },
+  {
+   "block": 7,
+   "person": "Nico",
+   "text": "Was mich sehr überrascht hat, ist, wie man sich dann wirklich",
+   "zeilen": [
+    "Was mich sehr überrascht hat,",
+    "ist, wie man sich dann wirklich"
+   ],
+   "start": 59.02,
+   "ende": 60.9,
+   "frameVon": 1476,
+   "frameBis": 1522
+  },
+  {
+   "block": 7,
+   "person": "Nico",
+   "text": "weiterentwickelt, wenn man arbeitet.",
+   "zeilen": [
+    "weiterentwickelt,",
+    "wenn man arbeitet."
+   ],
+   "start": 60.98,
+   "ende": 62.18,
+   "frameVon": 1524,
+   "frameBis": 1554
+  },
+  {
+   "block": 7,
+   "person": "Nico",
+   "text": "Man wird einfach reifer, man wird erwachsener.",
+   "zeilen": [
+    "Man wird einfach reifer,",
+    "man wird erwachsener."
+   ],
+   "start": 62.26,
+   "ende": 64.4,
+   "frameVon": 1556,
+   "frameBis": 1610
+  },
+  {
+   "block": 8,
+   "person": "Louis Endres",
+   "text": "Meine Liebe zu den LKWs habe ich schon seit klein auf.",
+   "zeilen": [
+    "Meine Liebe zu den LKWs habe",
+    "ich schon seit klein auf."
+   ],
+   "start": 90.1,
+   "ende": 91.84,
+   "frameVon": 2252,
+   "frameBis": 2296
+  },
+  {
+   "block": 8,
+   "person": "Louis Endres",
+   "text": "An den großen LKWs zu schrauben, macht einfach einen Haufen",
+   "zeilen": [
+    "An den großen LKWs zu schrauben,",
+    "macht einfach einen Haufen"
+   ],
+   "start": 92.0,
+   "ende": 93.91,
+   "frameVon": 2300,
+   "frameBis": 2348
+  },
+  {
+   "block": 8,
+   "person": "Louis Endres",
+   "text": "Spaß.",
+   "zeilen": [
+    "Spaß."
+   ],
+   "start": 93.99,
+   "ende": 95.19,
+   "frameVon": 2350,
+   "frameBis": 2380
+  },
+  {
+   "block": 9,
+   "person": "Lara",
+   "text": "Früher, als ich klein war, mein Vater war halt schon immer",
+   "zeilen": [
+    "Früher, als ich klein war, mein",
+    "Vater war halt schon immer"
+   ],
+   "start": 95.62,
+   "ende": 97.78,
+   "frameVon": 2390,
+   "frameBis": 2444
+  },
+  {
+   "block": 9,
+   "person": "Lara",
+   "text": "LKW-Fahrer und dadurch bin ich halt mit LKWs immer groß",
+   "zeilen": [
+    "LKW-Fahrer und dadurch bin",
+    "ich halt mit LKWs immer groß"
+   ],
+   "start": 97.88,
+   "ende": 101.08,
+   "frameVon": 2447,
+   "frameBis": 2527
+  },
+  {
+   "block": 9,
+   "person": "Lara",
+   "text": "geworden.",
+   "zeilen": [
+    "geworden."
+   ],
+   "start": 101.16,
+   "ende": 102.36,
+   "frameVon": 2529,
+   "frameBis": 2559
+  },
+  {
+   "block": 9,
+   "person": "Lara",
+   "text": "Da habe ich direkt gesagt: „Muss ich mich hier bewerben.“",
+   "zeilen": [
+    "Da habe ich direkt gesagt:",
+    "„Muss ich mich hier bewerben.“"
+   ],
+   "start": 102.44,
+   "ende": 104.17,
+   "frameVon": 2561,
+   "frameBis": 2604
+  },
+  {
+   "block": 10,
+   "person": "Hannes Husslein",
+   "text": "Das sind schon sehr große Maschinen, sehr beeindruckend auf jeden Fall.",
+   "zeilen": [
+    "Das sind schon sehr große Maschinen,",
+    "sehr beeindruckend auf jeden Fall."
+   ],
+   "start": 103.9,
+   "ende": 107.4,
+   "frameVon": 2598,
+   "frameBis": 2685
+  },
+  {
+   "block": 11,
+   "person": "Marcel Mauer",
+   "text": "Wenn ich mit meinem Sohn fahre, immer wenn er einen MAN sieht,",
+   "zeilen": [
+    "Wenn ich mit meinem Sohn fahre,",
+    "immer wenn er einen MAN sieht,"
+   ],
+   "start": 107.5,
+   "ende": 110.02,
+   "frameVon": 2688,
+   "frameBis": 2750
+  },
+  {
+   "block": 11,
+   "person": "Marcel Mauer",
+   "text": "schreit er: „Papa, schau, da ist ein MAN.“ Manchmal kann ich",
+   "zeilen": [
+    "schreit er: „Papa, schau, da",
+    "ist ein MAN.“ Manchmal kann ich"
+   ],
+   "start": 110.1,
+   "ende": 112.54,
+   "frameVon": 2752,
+   "frameBis": 2814
+  },
+  {
+   "block": 11,
+   "person": "Marcel Mauer",
+   "text": "auch sagen, ich habe ihn repariert und dann ist er immer sehr",
+   "zeilen": [
+    "auch sagen, ich habe ihn repariert",
+    "und dann ist er immer sehr"
+   ],
+   "start": 112.62,
+   "ende": 114.88,
+   "frameVon": 2816,
+   "frameBis": 2872
+  },
+  {
+   "block": 11,
+   "person": "Marcel Mauer",
+   "text": "neugierig und dann erzähle ich stolz davon, was ich gemacht habe.",
+   "zeilen": [
+    "neugierig und dann erzähle ich",
+    "stolz davon, was ich gemacht habe."
+   ],
+   "start": 114.96,
+   "ende": 118.5,
+   "frameVon": 2874,
+   "frameBis": 2962
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "text": "Also die Besonderheit bei der MAN und speziell im",
+   "zeilen": [
+    "Also die Besonderheit bei",
+    "der MAN und speziell im"
+   ],
+   "start": 118.58,
+   "ende": 120.43,
+   "frameVon": 2964,
+   "frameBis": 3011
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "text": "Nutzfahrzeugbereich ist, dass die Fahrzeuge halt einfach nicht",
+   "zeilen": [
+    "Nutzfahrzeugbereich ist, dass",
+    "die Fahrzeuge halt einfach nicht"
+   ],
+   "start": 120.51,
+   "ende": 122.56,
+   "frameVon": 3013,
+   "frameBis": 3064
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "text": "von der Stange sind.",
+   "zeilen": [
+    "von der Stange sind."
+   ],
+   "start": 122.64,
+   "ende": 123.84,
+   "frameVon": 3066,
+   "frameBis": 3096
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "text": "Die sind einfach besonders.",
+   "zeilen": [
+    "Die sind einfach besonders."
+   ],
+   "start": 123.92,
+   "ende": 125.12,
+   "frameVon": 3098,
+   "frameBis": 3128
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "text": "Macht's natürlich unabdinglich, dass die Mitarbeiter, die dann",
+   "zeilen": [
+    "Macht's natürlich unabdinglich,",
+    "dass die Mitarbeiter, die dann"
+   ],
+   "start": 125.2,
+   "ende": 126.83,
+   "frameVon": 3130,
+   "frameBis": 3171
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "text": "daran arbeiten und die Azubis, die dann dort ausgebildet werden,",
+   "zeilen": [
+    "daran arbeiten und die Azubis,",
+    "die dann dort ausgebildet werden,"
+   ],
+   "start": 126.91,
+   "ende": 129.56,
+   "frameVon": 3173,
+   "frameBis": 3239
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "text": "dass die halt absolute Spezialkräfte sind.",
+   "zeilen": [
+    "dass die halt absolute",
+    "Spezialkräfte sind."
+   ],
+   "start": 129.94,
+   "ende": 131.66,
+   "frameVon": 3248,
+   "frameBis": 3292
+  },
+  {
+   "block": 12,
+   "person": "Mark Ciattei",
+   "text": "Im LKW-Bereich wird halt wirklich noch repariert.",
+   "zeilen": [
+    "Im LKW-Bereich wird halt",
+    "wirklich noch repariert."
+   ],
+   "start": 131.82,
+   "ende": 133.36,
+   "frameVon": 3296,
+   "frameBis": 3334
+  }
+ ]
+}

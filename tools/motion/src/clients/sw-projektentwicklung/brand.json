@@ -1,0 +1,19 @@
+{
+  "name": "SW Projektentwicklung",
+  "colors": {
+    "primary": "#FF8022",
+    "secondary": "#2E2D2C",
+    "accent": "#FF9A4D",
+    "background": "#FFFFFF",
+    "text": "#2E2D2C"
+  },
+  "fonts": {
+    "heading": "Montserrat",
+    "body": "Montserrat"
+  },
+  "logo": "",
+  "style": {
+    "borderRadius": 8,
+    "animationSpeed": "fast"
+  }
+}

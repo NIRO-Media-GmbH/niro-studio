@@ -1,0 +1,19 @@
+{
+  "name": "Seniorenstiftung Prenzlauer Berg",
+  "colors": {
+    "primary": "#0E7EBE",
+    "secondary": "#0B5E8F",
+    "accent": "#3AA5D8",
+    "background": "#FFFFFF",
+    "text": "#1E2A32"
+  },
+  "fonts": {
+    "heading": "Mulish",
+    "body": "Mulish"
+  },
+  "logo": "clients/seniorenstiftung/logo.svg",
+  "style": {
+    "borderRadius": 16,
+    "animationSpeed": "normal"
+  }
+}

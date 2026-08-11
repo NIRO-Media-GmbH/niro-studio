@@ -1,0 +1,380 @@
+<h2>Persistentes Dach-Parallelogramm &mdash; 2 Varianten</h2>
+<p class="subtitle">Farbe: <span style="color:#D83C31; font-weight:700;">#D83C31</span> &bull; Rein visuell verst&auml;ndlich &bull; Dach bleibt immer sichtbar &bull; 37 Sek.</p>
+
+<div class="cards">
+
+  <!-- VARIANT A: Flat/2D -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)" style="border: 2px solid transparent;">
+    <div class="card-image" style="background: #0d1117; height: auto; padding: 20px;">
+
+      <!-- Title -->
+      <div style="text-align: center; margin-bottom: 16px;">
+        <span style="font-size: 11px; letter-spacing: 3px; color: #D83C31; font-weight: 600;">VARIANTE A &mdash; FLAT / 2D ILLUSTRATION</span>
+      </div>
+
+      <!-- Storyboard grid -->
+      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+
+        <!-- S1: Dach erscheint -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.2);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">0-3s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- Parallelogram roof -->
+              <polygon points="20,35 80,35 90,15 30,15" fill="none" stroke="#D83C31" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+              <!-- Tiles drawing in -->
+              <line x1="35" y1="15" x2="25" y2="35" stroke="#D83C31" stroke-width="0.5" opacity="0.3"/>
+              <line x1="45" y1="15" x2="35" y2="35" stroke="#D83C31" stroke-width="0.5" opacity="0.3"/>
+              <line x1="55" y1="15" x2="45" y2="35" stroke="#D83C31" stroke-width="0.5" opacity="0.3"/>
+              <line x1="65" y1="15" x2="55" y2="35" stroke="#D83C31" stroke-width="0.5" opacity="0.3"/>
+              <line x1="75" y1="15" x2="65" y2="35" stroke="#D83C31" stroke-width="0.5" opacity="0.3"/>
+              <line x1="85" y1="15" x2="75" y2="35" stroke="#D83C31" stroke-width="0.5" opacity="0.3"/>
+              <!-- Horizontal rows -->
+              <line x1="22" y1="25" x2="85" y2="25" stroke="#D83C31" stroke-width="0.5" opacity="0.3"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Dach zeichnet sich</div>
+        </div>
+
+        <!-- S2: Regen & Sonne -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.2);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">3-9s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- Roof solid -->
+              <polygon points="20,35 80,35 90,15 30,15" fill="#8B6914" stroke="#6B4F0A" stroke-width="1"/>
+              <!-- Tile lines -->
+              <line x1="35" y1="15" x2="25" y2="35" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="45" y1="15" x2="35" y2="35" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="55" y1="15" x2="45" y2="35" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="65" y1="15" x2="55" y2="35" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="75" y1="15" x2="65" y2="35" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="85" y1="15" x2="75" y2="35" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="22" y1="25" x2="85" y2="25" stroke="#5a4008" stroke-width="0.5"/>
+              <!-- Rain drops -->
+              <line x1="30" y1="2" x2="28" y2="10" stroke="#64b4ff" stroke-width="1" opacity="0.7"/>
+              <line x1="50" y1="0" x2="48" y2="9" stroke="#64b4ff" stroke-width="1" opacity="0.6"/>
+              <line x1="70" y1="3" x2="68" y2="11" stroke="#64b4ff" stroke-width="1" opacity="0.8"/>
+              <line x1="42" y1="5" x2="40" y2="12" stroke="#64b4ff" stroke-width="1" opacity="0.5"/>
+              <!-- Sun -->
+              <circle cx="88" cy="8" r="6" fill="#FFD700" opacity="0.5"/>
+              <!-- Frost crystals -->
+              <text x="15" y="55" font-size="8" fill="#a0d0ff" opacity="0.5">&#10052;</text>
+              <text x="78" y="55" font-size="6" fill="#a0d0ff" opacity="0.4">&#10052;</text>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Regen, Sonne, Frost</div>
+        </div>
+
+        <!-- S3: Verwitterung -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.2);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">9-15s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- Damaged roof -->
+              <polygon points="20,35 80,35 90,15 30,15" fill="#5a5a3a" stroke="#4a4a2a" stroke-width="1"/>
+              <!-- Cracked tiles -->
+              <line x1="35" y1="15" x2="25" y2="35" stroke="#3d3d2a" stroke-width="0.8"/>
+              <line x1="45" y1="15" x2="35" y2="35" stroke="#3d3d2a" stroke-width="0.8"/>
+              <line x1="55" y1="15" x2="45" y2="35" stroke="#3d3d2a" stroke-width="0.8"/>
+              <line x1="65" y1="15" x2="55" y2="35" stroke="#3d3d2a" stroke-width="0.8"/>
+              <line x1="75" y1="15" x2="65" y2="35" stroke="#3d3d2a" stroke-width="0.8"/>
+              <line x1="85" y1="15" x2="75" y2="35" stroke="#3d3d2a" stroke-width="0.8"/>
+              <line x1="22" y1="25" x2="85" y2="25" stroke="#3d3d2a" stroke-width="0.5"/>
+              <!-- Moss/algae blobs growing -->
+              <ellipse cx="38" cy="20" rx="5" ry="3" fill="#4a7c3f" opacity="0.7"/>
+              <ellipse cx="55" cy="28" rx="6" ry="4" fill="#3d6b33" opacity="0.8"/>
+              <ellipse cx="70" cy="18" rx="4" ry="3" fill="#2d5a24" opacity="0.6"/>
+              <ellipse cx="48" cy="32" rx="7" ry="3" fill="#4a7c3f" opacity="0.7"/>
+              <!-- Cracks -->
+              <path d="M42,17 L44,22 L41,26" fill="none" stroke="#2a2a1a" stroke-width="0.5"/>
+              <path d="M62,20 L65,24" fill="none" stroke="#2a2a1a" stroke-width="0.5"/>
+              <!-- Water seeping in (arrows) -->
+              <path d="M35,36 L35,45" stroke="#64b4ff" stroke-width="0.8" opacity="0.5" marker-end="url(#arr)"/>
+              <path d="M55,36 L55,48" stroke="#64b4ff" stroke-width="0.8" opacity="0.4"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Moos w&auml;chst, Risse</div>
+        </div>
+
+        <!-- S4: REM L&ouml;sung -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.3);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">15-22s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- Half-coated roof (left coated, right damaged) -->
+              <clipPath id="leftHalf">
+                <polygon points="20,35 50,35 60,15 30,15"/>
+              </clipPath>
+              <clipPath id="rightHalf">
+                <polygon points="50,35 80,35 90,15 60,15"/>
+              </clipPath>
+              <!-- Coated left -->
+              <polygon points="20,35 80,35 90,15 30,15" fill="#D83C31" clip-path="url(#leftHalf)" opacity="0.9"/>
+              <!-- Damaged right -->
+              <polygon points="20,35 80,35 90,15 30,15" fill="#5a5a3a" clip-path="url(#rightHalf)"/>
+              <ellipse cx="70" cy="22" rx="4" ry="3" fill="#4a7c3f" opacity="0.6"/>
+              <!-- Wipe line -->
+              <line x1="55" y1="12" x2="45" y2="38" stroke="white" stroke-width="2" opacity="0.9"/>
+              <!-- Shine on coated side -->
+              <line x1="33" y1="20" x2="48" y2="20" stroke="white" stroke-width="0.5" opacity="0.5"/>
+              <line x1="28" y1="28" x2="42" y2="28" stroke="white" stroke-width="0.3" opacity="0.4"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Beschichtungs-Wipe</div>
+        </div>
+
+        <!-- S5: Wasser perlt ab -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.3);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">22-30s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- Fully coated roof -->
+              <polygon points="20,35 80,35 90,15 30,15" fill="#D83C31" stroke="#B82E25" stroke-width="1"/>
+              <!-- Tile lines (subtle) -->
+              <line x1="35" y1="15" x2="25" y2="35" stroke="#B82E25" stroke-width="0.3" opacity="0.5"/>
+              <line x1="45" y1="15" x2="35" y2="35" stroke="#B82E25" stroke-width="0.3" opacity="0.5"/>
+              <line x1="55" y1="15" x2="45" y2="35" stroke="#B82E25" stroke-width="0.3" opacity="0.5"/>
+              <line x1="65" y1="15" x2="55" y2="35" stroke="#B82E25" stroke-width="0.3" opacity="0.5"/>
+              <line x1="75" y1="15" x2="65" y2="35" stroke="#B82E25" stroke-width="0.3" opacity="0.5"/>
+              <line x1="85" y1="15" x2="75" y2="35" stroke="#B82E25" stroke-width="0.3" opacity="0.5"/>
+              <line x1="22" y1="25" x2="85" y2="25" stroke="#B82E25" stroke-width="0.3" opacity="0.5"/>
+              <!-- Water droplets rolling off -->
+              <circle cx="32" cy="37" r="2.5" fill="#64b4ff" opacity="0.7"/>
+              <circle cx="45" cy="40" r="2" fill="#64b4ff" opacity="0.6"/>
+              <circle cx="58" cy="38" r="3" fill="#64b4ff" opacity="0.5"/>
+              <!-- Vapor/steam going up -->
+              <path d="M50,12 Q52,8 50,4" fill="none" stroke="white" stroke-width="0.5" opacity="0.3"/>
+              <path d="M60,10 Q62,6 60,2" fill="none" stroke="white" stroke-width="0.5" opacity="0.2"/>
+              <path d="M70,12 Q72,8 70,5" fill="none" stroke="white" stroke-width="0.5" opacity="0.25"/>
+              <!-- Shine -->
+              <line x1="35" y1="22" x2="75" y2="22" stroke="white" stroke-width="0.4" opacity="0.4"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Abperlen + Dampf</div>
+        </div>
+
+        <!-- S6: Logo -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.3);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">30-37s</div>
+          <div style="position: relative; height: 65px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="font-size: 18px; font-weight: 900; color: #D83C31; letter-spacing: 4px;">REM</div>
+            <div style="font-size: 6px; color: rgba(255,255,255,0.4); margin-top: 4px; letter-spacing: 1px;">Malerfachbetrieb</div>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; border: 1px solid rgba(216,60,49,0.15); border-radius: 50%;"></div>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Logo + Glow</div>
+        </div>
+
+      </div>
+
+      <!-- Description -->
+      <div style="margin-top: 16px; padding: 12px; background: rgba(216,60,49,0.06); border-radius: 6px; border-left: 3px solid #D83C31;">
+        <p style="margin: 0; font-size: 12px; color: #ccc; line-height: 1.6;">
+          <strong style="color: #D83C31;">Flat 2D:</strong> Das Dach als Parallelogramm ist das persistente Hauptelement. Alle Effekte &mdash; Regen (ParticleField), Moos (ShapeMorph), Beschichtung (CircleWipe/Clip-Wipe), Tropfen (Partikel-Physik) &mdash; passieren direkt AUF dem Dach. Dunkler Hintergrund, das Dach leuchtet. Clean Vector-Stil wie ein hochwertiges Erkl&auml;rvideo.
+        </p>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A &mdash; Flat 2D Erkl&auml;rvideo-Stil</h3>
+      <p>Saubere Vektorgrafik, das Parallelogramm-Dach ist immer pr&auml;sent. Regen als Partikel, Moos als organisch wachsende SVG-Formen, Beschichtung als befriedigender Wipe von links nach rechts. Dampfpartikel steigen auf. Alles auf dunklem Hintergrund mit <span style="color:#D83C31">REM-Rot</span> als Highlight.</p>
+    </div>
+  </div>
+
+  <!-- VARIANT B: 3D-Style -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)" style="border: 2px solid transparent;">
+    <div class="card-image" style="background: #0d1117; height: auto; padding: 20px;">
+
+      <!-- Title -->
+      <div style="text-align: center; margin-bottom: 16px;">
+        <span style="font-size: 11px; letter-spacing: 3px; color: #D83C31; font-weight: 600;">VARIANTE B &mdash; MODERNE 3D ANIMATION</span>
+      </div>
+
+      <!-- Storyboard grid -->
+      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+
+        <!-- S1: 3D Dach baut sich auf -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.2);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">0-3s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- 3D parallelogram with depth -->
+              <!-- Front face -->
+              <polygon points="15,38 75,38 85,18 25,18" fill="#c0392b" stroke="#962d22" stroke-width="0.8"/>
+              <!-- Top edge (3D depth) -->
+              <polygon points="25,18 85,18 90,14 30,14" fill="#D83C31" stroke="#B82E25" stroke-width="0.5"/>
+              <!-- Right edge -->
+              <polygon points="75,38 85,18 90,14 80,34" fill="#a83028" stroke="#962d22" stroke-width="0.5"/>
+              <!-- Tile grooves (3D) -->
+              <line x1="35" y1="18" x2="25" y2="38" stroke="#962d22" stroke-width="0.6"/>
+              <line x1="45" y1="18" x2="35" y2="38" stroke="#962d22" stroke-width="0.6"/>
+              <line x1="55" y1="18" x2="45" y2="38" stroke="#962d22" stroke-width="0.6"/>
+              <line x1="65" y1="18" x2="55" y2="38" stroke="#962d22" stroke-width="0.6"/>
+              <line x1="75" y1="18" x2="65" y2="38" stroke="#962d22" stroke-width="0.6"/>
+              <!-- Row line -->
+              <line x1="20" y1="28" x2="80" y2="28" stroke="#962d22" stroke-width="0.5"/>
+              <!-- Subtle shadow -->
+              <ellipse cx="52" cy="48" rx="35" ry="4" fill="rgba(0,0,0,0.2)"/>
+              <!-- Specular highlight -->
+              <line x1="30" y1="22" x2="55" y2="22" stroke="white" stroke-width="0.3" opacity="0.3"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">3D Dach mit Tiefe</div>
+        </div>
+
+        <!-- S2: Rain & weather in 3D space -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.2);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">3-9s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- 3D roof -->
+              <polygon points="15,38 75,38 85,18 25,18" fill="#8B6914" stroke="#6B4F0A" stroke-width="0.8"/>
+              <polygon points="25,18 85,18 90,14 30,14" fill="#9a7818" stroke="#7a5e10" stroke-width="0.5"/>
+              <polygon points="75,38 85,18 90,14 80,34" fill="#7a5e10" stroke="#6B4F0A" stroke-width="0.5"/>
+              <!-- Tile grooves -->
+              <line x1="35" y1="18" x2="25" y2="38" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="45" y1="18" x2="35" y2="38" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="55" y1="18" x2="45" y2="38" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="65" y1="18" x2="55" y2="38" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="75" y1="18" x2="65" y2="38" stroke="#5a4008" stroke-width="0.5"/>
+              <line x1="20" y1="28" x2="80" y2="28" stroke="#5a4008" stroke-width="0.5"/>
+              <!-- 3D rain drops (perspective) -->
+              <ellipse cx="35" cy="5" rx="1" ry="3" fill="#64b4ff" opacity="0.7"/>
+              <ellipse cx="52" cy="2" rx="0.8" ry="2.5" fill="#64b4ff" opacity="0.6"/>
+              <ellipse cx="68" cy="8" rx="1.2" ry="3.5" fill="#64b4ff" opacity="0.8"/>
+              <ellipse cx="42" cy="10" rx="0.6" ry="2" fill="#64b4ff" opacity="0.5"/>
+              <!-- Splash effects on roof -->
+              <circle cx="40" cy="22" r="3" fill="none" stroke="#64b4ff" stroke-width="0.3" opacity="0.4"/>
+              <circle cx="60" cy="30" r="2" fill="none" stroke="#64b4ff" stroke-width="0.3" opacity="0.3"/>
+              <!-- Shadow -->
+              <ellipse cx="52" cy="48" rx="35" ry="4" fill="rgba(0,0,0,0.2)"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">3D Regen + Splashes</div>
+        </div>
+
+        <!-- S3: 3D damage + moss -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.2);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">9-15s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- 3D roof damaged -->
+              <polygon points="15,38 75,38 85,18 25,18" fill="#5a5a3a" stroke="#4a4a2a" stroke-width="0.8"/>
+              <polygon points="25,18 85,18 90,14 30,14" fill="#6a6a4a" stroke="#5a5a3a" stroke-width="0.5"/>
+              <polygon points="75,38 85,18 90,14 80,34" fill="#4a4a2a" stroke="#3d3d1a" stroke-width="0.5"/>
+              <!-- 3D Moss blobs (with shadow) -->
+              <ellipse cx="38" cy="23" rx="6" ry="3" fill="#4a7c3f"/>
+              <ellipse cx="38" cy="22" rx="5" ry="2.5" fill="#5a9c4f"/>
+              <ellipse cx="55" cy="30" rx="7" ry="4" fill="#3d6b33"/>
+              <ellipse cx="55" cy="29" rx="6" ry="3" fill="#4a8c3f"/>
+              <ellipse cx="68" cy="21" rx="5" ry="3" fill="#2d5a24"/>
+              <ellipse cx="68" cy="20" rx="4" ry="2.5" fill="#3d7b34"/>
+              <!-- Lichen spots -->
+              <circle cx="30" cy="33" r="2" fill="#c4b78a" opacity="0.5"/>
+              <circle cx="72" cy="32" r="1.5" fill="#b8a87a" opacity="0.4"/>
+              <!-- Shadow -->
+              <ellipse cx="52" cy="48" rx="35" ry="4" fill="rgba(0,0,0,0.25)"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">3D Moos + Flechten</div>
+        </div>
+
+        <!-- S4: 3D Coating wipe -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.3);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">15-22s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <defs>
+                <clipPath id="coatedArea3d"><polygon points="15,38 50,38 60,18 25,18"/></clipPath>
+                <clipPath id="dirtyArea3d"><polygon points="50,38 75,38 85,18 60,18"/></clipPath>
+              </defs>
+              <!-- Coated half -->
+              <polygon points="15,38 75,38 85,18 25,18" fill="#D83C31" clip-path="url(#coatedArea3d)"/>
+              <!-- Dirty half -->
+              <polygon points="15,38 75,38 85,18 25,18" fill="#5a5a3a" clip-path="url(#dirtyArea3d)"/>
+              <ellipse cx="68" cy="25" rx="4" ry="2" fill="#4a7c3f" opacity="0.5"/>
+              <!-- Top edge coated -->
+              <polygon points="25,18 60,18 65,14 30,14" fill="#e84438"/>
+              <polygon points="60,18 85,18 90,14 65,14" fill="#6a6a4a"/>
+              <!-- Wipe line (glowing) -->
+              <line x1="55" y1="12" x2="45" y2="40" stroke="white" stroke-width="2.5" opacity="0.9"/>
+              <line x1="55" y1="12" x2="45" y2="40" stroke="#D83C31" stroke-width="1" opacity="0.5"/>
+              <!-- Sparkles on wipe line -->
+              <circle cx="52" cy="18" r="1.5" fill="white" opacity="0.8"/>
+              <circle cx="49" cy="28" r="1" fill="white" opacity="0.6"/>
+              <circle cx="47" cy="35" r="1.2" fill="white" opacity="0.7"/>
+              <!-- Shadow -->
+              <ellipse cx="52" cy="48" rx="35" ry="4" fill="rgba(0,0,0,0.2)"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Beschichtungs-Wipe + Sparkle</div>
+        </div>
+
+        <!-- S5: 3D water beading -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.3);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">22-30s</div>
+          <div style="position: relative; height: 65px; overflow: hidden;">
+            <svg viewBox="0 0 100 65" style="width: 100%; height: 100%;">
+              <!-- 3D Coated roof -->
+              <polygon points="15,38 75,38 85,18 25,18" fill="#D83C31" stroke="#B82E25" stroke-width="0.8"/>
+              <polygon points="25,18 85,18 90,14 30,14" fill="#e84438" stroke="#D83C31" stroke-width="0.5"/>
+              <polygon points="75,38 85,18 90,14 80,34" fill="#B82E25" stroke="#a02820" stroke-width="0.5"/>
+              <!-- Tile lines (subtle) -->
+              <line x1="35" y1="18" x2="25" y2="38" stroke="#B82E25" stroke-width="0.3" opacity="0.4"/>
+              <line x1="45" y1="18" x2="35" y2="38" stroke="#B82E25" stroke-width="0.3" opacity="0.4"/>
+              <line x1="55" y1="18" x2="45" y2="38" stroke="#B82E25" stroke-width="0.3" opacity="0.4"/>
+              <line x1="65" y1="18" x2="55" y2="38" stroke="#B82E25" stroke-width="0.3" opacity="0.4"/>
+              <line x1="75" y1="18" x2="65" y2="38" stroke="#B82E25" stroke-width="0.3" opacity="0.4"/>
+              <line x1="20" y1="28" x2="80" y2="28" stroke="#B82E25" stroke-width="0.3" opacity="0.4"/>
+              <!-- 3D water beads -->
+              <ellipse cx="35" cy="24" rx="3" ry="1.5" fill="#64b4ff" opacity="0.6"/>
+              <ellipse cx="35" cy="23.5" rx="2.5" ry="1" fill="#88d0ff" opacity="0.4"/>
+              <circle cx="55" cy="31" r="2" fill="#64b4ff" opacity="0.5"/>
+              <!-- Water drops falling off edge -->
+              <ellipse cx="78" cy="40" rx="1.5" ry="2.5" fill="#64b4ff" opacity="0.6"/>
+              <ellipse cx="72" cy="43" rx="1" ry="2" fill="#64b4ff" opacity="0.4"/>
+              <!-- Steam/vapor -->
+              <path d="M40,14 C42,10 38,6 40,2" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+              <path d="M55,12 C57,8 53,5 55,1" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
+              <path d="M70,13 C72,9 68,6 70,3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+              <!-- Specular highlight -->
+              <line x1="30" y1="22" x2="70" y2="22" stroke="white" stroke-width="0.5" opacity="0.25"/>
+              <!-- Shadow -->
+              <ellipse cx="52" cy="48" rx="35" ry="4" fill="rgba(0,0,0,0.2)"/>
+            </svg>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Tropfen perlen ab + Dampf</div>
+        </div>
+
+        <!-- S6: Logo -->
+        <div style="background: #111827; border-radius: 6px; padding: 8px; border: 1px solid rgba(216,60,49,0.3);">
+          <div style="font-size: 7px; color: #D83C31; font-weight: 600; text-align: center; margin-bottom: 4px;">30-37s</div>
+          <div style="position: relative; height: 65px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="font-size: 18px; font-weight: 900; color: #D83C31; letter-spacing: 4px;">REM</div>
+            <div style="font-size: 6px; color: rgba(255,255,255,0.4); margin-top: 4px; letter-spacing: 1px;">Malerfachbetrieb</div>
+            <!-- Glow circles -->
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 1px solid rgba(216,60,49,0.2); border-radius: 50%;"></div>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; height: 55px; border: 1px solid rgba(216,60,49,0.1); border-radius: 50%;"></div>
+          </div>
+          <div style="font-size: 7px; color: rgba(255,255,255,0.4); text-align: center;">Logo + Glow</div>
+        </div>
+
+      </div>
+
+      <!-- Description -->
+      <div style="margin-top: 16px; padding: 12px; background: rgba(216,60,49,0.06); border-radius: 6px; border-left: 3px solid #D83C31;">
+        <p style="margin: 0; font-size: 12px; color: #ccc; line-height: 1.6;">
+          <strong style="color: #D83C31;">3D-Stil:</strong> Das gleiche Parallelogramm-Dach, aber mit isometrischer 3D-Tiefe &mdash; Schattenwurf, Seitenfl&auml;chen, Oberkante sichtbar. Regen hat Splashes mit 3D-Ringen, Moos hat Volumen (Licht/Schatten), die Beschichtungs-Wipe hat Sparkle-Partikel. Wasser-Tropfen haben realistische Spiegelungen. Premium wie ein moderner Produktfilm.
+        </p>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B &mdash; Moderne 3D-Isometrie</h3>
+      <p>Gleiche Story, aber das Dach hat isometrische 3D-Tiefe mit Oberkante und Seitenfl&auml;che. Regen erzeugt 3D-Splash-Ringe, Moos hat Volumen, die Beschichtung wipt mit Sparkle-Partikeln. Alles wirkt greifbar und hochwertig. In Remotion machbar &uuml;ber geschichtete SVGs mit Schatten und Lichteffekten.</p>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 20px; padding: 16px; background: rgba(216,60,49,0.08); border-radius: 8px; border-left: 3px solid #D83C31;">
+  <p style="margin: 0; font-size: 13px; color: #ccc;"><strong style="color: #D83C31;">Kern-Idee beider Varianten:</strong> Das <span style="color:#D83C31">Parallelogramm-Dach</span> ist IMMER sichtbar. Es durchl&auml;uft eine visuelle Transformation: Neu &rarr; Verwittert &rarr; Bewachsen &rarr; Beschichtet &rarr; Gesch&uuml;tzt. Text ist optional &mdash; die Animation erz&auml;hlt alles durch Bilder.</p>
+</div>

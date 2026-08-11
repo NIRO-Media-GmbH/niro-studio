@@ -1,0 +1,19 @@
+{
+  "name": "BumbleClean",
+  "colors": {
+    "primary": "#FFD700",
+    "secondary": "#C9A227",
+    "accent": "#FFE27A",
+    "background": "#050505",
+    "text": "#FFFFFF"
+  },
+  "fonts": {
+    "heading": "Inter",
+    "body": "Inter"
+  },
+  "logo": "clients/bumble-clean/logo.png",
+  "style": {
+    "borderRadius": 24,
+    "animationSpeed": "normal"
+  }
+}

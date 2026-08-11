@@ -1,0 +1,19 @@
+{
+  "name": "NIRO Media",
+  "colors": {
+    "primary": "#A1D334",
+    "secondary": "#1A211C",
+    "accent": "#7DD1FF",
+    "background": "#FFFFFF",
+    "text": "#1A211C"
+  },
+  "fonts": {
+    "heading": "Meutas",
+    "body": "Roboto"
+  },
+  "logo": "clients/niro/niro-symbol.svg",
+  "style": {
+    "borderRadius": 12,
+    "animationSpeed": "normal"
+  }
+}

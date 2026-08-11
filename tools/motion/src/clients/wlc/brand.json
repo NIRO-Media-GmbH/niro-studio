@@ -1,0 +1,40 @@
+{
+  "name": "WLC Würth-Logistik",
+  "colors": {
+    "primary": "#CC0000",
+    "secondary": "#262626",
+    "accent": "#FDC300",
+    "background": "#000000",
+    "text": "#FFFFFF"
+  },
+  "palette": {
+    "wuerthRot": "#CC0000",
+    "schwarz": "#000000",
+    "weiss": "#FFFFFF",
+    "grau25": "#BFBFBF",
+    "grau40": "#999999",
+    "grau55": "#737373",
+    "grau70": "#4D4D4D",
+    "grau85": "#262626",
+    "gelb": "#FDC300",
+    "dunkelrot": "#90112C",
+    "blau": "#004774",
+    "cyan": "#0093DD",
+    "gruen": "#008448"
+  },
+  "fonts": {
+    "heading": "Wuerth Global Extra Bold Cond",
+    "body": "Wuerth Global Book"
+  },
+  "logo": "clients/wlc/logo-white.png",
+  "assets": {
+    "logoWhite": "clients/wlc/logo-white.png",
+    "wappen": "clients/wlc/wappen.png"
+  },
+  "claim": "ALLES LAGER. ALLES WIR. ALLES HIER.",
+  "style": {
+    "borderRadius": 0,
+    "animationSpeed": "fast"
+  },
+  "notes": "Quelle: WLC Corporate Design Richtlinien 2025 (Stand 01/2025). Extra Bold Cond NUR für Titel, IMMER VERSALIEN. Text nur in Schwarz/Rot/Weiß. Grau-Stufen = Layoutfarben (Flächen/Linien, nie Text). Signalfarben sparsam, nie als Textfarbe. Hartes Tabu Projekt Recruiting: kein Deutschland-Wording."
+}

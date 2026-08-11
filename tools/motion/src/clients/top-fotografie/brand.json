@@ -1,0 +1,19 @@
+{
+  "name": "Top Fotografie",
+  "colors": {
+    "primary": "#104697",
+    "secondary": "#9D9D9C",
+    "accent": "#FFFFFF",
+    "background": "#104697",
+    "text": "#FFFFFF"
+  },
+  "fonts": {
+    "heading": "Open Sans",
+    "body": "Open Sans"
+  },
+  "logo": "",
+  "style": {
+    "borderRadius": 8,
+    "animationSpeed": "fast"
+  }
+}
