@@ -1,4 +1,13 @@
-# Sub-Repos und Projektdaten sind nicht Teil des Master-Repos
-tools/
+# Auf GitHub liegt das Werkzeug, nicht die Arbeit.
+#
+# Alles unter projects/ — Kundenmaterial, Renders, Schnittpläne, Protokolle —
+# bleibt ausschließlich lokal bzw. auf NAS/SSD. Die Werkzeuge unter tools/
+# bringen eigene .gitignore-Dateien mit (venv, node_modules, Medien).
+
 projects/
+
 .DS_Store
+
+# Arbeitsspuren der Session-Werkzeuge
+.superpowers/
+.claude/settings.local.json
