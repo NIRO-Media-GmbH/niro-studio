@@ -11,7 +11,7 @@
     "heading": "Inter",
     "body": "Inter"
   },
-  "logo": "",
+  "logo": "clients/rem-maler/logo.png",
   "style": {
     "borderRadius": 0,
     "animationSpeed": "fast"

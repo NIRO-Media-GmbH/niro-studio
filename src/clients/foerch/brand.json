@@ -1,0 +1,20 @@
+{
+  "name": "Förch",
+  "colors": {
+    "primary": "#004B93",
+    "secondary": "#1A1A1A",
+    "accent": "#E30613",
+    "background": "#FFFFFF",
+    "text": "#1A1A1A"
+  },
+  "fonts": {
+    "heading": "Inter",
+    "body": "Inter"
+  },
+  "logo": "",
+  "style": {
+    "borderRadius": 8,
+    "animationSpeed": "medium"
+  },
+  "notes": "CI UNBESTÄTIGT — Platzhalterwerte (Blau/Rot nach Förch-Webauftritt geschätzt). Vor erster CI-abhängiger Komposition Styleguide/Logo von Förch einholen und Werte mit David bestätigen. Das REC-Overlay (messevideos) nutzt bewusst KEINE CI-Farben (neutrale Kamera-UI: Weiß/Rot)."
+}

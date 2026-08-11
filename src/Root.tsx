@@ -70,12 +70,66 @@ import { TopFotografieDreiProbleme, dreiProblemeSchema, dreiProblemeDefaults } f
 import { RemDachbeschichtung, remDachbeschichtungSchema, remDachbeschichtungDefaults } from "./clients/rem-maler/projects/dachbeschichtung/Composition";
 import { RemDachbeschichtungV2, remDachV2Schema, remDachV2Defaults } from "./clients/rem-maler/projects/dachbeschichtung-v2/Composition";
 import { RemDachbeschichtungV2Premium, remDachV2PremiumSchema, remDachV2PremiumDefaults } from "./clients/rem-maler/projects/dachbeschichtung-v2-premium/Composition";
+import { RemGewerbedachReinigung, remGewerbedachSchema, remGewerbedachDefaults } from "./clients/rem-maler/projects/gewerbedach-reinigung/Composition";
+import { RemGewerbedachOverlay, remGewerbedachOverlaySchema, remGewerbedachOverlayDefaults } from "./clients/rem-maler/projects/gewerbedach-overlay/Composition";
 import { ManLagerCta, manLagerCtaSchema, manLagerCtaDefaults } from "./clients/man/projects/lager-ausbildung-cta/Composition";
+import {
+  ManWzFrame, manWzFrameSchema,
+  manWzFrameSoloDefaults, manWzFrameVersetztDefaults, manWzFrameDuoDefaults,
+  ManWzOpener, manWzOpenerSchema, manWzOpenerDefaults,
+  ManWzTrenner, manWzTrennerSchema, manWzTrennerDefaults,
+  ManWzInsert, manWzInsertSchema, manWzInsertDefaults,
+  ManWzEndcard, manWzEndcardSchema, manWzEndcardDefaults,
+  ManWz169Master, manWz169MasterSchema, manWz169MasterDefaults,
+} from "./clients/man/projects/wartezimmervideo/Composition";
 import { WTNErsterTag, ersterTagSchema, ersterTagDefaults } from "./clients/wtn/projects/erster-tag/Composition";
+import { FoerchRecOverlay, foerchRecOverlaySchema, foerchRecOverlayDefaults } from "./clients/foerch/projects/messevideos/RecOverlay";
+import {
+  WlcV6WortBattle, wlcWortBattleSchema, wlcWortBattleDefaults,
+  WlcV6Trio, wlcTrioSchema, wlcTrioDefaults,
+  WlcV6BeweisCard, wlcBeweisCardSchema, wlcBeweisCardDefaults,
+  WlcV6Outro, wlcOutroSchema, wlcOutroDefaults,
+} from "./clients/wlc/projects/recruiting-v6/Composition";
+import {
+  WlcTalkOverlay, wlcTalkOverlaySchema, wlcV4OverlayDefaults, wlcV5OverlayDefaults,
+  WlcJobEndcard, wlcJobEndcardSchema, wlcJobEndcardDefaults,
+} from "./clients/wlc/projects/recruiting-v4-v5/Composition";
+import {
+  WlcAzubiOverlay, wlcAzubiOverlaySchema, wlcV1OverlayDefaults, wlcV2OverlayDefaults,
+  WlcReporterOverlay, wlcReporterOverlaySchema, wlcV3OverlayDefaults,
+  WlcV7Overlay, wlcV7OverlaySchema, wlcV7OverlayDefaults,
+} from "./clients/wlc/projects/recruiting-v1-v3/Composition";
 import { WTNTechnik, technikSchema, technikDefaults } from "./clients/wtn/projects/technik/Composition";
 import { WTNTeamSicherheit, teamSicherheitSchema, teamSicherheitDefaults } from "./clients/wtn/projects/team-sicherheit/Composition";
 import { WTNArbeitsbedingungen, arbeitsbedingungenSchema, arbeitsbedingungenDefaults } from "./clients/wtn/projects/arbeitsbedingungen/Composition";
 import { WTNMotivationAufstieg, motivationAufstiegSchema, motivationAufstiegDefaults } from "./clients/wtn/projects/motivation-aufstieg/Composition";
+import {
+  BumbleCleanMesseMaster, bumbleCleanMesseSchema, bumbleCleanMesseDefaults,
+} from "./clients/bumble-clean/projects/messevideo/Composition";
+import {
+  BumbleCleanV1LackEdit, v1LackEditSchema, v1LackEditDefaults,
+} from "./clients/bumble-clean/projects/schnittplan-social/V1LackEdit";
+import {
+  BumbleCleanV2Interior, v2InteriorSchema, v2InteriorDefaults,
+} from "./clients/bumble-clean/projects/schnittplan-social/V2InteriorDeepClean";
+import {
+  HblSaeulenGrafik, saeulenGrafikSchema, saeulenGrafikDefaults,
+  HblSaeulenFokus, saeulenFokusSchema, saeulenFokus01Defaults, saeulenFokus02Defaults,
+  HblOpener, openerSchema, openerDefaults,
+  HblTitelBadge, titelBadgeSchema, titel01Defaults, titel02Defaults,
+  HblZahl40, zahl40Schema, zahl40Defaults,
+  HblErgebnisseM1, ergebnisseM1Schema, ergebnisseM1Defaults,
+  HblCaption, captionSchema, captionOhneHblDefaults,
+  HblPraxisfallTransition, praxisfallTransitionSchema, praxisfallTransitionDefaults,
+  HblSplitBlende, splitBlendeSchema, splitBlendeDefaults,
+  HblCheckliste, checklisteSchema, checklisteS3Defaults,
+  HblSubMitUns, subMitUnsSchema, subMitUnsDefaults,
+  HblBauchbinde, bauchbindeSchema, bauchbindeAndreDefaults, bauchbindeBreitenfeldDefaults, bauchbindeHblTeamDefaults,
+  HblEndcard, endcardSchema, endcardDefaults,
+  HblScreenFenster, screenFensterSchema, screenFensterDefaults,
+  HblImagefilmMaster, imagefilmMasterSchema, imagefilmMasterDefaults,
+} from "./clients/hbl/projects/imagefilm/Composition";
+import { NiroCutterAd, niroCutterAdSchema, niroCutterAdDefaults } from "./clients/niro/projects/cutter-ad/Composition";
 
 
 export const RemotionRoot: React.FC = () => {
@@ -591,6 +645,20 @@ export const RemotionRoot: React.FC = () => {
             defaultProps={remDachV2PremiumDefaults}
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
           />
+          <Composition
+            id="REM-Gewerbedach-Reinigung"
+            component={RemGewerbedachReinigung}
+            schema={remGewerbedachSchema}
+            defaultProps={remGewerbedachDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="REM-Gewerbedach-Overlay"
+            component={RemGewerbedachOverlay}
+            schema={remGewerbedachOverlaySchema}
+            defaultProps={remGewerbedachOverlayDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
         </Folder>
 
         <Folder name="MAN">
@@ -599,6 +667,86 @@ export const RemotionRoot: React.FC = () => {
             component={ManLagerCta}
             schema={manLagerCtaSchema}
             defaultProps={manLagerCtaDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MAN-WZ-Frame-Solo"
+            component={ManWzFrame}
+            schema={manWzFrameSchema}
+            defaultProps={manWzFrameSoloDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MAN-WZ-Frame-Versetzt"
+            component={ManWzFrame}
+            schema={manWzFrameSchema}
+            defaultProps={manWzFrameVersetztDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MAN-WZ-Frame-Duo"
+            component={ManWzFrame}
+            schema={manWzFrameSchema}
+            defaultProps={manWzFrameDuoDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MAN-WZ-Opener"
+            component={ManWzOpener}
+            schema={manWzOpenerSchema}
+            defaultProps={manWzOpenerDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MAN-WZ-Trenner"
+            component={ManWzTrenner}
+            schema={manWzTrennerSchema}
+            defaultProps={manWzTrennerDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MAN-WZ-Insert"
+            component={ManWzInsert}
+            schema={manWzInsertSchema}
+            defaultProps={manWzInsertDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MAN-WZ-Endcard"
+            component={ManWzEndcard}
+            schema={manWzEndcardSchema}
+            defaultProps={manWzEndcardDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="man-wz-169-master"
+            component={ManWz169Master}
+            schema={manWz169MasterSchema}
+            defaultProps={manWz169MasterDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
+        <Folder name="BumbleClean">
+          <Composition
+            id="bumble-clean-messe-master"
+            component={BumbleCleanMesseMaster}
+            schema={bumbleCleanMesseSchema}
+            defaultProps={bumbleCleanMesseDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="bumble-clean-v1-lack-edit"
+            component={BumbleCleanV1LackEdit}
+            schema={v1LackEditSchema}
+            defaultProps={v1LackEditDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="bumble-clean-v2-interior-deep-clean"
+            component={BumbleCleanV2Interior}
+            schema={v2InteriorSchema}
+            defaultProps={v2InteriorDefaults}
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
           />
         </Folder>
@@ -641,6 +789,86 @@ export const RemotionRoot: React.FC = () => {
           />
         </Folder>
 
+        <Folder name="WLC">
+          <Composition
+            id="WlcV6-WortBattle"
+            component={WlcV6WortBattle}
+            schema={wlcWortBattleSchema}
+            defaultProps={wlcWortBattleDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV6-Trio"
+            component={WlcV6Trio}
+            schema={wlcTrioSchema}
+            defaultProps={wlcTrioDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV6-BeweisCard"
+            component={WlcV6BeweisCard}
+            schema={wlcBeweisCardSchema}
+            defaultProps={wlcBeweisCardDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV6-Outro"
+            component={WlcV6Outro}
+            schema={wlcOutroSchema}
+            defaultProps={wlcOutroDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV1-Overlay"
+            component={WlcAzubiOverlay}
+            schema={wlcAzubiOverlaySchema}
+            defaultProps={wlcV1OverlayDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV2-Overlay"
+            component={WlcAzubiOverlay}
+            schema={wlcAzubiOverlaySchema}
+            defaultProps={wlcV2OverlayDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV3-Overlay"
+            component={WlcReporterOverlay}
+            schema={wlcReporterOverlaySchema}
+            defaultProps={wlcV3OverlayDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV7-Overlay"
+            component={WlcV7Overlay}
+            schema={wlcV7OverlaySchema}
+            defaultProps={wlcV7OverlayDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV4-Overlay"
+            component={WlcTalkOverlay}
+            schema={wlcTalkOverlaySchema}
+            defaultProps={wlcV4OverlayDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcV5-Overlay"
+            component={WlcTalkOverlay}
+            schema={wlcTalkOverlaySchema}
+            defaultProps={wlcV5OverlayDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="WlcJob-Endcard"
+            component={WlcJobEndcard}
+            schema={wlcJobEndcardSchema}
+            defaultProps={wlcJobEndcardDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
         <Folder name="WTN">
           <Composition
             id="WTN-ErsterTag"
@@ -675,6 +903,162 @@ export const RemotionRoot: React.FC = () => {
             component={WTNMotivationAufstieg}
             schema={motivationAufstiegSchema}
             defaultProps={motivationAufstiegDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
+        <Folder name="Foerch">
+          <Composition
+            id="Foerch-RecOverlay"
+            component={FoerchRecOverlay}
+            schema={foerchRecOverlaySchema}
+            defaultProps={foerchRecOverlayDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
+        <Folder name="HBL">
+          <Composition
+            id="HBL-Imagefilm-Komplett"
+            component={HblImagefilmMaster}
+            schema={imagefilmMasterSchema}
+            defaultProps={imagefilmMasterDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-BauchbindeHBLTeam"
+            component={HblBauchbinde}
+            schema={bauchbindeSchema}
+            defaultProps={bauchbindeHblTeamDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-SaeulenGrafik"
+            component={HblSaeulenGrafik}
+            schema={saeulenGrafikSchema}
+            defaultProps={saeulenGrafikDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-Opener"
+            component={HblOpener}
+            schema={openerSchema}
+            defaultProps={openerDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-Saeulen-Fokus01"
+            component={HblSaeulenFokus}
+            schema={saeulenFokusSchema}
+            defaultProps={saeulenFokus01Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-Saeulen-Fokus02"
+            component={HblSaeulenFokus}
+            schema={saeulenFokusSchema}
+            defaultProps={saeulenFokus02Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-Titel01"
+            component={HblTitelBadge}
+            schema={titelBadgeSchema}
+            defaultProps={titel01Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-Titel02"
+            component={HblTitelBadge}
+            schema={titelBadgeSchema}
+            defaultProps={titel02Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-Zahl40"
+            component={HblZahl40}
+            schema={zahl40Schema}
+            defaultProps={zahl40Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-ErgebnisseM1"
+            component={HblErgebnisseM1}
+            schema={ergebnisseM1Schema}
+            defaultProps={ergebnisseM1Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-PraxisfallTransition"
+            component={HblPraxisfallTransition}
+            schema={praxisfallTransitionSchema}
+            defaultProps={praxisfallTransitionDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-ChecklisteS3"
+            component={HblCheckliste}
+            schema={checklisteSchema}
+            defaultProps={checklisteS3Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-SplitBlende"
+            component={HblSplitBlende}
+            schema={splitBlendeSchema}
+            defaultProps={splitBlendeDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-SubMitUns"
+            component={HblSubMitUns}
+            schema={subMitUnsSchema}
+            defaultProps={subMitUnsDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-ScreenFenster"
+            component={HblScreenFenster}
+            schema={screenFensterSchema}
+            defaultProps={screenFensterDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-CaptionOhneHBL"
+            component={HblCaption}
+            schema={captionSchema}
+            defaultProps={captionOhneHblDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-BauchbindeAndre"
+            component={HblBauchbinde}
+            schema={bauchbindeSchema}
+            defaultProps={bauchbindeAndreDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-BauchbindeBreitenfeld"
+            component={HblBauchbinde}
+            schema={bauchbindeSchema}
+            defaultProps={bauchbindeBreitenfeldDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="HBL-Endcard"
+            component={HblEndcard}
+            schema={endcardSchema}
+            defaultProps={endcardDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
+        <Folder name="NIRO">
+          <Composition
+            id="Niro-CutterAd"
+            component={NiroCutterAd}
+            schema={niroCutterAdSchema}
+            defaultProps={niroCutterAdDefaults}
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
           />
         </Folder>

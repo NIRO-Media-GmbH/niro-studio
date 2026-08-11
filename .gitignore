@@ -7,6 +7,17 @@ dist/
 *.mov
 *.gif
 *.tsbuildinfo
+*.MOV
+*.MP4
+*.wav
+*.aac
 Videos/
 Video inputs/
 public/projects/
+
+# Schlanke public-Spiegel für Renders (rsync-Kopien, jederzeit neu erzeugbar)
+public-*/
+
+# Remotion-Review-Stills, die versehentlich im Repo-Root landen (Frame-Nummer als Name)
+/[0-9][0-9][0-9]*.png
+/[0-9][0-9][0-9][0-9]

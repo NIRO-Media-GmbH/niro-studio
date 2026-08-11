@@ -24,6 +24,18 @@ Konventionen:
 - `out/` ist stillgelegt und bleibt leer; es gibt keine projektspezifischen
   package.json-Render-Scripts mehr. Alle Renders laufen als direkte
   render-Kommandos mit Projektpfad (auch bei Bestandskunden).
+- **Render-Performance/Disk (seit 2026-08-03):** Remotion kopiert bei JEDEM
+  Render/Still den kompletten `public/`-Ordner ins Temp-Bundle — dort liegen
+  GB-schwere Client-Videos (z. B. `clients/man/wz/`). Deshalb mit
+  `--public-dir=public-hbl`-Muster arbeiten: schlanker Spiegel via
+  `rsync -a --exclude='*.mov' --exclude='*.mp4' --exclude='*.wav' public/ public-<kunde>/`
+  (Achtung: manche Clients laden Fonts aus `clients/<kunde>/fonts/` — deshalb
+  ganzen public spiegeln, nicht nur den eigenen Client). Abgebrochene Renders
+  hinterlassen 6–7-GB-Bundles: `rm -rf "$TMPDIR"remotion-webpack-bundle-*`.
+- **Alpha-Falle:** CSS `border` + `overflow:hidden` + `borderRadius` erzeugt
+  im ProRes-Alpha eine Haarlinie an der Border-Innenkante (Subpixel-Lücke).
+  Rahmen mit „Loch" stattdessen aus 4 satt überlappenden Flächen bauen
+  (Referenz: HBL `ScreenFrameVisual`).
 
 Ablauf:
 1. Projektordner prüfen/anlegen (`<Charge>/Material/Video/`, `<Charge>/Ergebnisse/Renders/`),
