@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# Größensperre: verhindert, dass Kundenmaterial versehentlich ins Repo wandert.
+#
+# In diesem Repo liegt das Werkzeug, nicht die Arbeit. Rohmaterial, Renders und
+# Fotos gehören nach projects/ (ignoriert) bzw. auf NAS/SSD. Wenn eine einzelne
+# Regel in einer .gitignore mal fehlt, fängt dieser Hook den Fehler ab, bevor
+# eine 5-GB-Datei in der Historie landet — dort bekommt man sie nur mit einem
+# Rewrite wieder heraus.
+#
+# Aktivierung (einmalig, siehe SETUP.md):  git config core.hooksPath .githooks
+# Bewusst umgehen:                          git commit --no-verify
+
+LIMIT_MB=5
+LIMIT_BYTES=$((LIMIT_MB * 1024 * 1024))
+
+# Bekannte Ausnahmen: lizenzierte Corporate-Fonts sind von Haus aus groß.
+is_allowed() {
+	case "$1" in
+	tools/motion/public/fonts/*) return 0 ;;
+	*) return 1 ;;
+	esac
+}
+
+too_big=""
+while IFS= read -r file; do
+	[ -f "$file" ] || continue
+	is_allowed "$file" && continue
+	size=$(wc -c <"$file" | tr -d ' ')
+	if [ "$size" -gt "$LIMIT_BYTES" ]; then
+		too_big="$too_big  $((size / 1024 / 1024)) MB  $file
+"
+	fi
+done <<EOF
+$(git diff --cached --name-only --diff-filter=ACM)
+EOF
+
+if [ -n "$too_big" ]; then
+	cat >&2 <<MSG
+
+  Commit gestoppt — Dateien über ${LIMIT_MB} MB:
+
+$too_big
+  In dieses Repo gehört nur das Werkzeug. Rohmaterial, Renders und Fotos
+  gehören nach projects/ oder auf NAS/SSD.
+
+  Wenn die Datei wirklich hierher gehört:
+    - dauerhaft:  Pfad in is_allowed() in .githooks/pre-commit eintragen
+    - einmalig:   git commit --no-verify
+
+MSG
+	exit 1
+fi
+
+exit 0
