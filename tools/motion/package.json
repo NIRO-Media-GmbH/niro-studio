@@ -16,31 +16,33 @@
     "new:project": "npx tsx scripts/new-project.ts"
   },
   "dependencies": {
+    "@remotion/animation-utils": "4.0.519",
+    "@remotion/captions": "4.0.519",
+    "@remotion/cli": "4.0.519",
+    "@remotion/elevenlabs": "4.0.519",
+    "@remotion/fonts": "4.0.519",
+    "@remotion/google-fonts": "4.0.519",
+    "@remotion/layout-utils": "4.0.519",
+    "@remotion/lottie": "4.0.519",
+    "@remotion/motion-blur": "4.0.519",
+    "@remotion/noise": "4.0.519",
+    "@remotion/paths": "4.0.519",
+    "@remotion/player": "4.0.519",
+    "@remotion/shapes": "4.0.519",
+    "@remotion/studio": "4.0.519",
+    "@remotion/transitions": "4.0.519",
+    "@remotion/zod-types": "4.0.519",
+    "lottie-web": "^5.12.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remotion": "^4.0.0",
-    "@remotion/cli": "^4.0.0",
-    "@remotion/player": "^4.0.0",
-    "@remotion/transitions": "^4.0.0",
-    "@remotion/paths": "^4.0.0",
-    "@remotion/shapes": "^4.0.0",
-    "@remotion/noise": "^4.0.0",
-    "@remotion/google-fonts": "^4.0.0",
-    "@remotion/fonts": "^4.0.0",
-    "@remotion/lottie": "^4.0.0",
-    "@remotion/motion-blur": "^4.0.0",
-    "@remotion/animation-utils": "^4.0.0",
-    "@remotion/layout-utils": "^4.0.0",
-    "@remotion/zod-types": "^4.0.0",
-    "@remotion/studio": "^4.0.0",
-    "lottie-web": "^5.12.2",
-    "zod": "^4.0.0"
+    "remotion": "4.0.519",
+    "zod": "4.4.3"
   },
   "devDependencies": {
-    "typescript": "^5.5.0",
+    "@remotion/eslint-plugin": "4.0.519",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
-    "@remotion/eslint-plugin": "^4.0.0",
-    "tsx": "^4.19.0"
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
   }
 }

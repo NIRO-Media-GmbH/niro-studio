@@ -11,9 +11,9 @@
     "heading": "Montserrat",
     "body": "Montserrat"
   },
-  "logo": "",
+  "logo": "clients/sw-projektentwicklung/logo.svg",
   "style": {
-    "borderRadius": 8,
+    "borderRadius": 10,
     "animationSpeed": "fast"
   }
 }

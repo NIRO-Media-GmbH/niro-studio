@@ -36,6 +36,27 @@ Konventionen:
   im ProRes-Alpha eine Haarlinie an der Border-Innenkante (Subpixel-Lücke).
   Rahmen mit „Loch" stattdessen aus 4 satt überlappenden Flächen bauen
   (Referenz: HBL `ScreenFrameVisual`).
+- **Motion-Qualität:** Für jede Komposition gilt die Doktrin in
+  `docs/motion-doctrine.md` (Easing, Szenen-Rhythmus, Video-Skalen,
+  Transition-Rezepte, Technik-Fallen) — bei neuen Animationen vorher
+  lesen.
+- **Untertitel/Text-Overlays, Premium-Stufe:** Für gestaltete Captions
+  (Hero-Wörter, Glass-Look, Platzierung um den Sprecher) gilt
+  `docs/cinematic-captions.md` — vor dem Bauen lesen, Caption-Plan nach
+  dessen Abschnitt 8 erstellen. Schnelle Recruiting-Formate behalten ihre
+  bestehenden Kunden-Systeme.
+- **Caption-Datenkette (seit 2026-08-31, Remotion 4.0.519):** Wort-Timings
+  aus den Scribe-JSONs (`projects/.../_intern/cache/*.scribe.json`) nicht
+  mehr von Hand gruppieren, sondern:
+  `elevenLabsTranscriptToCaptions()` (`@remotion/elevenlabs`) →
+  `Caption[]` → `createTikTokStyleCaptions({captions,
+  combineTokensWithinMilliseconds})` (`@remotion/captions`) → Pages mit
+  Token-Timings für Wort-Highlights; `serializeSrt()` liefert nebenbei
+  SRT für Premiere. **Pflicht-Adapter:** unser Cache-Format hat kein
+  `type`-Feld — vor dem Aufruf `words.map(w => ({text: w.text, start:
+  w.start, end: w.end, type: "word", logprob: 0}))`, sonst überspringt
+  die Funktion ALLE Einträge stumm (leeres Ergebnis, kein Fehler).
+  Verifiziert am WTN-Imagefilm-Cache (230 Wörter → 61 Pages).
 
 Ablauf:
 1. Projektordner prüfen/anlegen (`<Charge>/Material/Video/`, `<Charge>/Ergebnisse/Renders/`),

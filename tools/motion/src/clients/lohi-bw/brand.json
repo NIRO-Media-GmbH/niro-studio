@@ -1,0 +1,19 @@
+{
+  "name": "Lohnsteuerhilfe Baden-Württemberg e.V. (LohiBW)",
+  "colors": {
+    "primary": "#FFD900",
+    "secondary": "#1A1A1A",
+    "accent": "#FFD900",
+    "background": "#FFFFFF",
+    "text": "#1A1A1A"
+  },
+  "fonts": {
+    "heading": "Open Sans",
+    "body": "Open Sans"
+  },
+  "logo": "",
+  "style": {
+    "borderRadius": 8,
+    "animationSpeed": "normal"
+  }
+}

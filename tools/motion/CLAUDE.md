@@ -31,6 +31,19 @@ IMPORTANT: Before delivering ANY video composition, Claude MUST perform all of t
 - `review.faceZone` — Custom face zone position (override per project)
 - `review.guideOpacity` — Transparency of all guide elements
 
+## Motion Quality
+
+Every composition follows `docs/motion-doctrine.md` (easing doctrine,
+scene rhythm, video-scale typography, transition recipes, technical
+traps). Read it before building new animations.
+
+## Captions
+
+For designed caption work (hero words, tinted-glass fills, subject-aware
+placement) read `docs/cinematic-captions.md` first and write the caption
+plan it specifies before implementing. Its verification section extends —
+never replaces — the review checklist above.
+
 ## Coding Conventions
 
 - All compositions extend `projectPropsSchema` from `src/core/schemas.ts`

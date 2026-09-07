@@ -3,8 +3,12 @@
 # Alles unter projects/ — Kundenmaterial, Renders, Schnittpläne, Protokolle —
 # bleibt ausschließlich lokal bzw. auf NAS/SSD. Die Werkzeuge unter tools/
 # bringen eigene .gitignore-Dateien mit (venv, node_modules, Medien).
+#
+# Mit führendem Schrägstrich verankert: nur der Wurzelordner ist gemeint.
+# Unverankert würde die Regel auch tools/motion/src/clients/*/projects/
+# treffen und jede neue Remotion-Komposition still aus git ausblenden.
 
-projects/
+/projects/
 
 .DS_Store
 

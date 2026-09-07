@@ -130,6 +130,18 @@ import {
   HblImagefilmMaster, imagefilmMasterSchema, imagefilmMasterDefaults,
 } from "./clients/hbl/projects/imagefilm/Composition";
 import { NiroCutterAd, niroCutterAdSchema, niroCutterAdDefaults } from "./clients/niro/projects/cutter-ad/Composition";
+import {
+  LohiBwAd1, LohiBwAd2, LohiBwAd3, LohiBwAd4,
+  lohiBwUntertitelSchema,
+  lohiBwAd1Defaults, lohiBwAd2Defaults, lohiBwAd3Defaults, lohiBwAd4Defaults,
+} from "./clients/lohi-bw/projects/untertitel/Composition";
+import { SWBifazialeModule, swBifazialeModuleSchema } from "./clients/sw-projektentwicklung/projects/bifaziale-module/Composition";
+import { SWGottwollshausen, swGottwollshausenSchema } from "./clients/sw-projektentwicklung/projects/gottwollshausen/Composition";
+import { SWFlachdach, swFlachdachSchema } from "./clients/sw-projektentwicklung/projects/flachdach/Composition";
+import { SWBauerSolar, swBauerSolarSchema } from "./clients/sw-projektentwicklung/projects/bauer-solar/Composition";
+import { SWSmartino, swSmartinoSchema } from "./clients/sw-projektentwicklung/projects/smartino/Composition";
+import { SWRecruiting, swRecruitingSchema } from "./clients/sw-projektentwicklung/projects/recruiting/Composition";
+import { SUBTITLE_DEFAULTS as SW_SUBTITLES } from "./clients/sw-projektentwicklung/Subtitles";
 
 
 export const RemotionRoot: React.FC = () => {
@@ -410,6 +422,157 @@ export const RemotionRoot: React.FC = () => {
               geldSparen:      { startSec: 29,   durationSec: 5.5, symbol: "€", symbolPos: { x: 0, y: 0 }, mainText: "Jeden Monat sparen", mainTextPos: { x: 0, y: 0 }, subText: "Bares Geld mit Solar", subTextPos: { x: 0, y: 0 } },
               fullService:     { startSec: 34.5, durationSec: 6.2, title: "Full Service", titlePos: { x: 0, y: 0 }, item1: "Alles aus einer Hand", item1Pos: { x: 0, y: 0 }, item2: "Keine Subunternehmer", item2Pos: { x: 0, y: 0 }, item3: "Persönliche Beratung", item3Pos: { x: 0, y: 0 }, item4: "Volle Betreuung nach Montage", item4Pos: { x: 0, y: 0 } },
               cta:             { startSec: 40.7, durationSec: 6.3, introText: "Schreib uns einfach", introPos: { x: 0, y: 0 }, bubbleText: "SOLAR", bubblePos: { x: 0, y: 0 }, arrowSymbol: "↓", arrowPos: { x: 0, y: 0 }, brandName: "SW Projektentwicklung", brandPos: { x: 0, y: 0 }, website: "sw-projektentwicklung.com", websitePos: { x: 0, y: 0 } },
+            }}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+
+          {/* Solar-Wissen — Reels 01/02/03/04/05/07 (06 existiert nicht). Preview-Konfiguration:
+              transparent:false + echtes footageFile, zum Weiterarbeiten (z.B. Untertitel) gegen
+              echtes Material. Fuer den reinen Overlay-Export (wie ausgeliefert): transparent auf
+              true, footageFile auf "" setzen. */}
+          <Composition
+            id="SW-Gottwollshausen"
+            component={SWGottwollshausen}
+            schema={swGottwollshausenSchema}
+            defaultProps={{
+              format: "portrait" as const,
+              fps: 30 as const,
+              durationInSeconds: 53.53,
+              transparent: false,
+              review: REVIEW_DEFAULTS,
+              footageFile: "01_Projekt-Gottwolfshausen_V1.mp4",
+              subtitles: SW_SUBTITLES,
+              hook:     { startSec: 1.3,  durationSec: 4.0,  line1: "Der Netzbetreiber kann", line2: "deine Anlage drosseln!", linesPos: { x: 0, y: 0 } },
+              projekt:  { startSec: 6.2,  durationSec: 4.0,  title: "Bauvorhaben", titlePos: { x: 0, y: 0 }, subline: "Gottwollshausen", sublinePos: { x: 0, y: 0 } },
+              anlage:   { startSec: 10.9, durationSec: 2.9,  moduleCount: "", wattLabel: "460 Watt", caption: "pro Solarmodul", captionPos: { x: 0, y: 0 }, modulePos: { x: 0, y: 0 } },
+              speicher: { startSec: 14.2, durationSec: 2.8,  value: "18", unit: "kWh", label: "Stromspeicher", labelPos: { x: 0, y: 0 }, batteryPos: { x: 0, y: 0 } },
+              ertrag:   { startSec: 18.9, durationSec: 3.3,  toValue: 24000, numberPos: { x: 0, y: 0 }, label: "pro Jahr", labelPos: { x: 0, y: 0 }, sublabel: "", sublabelPos: { x: 0, y: 0 } },
+              grenze:   { startSec: 22.2, durationSec: 2.0,  limitLabel: "25 kWp", title: "Bewusst darunter geplant", titlePos: { x: 0, y: 0 }, caption: "", captionPos: { x: 0, y: 0 } },
+              folgen:   { startSec: 25.6, durationSec: 15.9, heading: "Ab 25 kWp gilt", headingPos: { x: 0, y: 0 }, row1: "Rundsteuer-Empfänger nötig", row1Sub: "pauschal ab ca. 600 €", row2: "Netzbetreiber darf drosseln", row2Sub: "auch deinen Eigenverbrauch", row3: "Höhere Montagekosten", row3Sub: "zusätzlicher Aufwand am Bau", rowsPos: { x: 0, y: 0 } },
+              ctaFrage: { startSec: 41.8, durationSec: 4.4,  line1: "Frisst dir die Stromrechnung", line2: "die Haare vom Kopf?", linesPos: { x: 0, y: 0 } },
+              endkarte: { startSec: 46.8, durationSec: 6.7,  analyseText: "Komplette Analyse", analysePos: { x: 0, y: 0 }, pillText: "MIND. 70 % AUTARKIE", pillPos: { x: 0, y: 0 }, logoPos: { x: 0, y: 0 } },
+            }}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="SW-BifazialeModule"
+            component={SWBifazialeModule}
+            schema={swBifazialeModuleSchema}
+            defaultProps={{
+              format: "portrait" as const,
+              fps: 30 as const,
+              durationInSeconds: 35.967,
+              transparent: false,
+              review: REVIEW_DEFAULTS,
+              footageFile: "02_Bifaziale_Solarmodule_V1.mp4",
+              subtitles: SW_SUBTITLES,
+              hook:        { startSec: 0,    durationSec: 2.4, word: "STREIT", wordPos: { x: 0, y: 0 }, subline: "im Solarmarkt", sublinePos: { x: 0, y: 0 } },
+              streit:      { startSec: 3.4,  durationSec: 3.2, contraText: "„Bringt gar nichts.“", contraPos: { x: 0, y: 0 }, proText: "„Bringt richtig was.“", proPos: { x: 0, y: 0 } },
+              titel:       { startSec: 8.0,  durationSec: 5.0, title: "BIFAZIAL", titlePos: { x: 0, y: 0 }, subline: "Module mit zwei aktiven Seiten", sublinePos: { x: 0, y: 0 } },
+              beideSeiten: { startSec: 14.0, durationSec: 2.4, leftLabel: "Sonne", rightLabel: "Reflexion", caption: "Strom von beiden Seiten", captionPos: { x: 0, y: 0 }, modulePos: { x: 0, y: 0 } },
+              zaun:        { startSec: 18.6, durationSec: 5.4, title: "Modul als Gartenzaun", titlePos: { x: 0, y: 0 }, caption: "Ertrag von vorne und hinten", captionPos: { x: 0, y: 0 }, fencePos: { x: 0, y: 0 } },
+              ertrag:      { startSec: 25.0, durationSec: 6.3, fromValue: 5, toValue: 20, suffix: "%", numberPos: { x: 0, y: 0 }, label: "Mehrertrag", labelPos: { x: 0, y: 0 }, sublabel: "je nach Untergrund & Installation", sublabelPos: { x: 0, y: 0 } },
+              empfehlung:  { startSec: 32.8, durationSec: 3.2, pillText: "IMMER BIFAZIAL", pillPos: { x: 0, y: 0 }, subline: "Kann man nichts falsch machen.", sublinePos: { x: 0, y: 0 }, logoPos: { x: 0, y: 0 } },
+            }}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="SW-BauerSolar"
+            component={SWBauerSolar}
+            schema={swBauerSolarSchema}
+            defaultProps={{
+              format: "portrait" as const,
+              fps: 30 as const,
+              durationInSeconds: 56.0,
+              transparent: false,
+              review: REVIEW_DEFAULTS,
+              footageFile: "03_BauSolar-Modul_V1.mp4",
+              subtitles: SW_SUBTITLES,
+              brand:       { startSec: 3.1,  durationSec: 3.3, name: "Bauer Solar", namePos: { x: 0, y: 0 }, caption: "German Brand", captionPos: { x: 0, y: 0 } },
+              leistung:    { startSec: 7.4,  durationSec: 3.0, value: "460", unit: "Watt", caption: "pro Modul", captionPos: { x: 0, y: 0 }, blockPos: { x: 0, y: 0 } },
+              glas:        { startSec: 10.9, durationSec: 3.6, title: "Glas-Glas-Bifazial", titlePos: { x: 0, y: 0 }, caption: "Zellen zwischen zwei Scheiben", captionPos: { x: 0, y: 0 }, diagramPos: { x: 0, y: 0 } },
+              zellen:      { startSec: 15.2, durationSec: 2.9, title: "Zellen direkt sichtbar", titlePos: { x: 0, y: 0 }, caption: "durch das Glas erkennbar", captionPos: { x: 0, y: 0 }, diagramPos: { x: 0, y: 0 } },
+              zaun:        { startSec: 18.6, durationSec: 5.8, row1: "Auch als Solar-Zaun", row1Sub: "Module stehen senkrecht", row2: "Ertrag von beiden Seiten", row2Sub: "die Rückseite ist aktiv", rowsPos: { x: 0, y: 0 } },
+              stecker:     { startSec: 25.1, durationSec: 4.6, heading: "Stecker", headingPos: { x: 0, y: 0 }, goodText: "Stäubli-Stecker", goodSub: "Markenstecker ab Werk", badText: "Kein Standard-MC4", badSub: "", rowsPos: { x: 0, y: 0 } },
+              staerke:     { startSec: 29.7, durationSec: 5.4, value: "2 mm", valueCaption: "Glasstärke", klasseText: "Hagelwiderstandsklasse", klasseValue: "3", blockPos: { x: 0, y: 0 } },
+              vergleich:   { startSec: 36.3, durationSec: 3.4, heading: "Im Vergleich", headingPos: { x: 0, y: 0 }, ownLabel: "Bauer Solar", ownValue: "2 mm", otherLabel: "Andere", otherValue: "1,6 mm", barsPos: { x: 0, y: 0 } },
+              brandschutz: { startSec: 40.0, durationSec: 3.6, title: "Brandschutzklasse", value: "A", blockPos: { x: 0, y: 0 } },
+              beweis:      { startSec: 43.8, durationSec: 5.9, title: "Wirklich so robust?", titlePos: { x: 0, y: 0 }, caption: "Wir haben es getestet", captionPos: { x: 0, y: 0 } },
+              tests:       { startSec: 49.9, durationSec: 4.1, heading: "Bestanden", headingPos: { x: 0, y: 0 }, test1: "Härte", test2: "Feuer", test3: "Schlag", rowPos: { x: 0, y: 0 } },
+              endkarte:    { startSec: 54.0, durationSec: 2.0, fazitText: "", fazitPos: { x: 0, y: 0 }, pillText: "LINK UNTEN DRIN", pillPos: { x: 0, y: 0 }, logoPos: { x: 0, y: 0 } },
+            }}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="SW-Flachdach"
+            component={SWFlachdach}
+            schema={swFlachdachSchema}
+            defaultProps={{
+              format: "portrait" as const,
+              fps: 30 as const,
+              durationInSeconds: 79.47,
+              transparent: false,
+              review: REVIEW_DEFAULTS,
+              footageFile: "04_Flachdach-Erklaerung_V1.mp4",
+              subtitles: SW_SUBTITLES,
+              dicht:        { startSec: 0.9,  durationSec: 6.2, headline: "Kein Dichtigkeitsproblem", headlinePos: { x: 0, y: 0 }, caption: "Die erste Frage überhaupt", captionPos: { x: 0, y: 0 } },
+              ostWest:      { startSec: 10.9, durationSec: 5.6, title: "Ost-West-Aufständerung", titlePos: { x: 0, y: 0 }, leftLabel: "OST", rightLabel: "WEST", caption: "wie ein kleines Zelt", captionPos: { x: 0, y: 0 }, dachPos: { x: 0, y: 0 } },
+              winkel:       { startSec: 18.8, durationSec: 3.6, value: "10°", caption: "Module aufgewinkelt", captionPos: { x: 0, y: 0 }, diagramPos: { x: 0, y: 0 } },
+              schiene:      { startSec: 25.6, durationSec: 3.6, title: "Nur eine Schiene", titlePos: { x: 0, y: 0 }, caption: "Steine als Ballast — mehr nicht", captionPos: { x: 0, y: 0 }, diagramPos: { x: 0, y: 0 } },
+              durchstossen: { startSec: 29.2, durationSec: 2.4, title: "Keine Dachdurchdringung", subline: "nichts wird durchstoßen", blockPos: { x: 0, y: 0 } },
+              auflegen:     { startSec: 32.4, durationSec: 5.0, title: "Unterkonstruktion", titlePos: { x: 0, y: 0 }, caption: "Module werden aufgelegt", captionPos: { x: 0, y: 0 }, diagramPos: { x: 0, y: 0 } },
+              klemmen:      { startSec: 39.3, durationSec: 6.4, heading: "Befestigung", headingPos: { x: 0, y: 0 }, row1: "Mittelklemme", row1Sub: "zwischen zwei Modulen", row2: "Endklemme", row2Sub: "am Ende jeder Reihe", rowsPos: { x: 0, y: 0 } },
+              fertig:       { startSec: 46.9, durationSec: 4.6, line1: "Module verkabeln", line1Pos: { x: 0, y: 0 }, pillText: "ANLAGE FERTIG", pillPos: { x: 0, y: 0 } },
+              sued:         { startSec: 53.6, durationSec: 5.6, title: "Süd-Aufständerung", titlePos: { x: 0, y: 0 }, caption: "eine Reihe, nach Süden ausgerichtet", captionPos: { x: 0, y: 0 }, diagramPos: { x: 0, y: 0 } },
+              unterschied:  { startSec: 60.9, durationSec: 4.4, heading: "Der einzige Unterschied", headingPos: { x: 0, y: 0 }, caption: "Angriffsfläche für Wind", captionPos: { x: 0, y: 0 }, diagramPos: { x: 0, y: 0 } },
+              windfang:     { startSec: 67.6, durationSec: 4.2, title: "Windfangblech", titlePos: { x: 0, y: 0 }, caption1: "Wind kommt hinten nicht durch", caption2: "bei Ost-West nicht nötig", captionPos: { x: 0, y: 0 }, diagramPos: { x: 0, y: 0 } },
+              endkarte:     { startSec: 76.3, durationSec: 3.2, fazitText: "", fazitPos: { x: 0, y: 0 }, pillText: "FRAGEN? GERNE MELDEN", pillPos: { x: 0, y: 0 }, logoPos: { x: 0, y: 0 } },
+            }}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="SW-Smartino"
+            component={SWSmartino}
+            schema={swSmartinoSchema}
+            defaultProps={{
+              format: "portrait" as const,
+              fps: 30 as const,
+              durationInSeconds: 49.25,
+              transparent: false,
+              review: REVIEW_DEFAULTS,
+              footageFile: "05_Hotel-Smartino_V1.mp4",
+              subtitles: SW_SUBTITLES,
+              autarkie:  { startSec: 2.3,  durationSec: 2.9, value: "60 %", unit: "Autarkie", caption: "in den ersten 6 Monaten", captionPos: { x: 0, y: 0 }, blockPos: { x: 0, y: 0 } },
+              prognose:  { startSec: 6.3,  durationSec: 3.0, value: "65–70 %", unit: "", caption: "Prognose aufs ganze Jahr", captionPos: { x: 0, y: 0 }, blockPos: { x: 0, y: 0 } },
+              objekt:    { startSec: 10.5, durationSec: 5.4, name: "Hotel Smartino", namePos: { x: 0, y: 0 }, ort: "Schwäbisch Hall", caption: "PV-Anlage seit 6 Monaten in Betrieb", captionPos: { x: 0, y: 0 } },
+              anlage:    { startSec: 16.15, durationSec: 3.7, heading: "Die Anlage", headingPos: { x: 0, y: 0 }, value1: "144", label1: "Module", value2: "63", label2: "kWp", rowPos: { x: 0, y: 0 } },
+              verbrauch: { startSec: 21.4, durationSec: 3.4, value: "70.000", unit: "kWh", caption: "Stromverbrauch pro Jahr", captionPos: { x: 0, y: 0 }, blockPos: { x: 0, y: 0 } },
+              netz:      { startSec: 27.2, durationSec: 4.3, heading: "Nur noch", headingPos: { x: 0, y: 0 }, oldLabel: "Vorher", oldValue: "70.000 kWh", newLabel: "Jetzt", newValue: "25.000 kWh", caption: "Netzbezug in diesem Jahr", captionPos: { x: 0, y: 0 }, barsPos: { x: 0, y: 0 } },
+              fazit:     { startSec: 35.3, durationSec: 3.1, heading: "Richtig gelungenes Projekt", headingPos: { x: 0, y: 0 }, chip1: "63 kWp", chip2: "144 Module", chip3: "60 % Autarkie", rowPos: { x: 0, y: 0 }, caption: "perfekt ausgelegt", captionPos: { x: 0, y: 0 } },
+              cta:       { startSec: 39.4, durationSec: 6.5, heading: "Du hast ein Gewerbeobjekt?", headingPos: { x: 0, y: 0 }, row1: "Analyse deines Dachs", row1Sub: "wir schauen es uns an", row2: "Wie viel Autarkie geht?", row2Sub: "konkret für dein Objekt", rowsPos: { x: 0, y: 0 } },
+              endkarte:  { startSec: 46.0, durationSec: 3.25, pillText: "MELD DICH GERN", pillPos: { x: 0, y: 0 }, logoPos: { x: 0, y: 0 } },
+            }}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="SW-Recruiting"
+            component={SWRecruiting}
+            schema={swRecruitingSchema}
+            defaultProps={{
+              format: "portrait" as const,
+              fps: 30 as const,
+              durationInSeconds: 25.63,
+              transparent: false,
+              review: REVIEW_DEFAULTS,
+              footageFile: "07_Recruiting-Elektromeister_V1.mp4",
+              subtitles: SW_SUBTITLES,
+              hook:     { startSec: 0.3,   durationSec: 2.3,  word: "Elektromeister?", wordPos: { x: 0, y: 0 } },
+              satt:     { startSec: 2.6,   durationSec: 5.7,  heading: "Hast du's satt?", headingPos: { x: 0, y: 0 }, row1: "Nur PV am Einfamilienhaus", row1Sub: "immer dasselbe", row2: "Überspannungsschutz", row2Sub: "das Komplizierteste am Ganzen", rowsPos: { x: 0, y: 0 } },
+              richtig:  { startSec: 8.45,  durationSec: 2.9,  line1: "Dann bist du", line2: "bei uns richtig", linesPos: { x: 0, y: 0 } },
+              gewerbe:  { startSec: 11.6,  durationSec: 4.7,  heading: "Bei uns machst du", headingPos: { x: 0, y: 0 }, row1: "Gewerbeanlagen", row1Sub: "nicht nur Einfamilienhäuser", row2: "NA-Schutz & Tarifschaltgeräte", row2Sub: "richtige Elektrotechnik", rowsPos: { x: 0, y: 0 } },
+              rolle:    { startSec: 16.55, durationSec: 2.9,  headline: "Wir suchen dich", headlinePos: { x: 0, y: 0 }, role: "ALS TEAMLEITER", rolePos: { x: 0, y: 0 } },
+              cta:      { startSec: 19.6,  durationSec: 3.15, pillText: "MELD DICH GERN", pillPos: { x: 0, y: 0 }, caption: "Schauen wir, ob du ins Team passt", captionPos: { x: 0, y: 0 } },
+              endkarte: { startSec: 22.8,  durationSec: 2.83, headline: "Komm ins Team", role: "ELEKTROMEISTER", roleSuffix: "als Teamleiter (m/w/d)", pillText: "JETZT BEWERBEN", contact: "sw-projektentwicklung.com", blockPos: { x: 0, y: 0 } },
             }}
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
           />
@@ -1049,6 +1212,37 @@ export const RemotionRoot: React.FC = () => {
             component={HblEndcard}
             schema={endcardSchema}
             defaultProps={endcardDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
+        <Folder name="LohiBW">
+          <Composition
+            id="LohiBW-Untertitel-1"
+            component={LohiBwAd1}
+            schema={lohiBwUntertitelSchema}
+            defaultProps={lohiBwAd1Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="LohiBW-Untertitel-2"
+            component={LohiBwAd2}
+            schema={lohiBwUntertitelSchema}
+            defaultProps={lohiBwAd2Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="LohiBW-Untertitel-3"
+            component={LohiBwAd3}
+            schema={lohiBwUntertitelSchema}
+            defaultProps={lohiBwAd3Defaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="LohiBW-Untertitel-4"
+            component={LohiBwAd4}
+            schema={lohiBwUntertitelSchema}
+            defaultProps={lohiBwAd4Defaults}
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
           />
         </Folder>

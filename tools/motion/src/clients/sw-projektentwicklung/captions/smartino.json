@@ -1,0 +1,974 @@
+{
+ "video": "smartino",
+ "source": "05_Hotel-Smartino_V1.scribe.json",
+ "generated": "2026-09-03",
+ "pages": [
+  {
+   "start": 0.019,
+   "end": 1.159,
+   "tokens": [
+    {
+     "text": "Innerhalb",
+     "start": 0.099,
+     "end": 0.379
+    },
+    {
+     "text": "der",
+     "start": 0.419,
+     "end": 0.479
+    },
+    {
+     "text": "sechs",
+     "start": 0.62,
+     "end": 0.799
+    },
+    {
+     "text": "Monate",
+     "start": 0.859,
+     "end": 1.159
+    }
+   ]
+  },
+  {
+   "start": 1.16,
+   "end": 2.37,
+   "tokens": [
+    {
+     "text": "konnten",
+     "start": 1.24,
+     "end": 1.459
+    },
+    {
+     "text": "wir",
+     "start": 1.48,
+     "end": 1.559
+    },
+    {
+     "text": "jetzt",
+     "start": 1.579,
+     "end": 1.74
+    },
+    {
+     "text": "tatsächlich",
+     "start": 1.799,
+     "end": 2.339
+    }
+   ]
+  },
+  {
+   "start": 2.42,
+   "end": 4.529,
+   "tokens": [
+    {
+     "text": "60",
+     "start": 2.5,
+     "end": 2.819
+    },
+    {
+     "text": "Prozent",
+     "start": 2.919,
+     "end": 3.179
+    },
+    {
+     "text": "Autarkiegrad",
+     "start": 3.259,
+     "end": 3.859
+    },
+    {
+     "text": "erreichen.",
+     "start": 3.899,
+     "end": 4.279
+    }
+   ]
+  },
+  {
+   "start": 4.579,
+   "end": 5.239,
+   "tokens": [
+    {
+     "text": "Ich",
+     "start": 4.659,
+     "end": 4.799
+    },
+    {
+     "text": "denke,",
+     "start": 4.819,
+     "end": 4.94
+    },
+    {
+     "text": "wir",
+     "start": 5,
+     "end": 5.059
+    },
+    {
+     "text": "werden",
+     "start": 5.079,
+     "end": 5.239
+    }
+   ]
+  },
+  {
+   "start": 5.199,
+   "end": 6.96,
+   "tokens": [
+    {
+     "text": "am",
+     "start": 5.279,
+     "end": 5.379
+    },
+    {
+     "text": "Ende",
+     "start": 5.42,
+     "end": 5.559
+    },
+    {
+     "text": "des",
+     "start": 5.599,
+     "end": 5.719
+    },
+    {
+     "text": "Tages",
+     "start": 5.759,
+     "end": 6.059
+    },
+    {
+     "text": "zwischen",
+     "start": 6.119,
+     "end": 6.379
+    },
+    {
+     "text": "65",
+     "start": 6.44,
+     "end": 6.96
+    }
+   ]
+  },
+  {
+   "start": 6.939,
+   "end": 8.119,
+   "tokens": [
+    {
+     "text": "und",
+     "start": 7.019,
+     "end": 7.119
+    },
+    {
+     "text": "70",
+     "start": 7.159,
+     "end": 7.419
+    },
+    {
+     "text": "wahrscheinlich",
+     "start": 7.559,
+     "end": 7.899
+    },
+    {
+     "text": "aufs",
+     "start": 7.94,
+     "end": 8.119
+    }
+   ]
+  },
+  {
+   "start": 8.079,
+   "end": 9.069,
+   "tokens": [
+    {
+     "text": "Jahr",
+     "start": 8.159,
+     "end": 8.359
+    },
+    {
+     "text": "rauskommen.",
+     "start": 8.42,
+     "end": 8.88
+    }
+   ]
+  },
+  {
+   "start": 9.119,
+   "end": 10.439,
+   "tokens": [
+    {
+     "text": "Wir",
+     "start": 9.199,
+     "end": 9.26
+    },
+    {
+     "text": "sind",
+     "start": 9.319,
+     "end": 9.439
+    },
+    {
+     "text": "heute",
+     "start": 9.479,
+     "end": 9.859
+    },
+    {
+     "text": "bei",
+     "start": 10.239,
+     "end": 10.319
+    },
+    {
+     "text": "dem",
+     "start": 10.359,
+     "end": 10.439
+    }
+   ]
+  },
+  {
+   "start": 10.399,
+   "end": 12.079,
+   "tokens": [
+    {
+     "text": "Hotel",
+     "start": 10.479,
+     "end": 10.76
+    },
+    {
+     "text": "Smartino",
+     "start": 10.819,
+     "end": 11.3
+    },
+    {
+     "text": "in",
+     "start": 11.319,
+     "end": 11.42
+    },
+    {
+     "text": "Schwäbisch",
+     "start": 11.439,
+     "end": 11.779
+    },
+    {
+     "text": "Hall.",
+     "start": 11.8,
+     "end": 12.079
+    }
+   ]
+  },
+  {
+   "start": 12.099,
+   "end": 13.019,
+   "tokens": [
+    {
+     "text": "Hier",
+     "start": 12.179,
+     "end": 12.279
+    },
+    {
+     "text": "haben",
+     "start": 12.319,
+     "end": 12.42
+    },
+    {
+     "text": "wir",
+     "start": 12.439,
+     "end": 12.559
+    },
+    {
+     "text": "vor",
+     "start": 12.599,
+     "end": 12.719
+    },
+    {
+     "text": "circa",
+     "start": 12.759,
+     "end": 13.019
+    }
+   ]
+  },
+  {
+   "start": 13.039,
+   "end": 13.759,
+   "tokens": [
+    {
+     "text": "sechs",
+     "start": 13.119,
+     "end": 13.279
+    },
+    {
+     "text": "Monaten",
+     "start": 13.38,
+     "end": 13.759
+    }
+   ]
+  },
+  {
+   "start": 13.739,
+   "end": 15.339,
+   "tokens": [
+    {
+     "text": "eine",
+     "start": 13.819,
+     "end": 13.979
+    },
+    {
+     "text": "Photovoltaikanlage",
+     "start": 14.019,
+     "end": 14.859
+    },
+    {
+     "text": "in",
+     "start": 14.899,
+     "end": 14.98
+    },
+    {
+     "text": "Betrieb",
+     "start": 15.019,
+     "end": 15.339
+    }
+   ]
+  },
+  {
+   "start": 15.3,
+   "end": 18.019,
+   "tokens": [
+    {
+     "text": "genommen",
+     "start": 15.38,
+     "end": 15.699
+    },
+    {
+     "text": "mit",
+     "start": 16.02,
+     "end": 16.219
+    },
+    {
+     "text": "exakt",
+     "start": 16.399,
+     "end": 16.76
+    },
+    {
+     "text": "144",
+     "start": 16.819,
+     "end": 17.539
+    },
+    {
+     "text": "Modulen",
+     "start": 17.659,
+     "end": 18.019
+    }
+   ]
+  },
+  {
+   "start": 17.979,
+   "end": 19.299,
+   "tokens": [
+    {
+     "text": "und",
+     "start": 18.059,
+     "end": 18.219
+    },
+    {
+     "text": "63",
+     "start": 18.26,
+     "end": 18.78
+    },
+    {
+     "text": "Kilowatt-Peak.",
+     "start": 18.78,
+     "end": 19.299
+    }
+   ]
+  },
+  {
+   "start": 19.319,
+   "end": 20.579,
+   "tokens": [
+    {
+     "text": "Bei",
+     "start": 19.399,
+     "end": 19.479
+    },
+    {
+     "text": "dem",
+     "start": 19.52,
+     "end": 19.639
+    },
+    {
+     "text": "Objekt",
+     "start": 19.699,
+     "end": 19.979
+    },
+    {
+     "text": "hier",
+     "start": 20.02,
+     "end": 20.18
+    },
+    {
+     "text": "haben",
+     "start": 20.479,
+     "end": 20.579
+    }
+   ]
+  },
+  {
+   "start": 20.52,
+   "end": 21.959,
+   "tokens": [
+    {
+     "text": "wir",
+     "start": 20.6,
+     "end": 20.68
+    },
+    {
+     "text": "circa",
+     "start": 20.819,
+     "end": 21.139
+    },
+    {
+     "text": "einen",
+     "start": 21.159,
+     "end": 21.28
+    },
+    {
+     "text": "Stromverbrauch",
+     "start": 21.299,
+     "end": 21.959
+    }
+   ]
+  },
+  {
+   "start": 21.94,
+   "end": 23.659,
+   "tokens": [
+    {
+     "text": "von",
+     "start": 22.02,
+     "end": 22.199
+    },
+    {
+     "text": "70.000",
+     "start": 22.42,
+     "end": 22.979
+    },
+    {
+     "text": "Kilowattstunden",
+     "start": 23.1,
+     "end": 23.659
+    }
+   ]
+  },
+  {
+   "start": 23.699,
+   "end": 24.749,
+   "tokens": [
+    {
+     "text": "gehabt",
+     "start": 23.779,
+     "end": 24.019
+    },
+    {
+     "text": "pro",
+     "start": 24.139,
+     "end": 24.299
+    },
+    {
+     "text": "Jahr.",
+     "start": 24.399,
+     "end": 24.599
+    }
+   ]
+  },
+  {
+   "start": 24.799,
+   "end": 25.599,
+   "tokens": [
+    {
+     "text": "Wir",
+     "start": 24.879,
+     "end": 24.94
+    },
+    {
+     "text": "werden",
+     "start": 24.979,
+     "end": 25.199
+    },
+    {
+     "text": "wahrscheinlich",
+     "start": 25.239,
+     "end": 25.599
+    }
+   ]
+  },
+  {
+   "start": 25.579,
+   "end": 26.979,
+   "tokens": [
+    {
+     "text": "dieses",
+     "start": 25.659,
+     "end": 25.92
+    },
+    {
+     "text": "Jahr",
+     "start": 26,
+     "end": 26.219
+    },
+    {
+     "text": "bei",
+     "start": 26.459,
+     "end": 26.599
+    },
+    {
+     "text": "gerade",
+     "start": 26.659,
+     "end": 26.859
+    },
+    {
+     "text": "mal",
+     "start": 26.899,
+     "end": 26.979
+    }
+   ]
+  },
+  {
+   "start": 26.939,
+   "end": 28.859,
+   "tokens": [
+    {
+     "text": "noch",
+     "start": 27.019,
+     "end": 27.159
+    },
+    {
+     "text": "25.000",
+     "start": 27.199,
+     "end": 28.12
+    },
+    {
+     "text": "maximal",
+     "start": 28.379,
+     "end": 28.859
+    }
+   ]
+  },
+  {
+   "start": 28.819,
+   "end": 30.5,
+   "tokens": [
+    {
+     "text": "rauskommen,",
+     "start": 28.899,
+     "end": 29.619
+    },
+    {
+     "text": "was",
+     "start": 29.699,
+     "end": 29.819
+    },
+    {
+     "text": "hier",
+     "start": 29.859,
+     "end": 29.979
+    },
+    {
+     "text": "Netzbezug",
+     "start": 30,
+     "end": 30.5
+    }
+   ]
+  },
+  {
+   "start": 30.459,
+   "end": 31.799,
+   "tokens": [
+    {
+     "text": "dann",
+     "start": 30.539,
+     "end": 30.659
+    },
+    {
+     "text": "später",
+     "start": 30.719,
+     "end": 30.959
+    },
+    {
+     "text": "noch",
+     "start": 31,
+     "end": 31.139
+    },
+    {
+     "text": "ist.",
+     "start": 31.179,
+     "end": 31.799
+    }
+   ]
+  },
+  {
+   "start": 31.779,
+   "end": 32.559,
+   "tokens": [
+    {
+     "text": "Also",
+     "start": 31.859,
+     "end": 31.979
+    },
+    {
+     "text": "das",
+     "start": 32.02,
+     "end": 32.099
+    },
+    {
+     "text": "ist",
+     "start": 32.159,
+     "end": 32.259
+    },
+    {
+     "text": "wirklich",
+     "start": 32.299,
+     "end": 32.559
+    }
+   ]
+  },
+  {
+   "start": 32.499,
+   "end": 34.86,
+   "tokens": [
+    {
+     "text": "eine",
+     "start": 32.579,
+     "end": 33
+    },
+    {
+     "text": "Vorzeige-PV-Anlage,",
+     "start": 33.059,
+     "end": 34.619
+    },
+    {
+     "text": "also",
+     "start": 34.7,
+     "end": 34.86
+    }
+   ]
+  },
+  {
+   "start": 34.859,
+   "end": 36,
+   "tokens": [
+    {
+     "text": "das",
+     "start": 34.939,
+     "end": 35.02
+    },
+    {
+     "text": "ist",
+     "start": 35.079,
+     "end": 35.139
+    },
+    {
+     "text": "ein",
+     "start": 35.18,
+     "end": 35.239
+    },
+    {
+     "text": "richtig",
+     "start": 35.259,
+     "end": 35.54
+    },
+    {
+     "text": "gelungenes",
+     "start": 35.579,
+     "end": 36
+    }
+   ]
+  },
+  {
+   "start": 35.999,
+   "end": 36.9,
+   "tokens": [
+    {
+     "text": "Projekt",
+     "start": 36.079,
+     "end": 36.639
+    },
+    {
+     "text": "und",
+     "start": 36.7,
+     "end": 36.779
+    },
+    {
+     "text": "haben",
+     "start": 36.819,
+     "end": 36.9
+    }
+   ]
+  },
+  {
+   "start": 36.839,
+   "end": 38.459,
+   "tokens": [
+    {
+     "text": "wir",
+     "start": 36.919,
+     "end": 37
+    },
+    {
+     "text": "auch",
+     "start": 37.02,
+     "end": 37.159
+    },
+    {
+     "text": "perfekt",
+     "start": 37.18,
+     "end": 37.5
+    },
+    {
+     "text": "ausgelegt.",
+     "start": 37.559,
+     "end": 38.459
+    }
+   ]
+  },
+  {
+   "start": 38.44,
+   "end": 40.059,
+   "tokens": [
+    {
+     "text": "Wenn",
+     "start": 38.52,
+     "end": 38.619
+    },
+    {
+     "text": "auch",
+     "start": 38.68,
+     "end": 38.84
+    },
+    {
+     "text": "du",
+     "start": 38.879,
+     "end": 39.219
+    },
+    {
+     "text": "ein",
+     "start": 39.279,
+     "end": 39.34
+    },
+    {
+     "text": "Gewerbeobjekt",
+     "start": 39.419,
+     "end": 40.059
+    }
+   ]
+  },
+  {
+   "start": 40.039,
+   "end": 40.979,
+   "tokens": [
+    {
+     "text": "hast",
+     "start": 40.119,
+     "end": 40.419
+    },
+    {
+     "text": "und",
+     "start": 40.479,
+     "end": 40.619
+    },
+    {
+     "text": "auch",
+     "start": 40.68,
+     "end": 40.819
+    },
+    {
+     "text": "mal",
+     "start": 40.879,
+     "end": 40.979
+    }
+   ]
+  },
+  {
+   "start": 40.94,
+   "end": 42.079,
+   "tokens": [
+    {
+     "text": "eine",
+     "start": 41.02,
+     "end": 41.119
+    },
+    {
+     "text": "Analyse",
+     "start": 41.2,
+     "end": 41.599
+    },
+    {
+     "text": "haben",
+     "start": 41.659,
+     "end": 41.759
+    },
+    {
+     "text": "möchtest",
+     "start": 41.779,
+     "end": 42.079
+    }
+   ]
+  },
+  {
+   "start": 42.039,
+   "end": 43.439,
+   "tokens": [
+    {
+     "text": "von",
+     "start": 42.119,
+     "end": 42.239
+    },
+    {
+     "text": "deinem",
+     "start": 42.279,
+     "end": 42.479
+    },
+    {
+     "text": "Dach",
+     "start": 42.559,
+     "end": 43.099
+    },
+    {
+     "text": "und",
+     "start": 43.139,
+     "end": 43.239
+    },
+    {
+     "text": "wie",
+     "start": 43.239,
+     "end": 43.34
+    },
+    {
+     "text": "viel",
+     "start": 43.36,
+     "end": 43.439
+    }
+   ]
+  },
+  {
+   "start": 43.42,
+   "end": 44.479,
+   "tokens": [
+    {
+     "text": "Autarkiegrad",
+     "start": 43.5,
+     "end": 44.079
+    },
+    {
+     "text": "wir",
+     "start": 44.119,
+     "end": 44.479
+    }
+   ]
+  },
+  {
+   "start": 44.44,
+   "end": 45.649,
+   "tokens": [
+    {
+     "text": "bei",
+     "start": 44.52,
+     "end": 44.639
+    },
+    {
+     "text": "dir",
+     "start": 44.7,
+     "end": 44.86
+    },
+    {
+     "text": "erreichen",
+     "start": 44.899,
+     "end": 45.259
+    },
+    {
+     "text": "können,",
+     "start": 45.299,
+     "end": 45.479
+    }
+   ]
+  },
+  {
+   "start": 45.699,
+   "end": 46.36,
+   "tokens": [
+    {
+     "text": "dann",
+     "start": 45.779,
+     "end": 45.919
+    },
+    {
+     "text": "meld",
+     "start": 45.959,
+     "end": 46.099
+    },
+    {
+     "text": "dich",
+     "start": 46.119,
+     "end": 46.2
+    },
+    {
+     "text": "doch",
+     "start": 46.219,
+     "end": 46.36
+    }
+   ]
+  },
+  {
+   "start": 46.319,
+   "end": 47.479,
+   "tokens": [
+    {
+     "text": "bei",
+     "start": 46.399,
+     "end": 46.479
+    },
+    {
+     "text": "uns",
+     "start": 46.559,
+     "end": 46.759
+    },
+    {
+     "text": "und",
+     "start": 47.079,
+     "end": 47.18
+    },
+    {
+     "text": "wir",
+     "start": 47.2,
+     "end": 47.279
+    },
+    {
+     "text": "schauen",
+     "start": 47.319,
+     "end": 47.479
+    }
+   ]
+  },
+  {
+   "start": 47.44,
+   "end": 48.979,
+   "tokens": [
+    {
+     "text": "uns",
+     "start": 47.52,
+     "end": 47.619
+    },
+    {
+     "text": "das",
+     "start": 47.639,
+     "end": 47.759
+    },
+    {
+     "text": "Ganze",
+     "start": 47.779,
+     "end": 48.02
+    },
+    {
+     "text": "mal",
+     "start": 48.059,
+     "end": 48.18
+    },
+    {
+     "text": "an.",
+     "start": 48.219,
+     "end": 48.379
+    }
+   ]
+  }
+ ]
+}
