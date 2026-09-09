@@ -9,7 +9,8 @@ Aufruf:
 Schutz: läuft nur, wenn --project exakt dem geöffneten Projekt entspricht (Freigabe des Users) — sonst Exit 2
 ohne jede Änderung. Legt Bin „AutoCut/PROBE-API" und die Timelines „AutoCut PROBE API <HHMM>" und „… SYNC" an;
 am Ende werden die eigenen Objekte nur gelöscht, wenn alle Pflichtmessungen ok sind und kein Render-Timeout
-auftrat (--keep behält sie immer; bei Fehler heißen sie „… FEHLER" und bleiben stehen; bei „nicht ok" bleiben
+auftrat — nur in diesem Lauf importierte Clips; der Bin nur, wenn er von diesem Lauf angelegt wurde
+(--keep behält sie immer; bei Fehler heißen sie „… FEHLER" und bleiben stehen; bei „nicht ok" bleiben
 sie zur Ansicht stehen). Die Timeline des Users wird immer wieder aktiviert.
 Ergebnis → <Charge>/_intern/autocut/probe_api.json. Exit 0 = Pflichtmessungen ok (volume, speed, fades),
 1 = Messung fehlgeschlagen oder Fehler, 2 = Vorbedingung (Projektname, Resolve, ffmpeg, Charge).
@@ -18,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as _dt
+import json
 import sys
 import time
 import traceback
@@ -74,9 +76,14 @@ def _project_resolution(session) -> tuple[int, int]:
 
 def build_timelines(session, files: dict, name: str, rcfg: dict) -> dict:
     """Bin, Import, Timeline A (V1/A1 Ton, V3 Zähler A/Lücke/B/C/D, V4 leer) und Timeline B (Sync-Paar mit Ton)."""
+    root = session.media_pool.GetRootFolder()
+    ac = next((f for f in (root.GetSubFolderList() or []) if f.GetName() == str(rcfg["bin_root"])), None)
+    bin_neu = ac is None or not any(f.GetName() == "PROBE-API" for f in (ac.GetSubFolderList() or []))
     folder = session.ensure_bin([str(rcfg["bin_root"]), "PROBE-API"])
     ton, versetzt, zaehler = str(files["ton"]), str(files["versetzt"]), str(files["zaehler"])
+    neu = [p for p in (ton, versetzt, zaehler) if session.find_media_item(p) is None]
     mi = session.import_media([ton, versetzt, zaehler], folder)
+    own_clips = [mi[p] for p in neu]
     w, h = _project_resolution(session)      # Projektauflösung: kein useCustomSettings (BMD-Bug bleibt außen vor)
     tl_a = session.create_timeline(name, FPS, w, h, str(rcfg["start_timecode"]))
     session.ensure_tracks(tl_a, 4, 1, {"V1": "Ton", "V3": "B-Roll", "V4": "Grafik", "A1": "Ton"})
@@ -95,7 +102,8 @@ def build_timelines(session, files: dict, name: str, rcfg: dict) -> dict:
                Item("V2", versetzt, 0, 300, SYNC_REC, SYNC_REC + 300, True, "P"),
                Item("A2", versetzt, 0, 300, SYNC_REC, SYNC_REC + 300, True, "P")]
     added_b = session.append_items(tl_b, items_b, mi, start_b)
-    return {"folder": folder, "media": mi, "tl_a": tl_a, "tl_b": tl_b, "start_a": start_a, "start_b": start_b,
+    return {"folder": folder, "media": mi, "own_clips": own_clips, "bin_neu": bin_neu,
+            "tl_a": tl_a, "tl_b": tl_b, "start_a": start_a, "start_b": start_b,
             "v1c1": added_a[0], "a1c1": added_a[1], "v1c2": added_a[2], "a1c2": added_a[3],
             "v1b": added_b[0], "v2b": added_b[2],
             "baseline": {"A": session.read_timeline(tl_a), "B": session.read_timeline(tl_b)}}
@@ -217,6 +225,8 @@ def measure_quickexport(session, h: dict, target_dir: Path) -> dict:
         return {"uebersprungen": f"Preset '{RENDER_PRESET}' fehlt (vorhanden: {presets})"}
     p.SetCurrentTimeline(h["tl_a"])
     target_dir.mkdir(parents=True, exist_ok=True)
+    for f in target_dir.glob("probe_api*"):     # Reste eines früheren Laufs dürfen nicht als Erfolg zählen
+        f.unlink()
     t0 = time.monotonic()
     status = RA._safe(p.RenderWithQuickExport, None, RENDER_PRESET, {"TargetDir": str(target_dir), "CustomName": "probe_api"}) or {}
     wand = round(time.monotonic() - t0, 2)
@@ -234,6 +244,7 @@ def measure_alpha_import(session, h: dict, files: dict) -> tuple[dict, object]:
     """Alpha-Overlay importieren und auf V4 legen. Liefert (Befund, Media-Pool-Item fürs Aufräumen oder None)."""
     overlay = str(files["overlay"])
     try:
+        war_neu = session.find_media_item(overlay) is None
         mi = session.import_media([overlay], h["folder"])
         ov = mi[overlay]
         alpha = RA._safe(ov.GetClipProperty, None, "Alpha mode") or RA._safe(ov.GetClipProperty, None, "Alpha Mode")
@@ -241,7 +252,7 @@ def measure_alpha_import(session, h: dict, files: dict) -> tuple[dict, object]:
         added = session.append_items(h["tl_a"], [item], mi, h["start_a"])
         start, dauer = int(added[0].GetStart()), int(added[0].GetDuration())
         return ({"ok": start == h["start_a"] + OVERLAY_REC and dauer == OVERLAY_N, "start": start, "dauer": dauer,
-                 "alpha_mode": alpha}, ov)
+                 "alpha_mode": alpha}, ov if war_neu else None)
     except AutoCutError as e:
         return ({"ok": False, "fehler": str(e)}, None)
 
@@ -277,17 +288,28 @@ def run_probe_api(ch: Charge, session, files: dict, name: str, keep: bool) -> di
     except Exception as e:
         res["fehler"] = str(e) if isinstance(e, AutoCutError) else f"{type(e).__name__}: {e}"
         res["traceback"] = None if isinstance(e, AutoCutError) else traceback.format_exc()
-        timelines = [h["tl_a"], h["tl_b"]] if h is not None else [t for t in (session.current_timeline,) if t is not None]
+        wanted = {name, name + " SYNC"}
+        timelines = [t for t in session.list_timelines() if str(RA._safe(t.GetName, "") or "") in wanted]
+        if not timelines and session.current_timeline is not None:
+            timelines = [session.current_timeline]
         for tl in timelines:
             RA._safe(tl.SetName, False, str(RA._safe(tl.GetName, "") or "") + " FEHLER")
     finally:
         render_timeout = int((res.get("quickexport") or {}).get("gewartet_s") or 0) >= RENDER_WAIT_S
         if h is not None and not keep and not res["fehler"]:
             if res["ok"] and not render_timeout:
-                clips = list(h["media"].values()) + extra_clips
-                res["cleanup"] = session.delete_probe_objects([h["tl_a"], h["tl_b"]], clips, [h["folder"]])
+                clips = list(h["own_clips"]) + extra_clips
+                folders = [h["folder"]] if h["bin_neu"] else []
+                res["cleanup"] = session.delete_probe_objects([h["tl_a"], h["tl_b"]], clips, folders)
+                if not h["bin_neu"]:
+                    res["cleanup"]["folders"] = "uebersprungen: Bin PROBE-API bestand schon vor diesem Lauf"
             else:
-                grund = "Render-Timeout — Resolve rendert womöglich noch" if render_timeout else "Pflichtmessung nicht ok"
+                gruende = []
+                if render_timeout:
+                    gruende.append("Render-Timeout — Resolve rendert womöglich noch")
+                if not res["ok"]:
+                    gruende.append("Pflichtmessung nicht ok")
+                grund = " und ".join(gruende)
                 res["cleanup"] = {"uebersprungen": f"{grund} — Probe-Objekte bleiben zur Ansicht stehen"}
         res["warnings"] = list(session.warnings)
         session.restore_user_timeline()
@@ -308,6 +330,10 @@ def main(argv: list[str] | None = None) -> int:
         if session.project_name != args.project:
             raise AutoCutError(f"Offen ist das Projekt '{session.project_name}', freigegeben wurde '{args.project}'. "
                                f"Nichts geändert — Projekt öffnen oder --project anpassen.")
+        proj_fps = session.project.GetSetting("timelineFrameRate")
+        if not RA._fps_matches(proj_fps, FPS):
+            raise AutoCutError(f"Projekt '{session.project_name}' läuft mit {proj_fps} fps, die Probe braucht {FPS} fps "
+                               f"(Projekt-Setting timelineFrameRate). Nichts geändert.")
         files = PM.ensure_probe_media(ch.work / "probe_api")
     except AutoCutError as e:
         print(f"FEHLER (Vorbedingung): {e}", file=sys.stderr)
@@ -315,7 +341,7 @@ def main(argv: list[str] | None = None) -> int:
     name = f"AutoCut PROBE API {_dt.datetime.now():%H%M}"
     print(f"Resolve {session.version}, Projekt '{session.project_name}' — Probe '{name}'")
     res = run_probe_api(ch, session, files, name, args.keep)
-    out = ch.write_json("probe_api.json", res)
+    out = ch.write_json("probe_api.json", json.loads(json.dumps(res, default=str, ensure_ascii=False)))
     print("\n".join(PA.summary_lines(res)) + f"\n  cleanup: {res.get('cleanup')}\n→ {out}")
     if res.get("fehler"):
         print("FEHLER:", res["fehler"], file=sys.stderr)

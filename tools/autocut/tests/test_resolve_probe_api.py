@@ -85,11 +85,31 @@ def test_full_run_ok_and_cleans_up(env, capsys):
     assert res["quickexport"]["status"] == "Render Complete" and res["quickexport"]["datei"] == "probe_api.mov"
     assert res["baseline"]["A"]["tracks"]["V4"]["name"] == "Grafik"
     assert (res["baseline"]["A"]["width"], res["baseline"]["A"]["height"]) == (3840, 2160)   # Projektauflösung, kein useCustomSettings
-    assert res["timelines"] == {"A": res["timelines"]["A"], "B": res["timelines"]["A"] + " SYNC"}
+    assert res["timelines"]["A"].startswith("AutoCut PROBE API ") and res["timelines"]["B"] == res["timelines"]["A"] + " SYNC"
     p = env["project"]
     assert p.timelines == [] and _autocut_bin(p).subs == []
     assert res["cleanup"] == {"timelines": True, "clips": True, "folders": True}
     assert "probe_api.json" in capsys.readouterr().out
+
+
+def test_cleanup_spares_objects_of_earlier_runs(env):
+    p = env["project"]
+    mp = p.GetMediaPool()
+    root = mp.GetRootFolder()
+    ac = mp.AddSubFolder(root, "AutoCut")
+    alt = mp.AddSubFolder(ac, "PROBE-API")
+    mp.SetCurrentFolder(alt)
+    work = env["ch"].work / "probe_api"
+    work.mkdir(parents=True, exist_ok=True)
+    (work / "ton_25p.mov").write_bytes(b"alt")
+    alter_clip = mp.ImportMedia([str(work / "ton_25p.mov")])[0]          # Clip eines früheren Laufs
+    rc = probe.main([str(env["dir"]), "--project", "MCP MEK Test"])
+    res = env["ch"].read_json("probe_api.json")
+    assert rc == 0 and res["ok"] is True
+    assert [f.name for f in ac.subs] == ["PROBE-API"]                       # Bin bleibt
+    assert alter_clip in alt.clips                                          # fremder Clip bleibt
+    assert not any(c.path.endswith(("zaehler_50p.mov", "overlay_alpha.mov")) for c in alt.clips)  # eigene Importe weg
+    assert res["cleanup"]["timelines"] is True and "uebersprungen" in str(res["cleanup"]["folders"])
 
 
 def test_project_mismatch_exits_2_without_touching_resolve(env, capsys):
@@ -98,6 +118,13 @@ def test_project_mismatch_exits_2_without_touching_resolve(env, capsys):
     assert env["project"].timelines == [] and env["project"].mp.calls == []
     assert env["ch"].read_json("probe_api.json") is None
     assert "freigegeben" in capsys.readouterr().err
+
+
+def test_fps_mismatch_exits_2_without_changes(env, capsys):
+    env["project"].settings["timelineFrameRate"] = "30"
+    rc = probe.main([str(env["dir"]), "--project", "MCP MEK Test"])
+    assert rc == 2 and env["project"].timelines == [] and env["project"].mp.calls == []
+    assert "fps" in capsys.readouterr().err
 
 
 def test_keep_retains_timelines_and_bin(env):
@@ -113,12 +140,28 @@ def test_failure_renames_timelines_keeps_objects_and_exits_1(env, monkeypatch):
         raise RuntimeError("kaputt")
 
     monkeypatch.setattr(probe, "measure_fades", boom)
+    user_tl = env["project"].GetMediaPool().CreateEmptyTimeline("User Schnitt")
     rc = probe.main([str(env["dir"]), "--project", "MCP MEK Test"])
     res = env["ch"].read_json("probe_api.json")
     assert rc == 1 and res["ok"] is False and "kaputt" in res["fehler"] and res["traceback"]
-    names = [t.name for t in env["project"].timelines]
+    names = [t.name for t in env["project"].timelines if "PROBE API" in t.name]
     assert len(names) == 2 and all(n.endswith(" FEHLER") for n in names)
     assert res["cleanup"] is None and _autocut_bin(env["project"]).subs[0].name == "PROBE-API"
+    assert env["project"].current is user_tl
+
+
+def test_partial_build_marks_created_timeline_as_fehler(env, monkeypatch):
+    orig = probe.RA.ResolveSession.create_timeline
+
+    def flaky(self, name, *a, **k):
+        if name.endswith(" SYNC"):
+            raise RuntimeError("SYNC kaputt")
+        return orig(self, name, *a, **k)
+
+    monkeypatch.setattr(probe.RA.ResolveSession, "create_timeline", flaky)
+    rc = probe.main([str(env["dir"]), "--project", "MCP MEK Test"])
+    names = [t.name for t in env["project"].timelines]
+    assert rc == 1 and len(names) == 1 and names[0].endswith(" FEHLER")
 
 
 def test_failed_mandatory_measure_keeps_objects_for_inspection(env, monkeypatch):
@@ -150,6 +193,24 @@ def test_missing_preset_and_missing_mode_are_skipped(env):
         FakeTimeline.NORMALIZE_MODES = ["Sample Peak Program", "True Peak", "ITU-R BS.1770-4", "EBU R128"]
     res = env["ch"].read_json("probe_api.json")
     assert rc == 0 and "uebersprungen" in res["quickexport"] and "uebersprungen" in res["normalize"]
+
+
+def test_stale_render_file_does_not_count(env):
+    target = env["ch"].work / "probe_api" / "render"
+    target.mkdir(parents=True, exist_ok=True)
+    (target / "probe_api.mov").write_bytes(b"alt")
+    env["project"].RenderWithQuickExport = lambda preset, settings=None: {"JobStatus": "Render Failed", "Error": "Test"}
+    rc = probe.main([str(env["dir"]), "--project", "MCP MEK Test"])
+    res = env["ch"].read_json("probe_api.json")
+    assert rc == 0 and res["quickexport"]["ok"] is False and res["quickexport"]["datei"] is None
+    assert not (target / "probe_api.mov").exists()
+
+
+def test_result_is_written_even_with_non_primitive_values(env, monkeypatch):
+    monkeypatch.setattr(probe, "measure_transition", lambda h: {"ok": True, "typ": "transition", "dauer": 12, "obj": object()})
+    rc = probe.main([str(env["dir"]), "--project", "MCP MEK Test"])
+    res = env["ch"].read_json("probe_api.json")
+    assert rc == 0 and res["transition"]["obj"].startswith("<object object")
 
 
 def test_user_timeline_is_restored(env):
