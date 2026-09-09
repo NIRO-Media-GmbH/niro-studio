@@ -107,5 +107,9 @@ def test_charge_map_path_rejects_invalid_path_map(charge_dir):
     with pytest.raises(AutoCutError, match="path_map"):
         ch.map_path("/a/y.mp4")
 
+    ch.config["path_map"] = {"/a": None}                                 # YAML `"/a":` ohne Wert → sonst „None/y.mp4“
+    with pytest.raises(AutoCutError, match="path_map"):
+        ch.map_path("/a/y.mp4")
+
     ch.config["path_map"] = {"/a": "/b"}
     assert ch.map_path("/a/y.mp4") == "/b/y.mp4"                    # gültiges path_map bleibt unangetastet
