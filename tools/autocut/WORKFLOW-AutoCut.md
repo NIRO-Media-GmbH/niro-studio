@@ -59,6 +59,11 @@ Zusammenfassung; Exit ≠ 0 heißt Abbruch mit deutscher Meldung (Ursache + Abhi
 
 ## Eiserne Regeln
 
+- **Stufe 3 „B-Roll" ist ausgesetzt (User 09.09.2026).** Urteil zum Schnitt vom 09.09.: „total unpassend und
+  schlecht getrimmt — solange du das noch nicht besser kannst, lass es lieber ganz." Bis Teilprojekt 2
+  („B-Roll-Index v3": zuverlässige Shot-Erkennung, Ausschuss-Metriken, Trimmung) abgenommen ist, wird
+  **kein V3 gebaut**: geliefert werden Rohschnitt (Stufe 1) und Finalisieren (Stufe 5). Stufe 3 nur auf
+  ausdrückliche Anweisung im Chat.
 - **NAS nur lesen.** Kein Skript schreibt unter `/Volumes/`. Originale und Proxies bleiben unangetastet.
 - **Schreibbereiche** (im Code über `Charge.assert_writable` erzwungen): nur `<Charge>/_intern/autocut/**`,
   `<Charge>/Ergebnisse/Rohschnitt/**` und `Protokoll.md` (anhängen). Nichts unter `Material/`,
