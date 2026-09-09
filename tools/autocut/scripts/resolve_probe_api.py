@@ -8,8 +8,9 @@ Aufruf:
 
 Schutz: läuft nur, wenn --project exakt dem geöffneten Projekt entspricht (Freigabe des Users) — sonst Exit 2
 ohne jede Änderung. Legt Bin „AutoCut/PROBE-API" und die Timelines „AutoCut PROBE API <HHMM>" und „… SYNC" an;
-am Ende werden nur diese eigenen Objekte gelöscht (--keep behält sie; bei Fehler heißen sie „… FEHLER" und
-bleiben stehen). Die Timeline des Users wird immer wieder aktiviert.
+am Ende werden die eigenen Objekte nur gelöscht, wenn alle Pflichtmessungen ok sind und kein Render-Timeout
+auftrat (--keep behält sie immer; bei Fehler heißen sie „… FEHLER" und bleiben stehen; bei „nicht ok" bleiben
+sie zur Ansicht stehen). Die Timeline des Users wird immer wieder aktiviert.
 Ergebnis → <Charge>/_intern/autocut/probe_api.json. Exit 0 = Pflichtmessungen ok (volume, speed, fades),
 1 = Messung fehlgeschlagen oder Fehler, 2 = Vorbedingung (Projektname, Resolve, ffmpeg, Charge).
 """
@@ -280,9 +281,14 @@ def run_probe_api(ch: Charge, session, files: dict, name: str, keep: bool) -> di
         for tl in timelines:
             RA._safe(tl.SetName, False, str(RA._safe(tl.GetName, "") or "") + " FEHLER")
     finally:
+        render_timeout = int((res.get("quickexport") or {}).get("gewartet_s") or 0) >= RENDER_WAIT_S
         if h is not None and not keep and not res["fehler"]:
-            clips = list(h["media"].values()) + extra_clips
-            res["cleanup"] = session.delete_probe_objects([h["tl_a"], h["tl_b"]], clips, [h["folder"]])
+            if res["ok"] and not render_timeout:
+                clips = list(h["media"].values()) + extra_clips
+                res["cleanup"] = session.delete_probe_objects([h["tl_a"], h["tl_b"]], clips, [h["folder"]])
+            else:
+                grund = "Render-Timeout — Resolve rendert womöglich noch" if render_timeout else "Pflichtmessung nicht ok"
+                res["cleanup"] = {"uebersprungen": f"{grund} — Probe-Objekte bleiben zur Ansicht stehen"}
         res["warnings"] = list(session.warnings)
         session.restore_user_timeline()
     return res

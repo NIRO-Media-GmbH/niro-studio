@@ -45,10 +45,10 @@ def _fake_defaults():
 
 @pytest.fixture
 def env(charge_dir: Path, monkeypatch) -> dict:
-    """Charge + Fake-Resolve (Projekt „MCP MEK Test", 1920×1080); ffmpeg und True-Peak-Messung gepatcht."""
+    """Charge + Fake-Resolve (Projekt „MCP MEK Test", Projektauflösung bleibt beim Fake-Default 3840×2160);
+    ffmpeg und True-Peak-Messung gepatcht."""
     ch = Charge.open(charge_dir)
     project = FakeProject("MCP MEK Test")
-    project.settings.update({"timelineResolutionWidth": "1920", "timelineResolutionHeight": "1080"})
     fake = FakeResolve(project)
     work = ch.work / "probe_api"
     project.mp.fps_by_path[str(work / "zaehler_50p.mov")] = 50
@@ -84,6 +84,7 @@ def test_full_run_ok_and_cleans_up(env, capsys):
     assert res["alpha_import"]["alpha_mode"] == "Straight" and res["alpha_import"]["dauer"] == 50
     assert res["quickexport"]["status"] == "Render Complete" and res["quickexport"]["datei"] == "probe_api.mov"
     assert res["baseline"]["A"]["tracks"]["V4"]["name"] == "Grafik"
+    assert (res["baseline"]["A"]["width"], res["baseline"]["A"]["height"]) == (3840, 2160)   # Projektauflösung, kein useCustomSettings
     assert res["timelines"] == {"A": res["timelines"]["A"], "B": res["timelines"]["A"] + " SYNC"}
     p = env["project"]
     assert p.timelines == [] and _autocut_bin(p).subs == []
@@ -118,6 +119,18 @@ def test_failure_renames_timelines_keeps_objects_and_exits_1(env, monkeypatch):
     names = [t.name for t in env["project"].timelines]
     assert len(names) == 2 and all(n.endswith(" FEHLER") for n in names)
     assert res["cleanup"] is None and _autocut_bin(env["project"]).subs[0].name == "PROBE-API"
+
+
+def test_failed_mandatory_measure_keeps_objects_for_inspection(env, monkeypatch):
+    monkeypatch.setattr(probe, "measure_volume",
+                        lambda h: {"ok": False, "soll": 9.0, "ist": None, "enabled": False, "set_returned": False})
+    rc = probe.main([str(env["dir"]), "--project", "MCP MEK Test"])
+    res = env["ch"].read_json("probe_api.json")
+    assert rc == 1 and res["ok"] is False and res["fehler"] is None
+    assert "uebersprungen" in res["cleanup"]
+    names = [t.name for t in env["project"].timelines]
+    assert len(names) == 2 and not any(n.endswith(" FEHLER") for n in names)
+    assert [f.name for f in _autocut_bin(env["project"]).subs] == ["PROBE-API"]
 
 
 def test_keeps_duration_semantics_is_classified_not_failed(env):
