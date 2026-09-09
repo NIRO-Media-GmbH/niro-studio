@@ -59,6 +59,7 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     "$PY" "$TOOL/scripts/autocut_place_broll.py" "$CHARGE" --verify-only
     "$PY" "$TOOL/scripts/autocut_place_broll.py" "$CHARGE"        # V3 in die roh-Timeline + Bericht
     "$PY" "$TOOL/scripts/resolve_probe_xml.py" "$CHARGE"          # einmalig je Resolve-Umgebung: probe_xml.json
+    "$PY" "$TOOL/scripts/resolve_probe_api.py" "$CHARGE" --project "<Projekt>"   # einmalig je Resolve-Umgebung: probe_api.json (21.1-API)
     "$PY" "$TOOL/scripts/autocut_finalize.py" "$CHARGE"           # Stufe 5: End-Timeline (Pegel, Zeitlupe) + Bericht
 
 ## Aufbau

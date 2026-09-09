@@ -2,7 +2,8 @@
 
 Alle Resolve-Aufrufe laufen über ``ResolveSession``; Tests injizieren ein Fake-Resolve (tests/fake_resolve.py).
 
-Verbindliche Erkenntnisse (Recherche 03.09., README/CHANGELOG 21.0):
+Verbindliche Erkenntnisse (Recherche 03.09.; seit 21.1 heißt die Doku README.md/CHANGELOG.md/DaVinciResolveScript.pyi
+im Scripting-Ordner — Probe der neuen Funktionen: scripts/resolve_probe_api.py → probe_api.json):
 - ``recordFrame`` in ``AppendToTimeline`` ist ABSOLUT (Timeline-Startframe + Offset; 01:00:00:00 @ 25 fps = 90000).
   ``Timeline.AddMarker(frameId)`` ist dagegen RELATIV zum Timeline-Start (README „timeline offset").
 - ``endFrame`` gilt als inklusiv (``END_FRAME_INCLUSIVE``); die tatsächliche Semantik misst ``scripts/resolve_probe.py``
@@ -29,8 +30,8 @@ from .timeline_model import Item, MarkerSpec, TimelinePlan
 
 API = "/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting"
 LIB = "/Applications/DaVinci Resolve/DaVinci Resolve.app/Contents/Libraries/Fusion/fusionscript.so"
-TRACK_INDEX = {"V1": 1, "V2": 2, "V3": 3, "A1": 1, "A2": 2}
-APPEND_ORDER = {"V1": 0, "A1": 1, "V2": 2, "A2": 3, "V3": 4}   # je Cut: V1/A1/V2/A2, B-Roll zuletzt
+TRACK_INDEX = {"V1": 1, "V2": 2, "V3": 3, "V4": 4, "A1": 1, "A2": 2}
+APPEND_ORDER = {"V1": 0, "A1": 1, "V2": 2, "A2": 3, "V3": 4, "V4": 5}   # je Cut: V1/A1/V2/A2, B-Roll, Grafik zuletzt
 END_FRAME_INCLUSIVE = True      # Annahme (README-Beispiel 7); Probe misst und überschreibt per probe.json
 MARKER_NAME_MAX = 80
 MARKER_NOTE_MAX = 2000
