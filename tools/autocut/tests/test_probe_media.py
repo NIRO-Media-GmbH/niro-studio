@@ -48,7 +48,7 @@ def test_zaehler_is_50p_without_audio_and_overlay_has_alpha(tmp_path):
     assert "4444" in ov and "yuva444p10le" in ov and "black@0.0" in ov[ov.index("-i") + 1]
 
 
-def test_ensure_runs_only_missing_and_returns_paths(tmp_path, monkeypatch):
+def test_ensure_runs_only_missing_and_returns_paths(tmp_path):
     calls: list[list[str]] = []
 
     def fake_run(argv, **kw):

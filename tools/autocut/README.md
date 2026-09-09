@@ -100,7 +100,7 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 `timeline.json`, `build.json`, `broll_index.json` (+ Cache `broll_index/<fingerprint>.json`),
 `broll_index_kompakt.json`, `raster.json`, `broll_plan.json`, `broll_build.json`, `probe_xml.json`,
 `probe_api.json`, `ton.json`, `finalize.json`, `work/` (Audio, Frames, Kontaktbögen/Abschnittsbögen,
-`ton_cache.json`, `xml/`, `probe_api/` [synthetische Medien, Render]).
+`ton_cache.json`, `xml/`, `probe_api/` (synthetische Medien, Render)).
 `Ergebnisse/Rohschnitt/`: `<video>-rohschnitt.md` (mit Pegel-Abschnitt nach Stufe 5), `broll-index.md`,
 `<video>-raster.md`, `<video>-broll.md`, `<Timeline>.xml`.
 

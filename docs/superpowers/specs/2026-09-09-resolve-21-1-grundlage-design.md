@@ -73,7 +73,7 @@ Resolve-Projekt, eine Messung des tatsächlichen API-Verhaltens und eine Doku, d
 | Zuschnitt Teilprojekt 1 | Siebte Funktion „Resolve: <Aufgabe>" mit eigener Workflow-Datei unter `tools/resolve/`, Kurzregeln in CLAUDE.md, Probe als wiederholbares AutoCut-Skript, Doku-Fixes. |
 | MCP-Registrierung | Projekt-Scope `.mcp.json` (bereits angelegt), nicht User-Scope — damit Regeln und Anbindung auf beiden Macs gleich sind. |
 | Testmaterial der Probe | Synthetisch per ffmpeg, lokal in der Charge erzeugt; kein NAS, kein Kundenmaterial. |
-| Reihenfolge der Teilprojekte | 1 Grundlage → 2 AutoCut v3 → 3 Animations-Import. |
+| Reihenfolge der Teilprojekte | 1 Grundlage → 2 B-Roll-Index v3 → 3 AutoCut v3 → 4 Animations-Import (Entscheidung des Users am 09.09., B-Roll-Erkennung als größter Hebel zuerst). |
 
 ## 1. Siebte Funktion „Resolve: <Aufgabe>"
 
@@ -212,7 +212,7 @@ Teilprojekte 2 und 3. Transkripte werden nicht geprobt (bräuchten Sprachmateria
  "inactive": {"fades_on_inactive_ok": false},
  "quickexport": {"ok": true, "status": "Render Complete", "ms": 4200, "wanddauer_s": 4.6, "datei": "probe_api.mov"},
  "alpha_import": {"ok": true, "start": 90025, "dauer": 50, "alpha_mode": "Straight"},
- "cleanup": {"timelines": 2, "clips": 4, "folders": 1}, "warnings": [], "fehler": null}
+ "cleanup": {"timelines": true, "clips": true, "folders": true}, "warnings": [], "fehler": null}
 ```
 
 Felder mit `uebersprungen: "<Grund>"` statt `ok`, wenn eine Voraussetzung fehlt (Preset, Modus).
@@ -329,3 +329,4 @@ Beobachtet außerhalb des JSON: Resolve legt neue Timelines in den aktuellen Bin
 - **Review-Render:** `RenderWithQuickExport` blockiert und liefert den Status direkt (10-s-Timeline in 3.85 s) — passt ans Ende von Finalisieren.
 - **Animations-Import (Teilprojekt 4):** `ImportMedia` + `AppendToTimeline` auf V4 mit Alpha-Modus „Straight" funktioniert ohne Sonderbehandlung.
 - **Fades** lassen sich auch auf inaktiven Timelines setzen; `SetFades` und `AddTransition` stehen AutoCut v3 damit ohne Einschränkung zur Verfügung.
+- **Media Pool (alle Teilprojekte):** Importe werden über den ganzen Media Pool dedupliziert — jeder Lauf muss sich merken, welche Clips er selbst neu importiert hat, und nur diese wieder entfernen (seit der Fix-Welle so in `resolve_probe_api.py`).

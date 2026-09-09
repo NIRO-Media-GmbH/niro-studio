@@ -21,7 +21,7 @@ FILES = {"ton_wav": "ton.wav", "ton": "ton_25p.mov", "versetzt": "ton_25p_verset
          "zaehler": "zaehler_50p.mov", "overlay": "overlay_alpha.mov"}
 FPS = 25
 VERSATZ_S = 2.0            # Bursts in „versetzt" liegen 2,0 s (50 Frames) später als in „ton"
-PEAK_AMPLITUDE = 0.25      # Sample-Peak −12,04 dBFS
+PEAK_AMPLITUDE = 0.25      # Sample-Peak −12,04 dBFS vor dem Tiefpass; True Peak der fertigen Clips ≈ −12 dBFS (Live-Messung)
 # Nicht periodische Bursts (Perioden 1,7 s und 2,3 s), erste VERSATZ_S Sekunden still; random(0) nutzt den internen
 # Zustand 0 und liefert bei jedem Lauf dieselbe Folge. Das Gating gt(…,0) hält die Amplitude bei ≤ PEAK_AMPLITUDE.
 _AUDIO_EXPR = f"{PEAK_AMPLITUDE}*random(0)*gt(t,{VERSATZ_S})*gt(lt(mod(t,1.7),0.35)+lt(mod(t,2.3),0.2),0)"
