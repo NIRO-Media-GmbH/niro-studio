@@ -44,6 +44,9 @@ Zusammenfassung; Exit ≠ 0 heißt Abbruch mit deutscher Meldung (Ursache + Abhi
   Fehlt `kamera_rolle`, gilt FX3 = ton, a7MK4 = kontext. Mehrere `video-*.md` → `--video` angeben.
 - **NAS gemountet** (`/Volumes/NIRO NAS/...`, die `path`-Einträge des Index) mit den Resolve-Proxies
   `<Clip-Ordner>/Proxy/<stem>.mov` (1920×1080) für jeden Interview- und B-Roll-Clip.
+  Liegt das Material inzwischen unter einem anderen Präfix (SSD statt NAS), `path_map` in
+  `<Charge>/_intern/autocut/config.yaml` setzen (`"<alter Präfix>": "<neuer Präfix>"`) — die Arbeitsdateien bleiben
+  unverändert, AutoCut ordnet nur beim Zugriff zu (Media Pool, Proxy, Pegelmessung).
 - **DaVinci Resolve Studio 21.1 läuft**, das Zielprojekt ist geöffnet, Einstellungen → System → General →
   „External scripting using" = **Local**. Nur für Bau-Schritte (build, place, export, probe,
   probe_xml, finalize, read).
@@ -211,7 +214,7 @@ B-Roll-Bericht, keine Schwarzframes.
 | `Keine Charge gefunden … Ergebnisse/O-Ton-Pläne` | Pfad prüfen; erst den Schnittplan-Workflow ausführen |
 | `utterances.json fehlt` | `tools/transcribe/venv/bin/python tools/transcribe/scripts/build_utterances.py "<Charge>"` |
 | `Mehrere Pläne vorhanden, bitte mit --video wählen` | `--video video-1-x.md` an prepare/draft geben |
-| `Datei nicht gefunden … Ist das NAS gemountet?` | NAS im Finder mounten, Pfad aus dem Index prüfen |
+| `Datei nicht gefunden … Ist das NAS gemountet?` | NAS im Finder mounten, Pfad aus dem Index prüfen, oder `path_map` in der Chargen-config.yaml setzen |
 | prepare-Warnung `kein Proxy unter …/Proxy — Resolve nutzt das Original` bzw. verify-Fehler `kein Proxy für …` / `Frames weichen ab: Original … / Proxy …` | Proxy in Resolve neu erzeugen (`<Ordner>/Proxy/<stem>.mov`); nie das Original anfassen |
 | `Mischformate im Interview-Material, media.json nicht geschrieben` (fps/Hochformat/Auflösung der Ton-Clips uneinheitlich) | Clips prüfen; Cutlist nur aus einem Format, Rest im Bericht |
 | Sync-Zeile `ok=False` (Konfidenz unter 4 / keine Überlappung / Prüffenster uneinig) | Paar bleibt ohne V2; Kamera-Zuordnung im Index prüfen (`kamera_rolle`), ggf. `--ordner` neu rechnen; Rückfall: Resolve-Auto-Sync von Hand |
@@ -238,7 +241,7 @@ B-Roll-Bericht, keine Schwarzframes.
 ## Ausgabe-Konvention
 
     <Charge>/_intern/autocut/            Arbeitsdateien (überschreibbar, im Bericht referenziert)
-    ├── config.yaml                      optional: Überschreibungen von tools/autocut/defaults.yaml
+    ├── config.yaml                      optional: Überschreibungen von tools/autocut/defaults.yaml, `path_map`
     ├── media.json · sync.json           Stufe 1: Medien/Format, Kamerapaare
     ├── cutlist.json · verify.json       Stufe 1: Claude-Cutlist, Prüfergebnis mit Hash
     ├── probe.json                       Resolve-Probe (endFrame-Semantik, Positionen)

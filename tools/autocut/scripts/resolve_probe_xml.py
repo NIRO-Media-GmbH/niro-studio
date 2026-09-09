@@ -49,7 +49,7 @@ def run_probe_xml(ch: Charge, session: RA.ResolveSession, media: dict, index: di
     folder = session.ensure_bin([str(rcfg["bin_root"]), "PROBE-XML"])
     try:
         mi = session.import_media([fx, br], folder)
-        session.link_proxy(mi[fx], ((media.get("clips") or {}).get(fx) or {}).get("proxy_path") or (str(proxy_for(fx)) if proxy_for(fx) else None))
+        session.link_proxy(mi[fx], ((media.get("clips") or {}).get(fx) or {}).get("proxy_path") or (str(proxy_for(ch.map_path(fx))) if proxy_for(ch.map_path(fx)) else None))
         tl_roh = session.create_timeline(name + " (roh)", fps, int(media["format"]["width"]), int(media["format"]["height"]),
                                          str(rcfg["start_timecode"]))
         session.ensure_tracks(tl_roh, 3, 1, {"V1": "FX3", "V3": "B-Roll", "A1": "FX3 Ton"})
@@ -118,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
         media, index = ch.read_json("media.json"), ch.read_json("broll_index.json")
         if not media or not index:
             raise AutoCutError("media.json und broll_index.json werden gebraucht (autocut_prepare.py, autocut_index_broll.py).")
-        session = RA.ResolveSession(RA.connect(), probe=ch.read_json("probe.json"))
+        session = RA.ResolveSession(RA.connect(), probe=ch.read_json("probe.json"), path_map=ch.config.get("path_map"))
         name = f"AutoCut PROBE XML {_dt.datetime.now():%H%M%S}"
         print(f"Resolve {session.version}, Projekt '{session.project_name}' — Probe '{name}'")
         res = run_probe_xml(ch, session, media, index, name, args.keep)

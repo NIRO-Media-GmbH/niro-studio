@@ -152,7 +152,7 @@ def main(argv: list[str] | None = None) -> int:
         name = args.name or (RA.timeline_name(str(rcfg["timeline_prefix"]), video_kurz) + suffix)
         if not name.endswith(suffix):
             name += suffix
-        session = RA.ResolveSession(RA.connect(), probe=probe)
+        session = RA.ResolveSession(RA.connect(), probe=probe, path_map=ch.config.get("path_map"))
         print(f"Resolve: {session.version}, Projekt '{session.project_name}' ({session.project_id or 'ohne ID'})")
         if session.find_timeline(name) is not None:
             raise AutoCutError(f"Timeline '{name}' existiert bereits — eine Minute warten oder --name setzen.")

@@ -72,7 +72,8 @@ fehlt in dieser Installation — Zeitstempel werden mit Pillow eingebrannt.
 ## 6. NAS
 
 Die Clip-Pfade stammen aus `<Charge>/_intern/transcripts_index.json` (`/Volumes/NIRO NAS/...`). Das NAS
-muss beim Lauf gemountet sein; AutoCut liest dort nur (Original-Audio, Proxies) und schreibt nie.
+muss beim Lauf gemountet sein; AutoCut liest dort nur (Original-Audio, Proxies) und schreibt nie. Liegt das
+Material inzwischen unter einem anderen Präfix (z. B. auf einer SSD), `path_map` in der Chargen-config.yaml setzen.
 
 ## 7. Prüfen
 
@@ -88,4 +89,5 @@ Alle Tests laufen ohne Resolve, NAS und API-Key. Danach ein lesender Live-Check 
 Sync-Konfidenz 4,0, Index-Modell/Kacheln, B-Roll-Regeln, Resolve-Bin/Timeline-Namen). Pro Charge
 überschreibbar in `<Charge>/_intern/autocut/config.yaml` (rekursiv gemergt: nur die dort genannten Schlüssel
 ersetzen die Standardwerte, verschachtelte Blöcke bleiben sonst erhalten) — die Datei
-selbst nicht ändern, solange andere Chargen sie nutzen.
+selbst nicht ändern, solange andere Chargen sie nutzen. `path_map` ordnet die Pfade der Arbeitsdateien dem
+aktuellen Ablageort zu (NAS → SSD), je Charge in `config.yaml`.

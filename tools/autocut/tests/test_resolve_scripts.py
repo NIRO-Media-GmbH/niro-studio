@@ -559,3 +559,21 @@ def test_check_shot_files_reports_missing_proxy(tmp_path: Path):
     p.write_bytes(b"x")
     probs = place.check_shot_files([{"clip": str(p)}], {"clips": [{"path": str(p), "proxy": None}]})
     assert len(probs) == 1 and "kein Proxy" in probs[0]
+
+
+def test_build_uses_path_map_and_existing_media_items(mek, monkeypatch, tmp_path):
+    """config.yaml path_map: die Charge kennt NAS-Pfade, der Media Pool hat die SSD-Items — kein Import nötig."""
+    ch = mek["ch"]
+    nas_root = str(tmp_path / "nas")
+    ssd_root = str(tmp_path / "ssd")
+    (ch.autocut / "config.yaml").write_text(f'path_map:\n  "{nas_root}": "{ssd_root}"\n', encoding="utf-8")
+    p = FakeProject()
+    mp = p.GetMediaPool()
+    for src in (mek["fx"], mek["a7"]):
+        mp.ImportMedia([src.replace(nas_root, ssd_root)])
+    mp.calls.clear()
+    monkeypatch.setattr(build.RA, "connect", lambda: FakeResolve(p))
+    assert build.main([str(mek["dir"])]) == 0
+    assert not any(c[0] == "ImportMedia" for c in mp.calls)
+    tl = p.timelines[-1]
+    assert tl.GetItemListInTrack("video", 1)

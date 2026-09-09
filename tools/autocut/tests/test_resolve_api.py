@@ -399,3 +399,42 @@ def test_import_timeline_xml_unknown_clip_becomes_phantom_item(tmp_path):
     final = s.import_timeline_xml(xml, "Import-Phantom", [leer])
     mpi = final.GetItemListInTrack("video", 1)[0].GetMediaPoolItem()
     assert mpi.GetClipProperty("File Path") == "/import/FX3_1.MP4"
+
+
+def test_import_media_finds_mapped_item_without_import_and_keeps_original_key():
+    p = FakeProject()
+    mp = p.GetMediaPool()
+    root = mp.GetRootFolder()
+    ssd = mp.ImportMedia(["/Volumes/SSD/proj/Interviews/FX3_0001.MP4"])[0]
+    mp.calls.clear()
+    s = ResolveSession(FakeResolve(p), path_map={"/Volumes/NAS/proj": "/Volumes/SSD/proj"})
+    out = s.import_media(["/Volumes/NAS/proj/Interviews/FX3_0001.MP4"], root)
+    assert out == {"/Volumes/NAS/proj/Interviews/FX3_0001.MP4": ssd}
+    assert not any(c[0] == "ImportMedia" for c in mp.calls)
+    assert s.find_media_item("/Volumes/NAS/proj/Interviews/FX3_0001.MP4") is ssd
+
+
+def test_import_media_imports_mapped_path_when_missing():
+    p = FakeProject()
+    mp = p.GetMediaPool()
+    s = ResolveSession(FakeResolve(p), path_map={"/Volumes/NAS/proj": "/Volumes/SSD/proj"})
+    out = s.import_media(["/Volumes/NAS/proj/B/FX3_0002.MP4"], mp.GetRootFolder())
+    assert ("ImportMedia", ["/Volumes/SSD/proj/B/FX3_0002.MP4"]) in mp.calls
+    assert list(out) == ["/Volumes/NAS/proj/B/FX3_0002.MP4"]
+    assert out["/Volumes/NAS/proj/B/FX3_0002.MP4"].GetClipProperty("File Path") == "/Volumes/SSD/proj/B/FX3_0002.MP4"
+
+
+def test_link_proxy_maps_proxy_path():
+    p = FakeProject()
+    item = p.GetMediaPool().ImportMedia(["/Volumes/SSD/proj/FX3_0003.MP4"])[0]
+    s = ResolveSession(FakeResolve(p), path_map={"/Volumes/NAS/proj": "/Volumes/SSD/proj"})
+    assert s.link_proxy(item, "/Volumes/NAS/proj/Proxy/FX3_0003.mov") is True
+    assert item.proxy == "/Volumes/SSD/proj/Proxy/FX3_0003.mov"
+
+
+def test_session_without_path_map_is_unchanged():
+    p = FakeProject()
+    mp = p.GetMediaPool()
+    s = ResolveSession(FakeResolve(p))
+    s.import_media(["/Volumes/NAS/proj/FX3_0004.MP4"], mp.GetRootFolder())
+    assert ("ImportMedia", ["/Volumes/NAS/proj/FX3_0004.MP4"]) in mp.calls

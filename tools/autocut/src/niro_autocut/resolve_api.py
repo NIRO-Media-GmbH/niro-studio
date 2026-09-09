@@ -25,7 +25,7 @@ import sys
 import unicodedata
 from pathlib import Path
 
-from .charge import AutoCutError
+from .charge import AutoCutError, map_path
 from .timeline_model import Item, MarkerSpec, TimelinePlan
 
 API = "/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting"
@@ -134,9 +134,10 @@ class ResolveSession:
     ``probe``: Inhalt von probe.json (``scripts/resolve_probe.py``); Schlüssel ``end_frame_inclusive`` bestimmt
     die endFrame-Semantik. Fehlt die Probe, gilt ``END_FRAME_INCLUSIVE`` — der Readback deckt Abweichungen auf.
     Nicht-fatale Befunde (Proxy, Marker verschoben, Clip nicht stummgeschaltet) sammelt ``warnings``.
+    ``path_map`` (Chargen-Config) ordnet Arbeitsdatei-Pfade dem aktuellen Ablageort zu; Schlüssel bleiben Originalpfade.
     """
 
-    def __init__(self, resolve, probe: dict | None = None):
+    def __init__(self, resolve, probe: dict | None = None, path_map: dict | None = None):
         self.resolve = resolve
         self.pm = resolve.GetProjectManager()
         self.project = self.pm.GetCurrentProject()
@@ -150,10 +151,14 @@ class ResolveSession:
         if isinstance(probe, dict) and probe.get("end_frame_inclusive") is not None:
             self.end_frame_inclusive = bool(probe["end_frame_inclusive"])
         self.warnings: list[str] = []
+        self.path_map = dict(path_map or {})
         self.current_timeline = None     # zuletzt von dieser Session angelegte Timeline (Fehlerfall: umbenennen)
         self.user_timeline = _safe(self.project.GetCurrentTimeline, None)   # wird am Ende jedes Laufs wieder aktiviert
 
     # --- Media Pool ------------------------------------------------------
+    def map_path(self, path: str | Path) -> str:
+        return map_path(path, self.path_map)
+
     def _walk(self, folder):
         yield folder
         for sub in folder.GetSubFolderList() or []:
@@ -172,7 +177,7 @@ class ResolveSession:
 
     def find_media_item(self, path: str):
         """Vorhandenes Media-Pool-Item zum Dateipfad (über alle Bins), sonst None."""
-        return self._path_index().get(_norm(path))
+        return self._path_index().get(_norm(self.map_path(path)))
 
     def ensure_bin(self, parts: list[str]):
         """Bin-Pfad unter dem Master-Ordner anlegen (nur fehlende Ebenen) und als aktuellen Ordner setzen."""
@@ -192,13 +197,13 @@ class ResolveSession:
         out: dict[str, object] = {}
         missing: list[str] = []
         for p in paths:
-            item = index.get(_norm(p))
+            item = index.get(_norm(self.map_path(p)))
             if item is None:
                 missing.append(p)
             else:
                 out[p] = item
         if missing:
-            imported = self.media_pool.ImportMedia(list(missing)) or []
+            imported = self.media_pool.ImportMedia([self.map_path(p) for p in missing]) or []
             by_path = {}
             for it in imported:
                 fp = _safe(it.GetClipProperty, None, "File Path")
@@ -206,12 +211,12 @@ class ResolveSession:
                     by_path[_norm(fp)] = it
             fresh = None
             for p in missing:
-                item = by_path.get(_norm(p))
+                item = by_path.get(_norm(self.map_path(p)))
                 if item is None:
                     fresh = fresh if fresh is not None else self._path_index()
-                    item = fresh.get(_norm(p))
+                    item = fresh.get(_norm(self.map_path(p)))
                 if item is None:
-                    raise AutoCutError(f"Import in den Media Pool fehlgeschlagen: {p}\n"
+                    raise AutoCutError(f"Import in den Media Pool fehlgeschlagen: {self.map_path(p)}\n"
                                        f"Ist das NAS gemountet und die Datei lesbar?")
                 out[p] = item
         return out
@@ -220,6 +225,7 @@ class ResolveSession:
         """Proxy verknüpfen, falls noch keiner verknüpft ist (Clip-Eigenschaft 'Proxy' nennt sonst z. B. 1920x1080)."""
         if not proxy_path:
             return False
+        proxy_path = self.map_path(proxy_path)
         current = _safe(item.GetClipProperty, "", "Proxy")
         if isinstance(current, str) and "x" in current.lower() and any(ch.isdigit() for ch in current):
             return True

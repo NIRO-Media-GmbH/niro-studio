@@ -72,7 +72,8 @@ def _key(it: Item) -> str:
     return f"{it.clip}|{int(it.src_in_f)}|{int(it.src_out_f)}"
 
 
-def measure_a1_items(items: list[Item], fps: float, cfg_ton: dict, cache: dict, measure=measure_true_peak) -> list[dict]:
+def measure_a1_items(items: list[Item], fps: float, cfg_ton: dict, cache: dict, measure=measure_true_peak,
+                      map_path=None) -> list[dict]:
     """Je A1-Item (Reihenfolge der Timeline) True Peak aus dem Cache oder per ``measure``; liefert die ton.json-Einträge.
 
     Nicht endliche oder extrem niedrige Messwerte (digitale Stille, z. B. ``-math.inf``) werden auf
@@ -86,7 +87,8 @@ def measure_a1_items(items: list[Item], fps: float, cfg_ton: dict, cache: dict, 
         rec = cache.get(k)
         if not rec or rec.get("tpk_dbfs") is None:
             in_s, dur_s = it.src_in_f / fps, (it.src_out_f - it.src_in_f) / fps
-            rec = {"tpk_dbfs": measure(it.clip, round(in_s, 3), round(dur_s, 3))}
+            src = map_path(it.clip) if map_path else it.clip
+            rec = {"tpk_dbfs": measure(src, round(in_s, 3), round(dur_s, 3))}
             cache[k] = rec
         tpk = rec["tpk_dbfs"]
         if tpk is not None and (not math.isfinite(tpk) or tpk < -120.0):
@@ -113,7 +115,7 @@ def build_ton(charge, tp_dict: dict, cfg_ton: dict, measure=measure_true_peak) -
     charge.assert_writable(cache_file)
     cache_file.parent.mkdir(parents=True, exist_ok=True)
     try:
-        entries = measure_a1_items(items, fps, cfg_ton, cache, measure)
+        entries = measure_a1_items(items, fps, cfg_ton, cache, measure, map_path=getattr(charge, "map_path", None))
     finally:
         cache_file.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
     out = {"ziel_dbtp": float(cfg_ton["ziel_dbtp"]), "max_gain_db": float(cfg_ton["max_gain_db"]),

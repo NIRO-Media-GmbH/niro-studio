@@ -52,7 +52,7 @@ def main(argv: list[str] | None = None) -> int:
                   f"'{fin.get('status')}'; Timeline '{name}') — mit --timeline gezielt exportieren oder neu bauen/finalisieren.",
                   file=sys.stderr)
             return 2
-        session = RA.ResolveSession(RA.connect())
+        session = RA.ResolveSession(RA.connect(), path_map=ch.config.get("path_map"))
         timeline = session.find_timeline(name)
         if timeline is None:
             raise AutoCutError(f"Timeline '{name}' nicht im Projekt '{session.project_name}' gefunden — richtiges "

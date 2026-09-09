@@ -123,7 +123,7 @@ def require_verified_cutlist(ch: Charge) -> Cutlist:
     return cl
 
 
-def check_shot_files(placed: list[dict], index: dict) -> list[str]:
+def check_shot_files(placed: list[dict], index: dict, map_path=None) -> list[str]:
     """Original und Proxy jedes platzierten Clips müssen da sein (nur Existenz-Tests; NAS wird nur gelesen)."""
     probs = []
     by_path = {c["path"]: c for c in (index.get("clips") or []) if c.get("path")}
@@ -133,7 +133,7 @@ def check_shot_files(placed: list[dict], index: dict) -> list[str]:
             probs.append(f"Clip-Datei nicht gefunden: {p} — ist das NAS gemountet?")
             continue
         proxy = (by_path.get(clip) or {}).get("proxy")
-        if not (proxy and Path(proxy).is_file()) and proxy_for(p) is None:
+        if not (proxy and Path(proxy).is_file()) and proxy_for(map_path(p) if map_path else p) is None:
             probs.append(f"kein Proxy für {p.name} (erwartet {p.parent / 'Proxy' / (p.stem + '.mov')} oder .mp4).")
     return probs
 
@@ -192,7 +192,7 @@ def build_v3(session, timeline_name: str, video: str, items: list, markers: list
     media_items = session.import_media(clips, folder)
     by_path = {c["path"]: c for c in (index.get("clips") or []) if c.get("path")}
     for c in clips:
-        proxy = (by_path.get(c) or {}).get("proxy") or proxy_for(c)
+        proxy = (by_path.get(c) or {}).get("proxy") or proxy_for(session.map_path(c))
         if not session.link_proxy(media_items[c], str(proxy) if proxy else None):
             warnings.append(f"Proxy nicht verknüpft: {Path(c).name}")
     session.project.SetCurrentTimeline(timeline)      # zuerst aktivieren: Resolve setzt Spurnamen nur auf der aktiven Timeline
@@ -282,7 +282,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             wf, _ = window_frames(effective_windows(plan, tp_dict, cl, cfg_broll), tp_dict, fps, cfg_broll)
             placed, _ = place_shots(plan, tp_dict, index, cfg_broll, fps, strecken_frames=stretches(wf, int(tp_dict["total_frames"])))
-        res.errors += check_shot_files(placed, index)
+        res.errors += check_shot_files(placed, index, map_path=ch.map_path)
         for e in res.errors:
             print("FEHLER:", e)
         for w in res.warnings:
@@ -309,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
         probe = ch.read_json("probe.json")
         if not probe or probe.get("end_frame_inclusive") is None:
             print("HINWEIS: probe.json fehlt — endFrame-Semantik nicht gemessen (Annahme wie beim Rohschnitt-Bau).")
-        session = ResolveSession(connect(), probe=probe)
+        session = ResolveSession(connect(), probe=probe, path_map=ch.config.get("path_map"))
         print(f"Resolve: {session.version}, Projekt '{session.project_name}' ({session.project_id or 'ohne ID'})")
         vk = video_kurz(cl)
         started = _dt.datetime.now()

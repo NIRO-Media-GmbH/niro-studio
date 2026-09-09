@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import json
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -25,6 +26,25 @@ def _deep_merge(base: dict, override: dict) -> dict:
         else:
             out[k] = v
     return out
+
+
+def map_path(path: str | Path, path_map: dict | None) -> str:
+    """Pfad über die längste passende Präfix-Zuordnung umschreiben (Ordnergrenze, NFC-normalisiert); sonst unverändert.
+
+    Schlüssel = Präfix in den Arbeitsdateien (z. B. NAS), Wert = Präfix, unter dem die Dateien jetzt liegen (z. B. SSD).
+    """
+    s = unicodedata.normalize("NFC", str(path))
+    best: tuple[str, str] | None = None
+    for src, dst in (path_map or {}).items():
+        a = unicodedata.normalize("NFC", str(src)).rstrip("/")
+        if not a:
+            continue
+        if s == a or s.startswith(a + "/"):
+            if best is None or len(a) > len(best[0]):
+                best = (a, unicodedata.normalize("NFC", str(dst)).rstrip("/"))
+    if best is None:
+        return str(path)
+    return best[1] + s[len(best[0]):]
 
 
 def load_config(charge_root: str | Path) -> dict:
@@ -74,6 +94,10 @@ class Charge:
         if not any(str(p).startswith(str(a) + "/") or p == a for a in allowed):
             raise AutoCutError(f"Schreiben verweigert: {p}\nAutoCut schreibt nur unter "
                                f"{self.autocut} und {self.ergebnisse} sowie ans Protokoll.")
+
+    def map_path(self, path: str | Path) -> str:
+        """Zugriffspfad laut ``path_map`` der Config (Arbeitsdateien behalten die Originalpfade)."""
+        return map_path(path, self.config.get("path_map") or {})
 
     # --- Eingaben ------------------------------------------------------
     def plan_files(self) -> list[Path]:

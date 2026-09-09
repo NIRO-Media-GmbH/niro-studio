@@ -174,7 +174,7 @@ def main(argv: list[str] | None = None) -> int:
         if not media:
             raise AutoCutError(f"{ch.autocut / 'media.json'} fehlt — erst scripts/autocut_prepare.py ausführen.")
         sync = ch.read_json("sync.json")
-        session = RA.ResolveSession(RA.connect())
+        session = RA.ResolveSession(RA.connect(), path_map=ch.config.get("path_map"))
         name = f"AutoCut PROBE {_dt.datetime.now():%H%M%S}"
         print(f"Resolve {session.version}, Projekt '{session.project_name}' — Probe-Timeline '{name}'")
         result: dict = {"ok": False, "gemessen_am": _dt.datetime.now().isoformat(timespec="seconds"),

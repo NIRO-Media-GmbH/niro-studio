@@ -326,7 +326,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     try:
         ch = Charge.open(args.charge)
-        session = RA.ResolveSession(RA.connect(), probe=ch.read_json("probe.json"))
+        session = RA.ResolveSession(RA.connect(), probe=ch.read_json("probe.json"), path_map=ch.config.get("path_map"))
         if session.project_name != args.project:
             raise AutoCutError(f"Offen ist das Projekt '{session.project_name}', freigegeben wurde '{args.project}'. "
                                f"Nichts geändert — Projekt öffnen oder --project anpassen.")

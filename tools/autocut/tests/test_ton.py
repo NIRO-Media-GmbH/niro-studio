@@ -107,3 +107,19 @@ def test_build_ton_normalizes_non_finite_true_peak_for_json(charge_dir):
     json.dumps(out, allow_nan=False)  # darf nicht scheitern (kein -Infinity/NaN mehr im Baum)
     cache = json.loads((ch.work / "ton_cache.json").read_text())
     assert cache["/nas/FX3_1.MP4|0|25"]["tpk_dbfs"] == -120.0
+
+
+def test_measure_a1_items_measures_mapped_path_but_keys_original():
+    from niro_autocut.ton import measure_a1_items
+    seen = []
+
+    def fake_measure(path, in_s, dur_s):
+        seen.append(path)
+        return -12.0
+
+    items = [Item("A1", "/Volumes/NAS/proj/FX3_0001.MP4", 25, 125, 0, 100, True, "1")]
+    cache: dict = {}
+    cfg = {"ziel_dbtp": -3.0, "max_gain_db": 30.0, "clip_warn_dbtp": -0.5, "silence_dbtp": -60.0}
+    out = measure_a1_items(items, 25.0, cfg, cache, fake_measure, map_path=lambda p: p.replace("/Volumes/NAS/", "/Volumes/SSD/"))
+    assert seen == ["/Volumes/SSD/proj/FX3_0001.MP4"]
+    assert out[0]["clip"] == "/Volumes/NAS/proj/FX3_0001.MP4" and list(cache) == ["/Volumes/NAS/proj/FX3_0001.MP4|25|125"]

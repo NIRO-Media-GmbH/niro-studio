@@ -65,7 +65,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 ## Aufbau
 
     defaults.yaml            Standardwerte (Pause, Handles, Sync, Index-Modell, B-Roll-Regeln v2, Ton, Resolve-Namen);
-                             pro Charge überschreibbar in <Charge>/_intern/autocut/config.yaml
+                             pro Charge überschreibbar in <Charge>/_intern/autocut/config.yaml. path_map ordnet die
+                             Pfade der Arbeitsdateien dem aktuellen Ablageort zu (NAS → SSD), je Charge in config.yaml
     src/niro_autocut/
       charge.py              Charge öffnen, Config, Pfade, Schreibschutz, Protokoll-Eintrag
       media.py               ffprobe, Proxy-Suche, Format/Rotation, Fingerprint, Audio-Extraktion

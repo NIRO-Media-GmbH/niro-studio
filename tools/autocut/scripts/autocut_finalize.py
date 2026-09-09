@@ -37,7 +37,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"FEHLER: {ch.autocut / 'probe_xml.json'} fehlt oder level_import_ok=false — erst scripts/resolve_probe_xml.py.",
                   file=sys.stderr)
             return 2
-        session = RA.ResolveSession(RA.connect(), probe=ch.read_json("probe.json"))
+        session = RA.ResolveSession(RA.connect(), probe=ch.read_json("probe.json"), path_map=ch.config.get("path_map"))
         print(f"Resolve {session.version}, Projekt '{session.project_name}' — roh-Timeline '{build['timeline']}'")
         try:
             out = finalize(ch, session, ch.config, keep_roh=args.keep_roh)

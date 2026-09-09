@@ -54,6 +54,8 @@ index_sections:             # Stufe 2b: Nachlauf je Abschnitt (Frames aus dem Ca
   effort: medium
   max_tokens: 2500
   parallel: 4
+path_map: {}                # Präfix in den Arbeitsdateien → Präfix, unter dem das Material jetzt liegt (z. B. NAS → SSD);
+                            # je Charge in _intern/autocut/config.yaml setzen; längster Präfix gewinnt, Ordnergrenze
 resolve:
   bin_root: AutoCut
   timeline_prefix: AutoCut
