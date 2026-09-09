@@ -98,7 +98,7 @@ class Charge:
     def map_path(self, path: str | Path) -> str:
         """Zugriffspfad laut ``path_map`` der Config (Arbeitsdateien behalten die Originalpfade)."""
         pm = self.config.get("path_map")
-        valid = pm is None or (isinstance(pm, dict) and all(isinstance(v, str) for v in pm.values()))
+        valid = pm is None or (isinstance(pm, dict) and all(isinstance(v, str) and v.strip() for v in pm.values()))
         if not valid:
             raise AutoCutError("path_map in config.yaml muss ein Mapping Präfix → Präfix aus Zeichenketten sein "
                                "(kein leerer Wert).")
