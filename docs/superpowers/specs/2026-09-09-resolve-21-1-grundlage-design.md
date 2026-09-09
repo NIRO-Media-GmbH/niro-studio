@@ -301,3 +301,31 @@ Felder mit `uebersprungen: "<Grund>"` statt `ok`, wenn eine Voraussetzung fehlt 
   AutoCut-Skripte laufen trotzdem (eigener Scripting-Pfad).
 - Regeln sind nur Text: Der MCP kann Schreibzugriffe nicht technisch sperren. Deshalb die Pflicht, den
   Projektnamen zu nennen, und die Namenskonvention `Claude <Aufgabe> <Datum>` für eigene Objekte.
+
+## Befunde der Live-Probe (2026-09-09, „MCP MEK Test", Resolve 21.1.0.14)
+
+Lauf mit `--keep` um 17:08, Exit 0, `ok` = true. Timelines AutoCut PROBE API 1708 / AutoCut PROBE API 1708 SYNC, Projektauflösung 3840×2160, 25 fps.
+
+| Messung | Befund |
+|---|---|
+| `volume` | ok=true: Soll 9.0 dB, Ist 9.0 dB, AudioVolumeEnabled true |
+| `normalize` | ok=true: Modi 14 (u. a. „True Peak", „Sample Peak Program", „EBU R128"); True Peak ffmpeg −12.0 dBFS → Soll 9.0 dB, Ist 8.9 dB, Differenz −0.1 dB |
+| `speed` | ok=true: `gap` = „behält_dauer" (A: Dauer 50 → 50, Quelle [0, 100] → [0, 50]), `source_kept` = false; blockiert: B-Dauer 50 → 50, C-Start 90150 → 90150; `ripple` = „verschiebt" (D-Start 90200 → 90250, C-Dauer nachher 100); Speeds 50,0%, 50,0%, 50,0% |
+| `fades` | ok=true (Ton FadeIn 3.0, FadeOut 5.0), Bild ok=true (FadeIn 3.0, FadeOut 5.0) |
+| `transition` | ok=true: Typ transition, Dauer 12 |
+| `autoalign` | ok=false: `set_returned` = false, moved = keiner, delta_frames = 0 |
+| `inactive` | fades_on_inactive_ok = true (FadeIn 2.0, FadeOut 2.0) |
+| `quickexport` | ok=true: Render Complete, Resolve-Zeit 3026 ms, Wanddauer 3.85 s, gewartet 0 s → der Aufruf blockiert bis zum Ende; Datei probe_api.mov |
+| `alpha_import` | ok=true: Start 90025, Dauer 50, Alpha-Modus Straight |
+| Warnungen | keine |
+
+Beobachtet außerhalb des JSON: Resolve legt neue Timelines in den aktuellen Bin (PROBE-API enthielt nach dem Lauf 4 Medien + 2 Timelines); die `--keep`-Objekte „AutoCut PROBE API 1708"/„… SYNC" und der Bin „PROBE-API" stehen noch und werden vom User gelöscht; ein zweiter Lauf ohne `--keep` wurde bewusst ausgelassen, weil die Media-Pool-Dedupe die von den stehenden Timelines referenzierten Medien löschen würde.
+
+### Konsequenzen (Abschnitt 2.6)
+
+- **Zeitlupe (AutoCut v3):** `speed_gap` = „behält_dauer" → Zeitlupen-Items werden mit dem doppelten Quellbereich in voller Ziellänge gesetzt; `SetSpeed` halbiert dann den Quellbereich (jeder Quellframe genau einmal). Der bisherige XML-Weg entfällt.
+- **Pegel:** `NormalizeAudioLevel` „True Peak" trifft die ffmpeg-Messung auf −0.1 dB — beide Wege sind möglich; AutoCut v3 setzt `AudioVolume` direkt aus der eigenen Messung (deterministisch, gleiche Zahlen wie bisher) und kann Normalize als Gegenprobe nutzen.
+- **Sync-Rückfall:** `AutoAlignClips` lieferte False und bewegte nichts (Waveform, `UseTrack` AUTOMATIC, V1/V2 mit Ton ab Record 100). Teilprojekt 3 klärt die Bedingungen (z. B. `UseTrack` = 1, Auswahl der Clips, Timecode-Modus, gleiche Spur), bevor der Rückfall eingebaut wird; der Python-Sync bleibt Standard.
+- **Review-Render:** `RenderWithQuickExport` blockiert und liefert den Status direkt (10-s-Timeline in 3.85 s) — passt ans Ende von Finalisieren.
+- **Animations-Import (Teilprojekt 4):** `ImportMedia` + `AppendToTimeline` auf V4 mit Alpha-Modus „Straight" funktioniert ohne Sonderbehandlung.
+- **Fades** lassen sich auch auf inaktiven Timelines setzen; `SetFades` und `AddTransition` stehen AutoCut v3 damit ohne Einschränkung zur Verfügung.
