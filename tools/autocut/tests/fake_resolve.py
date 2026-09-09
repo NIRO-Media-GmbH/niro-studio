@@ -6,6 +6,7 @@ Nachgebildete Eigenheiten (Recherche 03.09. + README/CHANGELOG):
 - ``useCustomSettings='1'`` setzt die Color-Management-Keys zurück (BMD-Bug, Forum t=212784).
 - ``AddMarker`` erlaubt nur einen Marker pro Frame; mit ``reject_beyond_end`` auch keinen hinter dem letzten Clip.
 - ``recordFrame`` ist absolut (Startframe 90000 bei 01:00:00:00 @ 25 fps), ``AddMarker(frameId)`` relativ.
+- 21.1: Properties/Speed/Fades/Transition/Normalize/AutoAlign/QuickExport (Semantiken per Klassen-Flags, siehe Probe resolve_probe_api.py).
 """
 from __future__ import annotations
 
@@ -34,7 +35,7 @@ class FakeItem:
     def __init__(self, path: str):
         self.path = path
         self.proxy = None
-        self.props = {"File Path": path, "Proxy": "None", "Video Codec": "H.264", "FPS": "25"}
+        self.props = {"File Path": path, "Proxy": "None", "Video Codec": "H.264", "FPS": "25", "Alpha mode": "None"}
         self.link_calls = 0
         FakeItem._uid_counter += 1
         self._uid_n = FakeItem._uid_counter
@@ -78,6 +79,23 @@ class FakeFolder:
         return "folder-" + self.name
 
 
+class FakeTransition:
+    """Rückgabe von TimelineItem.AddTransition (21.1): eigenes Item mit GetType() == 'transition'."""
+
+    def __init__(self, opts: dict):
+        self.opts = dict(opts)
+        self.dur = int(opts.get("duration") or 12)
+
+    def GetType(self):
+        return "transition"
+
+    def GetDuration(self, *a):
+        return self.dur
+
+    def GetName(self):
+        return str(self.opts.get("type", ""))
+
+
 class FakeTLItem:
     """TimelineItem — Dauer nach der endFrame-Semantik der Timeline."""
 
@@ -97,6 +115,9 @@ class FakeTLItem:
         self.level = 1.0
         self.speed = 100.0
         self.color = ""
+        self.timeline = None                 # setzt AppendToTimeline/ImportTimelineFromFile (SetSpeed braucht die Nachbarn)
+        self.props = {"AudioVolume": 0.0, "AudioVolumeEnabled": True, "Opacity": 100.0}
+        self.fades = {"FadeIn": 0, "FadeOut": 0}
 
     # Plan-Test greift auf .enabled zu
     def SetClipEnabled(self, v):
@@ -139,10 +160,82 @@ class FakeTLItem:
     def GetClipColor(self):
         return self.color
 
+    # --- 21.1 -----------------------------------------------------------
+    def GetType(self):
+        return self.kind
+
+    def GetProperties(self):
+        return dict(self.props)
+
+    def SetProperties(self, props):
+        """Wie Resolve: alle Schlüssel werden vorab geprüft — entweder alles oder nichts."""
+        for k, v in props.items():
+            if k not in self.props:
+                return False
+            if k == "AudioVolume" and not (-100.0 <= float(v) <= 30.0):
+                return False
+        for k, v in props.items():
+            self.props[k] = float(v) if isinstance(self.props[k], float) else v
+        return True
+
+    def GetFades(self):
+        return dict(self.fades)
+
+    def SetFades(self, fades):
+        tl = self.timeline
+        if tl is not None and tl.fades_need_active and tl.project.current is not tl:
+            return False
+        for k in ("FadeIn", "FadeOut"):
+            if k in fades:
+                self.fades[k] = int(fades[k])
+        return True
+
+    def GetSpeed(self):
+        return {"Percentage": float(self.speed)}
+
+    def SetSpeed(self, opts):
+        """Semantik per FakeTimeline.speed_extends: True = Clip verlängert sich in eine Lücke (bleibt am Nachbarn
+        stehen), False = Timeline-Dauer bleibt, Quellbereich schrumpft. RippleTimeline verschiebt Nachfolger."""
+        pct = float(opts.get("Percentage", 100.0))
+        if pct <= 0:
+            return False
+        ripple = bool(opts.get("RippleTimeline", False))
+        tl = self.timeline
+        new_dur = int(round(self.dur * self.speed / pct))
+        self.speed = pct
+        later = sorted((o for o in (tl.GetItemListInTrack(self.kind, self.index) if tl is not None else [])
+                        if o.start > self.start), key=lambda o: o.start)
+        if ripple:
+            delta = new_dur - self.dur
+            for o in later:
+                o.start += delta
+            self.dur = new_dur
+        elif tl is None or tl.speed_extends:
+            limit = later[0].start if later else None
+            self.dur = new_dur if limit is None or self.start + new_dur <= limit else max(self.dur, limit - self.start)
+        else:
+            n = int(round((int(self.info["endFrame"]) - int(self.info["startFrame"])) * pct / 100.0))
+            self.info = dict(self.info, endFrame=int(self.info["startFrame"]) + n)
+        return True
+
+    def AddTransition(self, opts):
+        if opts.get("category") not in ("simple", "fusion", "ofx", "audio") or opts.get("position") not in ("start", "end"):
+            return None
+        tr = FakeTransition(opts)
+        if self.timeline is not None:
+            self.timeline.transitions.append(tr)
+        return tr
+
 
 class FakeTimeline:
     inclusive = True            # endFrame-Semantik (Probe misst sie live)
     reject_beyond_end = False   # Marker hinter dem letzten Clip ablehnen (Resolve-Verhalten)
+    speed_extends = True        # SetSpeed: True = verlängert in Lücken, False = behält Timeline-Dauer (Probe misst live)
+    fades_need_active = False   # SetFades nur auf der aktiven Timeline erlaubt?
+    align_moves = "V2"          # AutoAlignClips bewegt das zweite ("V2") oder erste ("V1") Item
+    align_offset_frames = -50   # … um so viele Frames (V2 nach vorn)
+    tpk_dbfs = -12.0            # True Peak, den NormalizeAudioLevel „misst"
+    NORMALIZE_MODES = ["Sample Peak Program", "True Peak", "ITU-R BS.1770-4", "EBU R128"]
 
     def __init__(self, name: str, project: "FakeProject"):
         self.name = name
@@ -163,6 +256,9 @@ class FakeTimeline:
         self.start_frame = 90000
         self.linked: list[list] = []
         self.exports: list[tuple] = []
+        self.transitions: list = []
+        self.align_calls: list[tuple] = []
+        self.normalize_calls: list[tuple] = []
 
     def GetName(self):
         return self.name
@@ -245,6 +341,36 @@ class FakeTimeline:
         self.linked.append(list(items))
         return True
 
+    # --- 21.1 -----------------------------------------------------------
+    def GetNormalizeAudioModes(self):
+        return list(self.NORMALIZE_MODES)
+
+    def NormalizeAudioLevel(self, items, opts=None):
+        opts = dict(opts or {})
+        mode = opts.get("normalizationMode", "Sample Peak Program")
+        if mode not in self.NORMALIZE_MODES:
+            return False
+        self.normalize_calls.append((list(items), opts))
+        target = float(opts.get("targetLevel", -9.0))
+        for it in items:
+            it.props["AudioVolume"] = round(target - float(self.tpk_dbfs), 3)
+            it.props["AudioVolumeEnabled"] = True
+        return True
+
+    def AutoAlignClips(self, items, opts=None):
+        """Bewegt ein Item samt gleich startendem Ton derselben Spurnummer (verknüpftes Paar)."""
+        if len(items) < 2:
+            return False
+        self.align_calls.append((list(items), dict(opts or {})))
+        first, second = items[0], items[1]
+        mover = second if self.align_moves == "V2" else first
+        delta = int(self.align_offset_frames) if mover is second else -int(self.align_offset_frames)
+        start = mover.start
+        for it in self.tl_items:
+            if it.index == mover.index and it.start == start:
+                it.start += delta
+        return True
+
     def _xmeml(self) -> str:
         def clip(it, media):
             rel = it.start - self.start_frame
@@ -292,6 +418,7 @@ class FakeMediaPool:
         self.calls: list[tuple] = []
         self.refreshed = 0
         self.fps_by_path: dict[str, object] = {}   # Tests füllen vorab (Konform-Simulation 50p/100p)
+        self.alpha_by_path: dict[str, str] = {}
 
     def GetRootFolder(self):
         return self.root
@@ -317,6 +444,7 @@ class FakeMediaPool:
         items = [FakeItem(p) for p in paths]
         for it in items:
             it.props["FPS"] = str(self.fps_by_path.get(it.path, "25"))
+            it.props["Alpha mode"] = str(self.alpha_by_path.get(it.path, "None"))
         self.current.clips.extend(items)
         self.calls.append(("ImportMedia", list(paths)))
         return items
@@ -350,6 +478,7 @@ class FakeMediaPool:
         for info in infos:
             kind = "audio" if info.get("mediaType") == 2 else "video"
             tl = FakeTLItem(info, t.inclusive, kind, int(info.get("trackIndex", 1)))
+            tl.timeline = t
             t.items.append(info)
             t.tl_items.append(tl)
             out.append(tl)
@@ -380,6 +509,7 @@ class FakeMediaPool:
                 info = {"mediaPoolItem": mpi, "startFrame": src_in, "endFrame": src_out, "recordFrame": t.start_frame + start,
                         "trackIndex": idx, "mediaType": 2 if media == "audio" else 1}
                 it = FakeTLItem(info, False, media, idx)
+                it.timeline = t
                 it.dur = end - start
                 it.enabled = (ci.findtext("enabled") or "TRUE").upper() == "TRUE"
                 lv = X.get_audio_level(ci)
@@ -432,6 +562,8 @@ class FakeProject:
         self.timelines: list[FakeTimeline] = []
         self.current: FakeTimeline | None = None
         self.saved = 0
+        self.quick_presets = ["H.264 Master", "H.265 Master", "ProRes 422 HQ", "YouTube"]
+        self.renders: list[tuple] = []
 
     def GetMediaPool(self):
         return self.mp
@@ -466,12 +598,37 @@ class FakeProject:
         self.saved += 1
         return True
 
+    # --- 21.1 -----------------------------------------------------------
+    def GetQuickExportRenderPresets(self):
+        return list(self.quick_presets)
+
+    def IsRenderingInProgress(self):
+        return False
+
+    def RenderWithQuickExport(self, preset, settings=None):
+        settings = dict(settings or {})
+        if preset not in self.quick_presets or self.current is None:
+            return {"JobStatus": "Render Failed", "CompletionPercentage": 0,
+                    "Error": f"Preset '{preset}' unbekannt oder keine aktuelle Timeline"}
+        target = Path(settings.get("TargetDir", "."))
+        target.mkdir(parents=True, exist_ok=True)
+        out = target / f"{settings.get('CustomName') or self.current.name}.mov"
+        out.write_bytes(b"fake render")
+        self.renders.append((preset, str(out)))
+        return {"JobStatus": "Render Complete", "CompletionPercentage": 100, "TimeTakenToRenderInMs": 1234}
+
 
 class FakeResolve:
     EXPORT_FCP_7_XML = 11
     EXPORT_OTIO = 16
     EXPORT_EDL = 2
     EXPORT_NONE = 0
+    NORMALIZE_AUDIO_SET_LEVEL_RELATIVE = 0
+    NORMALIZE_AUDIO_SET_LEVEL_INDEPENDENT = 1
+    AUTO_ALIGN_CLIPS_USING_TIMECODE = 0
+    AUTO_ALIGN_CLIPS_USING_WAVEFORM = 1
+    AUTO_ALIGN_CLIPS_WAVEFORM_TRACK_AUTOMATIC = -1
+    AUTO_ALIGN_CLIPS_WAVEFORM_TRACK_MIX = -2
 
     def __init__(self, project: FakeProject | None = None):
         self.p = project or FakeProject()
@@ -483,4 +640,4 @@ class FakeResolve:
         return self.p
 
     def GetVersionString(self):
-        return "21.0.4"
+        return "21.1.0.14"
