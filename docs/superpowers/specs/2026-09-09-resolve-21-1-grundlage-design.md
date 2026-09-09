@@ -1,9 +1,11 @@
 # NIRO Studio — Grundlage Resolve 21.1 (Spec)
 
 Datum: 2026-09-09 · Status: Design vom User freigegeben (Fahrplan in drei Teilprojekten, Zuschnitt
-„siebte Funktion + Probe-Skript"), Spec zur Durchsicht. Teilprojekt 1 von 3; es folgen
-2 „AutoCut v3" (Stufe 5 ohne XML-Roundtrip, Fades, Sync-Rückfall, Review-Render) und
-3 „Animations-Import" (Motion-Render → Media Pool → richtige Timeline, Spur, Position).
+„siebte Funktion + Probe-Skript"), Spec vom User freigegeben (09.09.). Teilprojekt 1 von 4; es folgen
+2 „B-Roll-Index v3" (lokale Ausschuss-Metriken, Personen-Erkennung mit Sprecher-Referenz, Modell-Test
+Claude gegen Gemini an einer Ground-Truth von David; Reihenfolge-Entscheidung des Users am 09.09.),
+3 „AutoCut v3" (Stufe 5 ohne XML-Roundtrip, Fades, Sync-Rückfall, Review-Render) und
+4 „Animations-Import" (Motion-Render → Media Pool → richtige Timeline, Spur, Position).
 
 ## Anlass
 
@@ -163,14 +165,17 @@ Die ffmpeg-Aufrufe sind reine Funktionen (Pfade rein, Argumentlisten raus) und d
 
 ### 2.3 Timelines und Messungen
 
-Timeline A „AutoCut PROBE API <HHMM>": 1920×1080, 25 fps, Start-TC 01:00:00:00, V1 „Ton", V2 leer,
-V3 „B-Roll", V4 „Grafik", A1 „Ton" (`ensure_tracks(tl, 4, 1, …)`).
+Timeline A „AutoCut PROBE API <HHMM>": Auflösung des Projekts (nicht 1920×1080 erzwingen — so bleibt
+`useCustomSettings` aus und der bekannte Color-Management-Bug greift nicht; das 1080p-Material wird skaliert),
+25 fps, Start-TC 01:00:00:00, V1 „Ton", V2 leer, V3 „B-Roll", V4 „Grafik", A1 „Ton"
+(`ensure_tracks(tl, 4, 1, …)`; `TRACK_INDEX` in `resolve_api.py` bekommt dafür `V4`).
 V1/A1: `ton_25p.mov` Clip 1 Quelle 25–125 auf Record 0–100, Clip 2 Quelle 150–250 direkt anschließend
 (beide mit Handles für die Transition). V3 (`zaehler_50p.mov`, 100 Quellframes = 50 Timeline-Frames bei
 100 %): A auf 0–50, **Lücke 50–100**, B auf 100–150, C auf 150–200, D auf 200–250 (B, C, D lückenlos;
 alle vier mit Quelle 0–100).
-Timeline B „… SYNC": V1/A1 `ton_25p.mov` komplett auf Record 0, V2/A2 `ton_25p_versetzt.mov` komplett
-auf Record 0 (mit Ton — Auto-Align braucht die Wellenform in der Timeline).
+Timeline B „… SYNC": V1/A1 `ton_25p.mov` komplett ab Record 100, V2/A2 `ton_25p_versetzt.mov` komplett
+ab Record 100 (mit Ton — Auto-Align braucht die Wellenform in der Timeline; ab Record 100, damit V2 um
+50 Frames nach vorn wandern kann, ohne vor den Timeline-Anfang zu geraten).
 Baseline: `read_timeline()` beider Timelines nach dem Bau (tatsächliche Starts, Dauern, Quellbereiche);
 alle Vergleiche laufen gegen diese Baseline, nicht gegen Annahmen zur endFrame-Semantik.
 
