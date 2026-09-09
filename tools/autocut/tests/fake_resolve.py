@@ -7,6 +7,7 @@ Nachgebildete Eigenheiten (Recherche 03.09. + README/CHANGELOG):
 - ``AddMarker`` erlaubt nur einen Marker pro Frame; mit ``reject_beyond_end`` auch keinen hinter dem letzten Clip.
 - ``recordFrame`` ist absolut (Startframe 90000 bei 01:00:00:00 @ 25 fps), ``AddMarker(frameId)`` relativ.
 - 21.1: Properties/Speed/Fades/Transition/Normalize/AutoAlign/QuickExport (Semantiken per Klassen-Flags, siehe Probe resolve_probe_api.py).
+- Gemessene Werte je Flag stehen in <Charge>/_intern/autocut/probe_api.json (resolve_probe_api.py) — Flags nur mit Beleg ändern.
 """
 from __future__ import annotations
 
@@ -232,7 +233,7 @@ class FakeTLItem:
 class FakeTimeline:
     inclusive = True            # endFrame-Semantik (Probe misst sie live)
     reject_beyond_end = False   # Marker hinter dem letzten Clip ablehnen (Resolve-Verhalten)
-    speed_extends = True        # SetSpeed: True = verlängert in Lücken, False = behält Timeline-Dauer (Probe misst live)
+    speed_extends = False       # SetSpeed: True = verlängert in Lücken, False = behält Timeline-Dauer (Live-Messung 09.09.2026: SetSpeed behält die Timeline-Dauer und verkleinert den Quellbereich)
     fades_need_active = False   # SetFades nur auf der aktiven Timeline erlaubt?
     align_moves = "V2"          # AutoAlignClips bewegt das zweite ("V2") oder erste ("V1") Item
     align_offset_frames = -50   # … um so viele Frames (V2 nach vorn)

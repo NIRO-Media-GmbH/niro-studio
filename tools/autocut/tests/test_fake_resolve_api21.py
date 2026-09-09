@@ -10,14 +10,14 @@ from fake_resolve import FakeProject, FakeResolve, FakeTimeline
 @pytest.fixture(autouse=True)
 def _defaults():
     FakeTimeline.inclusive = True
-    FakeTimeline.speed_extends = True
+    FakeTimeline.speed_extends = False
     FakeTimeline.fades_need_active = False
     FakeTimeline.align_moves = "V2"
     FakeTimeline.align_offset_frames = -50
     FakeTimeline.tpk_dbfs = -12.0
     yield
     FakeTimeline.inclusive = True
-    FakeTimeline.speed_extends = True
+    FakeTimeline.speed_extends = False
     FakeTimeline.fades_need_active = False
     FakeTimeline.align_moves = "V2"
     FakeTimeline.align_offset_frames = -50
@@ -50,6 +50,7 @@ def _audio_item(project: FakeProject):
 
 
 def test_setspeed_extends_into_gap_and_keeps_source():
+    FakeTimeline.speed_extends = True
     t, (a, b, c, d) = _v3_timeline(FakeProject())
     assert a.GetDuration() == 50 and a.timeline is t
     assert a.SetSpeed({"Percentage": 50.0, "RippleTimeline": False}) is True
@@ -60,6 +61,7 @@ def test_setspeed_extends_into_gap_and_keeps_source():
 
 
 def test_setspeed_blocked_by_neighbour_keeps_duration():
+    FakeTimeline.speed_extends = True
     t, (a, b, c, d) = _v3_timeline(FakeProject())
     assert b.SetSpeed({"Percentage": 50.0, "RippleTimeline": False}) is True
     assert b.GetDuration() == 50 and c.GetStart() == 90150

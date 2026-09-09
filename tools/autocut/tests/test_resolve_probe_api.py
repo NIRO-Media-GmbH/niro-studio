@@ -29,14 +29,14 @@ ALLE = ("volume", "normalize", "speed", "fades", "transition", "autoalign", "ina
 @pytest.fixture(autouse=True)
 def _fake_defaults():
     FakeTimeline.inclusive = True
-    FakeTimeline.speed_extends = True
+    FakeTimeline.speed_extends = False
     FakeTimeline.fades_need_active = False
     FakeTimeline.align_moves = "V2"
     FakeTimeline.align_offset_frames = -50
     FakeTimeline.tpk_dbfs = -12.0
     yield
     FakeTimeline.inclusive = True
-    FakeTimeline.speed_extends = True
+    FakeTimeline.speed_extends = False
     FakeTimeline.fades_need_active = False
     FakeTimeline.align_moves = "V2"
     FakeTimeline.align_offset_frames = -50
@@ -76,8 +76,8 @@ def test_full_run_ok_and_cleans_up(env, capsys):
     for k in ALLE:
         assert res[k].get("ok") is True, k
     sp = res["speed"]
-    assert sp["gap"] == "verlängert" and sp["source_kept"] is True and sp["ripple"] == "verschiebt"
-    assert sp["a"]["dauer_vorher"] == 50 and sp["a"]["dauer_nachher"] == 100
+    assert sp["gap"] == "behält_dauer" and sp["source_kept"] is False and sp["ripple"] == "verschiebt"
+    assert sp["a"]["dauer_vorher"] == 50 and sp["a"]["dauer_nachher"] == 50 and sp["a"]["src_nachher"] == [0, 50]
     assert sp["blocked"]["b_dauer_nachher"] == 50 and sp["blocked"]["c_start_nachher"] == sp["blocked"]["c_start_vorher"]
     assert res["normalize"]["soll"] == 9.0 and res["normalize"]["diff"] == 0.0
     assert res["autoalign"]["moved"] == "V2" and res["autoalign"]["delta_frames"] == -50
@@ -176,12 +176,12 @@ def test_failed_mandatory_measure_keeps_objects_for_inspection(env, monkeypatch)
     assert [f.name for f in _autocut_bin(env["project"]).subs] == ["PROBE-API"]
 
 
-def test_keeps_duration_semantics_is_classified_not_failed(env):
-    FakeTimeline.speed_extends = False
+def test_extending_semantics_is_classified_not_failed(env):
+    FakeTimeline.speed_extends = True
     rc = probe.main([str(env["dir"]), "--project", "MCP MEK Test"])
     res = env["ch"].read_json("probe_api.json")
     assert rc == 0 and res["speed"]["ok"] is True
-    assert res["speed"]["gap"] == "behält_dauer" and res["speed"]["source_kept"] is False
+    assert res["speed"]["gap"] == "verlängert" and res["speed"]["source_kept"] is True
 
 
 def test_missing_preset_and_missing_mode_are_skipped(env):
