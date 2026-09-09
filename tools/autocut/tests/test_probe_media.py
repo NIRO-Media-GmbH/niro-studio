@@ -82,6 +82,28 @@ def test_ensure_raises_german_error_on_ffmpeg_failure(tmp_path):
         PM.ensure_probe_media(tmp_path, run=bad_run, ffmpeg="/usr/bin/ffmpeg")
 
 
+def test_ensure_regenerates_empty_file(tmp_path):
+    calls: list[list[str]] = []
+
+    def fake_run(argv, **kw):
+        calls.append(argv)
+        Path(argv[-1]).write_bytes(b"neu")
+        return subprocess.CompletedProcess(argv, 0, "", "")
+
+    (tmp_path / "ton.wav").write_bytes(b"")                     # leer = gilt als fehlend
+    paths = PM.ensure_probe_media(tmp_path, run=fake_run, ffmpeg="/usr/bin/ffmpeg")
+    assert calls[0][-1] == str(paths["ton_wav"]) and len(calls) == 5
+    assert paths["ton_wav"].read_bytes() == b"neu"
+
+
+def test_ensure_raises_when_ffmpeg_succeeds_without_output(tmp_path):
+    def silent_run(argv, **kw):
+        return subprocess.CompletedProcess(argv, 0, "", "")      # rc 0, aber keine Datei
+
+    with pytest.raises(AutoCutError, match="konnte nicht erzeugt werden"):
+        PM.ensure_probe_media(tmp_path, run=silent_run, ffmpeg="/usr/bin/ffmpeg")
+
+
 @pytest.mark.skipif(not os.environ.get("AUTOCUT_FFMPEG_LIVE") or not shutil.which("ffmpeg"),
                     reason="AUTOCUT_FFMPEG_LIVE=1 und ffmpeg nötig — echter Lauf, dauert und schreibt ~100 MB")
 def test_real_ffmpeg_media_have_expected_properties(tmp_path):
