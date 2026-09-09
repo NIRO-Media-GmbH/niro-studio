@@ -116,6 +116,7 @@ class FakeTLItem:
         self.speed = 100.0
         self.color = ""
         self.timeline = None                 # setzt AppendToTimeline/ImportTimelineFromFile (SetSpeed braucht die Nachbarn)
+        self.src0 = (int(info["startFrame"]), int(info["endFrame"]))   # Quellbereich bei 100 % — Basis für SetSpeed ohne Verkettung
         self.props = {"AudioVolume": 0.0, "AudioVolumeEnabled": True, "Opacity": 100.0}
         self.fades = {"FadeIn": 0, "FadeOut": 0}
 
@@ -214,8 +215,9 @@ class FakeTLItem:
             limit = later[0].start if later else None
             self.dur = new_dur if limit is None or self.start + new_dur <= limit else max(self.dur, limit - self.start)
         else:
-            n = int(round((int(self.info["endFrame"]) - int(self.info["startFrame"])) * pct / 100.0))
-            self.info = dict(self.info, endFrame=int(self.info["startFrame"]) + n)
+            start, end0 = self.src0
+            n = int(round((end0 - start) * pct / 100.0))
+            self.info["endFrame"] = start + n          # in place: FakeTimeline.items teilt dasselbe Dict
         return True
 
     def AddTransition(self, opts):

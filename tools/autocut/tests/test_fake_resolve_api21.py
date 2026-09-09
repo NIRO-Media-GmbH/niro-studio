@@ -168,3 +168,14 @@ def test_alpha_mode_and_constants_and_version():
     assert r.GetVersionString() == "21.1.0.14"
     assert r.NORMALIZE_AUDIO_SET_LEVEL_INDEPENDENT == 1 and r.AUTO_ALIGN_CLIPS_USING_WAVEFORM == 1
     assert r.AUTO_ALIGN_CLIPS_WAVEFORM_TRACK_AUTOMATIC == -1
+
+
+def test_setspeed_keeps_duration_mode_uses_original_range_and_shared_info():
+    FakeTimeline.speed_extends = False
+    p = FakeProject()
+    t, (a, b, c, d) = _v3_timeline(p)
+    assert a.info is t.items[0]
+    assert a.SetSpeed({"Percentage": 50.0}) is True and a.GetSourceEndFrame() == 50
+    assert a.SetSpeed({"Percentage": 25.0}) is True and a.GetSourceEndFrame() == 25   # vom Original 0..99, nicht verkettet
+    assert a.info is t.items[0] and t.items[0]["endFrame"] == 25
+    assert a.SetSpeed({"Percentage": 100.0}) is True and a.GetSourceEndFrame() == 99
