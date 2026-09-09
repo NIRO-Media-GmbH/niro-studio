@@ -45,9 +45,11 @@ def collect_inputs(ch: Charge, cl: Cutlist) -> tuple[dict[str, list[dict]], dict
             dur = m["original"].get("duration_s")
         if dur is None:
             dur = rec.get("duration_s")
-        if dur is None and path in used and Path(path).is_file():
-            from niro_autocut.media import ffprobe
-            dur = ffprobe(path).duration_s
+        if dur is None and path in used:
+            mapped = ch.map_path(path)
+            if Path(mapped).is_file():
+                from niro_autocut.media import ffprobe
+                dur = ffprobe(mapped).duration_s
         if dur is not None:
             durations[path] = float(dur)
     return words, durations

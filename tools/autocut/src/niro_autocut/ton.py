@@ -115,7 +115,7 @@ def build_ton(charge, tp_dict: dict, cfg_ton: dict, measure=measure_true_peak) -
     charge.assert_writable(cache_file)
     cache_file.parent.mkdir(parents=True, exist_ok=True)
     try:
-        entries = measure_a1_items(items, fps, cfg_ton, cache, measure, map_path=getattr(charge, "map_path", None))
+        entries = measure_a1_items(items, fps, cfg_ton, cache, measure, map_path=charge.map_path)
     finally:
         cache_file.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
     out = {"ziel_dbtp": float(cfg_ton["ziel_dbtp"]), "max_gain_db": float(cfg_ton["max_gain_db"]),

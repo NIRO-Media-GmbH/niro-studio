@@ -214,7 +214,7 @@ B-Roll-Bericht, keine Schwarzframes.
 | `Keine Charge gefunden … Ergebnisse/O-Ton-Pläne` | Pfad prüfen; erst den Schnittplan-Workflow ausführen |
 | `utterances.json fehlt` | `tools/transcribe/venv/bin/python tools/transcribe/scripts/build_utterances.py "<Charge>"` |
 | `Mehrere Pläne vorhanden, bitte mit --video wählen` | `--video video-1-x.md` an prepare/draft geben |
-| `Datei nicht gefunden` / `nicht erreichbar` … `Ist das NAS gemountet?` (Rohschnitt-Bau und B-Roll-Prüfung eingeschlossen) | NAS im Finder mounten, Pfad aus dem Index prüfen, oder `path_map` in der Chargen-config.yaml setzen |
+| `Datei nicht gefunden` / `nicht erreichbar` … `Ist das NAS gemountet?` (Stufe 1 (Prüfen), Rohschnitt-Bau und B-Roll-Prüfung eingeschlossen) | NAS im Finder mounten, Pfad aus dem Index prüfen, oder `path_map` in der Chargen-config.yaml setzen |
 | prepare-Warnung `kein Proxy unter …/Proxy — Resolve nutzt das Original` bzw. verify-Fehler `kein Proxy für …` / `Frames weichen ab: Original … / Proxy …` | Proxy in Resolve neu erzeugen (`<Ordner>/Proxy/<stem>.mov`); nie das Original anfassen |
 | `Mischformate im Interview-Material, media.json nicht geschrieben` (fps/Hochformat/Auflösung der Ton-Clips uneinheitlich) | Clips prüfen; Cutlist nur aus einem Format, Rest im Bericht |
 | Sync-Zeile `ok=False` (Konfidenz unter 4 / keine Überlappung / Prüffenster uneinig) | Paar bleibt ohne V2; Kamera-Zuordnung im Index prüfen (`kamera_rolle`), ggf. `--ordner` neu rechnen; Rückfall: Resolve-Auto-Sync von Hand |

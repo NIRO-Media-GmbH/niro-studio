@@ -252,14 +252,19 @@ def _speech_words(words: list[dict]) -> list[dict]:
     return out
 
 
-def _file_problems(clip: str) -> list[str]:
-    """Original und Proxy müssen da sein (Bau verknüpft den Proxy). Nur Existenz-Tests, nichts wird geöffnet."""
+def _file_problems(clip: str, map_path=None) -> list[str]:
+    """Original und Proxy müssen da sein (Bau verknüpft den Proxy). Nur Existenz-Tests, nichts wird geöffnet.
+
+    map_path: Charge.map_path oder None — Muster wie check_shot_files (autocut_place_broll.py): Original- und
+    Proxy-Prüfung laufen am zugeordneten Pfad, damit eine verschobene Charge (path_map) hier nicht scheitert.
+    """
     from .media import proxy_for  # lokal: hält cutlist.py ohne niro_transcribe importierbar
     p = Path(clip)
-    if not p.is_file():
-        return [f"Clip-Datei nicht gefunden: {p} — ist das NAS gemountet?"]
-    if proxy_for(p) is None:
-        return [f"kein Proxy für {p.name} (erwartet {p.parent / 'Proxy' / (p.stem + '.mov')} oder .mp4) — "
+    mp = Path(map_path(clip)) if map_path else p
+    if not mp.is_file():
+        return [f"Clip-Datei nicht gefunden: {mp} — ist das NAS/SSD gemountet? path_map prüfen."]
+    if proxy_for(mp) is None:
+        return [f"kein Proxy für {mp.name} (erwartet {mp.parent / 'Proxy' / (mp.stem + '.mov')} oder .mp4) — "
                 f"Proxy erzeugen, sonst kann der Bau keinen Proxy verknüpfen"]
     return []
 
@@ -323,7 +328,7 @@ def verify_cutlist(cl: Cutlist, charge, words_by_clip: dict[str, list[dict]], du
             continue
         if charge is not None:
             if b.clip not in file_cache:
-                file_cache[b.clip] = _file_problems(b.clip)
+                file_cache[b.clip] = _file_problems(b.clip, charge.map_path)
             for prob in file_cache[b.clip]:
                 r.errors.append(f"{tag}: {prob}")
         dur = durations.get(b.clip)

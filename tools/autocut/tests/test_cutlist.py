@@ -215,6 +215,33 @@ def test_verify_with_charge_checks_original_and_proxy(charge_dir):
 
 # --- Gesamtlänge -----------------------------------------------------------
 
+
+def test_verify_with_charge_uses_map_path_for_original_and_proxy(charge_dir, tmp_path):
+    """Important 1: die Stufe-1-Prüfung (_file_problems über verify_cutlist) muss wie check_shot_files
+    zuordnen. Original und Proxy liegen nur unter dem gemappten (SSD-)Präfix (verschobene Charge); mit
+    path_map keine Meldung, ohne path_map bleibt der ungemappte (NAS-)Pfad unauffindbar."""
+    from niro_autocut.charge import Charge
+    ch = Charge.open(charge_dir)
+    rec = ch.load_index()[0]
+    words = {rec["path"]: ch.cache_transcript(rec["fingerprint"])["words"]}
+    cl = _cl(ziel=None, beats=[Beat(nr="1", szene="A", typ="oton", clip=rec["path"],
+                                    cuts=[Cut(1.0, 2.0, "Das ist meins.")])])
+    nas_orig = Path(rec["path"])
+    ssd_orig = tmp_path / "ssd" / "Anna" / nas_orig.name
+    ssd_orig.parent.mkdir(parents=True)
+    ssd_orig.write_bytes(b"x")
+    (ssd_orig.parent / "Proxy").mkdir()
+    (ssd_orig.parent / "Proxy" / (ssd_orig.stem + ".mov")).write_bytes(b"x")
+
+    ch.config["path_map"] = {str(nas_orig.parent): str(ssd_orig.parent)}
+    r = verify_cutlist(cl, ch, words, {rec["path"]: 10.0}, ch.config)
+    assert r.ok, r.errors                                          # gemappt: Original + Proxy gefunden
+
+    ch.config["path_map"] = {}
+    r = verify_cutlist(cl, ch, words, {rec["path"]: 10.0}, ch.config)
+    assert any("nicht gefunden" in e for e in r.errors)             # ungemappt: NAS-Pfad existiert nicht
+
+
 def test_total_length_includes_pauses_and_placeholders():
     cl = _cl(); cl.beats.append(Beat(nr="2", szene="VO", typ="vo", platzhalter_s=6))
     assert abs(total_length_s(cl, CFG) - (3.1 + 1.0 + 6.0)) < 1e-6

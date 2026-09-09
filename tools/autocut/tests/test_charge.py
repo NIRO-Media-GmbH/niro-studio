@@ -93,3 +93,19 @@ def test_charge_map_path_uses_config(charge_dir):
     ch = Charge.open(charge_dir)
     assert ch.map_path("/Volumes/NAS/p/x.mp4") == "/Volumes/SSD/p/x.mp4"
     assert ch.map_path("/woanders/x.mp4") == "/woanders/x.mp4"
+
+
+def test_charge_map_path_rejects_invalid_path_map(charge_dir):
+    """Minor 4: ein kaputtes path_map (YAML-Tippfehler, falscher Werttyp) muss eine deutsche AutoCutError
+    auslösen statt eines rohen Python-Tracebacks (AttributeError: 'str' object has no attribute 'items')."""
+    ch = Charge.open(charge_dir)
+    ch.config["path_map"] = "kaputt"
+    with pytest.raises(AutoCutError, match="path_map"):
+        ch.map_path("/x/y.mp4")
+
+    ch.config["path_map"] = {"/a": 123}
+    with pytest.raises(AutoCutError, match="path_map"):
+        ch.map_path("/a/y.mp4")
+
+    ch.config["path_map"] = {"/a": "/b"}
+    assert ch.map_path("/a/y.mp4") == "/b/y.mp4"                    # gültiges path_map bleibt unangetastet

@@ -136,7 +136,7 @@ def check_shot_files(placed: list[dict], index: dict, map_path=None) -> list[str
         proxy = (by_path.get(clip) or {}).get("proxy")
         proxy_mp = map_path(proxy) if (proxy and map_path) else proxy
         if not (proxy_mp and Path(proxy_mp).is_file()) and proxy_for(mp) is None:
-            probs.append(f"kein Proxy für {p.name} (erwartet {p.parent / 'Proxy' / (p.stem + '.mov')} oder .mp4).")
+            probs.append(f"kein Proxy für {mp.name} (erwartet {mp.parent / 'Proxy' / (mp.stem + '.mov')} oder .mp4).")
     return probs
 
 

@@ -603,6 +603,50 @@ def test_check_shot_files_uses_map_path_for_original_and_proxy(tmp_path: Path):
     assert len(without) == 1 and "nicht gefunden" in without[0]
 
 
+def test_check_shot_files_uses_map_path_for_index_proxy(tmp_path: Path):
+    """Minor 2: der Index-Proxy-Zweig (``proxy_mp = map_path(proxy) ...``) war ungetestet — alle drei
+    bisherigen Tests setzen den Index-Proxy auf None bzw. ein leeres Clips-Array, der Zweig wurde nie
+    betreten. Der Index-Proxy-Name weicht hier absichtlich von der proxy_for-Konvention ab (``anders.mov``
+    statt ``<stem>.mov``) und liegt nicht in einem Proxy/-Ordner neben dem Original — nur der gemappte
+    Index-Proxy (``proxy_mp``) kann die Prüfung also bestehen, der proxy_for-Rückfall hilft hier nicht."""
+    nas_root = tmp_path / "nas"
+    ssd_root = tmp_path / "ssd"
+    nas_clip = str(nas_root / "B-Roll" / "Flur" / "FX3_3.MP4")
+    nas_proxy = str(nas_root / "B-Roll" / "Flur" / "anders.mov")
+    ssd_dir = ssd_root / "B-Roll" / "Flur"
+    ssd_dir.mkdir(parents=True, exist_ok=True)
+    (ssd_dir / "FX3_3.MP4").write_bytes(b"x")
+    (ssd_dir / "anders.mov").write_bytes(b"x")
+    assert not (ssd_dir / "Proxy").exists()                        # kein Proxy-Ordner neben dem Original
+
+    def to_ssd(p):
+        return str(p).replace(str(nas_root), str(ssd_root))
+
+    placed = [{"clip": nas_clip}]
+    index = {"clips": [{"path": nas_clip, "proxy": nas_proxy}]}
+    assert place.check_shot_files(placed, index, map_path=to_ssd) == []
+
+
+def test_check_shot_files_missing_proxy_message_uses_mapped_path(tmp_path: Path):
+    """Minor 3: die "kein Proxy"-Meldung muss wie die Schwester-Meldung (Zeile darüber) den gemappten Ordner
+    nennen, nicht den unerreichbaren NAS-Ordner."""
+    nas_root = tmp_path / "nas"
+    ssd_root = tmp_path / "ssd"
+    nas_clip = str(nas_root / "B-Roll" / "Flur" / "FX3_4.MP4")
+    ssd_dir = ssd_root / "B-Roll" / "Flur"
+    ssd_dir.mkdir(parents=True, exist_ok=True)
+    (ssd_dir / "FX3_4.MP4").write_bytes(b"x")
+
+    def to_ssd(p):
+        return str(p).replace(str(nas_root), str(ssd_root))
+
+    placed = [{"clip": nas_clip}]
+    index = {"clips": [{"path": nas_clip, "proxy": None}]}
+    probs = place.check_shot_files(placed, index, map_path=to_ssd)
+    assert len(probs) == 1 and "kein Proxy" in probs[0]
+    assert str(ssd_dir) in probs[0] and str(nas_root) not in probs[0]
+
+
 def test_build_uses_path_map_and_existing_media_items(mek, monkeypatch, tmp_path):
     """config.yaml path_map: die Charge kennt NAS-Pfade, der Media Pool hat die SSD-Items — kein Import nötig.
     Die Original-(NAS-)Dateien existieren absichtlich nicht mehr: nur die gemappten (SSD-)Pfade liegen auf der
