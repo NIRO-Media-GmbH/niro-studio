@@ -129,11 +129,13 @@ def check_shot_files(placed: list[dict], index: dict, map_path=None) -> list[str
     by_path = {c["path"]: c for c in (index.get("clips") or []) if c.get("path")}
     for clip in sorted({p["clip"] for p in placed}):
         p = Path(clip)
-        if not p.is_file():
-            probs.append(f"Clip-Datei nicht gefunden: {p} — ist das NAS gemountet?")
+        mp = Path(map_path(clip)) if map_path else p
+        if not mp.is_file():
+            probs.append(f"Clip-Datei nicht gefunden: {mp} — ist das NAS/SSD gemountet? path_map prüfen.")
             continue
         proxy = (by_path.get(clip) or {}).get("proxy")
-        if not (proxy and Path(proxy).is_file()) and proxy_for(map_path(p) if map_path else p) is None:
+        proxy_mp = map_path(proxy) if (proxy and map_path) else proxy
+        if not (proxy_mp and Path(proxy_mp).is_file()) and proxy_for(mp) is None:
             probs.append(f"kein Proxy für {p.name} (erwartet {p.parent / 'Proxy' / (p.stem + '.mov')} oder .mp4).")
     return probs
 

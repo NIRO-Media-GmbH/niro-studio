@@ -234,6 +234,25 @@ def test_build_precondition_messages(mek, monkeypatch, capsys):
     assert build.main([str(mek["dir"])]) == 2 and "autocut_prepare" in capsys.readouterr().err
 
 
+def test_build_dry_run_finds_clips_via_path_map_when_originals_unreachable(mek, capsys, tmp_path):
+    """Kern-Szenario von path_map (Critical 1): die Originalpfade (NAS) sind nicht erreichbar, nur die gemappten
+    (SSD-)Dateien liegen auf der Platte. Gegenprobe zuerst: ohne path_map bleibt check_files beim ungemappten
+    Pfad und bricht weiterhin ab; erst mit path_map in config.yaml läuft --dry-run durch."""
+    ch = mek["ch"]
+    nas_root = str(tmp_path / "nas")
+    ssd_root = str(tmp_path / "ssd")
+    for src in (mek["fx"], mek["a7"]):
+        dst = Path(src.replace(nas_root, ssd_root))
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(b"")
+        Path(src).unlink()
+    assert build.main([str(mek["dir"]), "--dry-run"]) == 2
+    assert "nicht erreichbar" in capsys.readouterr().err
+    (ch.autocut / "config.yaml").write_text(f'path_map:\n  "{nas_root}": "{ssd_root}"\n', encoding="utf-8")
+    assert build.main([str(mek["dir"]), "--dry-run"]) == 0
+    assert "Probelauf" in capsys.readouterr().out
+
+
 def test_build_reports_missing_report_module_cleanly(mek, monkeypatch):
     import builtins
     real_import = builtins.__import__
@@ -561,8 +580,33 @@ def test_check_shot_files_reports_missing_proxy(tmp_path: Path):
     assert len(probs) == 1 and "kein Proxy" in probs[0]
 
 
+def test_check_shot_files_uses_map_path_for_original_and_proxy(tmp_path: Path):
+    """Original und Proxy liegen nur am gemappten (SSD-)Ort; der (NAS-)Originalpfad in placed/index existiert
+    nicht (Critical 2). Mit map_path müssen beide Prüfungen am gemappten Pfad laufen und nichts melden; ohne
+    map_path bleibt der Pfad ungemappt und die Original-Prüfung schlägt fehl."""
+    nas_root = tmp_path / "nas"
+    ssd_root = tmp_path / "ssd"
+    nas_clip = str(nas_root / "B-Roll" / "Flur" / "FX3_2.MP4")
+    ssd_dir = ssd_root / "B-Roll" / "Flur"
+    ssd_dir.mkdir(parents=True, exist_ok=True)
+    (ssd_dir / "FX3_2.MP4").write_bytes(b"x")
+    (ssd_dir / "Proxy").mkdir()
+    (ssd_dir / "Proxy" / "FX3_2.mov").write_bytes(b"x")
+
+    def to_ssd(p):
+        return str(p).replace(str(nas_root), str(ssd_root))
+
+    placed = [{"clip": nas_clip}]
+    index = {"clips": [{"path": nas_clip, "proxy": None}]}
+    assert place.check_shot_files(placed, index, map_path=to_ssd) == []
+    without = place.check_shot_files(placed, index)
+    assert len(without) == 1 and "nicht gefunden" in without[0]
+
+
 def test_build_uses_path_map_and_existing_media_items(mek, monkeypatch, tmp_path):
-    """config.yaml path_map: die Charge kennt NAS-Pfade, der Media Pool hat die SSD-Items — kein Import nötig."""
+    """config.yaml path_map: die Charge kennt NAS-Pfade, der Media Pool hat die SSD-Items — kein Import nötig.
+    Die Original-(NAS-)Dateien existieren absichtlich nicht mehr: nur die gemappten (SSD-)Pfade liegen auf der
+    Platte, damit dieser Test wirklich über path_map läuft statt zufällig über den (noch vorhandenen) NAS-Pfad."""
     ch = mek["ch"]
     nas_root = str(tmp_path / "nas")
     ssd_root = str(tmp_path / "ssd")
@@ -570,7 +614,11 @@ def test_build_uses_path_map_and_existing_media_items(mek, monkeypatch, tmp_path
     p = FakeProject()
     mp = p.GetMediaPool()
     for src in (mek["fx"], mek["a7"]):
-        mp.ImportMedia([src.replace(nas_root, ssd_root)])
+        dst = Path(src.replace(nas_root, ssd_root))
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(b"")
+        Path(src).unlink()
+        mp.ImportMedia([str(dst)])
     mp.calls.clear()
     monkeypatch.setattr(build.RA, "connect", lambda: FakeResolve(p))
     assert build.main([str(mek["dir"])]) == 0

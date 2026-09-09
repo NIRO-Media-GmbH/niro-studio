@@ -216,8 +216,8 @@ class ResolveSession:
                     fresh = fresh if fresh is not None else self._path_index()
                     item = fresh.get(_norm(self.map_path(p)))
                 if item is None:
-                    raise AutoCutError(f"Import in den Media Pool fehlgeschlagen: {self.map_path(p)}\n"
-                                       f"Ist das NAS gemountet und die Datei lesbar?")
+                    raise AutoCutError(f"Datei nicht erreichbar: {self.map_path(p)} — NAS/SSD gemountet? "
+                                       f"path_map prüfen.")
                 out[p] = item
         return out
 

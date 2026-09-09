@@ -64,10 +64,15 @@ def words_by_clip(ch: Charge) -> dict[str, list[dict]]:
     return out
 
 
-def check_files(tp: TimelinePlan) -> None:
-    missing = sorted({it.clip for it in tp.items if not Path(it.clip).is_file()})
+def check_files(tp: TimelinePlan, map_path=None) -> None:
+    missing = set()
+    for it in tp.items:
+        at = map_path(it.clip) if map_path else it.clip
+        if not Path(at).is_file():
+            missing.add(at)
     if missing:
-        raise PreconditionError("Clip-Dateien nicht erreichbar (NAS gemountet?):\n  " + "\n  ".join(missing))
+        raise PreconditionError("Clip-Dateien nicht erreichbar (NAS/SSD gemountet? path_map in config.yaml?):\n  "
+                                + "\n  ".join(sorted(missing)))
 
 
 def plan_summary(tp: TimelinePlan) -> list[str]:
@@ -133,7 +138,7 @@ def main(argv: list[str] | None = None) -> int:
         tp = build_timeline_plan(cl, media, sync, words_by_clip(ch), ch.config)
         if not tp.items:
             raise PreconditionError("Die Cutlist ergibt keine Timeline-Items (keine O-Ton-Beats?).")
-        check_files(tp)
+        check_files(tp, map_path=ch.map_path)
         print(f"Charge:  {ch.root}\nPlan:    " + "\n         ".join(plan_summary(tp)))
         for w in warnungen:
             print("WARNUNG:", w)
