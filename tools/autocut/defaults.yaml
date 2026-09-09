@@ -1,0 +1,66 @@
+# NIRO AutoCut — Standardwerte. Pro Charge überschreibbar in <Charge>/_intern/autocut/config.yaml
+pause_s: 1.0                # Lücke zwischen Beats
+handle_in_frames: 6         # Vorlauf vor dem ersten Wort
+handle_out_frames: 8        # Nachlauf nach dem letzten Wort
+align_min_score: 0.80       # Mindest-Ähnlichkeit Zitat ↔ Transkript (0–1)
+duration_tolerance: [0.5, 2.0]   # Beat-Dauer relativ zur Plan-Schätzung „~x s"
+target_length_warn: 0.25    # Warnung ab 25 % Abweichung von der Ziellänge
+sync:
+  sr: 16000
+  hop_s: 0.005
+  win_s: 0.02
+  min_confidence: 4.0
+  max_drift_frames: 1.0
+  exclusion_s: 1.0
+index:
+  model: claude-opus-5
+  effort: medium              # Opus 5 denkt adaptiv; effort ist der Kostenhebel
+  max_tokens: 4000
+  scene_threshold: 0.30
+  frames_min: 4
+  frames_max: 24
+  frame_interval_s: 2.0
+  tile_px: 640                # Kachelbreite (Hochkant: Kachelhöhe); nie unter 640x360 für Mängelurteile
+  pad_px: 8
+  grid: [4, 3]                # 4x3 à 640x360 → 2600x1112 → ~3.700 Bildtoken pro Bogen
+  parallel: 4
+broll:                      # Profil v2 (Feedback 04.09.2026); profile/<name>.yaml überschreibt, Chargen-config.yaml zuletzt
+  face_share: [0.15, 0.20]          # Sprecher sichtbar (Fenster-Summe / Gesamtlänge): Ziel
+  face_share_hard: [0.12, 0.23]     # … harte Grenze (Fehler)
+  window_first_s: 2.5               # Sprecher-Fenster beim ersten Auftritt einer Person
+  window_s: 2.0                     # … bei weiteren Auftritten
+  window_min_s: 1.5
+  window_max_s: 4.0
+  full_face_beat_max_s: 3.0         # Beats kürzer als das bleiben ganz Gesicht
+  full_face_keywords: ["Gehaltenes Gesicht", "Bookend"]
+  shot_len_s: [2.0, 5.0]            # Shot-Länge über O-Ton (Timeline-Sekunden)
+  shot_len_slow_max_s: 6.0          # … Obergrenze bei tempo 2/4
+  montage_len_s: [1.5, 3.0]         # in Platzhalter-Beats (vo/bild/grafik)
+  fast_cuts_len_s: [1.0, 2.0]       # Plan-Kommentar „Schnelle Cuts"
+  scene_min_shots: 3                # Szene = mindestens so viele Shots aus einem Ordner
+  scene_short_stretch_s: 6.0        # Strecken darunter dürfen weniger Shots haben
+  setup_hash_min_distance: 10       # dHash-Abstand, darunter „sieht fast gleich aus" (Warnung)
+  max_exceptions_warn: 3
+  forbidden_maengel: ["Blick in Kamera", "Crew im Bild", "Logo/Marke"]
+ton:                        # Stufe 5 Finalisieren: FX3-Ton je Timeline-Clip normalisieren
+  ziel_dbtp: -3.0
+  max_gain_db: 30.0
+  clip_warn_dbtp: -0.5
+  silence_dbtp: -60.0
+index_sections:             # Stufe 2b: Nachlauf je Abschnitt (Frames aus dem Cache, Modell wie index.model)
+  tile_px: 480
+  per_section: 2
+  max_sections: 5
+  effort: medium
+  max_tokens: 2500
+  parallel: 4
+resolve:
+  bin_root: AutoCut
+  timeline_prefix: AutoCut
+  start_timecode: "01:00:00:00"
+  track_names:
+    V1: "FX3"
+    V2: "a7IV"
+    V3: "B-Roll"
+    A1: "FX3 Ton"
+  roh_suffix: " (roh)"        # Stufe-1-Timeline; die End-Timeline ohne Suffix entsteht beim Finalisieren

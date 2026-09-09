@@ -1,0 +1,20 @@
+# NIRO AutoCut — Profil B-Roll v2 (Feedback-Runde 1, 04.09.2026). Reihenfolge der Geltung:
+# defaults.yaml < profile/<name>.yaml < <Charge>/_intern/autocut/config.yaml (broll:).
+broll:
+  face_share: [0.15, 0.20]          # Sprecher sichtbar (Fenster-Summe / Gesamtlänge): Ziel
+  face_share_hard: [0.12, 0.23]     # … harte Grenze (Fehler)
+  window_first_s: 2.5               # Sprecher-Fenster beim ersten Auftritt einer Person
+  window_s: 2.0                     # … bei weiteren Auftritten
+  window_min_s: 1.5
+  window_max_s: 4.0
+  full_face_beat_max_s: 3.0         # Beats kürzer als das bleiben ganz Gesicht
+  full_face_keywords: ["Gehaltenes Gesicht", "Bookend"]
+  shot_len_s: [2.0, 5.0]            # Shot-Länge über O-Ton (Timeline-Sekunden)
+  shot_len_slow_max_s: 6.0          # … Obergrenze bei tempo 2/4
+  montage_len_s: [1.5, 3.0]         # in Platzhalter-Beats (vo/bild/grafik)
+  fast_cuts_len_s: [1.0, 2.0]       # Plan-Kommentar „Schnelle Cuts"
+  scene_min_shots: 3                # Szene = mindestens so viele Shots aus einem Ordner
+  scene_short_stretch_s: 6.0        # Strecken darunter dürfen weniger Shots haben
+  setup_hash_min_distance: 10       # dHash-Abstand, darunter „sieht fast gleich aus" (Warnung)
+  max_exceptions_warn: 3
+  forbidden_maengel: ["Blick in Kamera", "Crew im Bild", "Logo/Marke"]

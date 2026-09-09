@@ -38,6 +38,7 @@ Datei bei der ersten Session anlegen.
 | „Schnittplan: <Kunde>/<Projekt>[/<Charge>]" | Roh-Footage → Cutter-Schnittanweisungen (PDF, max 2 Seiten/Video) | `tools/transcribe/WORKFLOW-Schnittplan.md` |
 | „Animation: <Kunde>/<Projekt>[/<Charge>]" | Remotion Motion Graphics | `tools/motion/WORKFLOW-Motion.md` |
 | „Foto: <Kunde>/<Projekt>[/<Charge>]" | ARW-RAWs → Culling, Look, fertige Bilder | `tools/photo/WORKFLOW-Foto.md` |
+| „AutoCut: <Kunde>/<Projekt>[/<Charge>]" | Schnittplan → Rohschnitt-Timeline in Resolve (roh) → Nachlauf, B-Roll-Layout, Finalisieren (Pegel, Zeitlupe) | `tools/autocut/WORKFLOW-AutoCut.md` |
 
 Beim Trigger die jeweilige Workflow-Datei lesen und ihr folgen.
 Projektpfad-Konvention überall: `projects/<Kunde>/<Projekt>/<Charge>/` (relativ

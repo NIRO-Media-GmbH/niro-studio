@@ -1,0 +1,11 @@
+# NIRO AutoCut — Arbeits- und Geheimdateien nie versionieren
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.env
+work/
+.DS_Store
+.superpowers/
