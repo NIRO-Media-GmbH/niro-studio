@@ -28,8 +28,10 @@ lesen. Abgrenzung: AutoCut (`tools/autocut/WORKFLOW-AutoCut.md`) bleibt skriptge
 1. **Standard nur lesen** — in jedem geöffneten Projekt.
 2. **Schreiben nur nach Freigabe.** Der User nennt in der Session das Projekt („Schreiben erlaubt in
    <Projekt>"). Die Freigabe gilt nur für dieses Projekt und nur für diese Session — auch bei Testprojekten.
-   Vor dem ersten schreibenden Skript `project.GetName()` lesen und im Chat nennen. Ohne Freigabe: nur
-   lesende Skripte; Änderungen als Vorschlag beschreiben.
+   Vor dem ersten schreibenden Skript `project.GetName()` lesen, im Chat nennen und exakt mit der Freigabe
+   abgleichen: Weicht der geöffnete Projektname ab, wird nichts geschrieben, sondern nachgefragt (dieselbe
+   Logik wie `--project` in `resolve_probe_api.py`). Ohne Freigabe: nur lesende Skripte; Änderungen als
+   Vorschlag beschreiben.
 3. **Cloud-Projektbibliothek tabu.** Keine Projekte laden, anlegen, löschen, exportieren, importieren oder
    wechseln; keine Cloud-Einstellungen; also nie `LoadProject`, `LoadCloudProject`, `CreateProject`,
    `DeleteProject`, `ExportProject`, `ImportProject` oder Ordnerwechsel in der Projektbibliothek. Gearbeitet
@@ -59,7 +61,9 @@ lesen. Abgrenzung: AutoCut (`tools/autocut/WORKFLOW-AutoCut.md`) bleibt skriptge
        result = {"projekt": project.GetName(), "timeline": tl.GetName() if tl else None,
                  "timelines": project.GetTimelineCount(), "version": resolve.GetVersionString()}
 
-3. **Freigabe prüfen** (Regel 2). Ohne Freigabe endet jede Änderung als Vorschlag im Chat.
+3. **Freigabe prüfen** (Regel 2): Freigabe-Satz vorhanden und der Projektname aus Schritt 2 stimmt exakt mit
+   dem freigegebenen Projekt überein — sonst nichts schreiben und nachfragen. Ohne Freigabe endet jede
+   Änderung als Vorschlag im Chat.
 4. **API nachschlagen** statt raten: `search_scripting_api` mit einem Muster, bei neuen Funktionen
    `get_whats_new` seit „21.0"; die Stubs sind die Wahrheit, nicht das Gedächtnis. Semantik-Fragen
    (verlängert `SetSpeed` in Lücken? bewegt `AutoAlignClips` V1 oder V2?) beantwortet `probe_api.json`.

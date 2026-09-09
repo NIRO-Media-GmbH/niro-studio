@@ -67,7 +67,7 @@ def test_resolve_workflow_exists_with_rules_and_flow():
     text = _text(RESOLVE_WORKFLOW)
     for needle in ("„Resolve: <Aufgabe>\"", "get_resolve_status", "run_script", "run_script_unsafe", "search_scripting_api",
                    "Freigabe", "Cloud-Projektbibliothek", "Ergebnisse/Export/", "Claude <Aufgabe>", "GetCurrentTimeline",
-                   "Protokoll", "## Fehlerbilder", "resolve_probe_api.py"):
+                   "Protokoll", "## Fehlerbilder", "resolve_probe_api.py", "nichts geschrieben"):
         assert needle in text, f"WORKFLOW-Resolve.md: „{needle}“ fehlt"
 
 
@@ -79,7 +79,7 @@ def test_claude_md_has_resolve_trigger_after_autocut_and_rules():
     assert lines[i - 1].startswith("| „AutoCut:"), "Resolve-Zeile muss direkt nach der AutoCut-Zeile stehen"
     assert lines[i].count("|") == 4 and "`tools/resolve/WORKFLOW-Resolve.md`" in lines[i]
     text = "\n".join(lines)
-    for needle in ("## Resolve-Regeln", "Cloud-Projektbibliothek", "Export/", ".mcp.json", "sieben Funktionen"):
+    for needle in ("## Resolve-Regeln", "Cloud-Projektbibliothek", "Export/", ".mcp.json", "sieben Funktionen", "bei Abweichung nichts schreiben"):
         assert needle in text, f"CLAUDE.md: „{needle}“ fehlt"
 
 

@@ -50,7 +50,8 @@ die Charge wird dann automatisch gefunden.
 ## Resolve-Regeln (MCP und Skripte)
 
 - **Standard nur lesen.** Schreiben nur in Projekten, die der User in dieser Session
-  ausdrücklich freigibt; vor jedem schreibenden Skript den Projektnamen nennen.
+  ausdrücklich freigibt; vor jedem schreibenden Skript den Projektnamen lesen, nennen und
+  mit der Freigabe abgleichen — bei Abweichung nichts schreiben, sondern nachfragen.
 - **Cloud-Projektbibliothek tabu:** keine Projekte laden, anlegen, löschen, wechseln;
   keine Cloud-Einstellungen. Gearbeitet wird nur im geöffneten Projekt.
 - **Auch im freigegebenen Projekt nur anhängen** (neue Bins, Timelines, Marker, Renders);
