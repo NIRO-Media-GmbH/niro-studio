@@ -47,17 +47,25 @@ fehlt in dieser Installation — Zeitstempel werden mit Pillow eingebrannt.
 
 ## 5. DaVinci Resolve Studio (für build, probe, place, export, read)
 
-- Resolve Studio 21 (verifiziert: 21.0.4) installiert unter `/Applications/DaVinci Resolve/`.
+- Resolve Studio 21.1 (verifiziert: 21.1.0.14) installiert unter `/Applications/DaVinci Resolve/`.
 - Externes Scripting freischalten: DaVinci Resolve → Preferences → System → General →
   „External scripting using" = **Local**. Resolve muss laufen und das Zielprojekt geöffnet sein.
 - Die Scripting-Pfade setzt `resolve_api.connect()` selbst:
   `RESOLVE_SCRIPT_API=/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting`,
   `RESOLVE_SCRIPT_LIB=/Applications/DaVinci Resolve/DaVinci Resolve.app/Contents/Libraries/Fusion/fusionscript.so`,
   Modul `…/Scripting/Modules/DaVinciResolveScript.py`. Keine Wrapper-Bibliothek (pydavinci ist verwaist).
+- Doku der API seit 21.1 im selben Ordner: `README.md`, `CHANGELOG.md` und die Stubs `DaVinciResolveScript.pyi`
+  (`README.txt`/`CHANGELOG.txt` gibt es nicht mehr). Resolve bringt ein eigenes Python 3.14 mit
+  (`…/DaVinci Resolve.app/Contents/Applications/ResolvePython`, ohne pip) — AutoCut bleibt bei der venv mit
+  Python 3.12 und den Umgebungsvariablen oben.
 - Erreichbarkeit prüfen: `venv/bin/python scripts/autocut_prepare.py "<Charge>" --check-resolve`.
 - Vor dem ersten Bau in einer neuen Resolve-Umgebung einmal `scripts/resolve_probe.py "<Charge>"`
   laufen lassen: legt eine Probe-Timeline an, misst die `endFrame`-Semantik und die Record-Positionen,
   löscht nur diese Probe wieder und schreibt `<Charge>/_intern/autocut/probe.json`.
+- Einmal je Resolve-Umgebung zusätzlich `scripts/resolve_probe_api.py "<Charge>" --project "<offenes Projekt>"`:
+  misst das Verhalten der 21.1-Funktionen (AudioVolume, Normalize, SetSpeed, Fades, Transition, AutoAlign,
+  QuickExport, Alpha-Import) mit synthetischem Material — `--project` muss exakt dem geöffneten Projekt entsprechen
+  (Freigabe des Users), sonst passiert nichts. Ergebnis `<Charge>/_intern/autocut/probe_api.json`.
 - Proxies: Resolve-Proxies der Clips liegen als `<Clip-Ordner>/Proxy/<stem>.mov` (1920×1080) neben den
   Originalen auf dem NAS; AutoCut verknüpft sie per `LinkProxyMedia` und liest sie für Frames/Kontaktbögen.
 

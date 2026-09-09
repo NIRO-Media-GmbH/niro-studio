@@ -44,9 +44,13 @@ Zusammenfassung; Exit ≠ 0 heißt Abbruch mit deutscher Meldung (Ursache + Abhi
   Fehlt `kamera_rolle`, gilt FX3 = ton, a7MK4 = kontext. Mehrere `video-*.md` → `--video` angeben.
 - **NAS gemountet** (`/Volumes/NIRO NAS/...`, die `path`-Einträge des Index) mit den Resolve-Proxies
   `<Clip-Ordner>/Proxy/<stem>.mov` (1920×1080) für jeden Interview- und B-Roll-Clip.
-- **DaVinci Resolve Studio läuft**, das Zielprojekt ist geöffnet, Einstellungen → System → General →
+- **DaVinci Resolve Studio 21.1 läuft**, das Zielprojekt ist geöffnet, Einstellungen → System → General →
   „External scripting using" = **Local**. Nur für Bau-Schritte (build, place, export, probe,
   probe_xml, finalize, read).
+- **Probe der 21.1-API** einmal je Resolve-Umgebung:
+  `resolve_probe_api.py "$CHARGE" --project "<offenes Projekt>"` → `probe_api.json` (Semantik von SetSpeed,
+  AudioVolume, Normalize, AutoAlign; Grundlage für AutoCut v3). `--project` ist die Freigabe des Users und muss
+  exakt dem geöffneten Projekt entsprechen.
 - **`tools/autocut/.env`** mit `ANTHROPIC_API_KEY` (Stufe 2 und 2b; `scripts/setup_env.py`, siehe `SETUP.md`).
 - Einrichtung (venv, `.pth` auf `tools/transcribe/src`, ffmpeg 8): `SETUP.md`. Test: `venv/bin/python -m pytest -q`.
 
@@ -215,6 +219,7 @@ B-Roll-Bericht, keine Schwarzframes.
 | `Text stimmt nicht mit dem Transkript … Dort steht: „…"` | `text` an den Transkript-Wortlaut angleichen oder Intervall neu auflösen (`autocut_find_quote.py`) |
 | `überschneidet … Sperre` | anderen Take, kürzeren Cut oder harte Kante — Sperre bleibt |
 | `Resolve-Scripting-Modul nicht ladbar` / `Resolve ist nicht erreichbar` | Resolve Studio starten, Projekt öffnen, External Scripting = Local; Pfade in `SETUP.md` |
+| Probe: `Offen ist das Projekt '…', freigegeben wurde '…'` (Exit 2) | Das freigegebene Projekt in Resolve öffnen oder `--project` auf den exakten Namen setzen; ohne Übereinstimmung ändert die Probe nichts |
 | `In Resolve ist kein Projekt geöffnet` | Zielprojekt öffnen (Cloud-Projekt: erst laden) |
 | `Timeline '…' existiert bereits` | Name enthält Datum + Uhrzeit — eine Minute warten oder alte Timeline umbenennen (nicht löschen lassen) |
 | `AppendToTimeline fehlgeschlagen …` / Readback-Abweichung Soll/Ist | `resolve_probe.py` laufen lassen (`probe.json` liefert die endFrame-Semantik), Proxy-Link prüfen; Timeline „… FEHLER" im Bericht nennen |
@@ -244,6 +249,8 @@ B-Roll-Bericht, keine Schwarzframes.
     ├── broll_plan.json · broll_build.json   Stufe 3: Zuordnung (v2: fenster/strecken/szenen/shots), Bau-Ergebnis
     ├── probe_xml.json                   Resolve-Probe des XML-Roundtrips (Pegel-/Zeitlupen-Import, Marker, FPS,
     │                                    Spurnamen setzbar auf Import-/aktuellem Handle)
+    ├── probe_api.json                   Resolve-Probe der 21.1-API (AudioVolume, Normalize, SetSpeed-Semantik, Fades,
+    │                                    Transition, AutoAlign, QuickExport, Alpha-Import); Medien in work/probe_api/
     ├── ton.json · finalize.json         Stufe 5: True-Peak/Gain je A1-Clip, Finalisieren-Ergebnis (End-Timeline)
     └── work/audio · work/frames · work/sheets · work/ton_cache.json · work/xml/
                                          Caches (WAVs, Einzelbilder, Kontaktbögen, Pegel-Messungen) und der

@@ -76,6 +76,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
       sync.py                Waveform-Kreuzkorrelation, Kamerapaare, Konfidenz, Drift
       timeline_model.py      Beats → frame-genaue Items (Pausen, Platzhalter, Handles, Marker; V2 nur Bild, kein A2)
       resolve_api.py         Resolve-Anbindung: Bins, Media Pool (Dedupe), Timeline-Bau, Marker, Export, Lesen, XML-Import
+      probe_media.py         synthetisches Testmaterial der API-Probe (ffmpeg-Argumentlisten, nur Fehlendes erzeugen)
+      probe_api.py           Auswertung der API-Probe 21.1 (Erwartungswerte, Speed-/Align-Klassifikation)
       report.py              Berichte (Rohschnitt, B-Roll-Index, Pegel-Abschnitt)
       broll_index.py         Szenenwechsel, Frames, Kontaktbögen, Claude-Vision, Cache (Stufe 2)
       index_sections.py      Abschnitts-Nachlauf: Einstellung/Perspektive/Brennweite/Bewegungsrichtung/setup_hash (Stufe 2b)
@@ -85,7 +87,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
       xml_patch.py           FCP7-XML lesen/patchen (Pegel, Zeitlupe) für den Finalisieren-Roundtrip
       finalize.py            Stufe 5: roh-Timeline → XML → Pegel/Zeitlupe → End-Timeline → prüfen → roh löschen
     scripts/                 CLI je Schritt (siehe Schnellstart; autocut_read_timelines.py für Stufe 4,
-                             resolve_probe_xml.py für die Finalisieren-Vorprobe, setup_env.py für die .env)
+                             resolve_probe_xml.py für die Finalisieren-Vorprobe,
+                             resolve_probe_api.py für die 21.1-API-Probe (--project = Freigabe), setup_env.py für die .env)
     prompts/                 cutlist.md, index-clip.md, index-sections.md, place-broll.md (Anleitungen/System-Prompts)
     profile/                 default.md + default.yaml (Startprofil B-Roll v2, bis Stufe 4 vorliegt)
     tests/                   pytest (Einheiten + Fake-Resolve, Fixtures aus MEK-Auszügen)
@@ -96,7 +99,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 `_intern/autocut/`: `media.json`, `sync.json`, `cutlist.json`, `verify.json`, `probe.json`,
 `timeline.json`, `build.json`, `broll_index.json` (+ Cache `broll_index/<fingerprint>.json`),
 `broll_index_kompakt.json`, `raster.json`, `broll_plan.json`, `broll_build.json`, `probe_xml.json`,
-`ton.json`, `finalize.json`, `work/` (Audio, Frames, Kontaktbögen/Abschnittsbögen, `ton_cache.json`, `xml/`).
+`probe_api.json`, `ton.json`, `finalize.json`, `work/` (Audio, Frames, Kontaktbögen/Abschnittsbögen,
+`ton_cache.json`, `xml/`, `probe_api/` [synthetische Medien, Render]).
 `Ergebnisse/Rohschnitt/`: `<video>-rohschnitt.md` (mit Pegel-Abschnitt nach Stufe 5), `broll-index.md`,
 `<video>-raster.md`, `<video>-broll.md`, `<Timeline>.xml`.
 

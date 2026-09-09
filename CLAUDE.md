@@ -1,6 +1,6 @@
 # NIRO Studio
 
-Master-Werkzeug von NIRO Media: fünf Funktionen, ein Projektsystem, eine Session.
+Master-Werkzeug von NIRO Media: sieben Funktionen, ein Projektsystem, eine Session.
 
 ## Projektstruktur
 
@@ -18,6 +18,7 @@ Chargen-Ebene existiert immer, auch bei nur einer Charge.
     │   ├── O-Ton-Pläne/       Interview-Pipeline
     │   ├── Sortierung/        Zuordnungspläne Footage
     │   ├── Renders/           fertige Animationen
+    │   ├── Export/            Renders aus Resolve (Review-Kopien, Lieferungen)
     │   └── Fotos/             entwickelte RAW-Fotos (+ web/)
     └── _intern/            was die Tools brauchen (cache, work, Logs, Manifeste)
 
@@ -29,7 +30,7 @@ Ergebnisdateien. Unterordner nur anlegen, wenn die Funktion genutzt wird.
 Eintrag: Datum, was gemacht, was geliefert (Dateien), Entscheidungen/Offenes.
 Datei bei der ersten Session anlegen.
 
-## Die fünf Funktionen (Trigger)
+## Die Funktionen (Trigger)
 
 | Trigger im Chat | Funktion | Anleitung |
 |---|---|---|
@@ -39,11 +40,24 @@ Datei bei der ersten Session anlegen.
 | „Animation: <Kunde>/<Projekt>[/<Charge>]" | Remotion Motion Graphics | `tools/motion/WORKFLOW-Motion.md` |
 | „Foto: <Kunde>/<Projekt>[/<Charge>]" | ARW-RAWs → Culling, Look, fertige Bilder | `tools/photo/WORKFLOW-Foto.md` |
 | „AutoCut: <Kunde>/<Projekt>[/<Charge>]" | Schnittplan → Rohschnitt-Timeline in Resolve (roh) → Nachlauf, B-Roll-Layout, Finalisieren (Pegel, Zeitlupe) | `tools/autocut/WORKFLOW-AutoCut.md` |
+| „Resolve: <Aufgabe>" | Ad-hoc-Arbeit im offenen Resolve-Projekt über den nativen MCP (lesen, prüfen, rendern, importieren) | `tools/resolve/WORKFLOW-Resolve.md` |
 
 Beim Trigger die jeweilige Workflow-Datei lesen und ihr folgen.
 Projektpfad-Konvention überall: `projects/<Kunde>/<Projekt>/<Charge>/` (relativ
 zu dieser Studio-Wurzel). Bei nur einer Charge reicht Kunde/Projekt im Trigger —
 die Charge wird dann automatisch gefunden.
+
+## Resolve-Regeln (MCP und Skripte)
+
+- **Standard nur lesen.** Schreiben nur in Projekten, die der User in dieser Session
+  ausdrücklich freigibt; vor jedem schreibenden Skript den Projektnamen nennen.
+- **Cloud-Projektbibliothek tabu:** keine Projekte laden, anlegen, löschen, wechseln;
+  keine Cloud-Einstellungen. Gearbeitet wird nur im geöffneten Projekt.
+- **Auch im freigegebenen Projekt nur anhängen** (neue Bins, Timelines, Marker, Renders);
+  gelöscht werden nur eigene Objekte derselben Session; am Ende die Timeline des Users
+  wieder aktivieren.
+- **Cloud-Projekte speichern sofort (Live Save):** erst lesen, dann klein schreiben,
+  Readback, Bericht mit Projekt- und Timeline-Namen und Zahlen.
 
 ## Umgebung
 
@@ -54,5 +68,11 @@ die Charge wird dann automatisch gefunden.
 - **Foto (photo):** RAW-Stufe `dcraw_emu` (libraw, Homebrew) + ImageMagick;
   Kunden-Looks als HALD-LUT in `tools/photo/looks/<kunde>/`; RawTherapee liegt
   quarantäne-blockiert in `/Applications` (GUI einmal öffnen würde ihn freischalten).
+- **Resolve (MCP):** nativer Server `ResolveMCP` aus dem App-Bundle, registriert in
+  `.mcp.json` (Projekt-Scope); braucht laufendes Resolve Studio 21.1 mit „External
+  scripting = Local". Werkzeuge `run_script` (Sandbox-Python 3.14, `resolve`/`project`
+  vorinjiziert, Rückgabe über `result`), `search_scripting_api`, `get_scripting_docs`;
+  Stubs und README lokal unter `/Library/Application Support/Blackmagic Design/DaVinci
+  Resolve/Developer/Scripting/`. AutoCut nutzt weiter `tools/autocut/venv/bin/python`.
 - **Neues Projekt:** Ordner nach Bedarf anlegen, z. B.
   `mkdir -p "projects/<Kunde>/<Projekt>/<Charge>/Material/Audio"`.

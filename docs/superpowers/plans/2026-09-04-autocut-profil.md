@@ -4,6 +4,10 @@
 > Liste der Cloud-Projektnamen vorliegt. Baut auf `resolve_api.read_timeline`
 > und `scripts/autocut_read_timelines.py` aus dem Hauptplan auf.
 
+> **Hinweis 09.09.2026:** `LoadCloudProject` verstößt gegen die Cloud-Regel des Users (Cloud-Projektbibliothek
+> tabu, siehe `tools/resolve/WORKFLOW-Resolve.md`). Stufe 4 läuft nur mit ausdrücklicher Freigabe je Projekt
+> oder mit Timelines, die der User selbst im geöffneten Projekt bereitstellt.
+
 **Ziel:** Aus den fertigen Schnitten des Users (Blackmagic-Cloud-Projekte +
 MP4s) ein dauerhaftes Schnitt-Profil ableiten: messbare Kennzahlen je Videotyp
 und Regeln in Prosa mit Beispielen, das AutoCut in Stufe 3 (B-Roll) und Stufe 1

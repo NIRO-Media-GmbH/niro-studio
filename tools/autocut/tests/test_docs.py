@@ -8,12 +8,13 @@ WORKFLOW = TOOL_ROOT / "WORKFLOW-AutoCut.md"
 README = TOOL_ROOT / "README.md"
 SETUP = TOOL_ROOT / "SETUP.md"
 CLAUDE_MD = STUDIO_ROOT / "CLAUDE.md"
+RESOLVE_WORKFLOW = STUDIO_ROOT / "tools" / "resolve" / "WORKFLOW-Resolve.md"
 
 # CLI-Einstiege laut Spec Abschnitt 6 (alle mit venv/bin/python, Argument = Chargen-Ordner)
 SPEC_SCRIPTS = ["autocut_prepare.py", "autocut_sync.py", "autocut_find_quote.py", "autocut_verify.py",
                 "autocut_build.py", "autocut_export_xml.py", "autocut_index_broll.py",
                 "autocut_place_broll.py", "autocut_read_timelines.py", "autocut_index_sections.py",
-                "autocut_finalize.py", "resolve_probe_xml.py"]
+                "autocut_finalize.py", "resolve_probe_xml.py", "resolve_probe_api.py"]
 
 
 def _text(p) -> str:
@@ -60,3 +61,32 @@ def test_claude_md_has_exactly_one_autocut_trigger_after_foto():
     assert lines[i].count("|") == 4, "Trigger-Zeile braucht drei Spalten"
     assert "`tools/autocut/WORKFLOW-AutoCut.md`" in lines[i]
     assert lines[i].startswith("| „AutoCut: <Kunde>/<Projekt>[/<Charge>]\" |")
+
+
+def test_resolve_workflow_exists_with_rules_and_flow():
+    text = _text(RESOLVE_WORKFLOW)
+    for needle in ("„Resolve: <Aufgabe>\"", "get_resolve_status", "run_script", "run_script_unsafe", "search_scripting_api",
+                   "Freigabe", "Cloud-Projektbibliothek", "Ergebnisse/Export/", "Claude <Aufgabe>", "GetCurrentTimeline",
+                   "Protokoll", "## Fehlerbilder", "resolve_probe_api.py"):
+        assert needle in text, f"WORKFLOW-Resolve.md: „{needle}“ fehlt"
+
+
+def test_claude_md_has_resolve_trigger_after_autocut_and_rules():
+    lines = _text(CLAUDE_MD).splitlines()
+    hits = [i for i, l in enumerate(lines) if l.startswith("| „Resolve: <Aufgabe>\"")]
+    assert len(hits) == 1, "CLAUDE.md muss genau eine Resolve-Trigger-Zeile enthalten"
+    i = hits[0]
+    assert lines[i - 1].startswith("| „AutoCut:"), "Resolve-Zeile muss direkt nach der AutoCut-Zeile stehen"
+    assert lines[i].count("|") == 4 and "`tools/resolve/WORKFLOW-Resolve.md`" in lines[i]
+    text = "\n".join(lines)
+    for needle in ("## Resolve-Regeln", "Cloud-Projektbibliothek", "Export/", ".mcp.json", "sieben Funktionen"):
+        assert needle in text, f"CLAUDE.md: „{needle}“ fehlt"
+
+
+def test_setup_and_workflow_are_on_21_1():
+    setup = _text(SETUP)
+    for needle in ("21.1", "README.md", "DaVinciResolveScript.pyi", "ResolvePython", "resolve_probe_api.py", "--project"):
+        assert needle in setup, f"SETUP.md: „{needle}“ fehlt"
+    workflow = _text(WORKFLOW)
+    for needle in ("probe_api.json", "--project", "Resolve Studio 21.1"):
+        assert needle in workflow, f"WORKFLOW-AutoCut.md: „{needle}“ fehlt"
