@@ -1,17 +1,61 @@
-# Auf GitHub liegt das Werkzeug, nicht die Arbeit.
+# Auf GitHub liegt das Werkzeug — aus projects/ nur die Referenzen.
 #
-# Alles unter projects/ — Kundenmaterial, Renders, Schnittpläne, Protokolle —
-# bleibt ausschließlich lokal bzw. auf NAS/SSD. Die Werkzeuge unter tools/
-# bringen eigene .gitignore-Dateien mit (venv, node_modules, Medien).
+# projects/ (User-Entscheid 15.09.2026): Protokolle, Pläne, Berichte, Chargen-
+# Skripte, Arbeits-JSONs und CI (Schriften, Vektorlogos) gehen als Referenz mit,
+# damit das Zweit-MacBook sieht, wie frühere Chargen gebaut wurden.
+# Nie mit: Mediendateien (Video, Audio, Bilder, RAW, PDF, Design-Dateien),
+# Rohtranskripte und Caches (Scribe-Cache, utterances, transcripts_index,
+# Dumps), Logs, Website-Kopien, kompilierte Helfer.
+# Deshalb eine Positivliste: erst alles unter projects/ ausblenden, dann die
+# Referenz-Endungen zulassen, zuletzt die Rohdaten-Ordner wieder ausblenden.
+# Neue Endung gebraucht? Hier ergänzen — nie projects/ pauschal freigeben.
 #
 # Mit führendem Schrägstrich verankert: nur der Wurzelordner ist gemeint.
 # Unverankert würde die Regel auch tools/motion/src/clients/*/projects/
 # treffen und jede neue Remotion-Komposition still aus git ausblenden.
 
-/projects/
+/projects/**
+!/projects/**/
+!/projects/**/*.md
+!/projects/**/*.py
+!/projects/**/*.swift
+!/projects/**/*.sh
+!/projects/**/*.ts
+!/projects/**/*.tsx
+!/projects/**/*.json
+!/projects/**/*.yaml
+!/projects/**/*.yml
+!/projects/**/*.txt
+!/projects/**/*.csv
+!/projects/**/*.tsv
+!/projects/**/*.svg
+!/projects/**/*.ttf
+!/projects/**/*.TTF
+!/projects/**/*.otf
+!/projects/**/*.woff
+!/projects/**/*.woff2
+
+# Rohdaten, Caches und Logs bleiben lokal, auch wenn die Endung erlaubt ist
+/projects/**/cache/
+/projects/**/work/
+/projects/**/dumps/
+/projects/**/website/
+/projects/**/transcripts/
+/projects/**/transcripts_md/
+/projects/**/Transkripte/
+/projects/**/broll_index/
+/projects/**/oton-work/
+/projects/**/__pycache__/
+/projects/**/*.scribe.json
+/projects/**/utterances*.json
+/projects/**/transcripts_index*.json
+/projects/**/*digest*.txt
+/projects/**/*progress*.txt
+/projects/**/Sortierung/transkripte*.md
 
 .DS_Store
 
 # Arbeitsspuren der Session-Werkzeuge
 .superpowers/
 .claude/settings.local.json
+.claude/worktrees/

@@ -18,6 +18,9 @@ public/projects/
 # Schlanke public-Spiegel für Renders (rsync-Kopien, jederzeit neu erzeugbar)
 public-*/
 
+# Remotion-Bundles (z. B. build-sw, ~500 MB inkl. public-Kopie), jederzeit neu erzeugbar
+build-*/
+
 # Remotion-Review-Stills, die versehentlich im Repo-Root landen (Frame-Nummer als Name)
 /[0-9][0-9][0-9]*.png
 /[0-9][0-9][0-9][0-9]
