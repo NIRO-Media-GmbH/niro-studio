@@ -40,9 +40,17 @@ lesen. Abgrenzung: AutoCut (`tools/autocut/WORKFLOW-AutoCut.md`) bleibt skriptge
    Timelines und Clips nie ändern oder löschen; gelöscht werden nur Objekte, die Claude in derselben Session
    angelegt hat. Eigene Objekte heißen `Claude <Aufgabe> <JJJJ-MM-TT HHMM>` (z. B. Bin „Claude Review
    2026-09-10 1430"), damit sie erkennbar und löschbar bleiben.
-5. **Timeline des Users wiederherstellen:** vor jeder Änderung `project.GetCurrentTimeline()` merken, am Ende
-   `project.SetCurrentTimeline(...)` darauf — auch nach einem Fehler.
+5. **Timeline und Bin des Users wiederherstellen:** vor jeder Änderung `project.GetCurrentTimeline()` und den
+   aktuellen Media-Pool-Ordner (`project.GetMediaPool().GetCurrentFolder()`, per `GetUniqueId()`) merken, am Ende
+   beides zurücksetzen — auch nach einem Fehler. Importe, `AddSubFolder` und Timeline-Bauten verstellen den Bin;
+   `autocut_build.py` stellt nur die Timeline zurück (Taxodia 15.09.2026).
 6. **Cloud-Projekte speichern sofort (Live Save):** erst lesen, dann klein schreiben, Readback, Bericht.
+   **Nie schreiben, während der User abspielt** (Cinema Viewer/Vollbild): Schreibaufrufe liefern dann `False`
+   oder hängen (`DeleteClips`, sogar `run_script` bei `GetName()`), und ein abgebrochenes Skript führt seine
+   eingereihten Aufrufe nach der Wiedergabe trotzdem aus. Vor schreibenden Läufen die Wiedergabe prüfen
+   (`tools/autocut/vorlagen/feinschnitt/werkzeuge/fenster.swift`, ohne Fokuswechsel), nach jedem Abbruch den
+   Zustand neu lesen und eigene Objekte wiederherstellen. Arbeitet der User parallel in Resolve, Timeline-Wechsel
+   vorher kurz abstimmen (ein Bau wechselt die aktive Timeline für einige Sekunden).
 7. **Was als Schreiben zählt:** alles, was Projekt, Media Pool, Timelines, Marker, Einstellungen, Hintergrund-
    analysen (Transkription, IntelliSearch, Audio-Klassifikation, Slate) oder Dateien ändert — auch
    `SetCurrentTimeline`, Renders und Exporte.
@@ -96,9 +104,82 @@ lesen. Abgrenzung: AutoCut (`tools/autocut/WORKFLOW-AutoCut.md`) bleibt skriptge
   Users wiederherstellen. Braucht `run_script_unsafe` nur, wenn der Zielordner erst angelegt werden muss.
 - **Medien importieren** (schreibend, nach Freigabe): `mp = project.GetMediaPool()`, Bin
   `Claude Import <Datum>` per `mp.AddSubFolder(mp.GetRootFolder(), name)`, `mp.SetCurrentFolder(bin)`,
-  `mp.ImportMedia([{"FilePath": pfad}])`; Readback über `GetClipProperty("File Path")`.
+  `mp.ImportMedia([pfad, …])` (**Liste von Pfad-Strings** — die Dict-Form `[{"FilePath": pfad}]` aus dem
+  Stub liefert in 21.1.0.14 kommentarlos 0 Clips, gemessen 11.09.2026); Readback über
+  `GetClipProperty("File Path")`.
 - **Transkripte lesen** (lesend): `clip.GetTranscription()` → `segments[].words[]` mit Timecodes und
   `speaker`; leer, wenn in Resolve nicht transkribiert wurde (Transkribieren = schreibend, Regel 7).
+
+## Gemessenes Verhalten 21.1.0.14 (Live-Befunde bis 15.09.2026)
+
+Die Stubs nennen Signaturen, nicht die Semantik. Das hier ist gemessen (MEK-Testprojekt, Aeterna, Taxodia);
+Skripte mit diesen Aufrufen liegen als Vorlagen unter `tools/autocut/vorlagen/feinschnitt/`.
+
+- **`run_script`-Sandbox:** `import` ist gesperrt (auch `traceback`); 60-s-Grenze. Lange oder blockierende
+  Aufrufe (`DetectSceneCuts`, `Stabilize` über viele Clips, `RenderWithQuickExport` langer Timelines) extern
+  über `tools/autocut/venv/bin/python` im Hintergrund. `GetCurrentProject()` kann kurz `None` liefern, wenn
+  Resolve beschäftigt ist — nachfragen, nie ein Projekt laden.
+- **Readback:** `TimelineItem.GetLeftOffset()`/`GetDuration()` sind exakt (Timeline-Frames),
+  `GetSourceStartFrame()` liegt oft 1 Frame darunter. 50p-Clip in 25p-Timeline: Quellframe = 2 × Left-Offset.
+  `Timeline.GetIsTrackEnabled` ist nur auf der aktiven Timeline aussagekräftig; `Folder.GetClipList()` zählt
+  Timelines mit (`GetClipProperty("Type") == "Timeline"`).
+- **Nicht aktive Timeline:** `AddMarker`, `SetProperty`/`SetProperties` (AudioVolume, Transform) und `SetFades`
+  wirken ohne `SetCurrentTimeline`. Nur auf der aktiven Timeline: `DeleteClips` (sonst `False`) und
+  `SetTrackName`. Kein Slip per API (Left-Offset nicht setzbar) — Quell-In ändern heißt eigenes Item löschen
+  und neu anhängen. Zeitweise verweigert Resolve alle Item-Schreibzugriffe (`SetProperty` = `False`), solange
+  ein Clip im Source-Viewer/Inspector geöffnet ist — später erneut versuchen.
+- **Anhängen:** `AppendClipInfo.endFrame` ist exklusiv, `mediaType: 1` = nur Bild; mehrere Clips in einem
+  `AppendToTimeline` gehen auch extern. Ein PNG ignoriert start/end und wird 125 Frames lang. ProRes 4444 aus
+  Remotion bekommt beim Import automatisch Alpha „Straight".
+- **Tempo:** `SetSpeed` behält die Timeline-Dauer, der Quellbereich schrumpft — für 50 % den doppelten
+  Quellbereich bei 100 % anhängen, dann `SetProperties({"RetimeProcess": resolve.RETIME_NEAREST})` (reine
+  Bildauswahl) und `SetSpeed({"Percentage": 50.0, "RippleTimeline": False})`. `TimelineItem.Stabilize()` →
+  `True`, blockierend 0,5–1,8 s je 4K-50p-Clip, erst nach `SetSpeed`.
+- **Handarbeit:** `TimelineItem.SetClipEnabled(False)` deaktiviert Stücke. `Timeline.SetClipsLinked(items, True)`
+  nimmt je Link-Gruppe nur einen Clip pro Spur auf, und einzeln nacheinander verknüpfen ersetzt den vorigen Link —
+  mehrere SFX an einem Grafik-Clip gehen nur über getrennte Spuren.
+- **Schreibsperre:** Resolve lehnt zeitweise jede Item-Schreibaktion ab, auch ohne Wiedergabe. Nie ein Ergebnis als
+  gesetzt protokollieren ohne `True` **und** Readback; Nachsetzen per Hintergrund-Retry, der vorher prüft, dass
+  der Wert nicht inzwischen von Hand geändert wurde.
+- **⚠️ Tonspuren beim Bau anlegen:** `Timeline.AddTrack("audio", "stereo")` auf einer Timeline, die schon Clips
+  enthält, erzeugt eine Spur ohne Ausgang — im Render −180 dB, obwohl die Spurmeter Pegel zeigen. Spuren, die
+  direkt nach `CreateEmptyTimeline` vor dem ersten Anhängen angelegt werden, klingen normal. Die Bus-Zuweisung
+  ist per API weder lesbar noch setzbar, Main-Zuweisung von Hand half nicht. Gelöst hat es der User mit dem
+  Track-Effekt **Stereo Fixer, Fix Mode 2**. Regel: auf jede SFX- und Sprachspur; Track-Effekte sind per API
+  nicht setzbar, deshalb nach jedem Bau mit Sprache oder SFX den User daran erinnern. Nach nachträglich
+  angelegten Spuren immer einen kurzen Ton-Render zur Kontrolle.
+- **Ton-Render zur Kontrolle** (verstellt die Deliver-Seite des Users):
+  1. `SaveAsNewRenderPreset("<Sicherung>")`.
+  2. `SetRenderSettings({"MarkIn", "MarkOut", "ExportVideo": False, "ExportAudio": True, "TargetDir", "CustomName"})`.
+  3. `AddRenderJob()`, dann `StartRendering(...)`.
+  4. Auf `GetRenderJobStatus(...)` == Complete warten — nicht auf `IsRenderingInProgress`, das direkt nach dem
+     Start noch `False` liefert.
+  5. Job löschen, `LoadRenderPreset` + `DeleteRenderPreset`.
+  6. Trotz Preset bleiben Dateiname, Ort, „Export Video" und In/Out geändert: `SetRenderSettings({"SelectAllFrames":
+     True, "ExportVideo": True, …})` und `OpenPage("edit")`.
+  Dazu kommen zwei Befunde:
+  - `StartRendering` lieferte `False`, während die Edit-Seite aktiv war.
+  - Nach `LoadRenderPreset` stand der Codec auf H.264 statt ProRes 422 HQ, also Codec und Format nachprüfen.
+  Den früheren Dateinamen und Ort des Users stellt nichts wieder her; vorher lesen und im Bericht nennen.
+- **Ton:** `Timeline.NormalizeAudioLevel(items, {"normalizationMode": "True Peak", "targetLevel": -3.0,
+  "setLevelMode": resolve.NORMALIZE_AUDIO_SET_LEVEL_INDEPENDENT})` trifft ffmpeg-ebur128 auf ±0,1 dB;
+  `Timeline.SetVoiceIsolationState(1, {"isEnabled": True, "amount": 50})` schaltet Voice Isolation auf A1.
+  Beides ohne Timeline-Wechsel.
+- **Farbe:** `item.SetCDL({...})` und `item.GetNodeGraph().SetLUT(1, "Sony/SLog3SGamut3.CineToLC-709.cube")`
+  (relativer LUT-Pfad, sonst absolut) wirken auf die aktive Farbversion des Items — keine neue Version anlegen.
+  `ExportLUT` geht nur auf der Color-Seite; die Seite nicht wechseln, während der User auf Edit arbeitet.
+- **Transform** (ArUco-Raster vermessen, Rest < 0,3 px; zentrierte Pixel, y nach unten):
+  H = T(Pan, −Tilt) · Zoom · R(θ) · P mit R = [[cos, sin], [−sin, cos]] (RotationAngle in Grad, + = gegen den
+  Uhrzeigersinn) und P = [[1,0,0],[0,1,0],[2·Yaw/W, −2·Pitch/H, 1]] (reine Trapezverzerrung, zuerst angewendet);
+  Pan + = rechts, Tilt + = oben, in Timeline-Pixeln. Wirkt auch auf nicht aktiven Timelines.
+- **Standbilder und Renders:** `ExportCurrentFrameAsStill` enthält keine Inspector-Transformationen und liefert
+  je Skript nur ein neues Bild (Timecode im vorigen Aufruf setzen). Für Sichtprüfungen daher
+  `RenderWithQuickExport("ProRes 422 HQ", {"TargetDir": …, "CustomName": …, "EnableUpload": False})` — rendert
+  die aktive Timeline blockierend (60 s Timeline in 4,5 s) und lässt die Deliver-Einstellungen unberührt.
+  `AddRenderJob()` liefert `""`, wenn im selben Skript `SetCurrentTimeline` lief — Timeline vorher in einem
+  eigenen Aufruf aktivieren.
+- **`Timeline.DetectSceneCuts()`** blockiert (76 s für 21 min 4K vom NAS) und schneidet alle Video-Items der
+  Timeline in place — nur auf eigenen Timelines.
 
 ## Fehlerbilder
 
@@ -111,3 +192,6 @@ lesen. Abgrenzung: AutoCut (`tools/autocut/WORKFLOW-AutoCut.md`) bleibt skriptge
 | Skript läuft in den Timeout | Kleiner schneiden (eine Timeline je Skript), `timeout` erhöhen |
 | Medien offline (NAS) | NAS mounten; Resolve zeigt Offline-Clips rot, `GetClipProperty("File Path")` nennt den Pfad |
 | Funktion unbekannt / anders als erinnert | `search_scripting_api`, `get_whats_new` — 21.1 hat 20 neue Funktionen (Changelog) |
+| `DeleteClips` = `False`, `run_script` hängt schon bei `GetName()` | User spielt ab (Regel 6) — warten, nicht abbrechen und neu starten; danach Zustand lesen, fehlende eigene Items wiederherstellen |
+| `SetProperty` = `False` auf allen Items, keine Wiedergabe | Clip im Source-Viewer/Inspector offen — später erneut versuchen, den User nicht zum Klicken drängen |
+| Media Pool steht nach einem Lauf auf einem fremden Bin | Bin des Users per `GetUniqueId()` suchen und `SetCurrentFolder` (Regel 5) |

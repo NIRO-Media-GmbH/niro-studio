@@ -36,10 +36,10 @@ Datei bei der ersten Session anlegen.
 |---|---|---|
 | „Video-Auswahl: <Kunde>/<Projekt>[/<Charge>]" | Interviews → sortierte O-Ton-Pläne | `tools/transcribe/WORKFLOW.md` |
 | „Footage sortieren: <Pfad>" + Konzept | Roh-MP4s nach Konzept-Script sortieren | `tools/transcribe/WORKFLOW-Footage.md` |
-| „Schnittplan: <Kunde>/<Projekt>[/<Charge>]" | Roh-Footage → Cutter-Schnittanweisungen (PDF, max 2 Seiten/Video) | `tools/transcribe/WORKFLOW-Schnittplan.md` |
+| „Schnittplan: <Kunde>/<Projekt>[/<Charge>]" | Roh-Footage → Cutter-Schnittanweisungen (PDF, Lesbarkeit vor Seitenbudget, max. 20 Seiten) | `tools/transcribe/WORKFLOW-Schnittplan.md` |
 | „Animation: <Kunde>/<Projekt>[/<Charge>]" | Remotion Motion Graphics | `tools/motion/WORKFLOW-Motion.md` |
 | „Foto: <Kunde>/<Projekt>[/<Charge>]" | ARW-RAWs → Culling, Look, fertige Bilder | `tools/photo/WORKFLOW-Foto.md` |
-| „AutoCut: <Kunde>/<Projekt>[/<Charge>]" | Schnittplan → Rohschnitt-Timeline in Resolve (roh) → Nachlauf, B-Roll-Layout, Finalisieren (Pegel, Zeitlupe) | `tools/autocut/WORKFLOW-AutoCut.md` |
+| „AutoCut: <Kunde>/<Projekt>[/<Charge>]" | Schnittplan → Rohschnitt-Timeline in Resolve (roh) → B-Roll aus der Auswahl-Timeline des Users → Feinschnitt (A/B-Wechsel, Grafik, Ton, Musik, SFX, Grading, Begradigen; Vorlagen) · Finalisieren (Pegel, Zeitlupe) | `tools/autocut/WORKFLOW-AutoCut.md` |
 | „Resolve: <Aufgabe>" | Ad-hoc-Arbeit im offenen Resolve-Projekt über den nativen MCP (lesen, prüfen, rendern, importieren) | `tools/resolve/WORKFLOW-Resolve.md` |
 
 Beim Trigger die jeweilige Workflow-Datei lesen und ihr folgen.
@@ -55,10 +55,14 @@ die Charge wird dann automatisch gefunden.
 - **Cloud-Projektbibliothek tabu:** keine Projekte laden, anlegen, löschen, wechseln;
   keine Cloud-Einstellungen. Gearbeitet wird nur im geöffneten Projekt.
 - **Auch im freigegebenen Projekt nur anhängen** (neue Bins, Timelines, Marker, Renders);
-  gelöscht werden nur eigene Objekte derselben Session; am Ende die Timeline des Users
-  wieder aktivieren.
+  gelöscht werden nur eigene Objekte derselben Session; am Ende Timeline und Media-Pool-Bin
+  des Users wieder aktivieren.
 - **Cloud-Projekte speichern sofort (Live Save):** erst lesen, dann klein schreiben,
   Readback, Bericht mit Projekt- und Timeline-Namen und Zahlen.
+- **Nie schreiben, während der User abspielt:** Schreibaufrufe hängen dann oder laufen
+  nach einem Abbruch später trotzdem. Arbeitet der User parallel in Resolve, Timeline-Wechsel
+  vorher abstimmen; von Hand Geändertes nie überschreiben. Gemessenes API-Verhalten:
+  `tools/resolve/WORKFLOW-Resolve.md`.
 
 ## Umgebung
 

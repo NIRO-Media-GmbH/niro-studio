@@ -1,0 +1,481 @@
+{
+ "titel": "Color-Grading-Vorschlag <Projekt/Video> – Kamera-Angleich FX3/a7 IV + cleaner Look",
+ "stand": "2026-09-15",
+ "status": "Nur Analyse/Vorschlag. In Resolve wurde nichts geschrieben, auf dem NAS nichts veraendert.",
+ "charge": "projects/<Kunde>/<Projekt>/<Charge>",
+ "resolve_projekt_laut_timeline_json": "<Resolve-Projekt>",
+ "material": {
+  "kameras_laut_sony_xml": {
+   "FX3 (Kamera-B, V1, Ton)": "ILME-FX3, <Objektiv>, s-log3-cine / s-gamut3-cine, H.264 140 Mbit/s 4:2:2 10 Bit Long-GOP, 25p",
+   "a7 IV (Kamera-A, V2)": "ILCE-7M4, <Objektiv>, s-log3-cine / s-gamut3-cine, H.264 140 Mbit/s 4:2:2 10 Bit Long-GOP, 25p",
+   "B-Roll": "ILME-FX3A, <Objektiv>, s-log3-cine / s-gamut3-cine, H.264 200 Mbit/s 4:2:2 10 Bit Long-GOP, 50p"
+  },
+  "proxys": "H.264 Main 8 Bit 4:2:0 1920x1080 (Blackmagic Proxy Generator), getaggt bt709/tv, Inhalt ist S-Log3 (nicht gegradet).",
+  "pegel_befund": "Originale sind als Full Range geflaggt. Der Proxy Generator hat sie als Full Range gelesen und nach Legal umgesetzt: Y8 = 16 + CV10*219/1023 (Fit rms 0,08). Ein Proxy, normal als TV-Range dekodiert, liefert also CV/1023 = genau das, was die Sony-LUTs ('full in full out') erwarten. Chroma im Proxy ca. 2 % flacher als im Original (betrifft alle Kameras gleich)."
+ },
+ "lut": {
+  "empfohlen": "/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/Sony/SLog3SGamut3.CineToLC-709.cube",
+  "empfohlen_relativ_fuer_SetLUT": "Sony/SLog3SGamut3.CineToLC-709.cube",
+  "details": "Sony LookProfile LUT v1.08.04, 33er Wuerfel, 'full in full out'; auf der Neutralachse der sauberste (kein Farbdrift bis 500 %).",
+  "alternativen": {
+   "/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/Sony/SLog3SGamut3.CineToLC-709TypeA.cube": "33er, v1.04.04 – weicher, Schwarz angehoben, Lichter leicht magenta; im Vergleich milchiger (look_varianten.jpg, Spalte C)",
+   "/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/Sony/SLog3SGamut3.CineToCine+709.cube": "65er, v1.04.04 – kontrastreicher, Lichter warm (Blau faellt ab) = Stil-Farbstich",
+   "/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/Sony/SLog3SGamut3.CineToSLog2-709.cube": "33er – Legacy-Kurve",
+   "/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/Sony SLog3 to Rec709.ilut": "1D-Input-LUT nur Gamma, keine Gamut-Wandlung – nicht verwenden"
+  },
+  "kopien": "Identische Dateien (gleiche SHA-1) unter .../LUT/05_Davinci/Sony/"
+ },
+ "reihenfolge": {
+  "grundsatz": "ALLE CDLs sind im S-Log3-Raum (normierter Codewert CV/1023) VOR dem LUT gerechnet. Der Look ist ebenfalls eine Log-CDL (Kontrast um 18 % Grau), kein Display-Grade nach dem LUT.",
+  "variante_A_ein_node_empfohlen": "Node 1: SetCDL(Gesamt-CDL je Kamera/Set) + SetLUT(LC-709). Resolve wendet den Node-LUT am Ende des Nodes an, also CDL -> LUT. Vollstaendig per API setzbar (keine Node-Erzeugung noetig).",
+  "variante_B_node_baum": "Node 1: Angleich-CDL (Log) -> Node 2: Look-CDL (Log) -> Node 3: nur LUT. Die API kann keine Nodes anlegen; Baum vorher im UI oder per DRX-Vorlage (Graph.ApplyGradeFromDRX) anlegen.",
+  "komposition": "Gesamt = Look(Angleich(x)): slope = k*slope_angleich, offset = k*offset_angleich + P*(1-k), saturation = sat_angleich*sat_look; P = 18-%-Grau in S-Log3 = 0.4106, k = 1.20. Exakt, weil Look-Slope/Offset je Kanal gleich und Power = 1.",
+  "power": "Power ueberall 1.0 (robust gegen Unterschiede in Resolves Gamma-Umsetzung).",
+  "farbmanagement_voraussetzung": "DaVinci YRGB ohne Color Management (bzw. keine Input-Transformation auf den Clips). Gemessen 15.09.2026: RCM v2 mit Input = Timeline = Rec.709 (Scene) – die Clips gehen unkonvertiert als S-Log3 in den Node, der Vorschlag gilt. Bei anderem Input-/Timeline-Farbraum oder ACES gilt er so nicht. Farbmanagement nur lesen (skripte/grade_check.py), nie aendern."
+ },
+ "look_cdl_global_log_vor_LUT": {
+  "slope": [
+   1.2,
+   1.2,
+   1.2
+  ],
+  "offset": [
+   -0.0821,
+   -0.0821,
+   -0.0821
+  ],
+  "power": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "saturation": 1.03,
+  "resolve_SetCDL": {
+   "Slope": "1.2000 1.2000 1.2000",
+   "Offset": "-0.0821 -0.0821 -0.0821",
+   "Power": "1.0000 1.0000 1.0000",
+   "Saturation": 1.03
+  },
+  "hinweis": "Dezenter cleaner Look fuer alle Clips: Log-Kontrast 1,20 um 18 % Grau, Saettigung 1,03 – ergibt mit LC-709 neutrale Weissen, tiefes aber zeichnendes Schwarz, natuerliche Haut. In den Gesamt-CDLs bereits enthalten."
+ },
+ "look_ziele_final": {
+  "haut_L*": 70,
+  "helle_wand_L*": 88,
+  "wand_a*b*": "0/0 (neutral)",
+  "schwarzes_polo_a*b*": "0/0 (neutral)",
+  "b_roll_haut_L*": 36,
+  "hinweis": "Belichtung je Set = Kompromiss aus Haut- und Wand-Ziel (gleich gewichtet); FX3 bekommt keinen eigenen Kontrast, den setzt nur der Look. schwarzes_polo_a*b* = dunkle Kleidung neutral (ausser farbiger Kleidung, fit.DUNKEL_NICHT_NEUTRAL)."
+ },
+ "cdl_je_kamera_und_set": {
+  "Person A": {
+   "clips": {
+    "FX3 (B-Cam, V1, Ton)": "FX3_0001.MP4",
+    "a7 IV (A-Cam, V2)": "a7MK4_JJJJMMTT_0001.MP4"
+   },
+   "FX3": {
+    "node1_gesamt_log_vor_LUT": {
+     "slope": [
+      1.164,
+      1.2001,
+      1.2518
+     ],
+     "offset": [
+      0.005,
+      -0.0152,
+      -0.048
+     ],
+     "power": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "saturation": 1.03,
+     "resolve_SetCDL": {
+      "Slope": "1.1640 1.2001 1.2518",
+      "Offset": "0.0050 -0.0152 -0.0480",
+      "Power": "1.0000 1.0000 1.0000",
+      "Saturation": 1.03
+     },
+     "hinweis": "In Node 1 zusammen mit dem LUT setzen (CDL = Angleich + Look, im S-Log3-Raum vor dem Node-LUT)."
+    },
+    "nur_angleich_log_vor_LUT": {
+     "slope": [
+      0.97,
+      1.0001,
+      1.0432
+     ],
+     "offset": [
+      0.0726,
+      0.0558,
+      0.0284
+     ],
+     "power": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "saturation": 1.0,
+     "resolve_SetCDL": {
+      "Slope": "0.9700 1.0001 1.0432",
+      "Offset": "0.0726 0.0558 0.0284",
+      "Power": "1.0000 1.0000 1.0000",
+      "Saturation": 1.0
+     },
+     "hinweis": "Nur fuer einen Node-Baum: Node 1 = diese CDL, Node 2 = Look-CDL, Node 3 = LUT."
+    },
+    "physikalisch": {
+     "belichtung_blenden": 0.7254,
+     "wb_r_blenden": -0.0271,
+     "wb_b_blenden": -0.004,
+     "schwarz_slope_delta_r": -0.0301,
+     "schwarz_slope_delta_b": 0.0431,
+     "kontrast_delta": 0.0001
+    }
+   },
+   "a7_IV": {
+    "node1_gesamt_log_vor_LUT": {
+     "slope": [
+      1.2981,
+      1.3137,
+      1.3251
+     ],
+     "offset": [
+      -0.0045,
+      -0.0068,
+      -0.0095
+     ],
+     "power": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "saturation": 1.0044,
+     "resolve_SetCDL": {
+      "Slope": "1.2981 1.3137 1.3251",
+      "Offset": "-0.0045 -0.0068 -0.0095",
+      "Power": "1.0000 1.0000 1.0000",
+      "Saturation": 1.0044
+     },
+     "hinweis": "In Node 1 zusammen mit dem LUT setzen (CDL = Angleich + Look, im S-Log3-Raum vor dem Node-LUT)."
+    },
+    "nur_angleich_log_vor_LUT": {
+     "slope": [
+      1.0817,
+      1.0948,
+      1.1042
+     ],
+     "offset": [
+      0.0647,
+      0.0628,
+      0.0605
+     ],
+     "power": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "saturation": 0.9751,
+     "resolve_SetCDL": {
+      "Slope": "1.0817 1.0948 1.1042",
+      "Offset": "0.0647 0.0628 0.0605",
+      "Power": "1.0000 1.0000 1.0000",
+      "Saturation": 0.9751
+     },
+     "hinweis": "Nur fuer einen Node-Baum: Node 1 = diese CDL, Node 2 = Look-CDL, Node 3 = LUT."
+    },
+    "physikalisch": {
+     "belichtung_blenden": 1.2069,
+     "wb_r_blenden": -0.0745,
+     "wb_b_blenden": 0.0438,
+     "schwarz_slope_delta_r": -0.0119,
+     "schwarz_slope_delta_b": 0.0086,
+     "kontrast_delta": 0.0948,
+     "saettigung_delta": -0.0249
+    }
+   },
+   "deutung": {
+    "a7_dunkler_als_FX3_blenden": 0.48,
+    "a7_waermer_rot_mehr_blenden": 0.047,
+    "a7_waermer_blau_weniger_blenden": 0.048,
+    "a7_kontrast_anhebung": 0.0948,
+    "a7_saettigung_delta": -0.0249,
+    "FX3_schatten_blau_neutralisiert": {
+     "slope_delta_r": -0.0301,
+     "slope_delta_b": 0.0431
+    },
+    "FX3_belichtung_blenden": 0.7254
+   },
+   "messung_fit_6_paare": {
+    "haut": {
+     "dE2000_mittel": 1.98,
+     "dE2000_max": 4.79,
+     "Lab_FX3": [
+      68.3,
+      16.5,
+      14.2
+     ],
+     "Lab_A7": [
+      68.2,
+      16.5,
+      14.2
+     ],
+     "dE2000_vorher_nur_LUT_mittel": 9.64
+    },
+    "dunkle_kleidung": {
+     "dE2000_mittel": 1.01,
+     "dE2000_max": 1.7,
+     "Lab_FX3": [
+      5.2,
+      -0.1,
+      -0.1
+     ],
+     "Lab_A7": [
+      6.6,
+      -0.2,
+      -0.2
+     ],
+     "dE2000_vorher_nur_LUT_mittel": 2.67
+    },
+    "wand_FX3_Lab_nachher": [
+     89.6,
+     0.1,
+     0.1
+    ],
+    "wand_FX3_Lab_vorher_nur_LUT": [
+     75.3,
+     0.6,
+     -0.3
+    ],
+    "haut_dE2000_je_frame": [
+     2.37,
+     1.56,
+     2.06,
+     0.67,
+     0.43,
+     4.79
+    ]
+   },
+   "hold_out_3_paare": {
+    "haut": {
+     "dE2000_vorher_mittel": 10.98,
+     "dE2000_nachher_mittel": 2.33,
+     "dE2000_nachher_max": 3.7
+    },
+    "dunkle_kleidung": {
+     "dE2000_vorher_mittel": 3.13,
+     "dE2000_nachher_mittel": 0.94,
+     "dE2000_nachher_max": 1.26
+    }
+   },
+   "gegenprobe_10bit_original_paar_2": {
+    "haut_dE2000_FX3_vs_a7_auf_originalen": 1.64,
+    "haut_dE2000_original_vs_proxy_FX3": 1.24,
+    "haut_dE2000_original_vs_proxy_a7": 1.15
+   }
+  }
+ },
+ "b_roll_FX3A": {
+  "clips": "alle C0001–C0030 aus broll_auswahl.json",
+  "node1_gesamt_log_vor_LUT": {
+   "slope": [
+    1.1687,
+    1.2,
+    1.2394
+   ],
+   "offset": [
+    0.016,
+    0.0072,
+    0.0045
+   ],
+   "power": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "saturation": 1.03,
+   "resolve_SetCDL": {
+    "Slope": "1.1687 1.2000 1.2394",
+    "Offset": "0.0160 0.0072 0.0045",
+    "Power": "1.0000 1.0000 1.0000",
+    "Saturation": 1.03
+   },
+   "hinweis": "Gemeinsame Basis fuer alle B-Roll-Shots, Node 1 mit LC-709-LUT."
+  },
+  "nur_angleich_log_vor_LUT": {
+   "slope": [
+    0.9739,
+    1.0,
+    1.0328
+   ],
+   "offset": [
+    0.0818,
+    0.0744,
+    0.0721
+   ],
+   "power": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "saturation": 1.0,
+   "resolve_SetCDL": {
+    "Slope": "0.9739 1.0000 1.0328",
+    "Offset": "0.0818 0.0744 0.0721",
+    "Power": "1.0000 1.0000 1.0000",
+    "Saturation": 1.0
+   },
+   "hinweis": "Fuer Node-Baum (Angleich -> Look -> LUT)."
+  },
+  "physikalisch": {
+   "belichtung_blenden": 0.967,
+   "wb_r_blenden": -0.1172,
+   "wb_b_blenden": 0.2387,
+   "schwarz_slope_delta_r": -0.0261,
+   "schwarz_slope_delta_b": 0.0328,
+   "kontrast_delta": -0.0
+  },
+  "deutung": "B-Roll rund 1 Blende heller, warmes Licht neutralisiert (Blau +0,24 Blende, Rot -0,12), Schatten leicht entblaut. Stimmung bleibt dunkler als die Interviews.",
+  "shots_Lab_vorher_nachher": {
+   "BR02_C0002": {
+    "skin": {
+     "vorher_nur_LUT": [
+      30.6,
+      12.1,
+      5.9
+     ],
+     "nachher": [
+      47.2,
+      15.0,
+      2.6
+     ]
+    },
+    "wall": {
+     "vorher_nur_LUT": [
+      60.8,
+      -2.0,
+      3.0
+     ],
+     "nachher": [
+      76.8,
+      -1.8,
+      -0.3
+     ]
+    },
+    "dark": {
+     "vorher_nur_LUT": [
+      0.5,
+      0.0,
+      -0.3
+     ],
+     "nachher": [
+      1.4,
+      0.6,
+      -1.4
+     ]
+    }
+   }
+  },
+  "einzel_trims": "Szenen stark unterschiedlich: drei Shots bleiben dunkel (Haut L* 25–30), zwei hell (L* 47–52), einer clippt im Fenster (Wand L* 96). Pro Shot +-0,3–0,5 Blende Offset nachtrimmen (broll_trims.py)."
+ },
+ "resolve_api": {
+  "quelle": "/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer/Scripting/DaVinciResolveScript.pyi + README.md (Resolve 21.1, Stand 31.08./01.09.2026)",
+  "grading": {
+   "TimelineItem.GetNodeGraph": "def GetNodeGraph(self, layerIdx: int | None = None) -> Graph   (Z. 2506)",
+   "Graph.GetNumNodes": "def GetNumNodes(self) -> int   (Z. 2692)",
+   "Graph.SetLUT": "def SetLUT(self, nodeIndex: int, lutPath: str) -> bool   (Z. 2695; 1-basiert; README: Pfad absolut oder relativ zum LUT-Ordner, muss von Resolve entdeckt sein -> Project.RefreshLUTList)",
+   "Graph.GetLUT": "def GetLUT(self, nodeIndex: int) -> str   (Z. 2698)",
+   "TimelineItem.SetCDL": "def SetCDL(self, CDL: CDL) -> bool   (Z. 2449); CDL = TypedDict {NodeIndex: int, Slope: str 'r g b', Offset: str 'r g b', Power: str 'r g b', Saturation: float}   (Z. 146–156)",
+   "Graph.GetNodeLabel / GetToolsInNode": "def GetNodeLabel(self, nodeIndex: int) -> str (Z. 2707); def GetToolsInNode(self, nodeIndex: int) -> list[str] (Z. 2710)",
+   "Graph.SetNodeEnabled": "def SetNodeEnabled(self, nodeIndex: int, isEnabled: bool) -> bool   (Z. 2713)",
+   "Graph.ApplyGradeFromDRX": "def ApplyGradeFromDRX(self, path: str, gradeMode: int) -> bool   (Z. 2719; 0 = ohne Keyframes, 1 = Quell-TC, 2 = Startframes)",
+   "Graph.ResetAllGrades": "def ResetAllGrades(self) -> bool   (Z. 2722)",
+   "TimelineItem.CopyGrades": "def CopyGrades(self, tgtTimelineItems: list[TimelineItem]) -> bool   (Z. 2473; kopiert den Grade der aktuellen Node-Stack-Ebene)",
+   "TimelineItem.AddVersion / LoadVersionByName / GetCurrentVersion": "def AddVersion(self, versionName: str, versionType: int) -> bool (Z. 2443); def LoadVersionByName(self, versionName: str, versionType: int) -> bool (Z. 2440); def GetCurrentVersion(self) -> VersionInfo (Z. 2482) – eigene Farbversion anlegen = nicht-destruktiv",
+   "TimelineItem.ExportLUT": "def ExportLUT(self, exportType: ExportLutType, path: str) -> bool   (Z. 2518; z. B. resolve.EXPORT_LUT_33PTCUBE – fuer Readback-Vergleich mit dieser Rechnung)",
+   "Project.RefreshLUTList": "def RefreshLUTList(self) -> bool   (Z. 1846)",
+   "Project.GetColorGroupsList / AddColorGroup / DeleteColorGroup": "def GetColorGroupsList(self) -> list[ColorGroup] (Z. 1861); def AddColorGroup(self, groupName: str) -> ColorGroup (Z. 1864); def DeleteColorGroup(self, colorGroup: ColorGroup) -> bool (Z. 1867)",
+   "TimelineItem.AssignToColorGroup / GetColorGroup / RemoveFromColorGroup": "def AssignToColorGroup(self, colorGroup: ColorGroup) -> bool (Z. 2512); def GetColorGroup(self) -> ColorGroup | None (Z. 2509); def RemoveFromColorGroup(self) -> bool (Z. 2515)",
+   "ColorGroup.GetPreClipNodeGraph / GetPostClipNodeGraph / GetClipsInTimeline": "def GetPreClipNodeGraph(self) -> Graph (Z. 2590); def GetPostClipNodeGraph(self) -> Graph (Z. 2593); def GetClipsInTimeline(self, timeline: Timeline | None = None) -> list[TimelineItem] (Z. 2587)",
+   "Timeline.GetNodeGraph": "def GetNodeGraph(self) -> Graph   (Z. 2266; Timeline-Grade)",
+   "Timeline.GrabStill + GalleryStillAlbum.ExportStills": "def GrabStill(self) -> GalleryStill (Z. 2206); def ExportStills(self, galleryStill: list[GalleryStill], folderPath: str, filePrefix: str, format: str) -> bool (Z. 2683) – DRX-Vorlage erzeugen",
+   "Project.ExportCurrentFrameAsStill": "def ExportCurrentFrameAsStill(self, filePath: str) -> bool   (Z. 1858; Sichtkontrolle)",
+   "MediaPoolItem.GetClipProperty": "def GetClipProperty(self, propertyName: str | None = None) -> str | ClipProperties   (Z. 2050; 'Data Level' = Auto/Full/Video, Z. 169; 'Input LUT', 'Input Color Space')"
+  },
+  "fehlt_in_der_api": [
+   "Kein AddNode/InsertNode: Nodes koennen per Skript nicht angelegt werden (nur vorhandene per NodeIndex ansprechen, oder Baum per ApplyGradeFromDRX).",
+   "SetCDL gibt es nur am TimelineItem (Clip-Graph). Color-Group-Pre/Post-Clip- und Timeline-Graphen koennen nur SetLUT/ApplyGradeFromDRX, keine CDL.",
+   "Kein Zugriff auf Primaries/Kurven/Color-Space-Transform-OFX; keine dokumentierte Einstellung fuer die 3D-LUT-Interpolation."
+  ],
+  "stabilize_und_speed": {
+   "TimelineItem.Stabilize": "def Stabilize(self) -> bool   (Z. 2500; ohne Parameter, nutzt die Stabilizer-Einstellungen des Clips)",
+   "TimelineItem.SmartReframe": "def SmartReframe(self) -> bool   (Z. 2503)",
+   "TimelineItem.SetSpeed": "def SetSpeed(self, speedOptions: SpeedOptions) -> bool   (Z. 2386); SpeedOptions = {Percentage: float (0.0 = Standbild), PitchCorrection: bool, StretchKeyframesToFit: bool, RippleTimeline: bool} (Z. 947–955)",
+   "TimelineItem.GetSpeed": "def GetSpeed(self) -> SpeedOptions   (Z. 2389)",
+   "Retime-Qualitaet": "TimelineItem.SetProperties(properties: TimelineItemProperties) -> bool (Z. 2380) mit RetimeAndScalingEnabled, RetimeProcess = resolve.RETIME_USE_PROJECT/NEAREST/FRAME_BLEND/OPTICAL_FLOW, MotionEstimation = resolve.MOTION_EST_* (u. a. SPEED_WARP_BETTER) (Z. 1029–1033, 1431–1442)",
+   "studio_notiz": "Laut Resolve-21.1-Notiz vom 09.09.: SetSpeed behaelt die Clip-Dauer (Laenge vorher/nachher pruefen)."
+  }
+ },
+ "umsetzung_spaeter_nicht_ausgefuehrt": [
+  "1. User gibt das Resolve-Projekt ausdruecklich frei; Projektname lesen und mit '<Resolve-Projekt>' abgleichen (CLAUDE.md-Resolve-Regeln).",
+  "2. Nur lesen (skripte/grade_check.py): Projekt-Einstellungen colorScienceMode/colorSpaceInput/colorSpaceTimeline (YRGB ohne CM oder RCM v2 mit Input = Timeline = Rec.709 (Scene)), MediaPoolItem.GetClipProperty('Data Level') und 'Input Color Space' (gemessen: Auto bzw. Project = wie Proxy Generator), TimelineItem.GetNodeGraph().GetNumNodes(), aktuelle Seite.",
+  "3. Keine neue Farbversion anlegen (die Stabilisierung kann an der Version haengen): gegradet wird die aktive lokale Version jedes Items. Grading erst nach dem letzten Umbau der Timeline – ersetzte Items verlieren den Grade.",
+  "4. Graph.SetLUT(1, 'Sony/SLog3SGamut3.CineToLC-709.cube'); TimelineItem.SetCDL({'NodeIndex': 1, ...Gesamt-CDL der Kamera/des Sets...}).",
+  "5. Erst an EINEM Clip (grading_anwenden.py --test): Readback GetLUT(1) + ExportLUT(resolve.EXPORT_LUT_33PTCUBE, '<_intern/color/resolve_export/...cube>') und offline mit dieser Rechnung vergleichen (prueft SetCDL-Zuordnung und Reihenfolge CDL -> Node-LUT). ExportLUT klappt nur auf der Color-Seite – die Seite nie per Skript wechseln, solange der User auf der Edit-Seite arbeitet.",
+  "6. Danach grading_anwenden.py --alle: SetCDL + SetLUT je Item, Zuordnung Item -> Gruppe ueber den Clipnamen (FX3-, a7- und B-Roll-Clips je Person/Kamera), B-Roll mit Belichtungs-Trim je Einsatz (broll_trims.py). Optional Color Groups je Kamera/Set zur Ordnung.",
+  "6a. Die Werte haengen am Quellclip und gelten fuer Rohschnitt- und Feinschnitt-Timeline gleichermassen (Feinschnitt laut feinschnitt.json: V1 = FX3, V2 = a7 inkl. deaktivierter Stuecke, V3 = B-Roll FX3A mit Speed 50 % und Stabilize). NICHT auf Grafik-/Alpha-Spuren (V4) anwenden.",
+  "7. Am Ende die Timeline des Users wieder aktivieren; Bericht mit Projekt, Timeline, Anzahl gesetzter Clips."
+ ],
+ "kontaktboegen": {
+  "Person A": "<Charge>/_intern/color/kontaktbogen_Person A.jpg",
+  "B-Roll": "<Charge>/_intern/color/kontaktbogen_BRoll.jpg",
+  "Gesichter Person A": "<Charge>/_intern/color/gesichter_Person A.jpg",
+  "Übersicht final": "<Charge>/_intern/color/uebersicht_final.jpg",
+  "Look-Varianten": "<Charge>/_intern/color/look_varianten.jpg",
+  "spalten": "Kontaktboegen: Log roh | LC-709 | LC-709 + Angleich + Look, je FX3 und a7 nebeneinander, 6 zeitgleiche Paare"
+ },
+ "methode": {
+  "frames": "Je Person 6 zeitgleiche Paare aus Timeline-Items mit Ueberlappung V1/V2 (Mitte der Ueberlappung), Sync geprueft: a7_frame = fx3_frame + offset (sync.json, nur Paare mit ok); 3 Hold-out-Paare je Person (20 % in die Ueberlappung); 8 B-Roll-Shots aus verschiedenen Clips.",
+  "messung": "Proxy -> S-Log3 (CV/1023) -> CDL -> LC-709 (trilinear) -> Rec.709/BT.1886 -> CIELAB. Gesichtsboxen per macOS Vision; Haut = innere Gesichtsbox + Hautfilter; dunkle Kleidung = dunkelste 30 % des Oberkoerpers; helles Hemd (nur Personen mit hellem Hemd) = hellste 25 % im Hemdbereich; Wand = helle, glatte, chromaarme Flaechen ausserhalb der Person (nur FX3 fuer den Neutralpunkt).",
+  "fit": "Robuste Least-Squares je Set (soft-L1): FX3 = Neutralisierung Wand + dunkle Kleidung (sofern nicht farbig), Belichtung Kompromiss Haut/Wand; a7 = Match auf korrigierte FX3 (Haut L*a*b*, dunkle Kleidung, Hemd), plus Belichtung, WB, Schatten-Slopes, Kontrast, Saettigung; alles regularisiert.",
+  "ffmpeg_gegenprobe": "LUT per ffmpeg lut3d (trilinear) gegen numpy: mittlere Abweichung 0,0037 (< 1 Codewert 8 Bit), gemessen 15.09.2026.",
+  "frames_fit": [
+   {
+    "id": "Person A_1",
+    "beat": "1",
+    "FX3": "FX3_0001.MP4 Frame 3106",
+    "a7": "a7MK4_JJJJMMTT_0001.MP4 Frame 4092"
+   }
+  ],
+  "frames_hold_out": [
+   {
+    "id": "Person A_H1",
+    "beat": "1",
+    "FX3": "FX3_0001.MP4 Frame 3088",
+    "a7": "a7MK4_JJJJMMTT_0001.MP4 Frame 4074"
+   }
+  ],
+  "frames_b_roll": [
+   {
+    "id": "BR02_C0002",
+    "clip": "C0002",
+    "t_s": 12.2
+   }
+  ],
+  "skripte": "<Charge>/_intern/color/skripte (grade_check -> extract -> preview -> lutjpg/faces -> measure -> fit cfg3.json -> sheets/compare -> holdout_* -> orig_check -> export_vorschlag)"
+ },
+ "grenzen": [
+  "Messbasis 8-Bit-H.264-Proxys (4:2:0). Gegenprobe auf 10-Bit-Originalen je Set 1 Paar (gegenprobe_10bit_original_paar_2); 15.09.2026 nach dem Grade Haut 0,6–1,2 dE2000 Abweichung Proxy vs. Original (Original minimal gelber, b* ca. +1).",
+  "Pegel-Annahme: Resolve liest die full-range-geflaggten XAVC-Originale wie der Proxy Generator (CV/1023). Wird 'Data Level' auf Video gezwungen, verschieben sich Offsets und Schwarzwerte – vorher lesen.",
+  "Nur statistisch angeglichen: Mittelwerte ueber Haut, dunkle Kleidung und (falls gemessen) helles Hemd auf 6 Paaren je Set, keine Pixelkorrespondenz (andere Winkel/Brennweiten). Einzelframes koennen durch Kopfhaltung/Lichtwinkel in der Gesichtshelligkeit abweichen (15.09.2026: bis ca. 6 L*), der Farbton liegt dort meist innerhalb ca. 1 dE.",
+  "Hold-out nur teilweise unabhaengig (andere Zeitpunkte, teils in denselben Beats); Ergebnis je Set in hold_out_3_paare.",
+  "CDL kann keine gezielten Farbton-Drehungen: sensorbedingte Rest-Unterschiede bleiben (15.09.2026: farbige Kleidung im Mittel ca. 1–2 dE2000, einzeln bis ca. 4).",
+  "a7 IV unterdrueckt Chroma in tiefen Schatten kameraintern (Cb/Cr ca. +-1/1023 im Original); deshalb werden blaustichige FX3-Schatten neutralisiert statt die a7 einzufaerben.",
+  "Eine a7-Kontrastanhebung im Fit (15.09.2026: +0,08 bis +0,11 im Log) gleicht vermutlich Streulicht des Teleobjektivs gegen helle Hintergruende aus – sie wirkt global, nicht nur in den Schatten.",
+  "SetCDL-Semantik und die Reihenfolge CDL -> Node-LUT sind Handbuch-Verhalten; vor dem Ausrollen per ExportLUT-Readback an einem Clip verifizieren (grading_anwenden.py --test, nur auf der Color-Seite). Rechnung mit trilinearer LUT-Interpolation.",
+  "Look und Belichtungsziele (Haut L* 70, Wand L* 88) sind Geschmacksvorschlag.",
+  "B-Roll: eine CDL fuer alle B-Roll-Shots, gemessen an 8 von 30 Shots; Gegenlicht-Szenen brauchen Einzel-Trims (broll_trims.py).",
+  "Gesamt-CDL setzt voraus, dass die Clips unkonvertiert als S-Log3 in den Node gehen: DaVinci YRGB ohne Color Management oder RCM v2 mit Input = Timeline = Rec.709 (Scene).",
+  "Hold-out: Haut 0,4–3,7 dE2000 (Mittel ca. 1,5), vorher 7,9–17,0."
+ ],
+ "protokoll_hinweis": "Protokoll.md der Charge wurde bewusst nicht fortgeschrieben (Schreibrecht nur _intern/color) – Eintrag durch die Hauptsession."
+}

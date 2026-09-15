@@ -1,0 +1,18 @@
+[
+ {
+  "bin": "SFX/Whoosh/Fast",
+  "name": "Whoosh Beispiel 1.wav",
+  "dauer": "00:00:01:05",
+  "pfad": "<Mount>/<alter SFX-Ordner>/SFX Library/Whoosh/Fast/Whoosh Beispiel 1.wav",
+  "online": false,
+  "pfad_nas": "<Mount>/<SFX-Ordner>/SFX Library/Whoosh/Fast/Whoosh Beispiel 1.wav"
+ },
+ {
+  "bin": "SFX/UI",
+  "name": "Klick Beispiel.wav",
+  "dauer": "00:00:00:04",
+  "pfad": "<Mount>/<SFX-Ordner>/SFX Library/UI/Klick Beispiel.wav",
+  "online": true,
+  "pfad_nas": "<Mount>/<SFX-Ordner>/SFX Library/UI/Klick Beispiel.wav"
+ }
+]

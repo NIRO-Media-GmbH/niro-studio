@@ -83,6 +83,29 @@ Alle Tests laufen ohne Resolve, NAS und API-Key. Danach ein lesender Live-Check 
 
     venv/bin/python -c "from niro_autocut.media import ffprobe, proxy_for; import sys; i=ffprobe(sys.argv[1]); print(i, proxy_for(sys.argv[1]))" "<FX3-Pfad aus transcripts_index.json>"
 
+## 8. Feinschnitt-Vorlagen (Stufe 3a/6)
+
+Die Vorlagen unter `vorlagen/feinschnitt/` laufen mit dieser venv (numpy, scipy, Pillow reichen). Zusätzlich:
+
+- **OpenCV ≥ 5 mit ArUco und LSD** für `begradigen/raster_erzeugen.py`, `linien_messen.py`,
+  `kalibrierung_auswerten.py` und `pruefung_auswerten.py`. Es liegt in `tools/transcribe/venv`
+  (`opencv-python-headless` 5.0), nicht in dieser venv — diese vier Skripte mit `tools/transcribe/venv/bin/python`
+  starten (dort fehlt dafür `rapidfuzz`, deshalb laden sie `feinschnitt_bauen.py` nicht selbst). Auf einem neuen
+  Rechner nachinstallieren:
+
+      "/Users/jansantos/NIRO Studio/tools/transcribe/venv/bin/python" -m pip install opencv-python-headless
+
+- **Swift** (Xcode Command Line Tools: `xcode-select --install`) für die Apple-Vision-Helfer
+  (`gesichtscheck/faces.swift`, `begradigen/personenmaske.swift`) und die Wiedergabe-Erkennung
+  (`werkzeuge/fenster.swift`). Build- und Aufrufbefehl stehen im Kopfkommentar jeder Swift-Datei; die gebauten
+  Programme bleiben in der Charge (nicht versioniert). `fenster.swift` sieht Fensternamen nur, wenn das
+  aufrufende Programm (Terminal bzw. Claude) unter Systemeinstellungen → Datenschutz & Sicherheit →
+  Bildschirmaufnahme freigegeben ist.
+- **Remotion** (`tools/motion`, `npm install`) für die Grafikebene und die Review-Standbilder
+  (`tools/motion/scripts/stills-multi.ts`).
+- **LUT** `Sony/SLog3SGamut3.CineToLC-709.cube` für das Grading liegt nach der Resolve-Installation unter
+  `/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/`.
+
 ## Werte anpassen
 
 `defaults.yaml` enthält alle Standardwerte (Pause 1,0 s, Handles 6/8 Frames, Alignment-Schwelle 0,80,

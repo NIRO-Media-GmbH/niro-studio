@@ -9,9 +9,15 @@ je Abschnitt genauer bestimmt (Stufe 2b, Nachlauf) und V3 nach Plan v2 (Fenster/
 Shots), Index und Profil in die roh-Timeline gefüllt (Stufe 3). **Finalisieren** (Stufe 5) macht
 daraus die End-Timeline: Pegel je FX3-Clip, Zeitlupen, Marker, Spurnamen — ohne „(roh)"-Suffix.
 
+Seit 15.09.2026 (Taxodia) kommen zwei Stufen dazu:
+- **B-Roll aus der Auswahl-Timeline des Users** (Stufe 3a),
+- **Feinschnitt** (Stufe 6): A/B-Wechsel, Grafikebene V4, Ton, Musik, SFX, Grading, Begradigen und
+  Kopfposition.
+Beide gibt es vorerst nur als Vorlagen (`vorlagen/feinschnitt/`), noch nicht als getestete Stufen.
+
 Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" | „B-Roll-Index" |
-„Nachlauf" | „B-Roll" | „Profil" | „Finalisieren". Anleitung: `WORKFLOW-AutoCut.md`. Einrichtung:
-`SETUP.md`. Spec: `docs/superpowers/specs/2026-09-03-autocut-design.md`.
+„Nachlauf" | „B-Roll" | „B-Roll aus Auswahl" | „Profil" | „Finalisieren" | „Feinschnitt". Anleitung:
+`WORKFLOW-AutoCut.md`. Einrichtung: `SETUP.md`. Spec: `docs/superpowers/specs/2026-09-03-autocut-design.md`.
 
 ## Stufen
 
@@ -20,9 +26,11 @@ Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" 
 | „Rohschnitt" | 1 | roh-Timeline V1/V2/A1 (V3 leer) mit O-Tönen, Pausen, Platzhaltern, Markern + Bericht |
 | „B-Roll-Index" | 2 | `broll_index.json` + `broll-index.md`: Beschreibung aller B-Roll-Clips |
 | „Nachlauf" | 2b | Abschnittsfelder je Clip (Einstellung, Perspektive, Brennweite, Bewegungsrichtung, Hauptmotiv, `setup_hash`) |
-| „B-Roll" | 3 | V3 in der roh-Timeline gefüllt nach Plan v2 (Fenster/Strecken/Szenen/Shots), Index und Profil + Bericht |
+| „B-Roll" | 3 | V3 in der roh-Timeline gefüllt nach Plan v2 (Fenster/Strecken/Szenen/Shots), Index und Profil + Bericht — ausgesetzt seit 09.09. |
+| „B-Roll aus Auswahl" | 3a | V3 aus der Auswahl-Timeline des Users, nur deren In/Out-Bereiche (Vorlage) |
 | „Profil" | 4 | Schnitt-Profil aus den Cloud-Timelines des Users (noch nicht gebaut, siehe `WORKFLOW-AutoCut.md`) |
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe aus der roh-Timeline |
+| „Feinschnitt" | 6 | neue Feinschnitt-Timeline: A/B-Wechsel, B-Roll-Tempo/Stabilisierung, Grafik V4, Ton, Musik, SFX, danach Grading, Begradigen, Kopfposition (Vorlagen) |
 
 Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 
@@ -92,6 +100,9 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
                              resolve_probe_api.py für die 21.1-API-Probe (--project = Freigabe), setup_env.py für die .env)
     prompts/                 cutlist.md, index-clip.md, index-sections.md, place-broll.md (Anleitungen/System-Prompts)
     profile/                 default.md + default.yaml (Startprofil B-Roll v2, bis Stufe 4 vorliegt)
+    vorlagen/feinschnitt/    Chargen-Skripte für Stufe 3a/6 (Stand Taxodia 15.09.2026) mit ANPASSEN-Block; spiegeln
+                             <Charge>/_intern/ (musik/, sfx/, color/, gesichtscheck/, begradigen/, werkzeuge/) —
+                             Ordner in die Charge kopieren, Übersicht in vorlagen/README.md
     tests/                   pytest (Einheiten + Fake-Resolve, Fixtures aus MEK-Auszügen)
     docs/referenz/           Recherche-Material außerhalb des Produktivpfads (GCC-PHAT-Sync-Rezept)
 
@@ -104,6 +115,9 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 `ton_cache.json`, `xml/`, `probe_api/` (synthetische Medien, Render)).
 `Ergebnisse/Rohschnitt/`: `<video>-rohschnitt.md` (mit Pegel-Abschnitt nach Stufe 5), `broll-index.md`,
 `<video>-raster.md`, `<video>-broll.md`, `<Timeline>.xml`.
+Stufe 3a/6 (Vorlagen): `_intern/autocut/broll_auswahl.json`, `broll_einsatz.json`, `audio.json`,
+`grafik_einsatz.json`, `feinschnitt.json`, `feinschnitt_umbau.json` sowie `_intern/grafik/`, `musik/`, `sfx/`,
+`color/`, `begradigen/`, `gesichtscheck/`, `sichtung/` (Liste in `WORKFLOW-AutoCut.md`, Ausgabe-Konvention).
 
 ## Tests
 
