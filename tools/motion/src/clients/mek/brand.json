@@ -1,0 +1,19 @@
+{
+  "name": "Marien-Elisabeth-Kliniken Kassel",
+  "colors": {
+    "primary": "#002854",
+    "secondary": "#0E335E",
+    "accent": "#818DAB",
+    "background": "#FFFFFF",
+    "text": "#FFFFFF"
+  },
+  "fonts": {
+    "heading": "Roboto",
+    "body": "Roboto"
+  },
+  "logo": "clients/mek/logos/mek_elisabeth_logo.svg",
+  "style": {
+    "borderRadius": 20,
+    "animationSpeed": "normal"
+  }
+}

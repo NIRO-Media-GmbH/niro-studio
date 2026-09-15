@@ -13,6 +13,7 @@ export const fpsSchema = z.union([
   z.literal(24),
   z.literal(25),
   z.literal(30),
+  z.literal(50),
   z.literal(60),
 ]);
 export const directionSchema = z.enum(["left", "right", "up", "down"]);

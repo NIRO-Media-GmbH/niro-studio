@@ -98,8 +98,9 @@ const PARTICLES = (() => {
 export const manLagerCtaSchema = projectPropsSchema.extend({
   eyebrow: z.string().describe("Eyebrow / Badge oben"),
   headline: z.string().describe("Headline (zweizeilig, \\n für Umbruch)"),
+  beruf2: z.string().describe("Zweiter Beruf, gleichwertig unter dem ersten (\\n für Umbruch, leer = entfällt)"),
   headlineSuffix: z.string().describe("Kleiner Zusatz, z.B. (m/w/d)"),
-  benefits: z.array(z.string()).min(1).max(6).describe("Benefit-Chips"),
+  benefits: z.array(z.string()).max(6).describe("Benefit-Chips (leer = Block entfällt)"),
   ctaText: z.string().describe("CTA Button Text"),
   subText: z.string().describe("Sub-Text unter CTA"),
 });
@@ -121,13 +122,10 @@ export const manLagerCtaDefaults: ManLagerCtaProps = {
   },
   eyebrow: "STARTE DEINE AUSBILDUNG",
   headline: "FACHKRAFT FÜR\nLAGERLOGISTIK",
+  beruf2: "Kaufmann/frau\nim Einzelhandel", // Kundenwunsch 2026-08-13, gleichwertig zu Beruf 1
   headlineSuffix: "(m/w/d)",
-  benefits: [
-    "Attraktive Vergütung",
-    "30 Tage Urlaub",
-    "Kostenloses iPad",
-    "36h Woche",
-  ],
+  // Kundenwunsch 2026-08-13: Benefits ganz raus, Standort raus
+  benefits: [],
   ctaText: "Jetzt in unter 1 Min. bewerben",
   subText: "Ohne Lebenslauf!",
 };
@@ -314,6 +312,7 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
   review,
   eyebrow,
   headline,
+  beruf2,
   headlineSuffix,
   benefits,
   ctaText,
@@ -331,13 +330,26 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
   const INTRO = Math.round(INTRO_SEC * fps);
   const F = (sec: number) => Math.round(sec * fps);
 
+  // --- Titel-Zeilen: beide Ausbildungen visuell gleichwertig (Kundenwunsch 2026-08-13) ---
+  // Sequenz: Beruf 1 · roter „+"-Trenner · Beruf 2; Highlight auf der letzten Zeile JEDES Berufs.
+  const beruf1Zeilen = headline.split("\n");
+  const beruf2Zeilen = beruf2 !== "" ? beruf2.split("\n") : [];
+  const titelZeilen = [
+    ...beruf1Zeilen.map((text, i) => ({ text, highlight: i === beruf1Zeilen.length - 1, separator: false })),
+    ...(beruf2Zeilen.length > 0 ? [{ text: "+", highlight: false, separator: true }] : []),
+    ...beruf2Zeilen.map((text, i) => ({ text, highlight: i === beruf2Zeilen.length - 1, separator: false })),
+  ];
+
   // --- Timings (CTA content starts AFTER the intro) ---
   const logoStart = INTRO + 0;
   const eyebrowStart = INTRO + F(0.33);
   const headlineStart = INTRO + F(0.8);
   const chipsStart = INTRO + F(2.33);
-  const ctaStart = INTRO + F(3.53);
-  const subStart = INTRO + F(4.0);
+  // Ohne Benefit-Chips rückt der CTA zeitlich und räumlich nach oben
+  const hatChips = benefits.length > 0;
+  const titelEnde = headlineStart + (titelZeilen.length - 1) * F(0.4); // Start der letzten Titel-Zeile
+  const ctaStart = hatChips ? INTRO + F(3.53) : Math.max(INTRO + F(2.53), titelEnde + F(0.8));
+  const subStart = ctaStart + F(0.47);
 
   // --- Logo ---
   const logoP = spring({ frame: frame - logoStart, fps, config: PUNCH });
@@ -357,8 +369,7 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
-  // --- Headline lines (smash-in with decaying micro-shake) ---
-  const lines = headline.split("\n");
+  // --- Titel-Zeilen (smash-in with decaying micro-shake) ---
   const lineAnim = (idx: number) => {
     const start = headlineStart + idx * F(0.4);
     const p = spring({ frame: frame - start, fps, config: HARD });
@@ -377,10 +388,14 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
     return { op, scale, shakeX, shakeY };
   };
 
-  // Highlight sweep behind last headline line
-  const hlStart = headlineStart + (lines.length - 1) * F(0.4) + F(0.13);
-  const hlP = spring({ frame: frame - hlStart, fps, config: { damping: 16, stiffness: 150, mass: 1, overshootClamping: true } });
-  const hlScaleX = interpolate(hlP, [0, 1], [0, 1]);
+  // Highlight-Sweep je markierter Titel-Zeile (eigener Start pro Zeile)
+  const hlScaleXFor = (idx: number) => {
+    const start = headlineStart + idx * F(0.4) + F(0.13);
+    const p = spring({ frame: frame - start, fps, config: { damping: 16, stiffness: 150, mass: 1, overshootClamping: true } });
+    return interpolate(p, [0, 1], [0, 1]);
+  };
+  // Suffix (m/w/d) nach der letzten Titel-Zeile — gilt für beide Berufe
+  const suffixStart = titelEnde + F(0.46);
 
   // --- CTA ---
   const ctaP = spring({ frame: frame - ctaStart, fps, config: PUNCH });
@@ -487,9 +502,34 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
             textAlign: "center",
           }}
         >
-          {lines.map((line, idx) => {
+          {titelZeilen.map((z, idx) => {
             const a = lineAnim(idx);
-            const isLast = idx === lines.length - 1;
+            if (z.separator) {
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    position: "relative",
+                    margin: "2px 0",
+                    opacity: a.op,
+                    transform: `translate(${a.shakeX}px, ${a.shakeY}px) scale(${a.scale})`,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: FONT_TITLE,
+                      fontWeight: 700,
+                      fontSize: 54,
+                      lineHeight: 1.0,
+                      color: WHITE,
+                      textShadow: "0 4px 24px rgba(0,0,0,0.45)",
+                    }}
+                  >
+                    {z.text}
+                  </span>
+                </div>
+              );
+            }
             return (
               <div
                 key={idx}
@@ -500,7 +540,7 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
                   transform: `translate(${a.shakeX}px, ${a.shakeY}px) scale(${a.scale})`,
                 }}
               >
-                {isLast && (
+                {z.highlight && (
                   <div
                     style={{
                       position: "absolute",
@@ -511,7 +551,7 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
                       marginLeft: "-52%",
                       backgroundColor: MAN_RED,
                       borderRadius: 8,
-                      transform: `scaleX(${hlScaleX})`,
+                      transform: `scaleX(${hlScaleXFor(idx)})`,
                       transformOrigin: "center",
                       boxShadow: `0 8px 34px ${MAN_RED}77`,
                     }}
@@ -522,33 +562,39 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
                     position: "relative",
                     fontFamily: FONT_TITLE,
                     fontWeight: 700,
-                    fontSize: 118,
-                    lineHeight: 1.0,
+                    fontSize: 96,
+                    lineHeight: 1.05,
                     letterSpacing: -1,
                     color: WHITE,
                     textTransform: "uppercase",
+                    whiteSpace: "nowrap",
                     textShadow: "0 4px 24px rgba(0,0,0,0.45)",
                   }}
                 >
-                  {line}
+                  {z.text}
                 </span>
               </div>
             );
           })}
-          {/* suffix */}
+          {/* suffix — gilt für beide Berufe */}
           <div
             style={{
-              marginTop: 6,
+              marginTop: 10,
               fontFamily: FONT_BODY,
               fontWeight: 500,
               fontSize: 30,
               letterSpacing: 3,
               color: "rgba(255,255,255,0.65)",
               textTransform: "uppercase",
-              opacity: interpolate(frame, [hlStart + F(0.2), hlStart + F(0.53)], [0, 1], {
-                extrapolateLeft: "clamp",
-                extrapolateRight: "clamp",
-              }),
+              opacity: interpolate(
+                frame,
+                [suffixStart, suffixStart + F(0.33)],
+                [0, 1],
+                {
+                  extrapolateLeft: "clamp",
+                  extrapolateRight: "clamp",
+                },
+              ),
             }}
           >
             {headlineSuffix}
@@ -556,6 +602,7 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
         </div>
 
         {/* ===== Benefit chips ===== */}
+        {hatChips && (
         <div
           style={{
             position: "absolute",
@@ -600,12 +647,13 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
             );
           })}
         </div>
+        )}
 
         {/* ===== CTA button ===== */}
         <div
           style={{
             position: "absolute",
-            top: "66%",
+            top: hatChips ? "66%" : "56%",
             left: 0,
             right: 0,
             display: "flex",
@@ -643,7 +691,7 @@ export const ManLagerCta: React.FC<ManLagerCtaProps> = ({
         <div
           style={{
             position: "absolute",
-            top: "74%",
+            top: hatChips ? "74%" : "64%",
             left: 0,
             right: 0,
             textAlign: "center",

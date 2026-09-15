@@ -1,0 +1,19 @@
+{
+  "name": "Landmetzgerei Setzer GmbH",
+  "colors": {
+    "primary": "#E30613",
+    "secondary": "#0D0802",
+    "accent": "#B9000B",
+    "background": "#FFFAFA",
+    "text": "#7A7A7A"
+  },
+  "fonts": {
+    "heading": "Arial Black",
+    "body": "Arial"
+  },
+  "logo": "clients/setzer/setzer-logo-rot.png",
+  "style": {
+    "borderRadius": 3,
+    "animationSpeed": "fast"
+  }
+}

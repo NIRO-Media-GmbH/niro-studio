@@ -1,6 +1,6 @@
 // ============================================================
 // WLC Würth-Logistik — Shared Client Components
-// CI: Würth Rot #CC0000, Schwarz/Weiß, Wuerth Global Extra Bold Cond
+// CI: Würth Rot #CC0000, Schwarz/Weiß, Wuerth Sans Black Cond
 // (Titel, immer Versalien) — Quelle: CD-Richtlinien 2025
 // ============================================================
 
@@ -16,20 +16,89 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { loadFont } from "@remotion/fonts";
 import { fitText } from "@remotion/layout-utils";
 
 // --- Fonts (lokale Würth-TTFs) ---
+//
+// CI-Umstellung 09.09.2026: Der Kunde hat die Hausschrift von der alten
+// Familie `Wuerth` (V1.30) auf `Wuerth Sans` (V1_000) gewechselt. Mapping
+// nach optischem Abgleich — NICHT nach den OS/2-Gewichtszahlen, die in der
+// alten Familie untypisch gesetzt sind (altes "Bold" trägt wght 500):
+//   Extra Bold Cond (800) → BlackCond   — Headlines, condensed
+//   Bold            (500) → Black       — Demi (600) rendert sichtbar
+//                                         dünner als das alte Bold und
+//                                         schwächt die Rollen-Bauchbinden
+//   Book            (300) → Book
+// Die Family-Strings sind bewusst eigene Aliase (interne Namen lauten
+// "Wuerth Sans Black Condensed" o. ä.) — verhindert Kollision mit einer
+// evtl. systemweit installierten Würth-Schrift.
 
-export const FONT_XBDCN = "Wuerth Global Extra Bold Cond";
-export const FONT_BOLD = "Wuerth Global Bold";
-export const FONT_BOOK = "Wuerth Global Book";
+export const FONT_XBDCN = "Wuerth Sans Black Cond";
+export const FONT_BOLD = "Wuerth Sans Black";
+export const FONT_BOOK = "Wuerth Sans Book";
 
-const fontsReady = Promise.all([
-  loadFont({ family: FONT_XBDCN, url: staticFile("clients/wlc/fonts/WuerthExtraBoldCond.ttf") }),
-  loadFont({ family: FONT_BOLD, url: staticFile("clients/wlc/fonts/WuerthBold.ttf") }),
-  loadFont({ family: FONT_BOOK, url: staticFile("clients/wlc/fonts/WuerthBook.ttf") }),
-]);
+// --- Metrik-Angleichung an die abgelöste Familie ---
+//
+// Die Overlays liegen über bereits geschnittenen und freigegebenen Videos —
+// die Elemente MÜSSEN pixelgleich sitzen wie in der alten Fassung.
+// Wuerth Sans hat aber eine andere Zeilenbox als die alte Wuerth-Familie:
+//   alt (hhea, upem 2048): (2030 + 427 + 307) / 2048 = 1.3496 em
+//   neu (hhea, upem 1000): ( 780 + 220 + 150) / 1000 = 1.1500 em
+// Chrome zieht für `line-height: normal` die hhea-Werte (am Render
+// gegengemessen: alt 1.3474 em, neu 1.1458 em). Ohne Ausgleich schrumpft
+// deshalb JEDE Box, deren Höhe sich aus dem Text ergibt, um ~0.2 em, und
+// die Baseline wandert nach oben — im V1-Splash gemessen: roter Kasten
+// 12 px flacher, Schrift 13 px höher.
+//
+// Lösung: Der neuen Schrift beim Laden die hhea-Metriken des jeweils
+// abgelösten Schnitts aufprägen (Prozent = Wert/upem der ALTEN Datei).
+// Damit bleiben Zeilenboxen UND Baselines identisch — an allen Stellen,
+// nicht nur dort, wo eine lineHeight gesetzt ist.
+const FACES = [
+  {
+    family: FONT_XBDCN,
+    file: "WuerthSans-BlackCond_V1_000.ttf",
+    // löst Wuerth Extra Bold Cond ab: asc 2030, desc 427, gap 307 / 2048
+    ascentOverride: "99.121%",
+    descentOverride: "20.850%",
+    lineGapOverride: "14.990%",
+  },
+  {
+    family: FONT_BOLD,
+    file: "WuerthSans-Black_V1_000.ttf",
+    // löst Wuerth Bold ab: asc 1939, desc 464, gap 307 / 2048
+    ascentOverride: "94.678%",
+    descentOverride: "22.656%",
+    lineGapOverride: "14.990%",
+  },
+  {
+    family: FONT_BOOK,
+    file: "WuerthSans-Book_V1_000.ttf",
+    // löst Wuerth Book ab: asc 1978, desc 479, gap 307 / 2048
+    ascentOverride: "96.582%",
+    descentOverride: "23.389%",
+    lineGapOverride: "14.990%",
+  },
+] as const;
+
+// `loadFont` aus @remotion/fonts kann keine Metrik-Overrides — deshalb die
+// FontFace-API direkt. Guard, weil der Modulcode auch in Node ausgewertet
+// wird (getCompositions), wo es kein `document` gibt.
+const fontsReady =
+  typeof document === "undefined"
+    ? Promise.resolve([])
+    : Promise.all(
+        FACES.map(async (f) => {
+          const face = new FontFace(f.family, `url(${staticFile(`clients/wlc/fonts/${f.file}`)})`, {
+            ascentOverride: f.ascentOverride,
+            descentOverride: f.descentOverride,
+            lineGapOverride: f.lineGapOverride,
+          });
+          await face.load();
+          document.fonts.add(face);
+          return face;
+        })
+      );
 
 /**
  * Blockiert den Render, bis alle Würth-Fonts geladen sind.

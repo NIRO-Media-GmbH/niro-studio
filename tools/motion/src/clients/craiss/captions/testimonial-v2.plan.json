@@ -1,0 +1,684 @@
+{
+ "video": "testimonial-v2",
+ "cues": [
+  {
+   "id": "cc-01",
+   "start": 0.039,
+   "end": 2.039,
+   "tokens": [
+    {
+     "text": "Ich",
+     "start": 0.119,
+     "end": 0.259
+    },
+    {
+     "text": "mach",
+     "start": 0.299,
+     "end": 0.479
+    },
+    {
+     "text": "meine",
+     "start": 0.5,
+     "end": 0.779
+    },
+    {
+     "text": "Arbeit.",
+     "start": 0.819,
+     "end": 1.439
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-02",
+   "start": 3.14,
+   "end": 5.06,
+   "tokens": [
+    {
+     "text": "Jeden",
+     "start": 3.22,
+     "end": 3.5
+    },
+    {
+     "text": "Tag",
+     "start": 3.579,
+     "end": 3.779
+    },
+    {
+     "text": "ist",
+     "start": 3.799,
+     "end": 3.899
+    },
+    {
+     "text": "gute",
+     "start": 3.919,
+     "end": 4.139
+    },
+    {
+     "text": "Tag.",
+     "start": 4.179,
+     "end": 4.46
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-03",
+   "start": 6.679,
+   "end": 9.1,
+   "tokens": [
+    {
+     "text": "Die",
+     "start": 6.759,
+     "end": 6.879
+    },
+    {
+     "text": "Freiheit,",
+     "start": 6.92,
+     "end": 7.319
+    },
+    {
+     "text": "die",
+     "start": 7.339,
+     "end": 7.399
+    },
+    {
+     "text": "Ruhe",
+     "start": 7.46,
+     "end": 7.739
+    },
+    {
+     "text": "im",
+     "start": 8.039,
+     "end": 8.179
+    },
+    {
+     "text": "Lkw.",
+     "start": 8.239,
+     "end": 8.5
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-04a",
+   "start": 10.859,
+   "end": 12.84,
+   "tokens": [
+    {
+     "text": "Bei",
+     "start": 10.939,
+     "end": 11.079
+    },
+    {
+     "text": "Kleine",
+     "start": 11.119,
+     "end": 11.399
+    },
+    {
+     "text": "habe",
+     "start": 11.479,
+     "end": 11.579
+    },
+    {
+     "text": "ich",
+     "start": 11.619,
+     "end": 11.699
+    },
+    {
+     "text": "gesehen",
+     "start": 11.719,
+     "end": 12
+    },
+    {
+     "text": "immer",
+     "start": 12.019,
+     "end": 12.199
+    },
+    {
+     "text": "Lkw",
+     "start": 12.239,
+     "end": 12.679
+    }
+   ],
+   "pages": [
+    0,
+    5
+   ],
+   "treatment": "hero-white",
+   "zone": "chest",
+   "y": 1150,
+   "glass": null,
+   "heroIndex": 5,
+   "heroCount": 2
+  },
+  {
+   "id": "cc-04b",
+   "start": 12.84,
+   "end": 16.96,
+   "tokens": [
+    {
+     "text": "und",
+     "start": 12.92,
+     "end": 13
+    },
+    {
+     "text": "ich",
+     "start": 13.019,
+     "end": 13.099
+    },
+    {
+     "text": "habe",
+     "start": 13.1,
+     "end": 13.239
+    },
+    {
+     "text": "gesagt,",
+     "start": 13.259,
+     "end": 13.5
+    },
+    {
+     "text": "ich",
+     "start": 13.519,
+     "end": 13.619
+    },
+    {
+     "text": "mag",
+     "start": 13.619,
+     "end": 13.699
+    },
+    {
+     "text": "Lkw",
+     "start": 13.859,
+     "end": 14.06
+    },
+    {
+     "text": "fahren",
+     "start": 14.179,
+     "end": 14.519
+    },
+    {
+     "text": "und",
+     "start": 14.679,
+     "end": 14.9
+    },
+    {
+     "text": "für",
+     "start": 14.979,
+     "end": 15.139
+    },
+    {
+     "text": "mich",
+     "start": 15.159,
+     "end": 15.339
+    },
+    {
+     "text": "ist,",
+     "start": 15.399,
+     "end": 15.6
+    },
+    {
+     "text": "ich",
+     "start": 15.739,
+     "end": 15.899
+    },
+    {
+     "text": "liebe",
+     "start": 15.899,
+     "end": 16.059
+    },
+    {
+     "text": "meinen",
+     "start": 16.059,
+     "end": 16.219
+    },
+    {
+     "text": "Job.",
+     "start": 16.219,
+     "end": 16.379
+    }
+   ],
+   "pages": [
+    0,
+    3,
+    8
+   ],
+   "treatment": "hero-blue",
+   "zone": "chest",
+   "y": 1180,
+   "chinY": 800,
+   "glass": null,
+   "heroIndex": 12,
+   "heroCount": 4
+  },
+  {
+   "id": "cc-05",
+   "start": 17.019,
+   "end": 21.939,
+   "tokens": [
+    {
+     "text": "Ich",
+     "start": 17.099,
+     "end": 17.219
+    },
+    {
+     "text": "melde",
+     "start": 17.279,
+     "end": 17.619
+    },
+    {
+     "text": "Chef",
+     "start": 17.98,
+     "end": 18.139
+    },
+    {
+     "text": "Werkstatt",
+     "start": 18.219,
+     "end": 18.66
+    },
+    {
+     "text": "und",
+     "start": 18.779,
+     "end": 18.839
+    },
+    {
+     "text": "Chef",
+     "start": 18.98,
+     "end": 19.099
+    },
+    {
+     "text": "Werkstatt",
+     "start": 19.24,
+     "end": 19.439
+    },
+    {
+     "text": "sagen,",
+     "start": 19.519,
+     "end": 19.919
+    },
+    {
+     "text": "muss",
+     "start": 19.98,
+     "end": 20.139
+    },
+    {
+     "text": "warten",
+     "start": 20.199,
+     "end": 20.48
+    },
+    {
+     "text": "zehn",
+     "start": 20.519,
+     "end": 20.699
+    },
+    {
+     "text": "Minuten.",
+     "start": 20.719,
+     "end": 21.339
+    }
+   ],
+   "pages": [
+    0,
+    4,
+    9
+   ],
+   "treatment": "hero-red",
+   "zone": "chest",
+   "y": 1150,
+   "chinY": 800,
+   "glass": null,
+   "heroIndex": 10,
+   "heroCount": 2
+  },
+  {
+   "id": "cc-06",
+   "start": 23.419,
+   "end": 26.35,
+   "tokens": [
+    {
+     "text": "Ich",
+     "start": 23.499,
+     "end": 23.58
+    },
+    {
+     "text": "habe",
+     "start": 23.58,
+     "end": 23.9
+    },
+    {
+     "text": "Mercedes",
+     "start": 23.959,
+     "end": 24.559
+    },
+    {
+     "text": "und",
+     "start": 24.98,
+     "end": 25.119
+    },
+    {
+     "text": "das",
+     "start": 25.16,
+     "end": 25.279
+    },
+    {
+     "text": "ist",
+     "start": 25.359,
+     "end": 25.48
+    },
+    {
+     "text": "gut.",
+     "start": 25.599,
+     "end": 25.939
+    }
+   ],
+   "pages": [
+    0,
+    3
+   ],
+   "treatment": "hero-white",
+   "zone": "chest",
+   "y": 1150,
+   "glass": null,
+   "heroIndex": 2,
+   "heroCount": 1
+  },
+  {
+   "id": "cc-07",
+   "start": 26.4,
+   "end": 31.429,
+   "tokens": [
+    {
+     "text": "Bei",
+     "start": 26.48,
+     "end": 26.619
+    },
+    {
+     "text": "Firma",
+     "start": 26.679,
+     "end": 26.879
+    },
+    {
+     "text": "Craiss",
+     "start": 26.98,
+     "end": 27.32
+    },
+    {
+     "text": "arbeite",
+     "start": 27.539,
+     "end": 27.779
+    },
+    {
+     "text": "Nahverkehr,",
+     "start": 27.82,
+     "end": 28.339
+    },
+    {
+     "text": "jeden",
+     "start": 28.499,
+     "end": 28.699
+    },
+    {
+     "text": "Tag",
+     "start": 28.74,
+     "end": 28.859
+    },
+    {
+     "text": "zu",
+     "start": 28.9,
+     "end": 28.98
+    },
+    {
+     "text": "Hause",
+     "start": 28.999,
+     "end": 29.339
+    },
+    {
+     "text": "und",
+     "start": 29.379,
+     "end": 29.48
+    },
+    {
+     "text": "ist",
+     "start": 29.499,
+     "end": 29.619
+    },
+    {
+     "text": "besser",
+     "start": 29.659,
+     "end": 29.879
+    },
+    {
+     "text": "für",
+     "start": 29.959,
+     "end": 30.059
+    },
+    {
+     "text": "mich,",
+     "start": 30.099,
+     "end": 30.259
+    },
+    {
+     "text": "für",
+     "start": 30.299,
+     "end": 30.379
+    },
+    {
+     "text": "meine",
+     "start": 30.419,
+     "end": 30.619
+    },
+    {
+     "text": "Familie.",
+     "start": 30.679,
+     "end": 31.159
+    }
+   ],
+   "pages": [
+    0,
+    4,
+    9,
+    14
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-08",
+   "start": 31.479,
+   "end": 34.89,
+   "tokens": [
+    {
+     "text": "Trotzdem,",
+     "start": 31.559,
+     "end": 32.039
+    },
+    {
+     "text": "dass",
+     "start": 32.139,
+     "end": 32.279
+    },
+    {
+     "text": "ich",
+     "start": 32.36,
+     "end": 32.419
+    },
+    {
+     "text": "in",
+     "start": 32.459,
+     "end": 32.559
+    },
+    {
+     "text": "Rente",
+     "start": 32.68,
+     "end": 32.939
+    },
+    {
+     "text": "bin,",
+     "start": 33,
+     "end": 33.18
+    },
+    {
+     "text": "möchte",
+     "start": 33.559,
+     "end": 33.739
+    },
+    {
+     "text": "ich",
+     "start": 33.779,
+     "end": 33.84
+    },
+    {
+     "text": "noch",
+     "start": 33.879,
+     "end": 34
+    },
+    {
+     "text": "gern",
+     "start": 34.039,
+     "end": 34.199
+    },
+    {
+     "text": "fahren.",
+     "start": 34.299,
+     "end": 34.68
+    }
+   ],
+   "pages": [
+    0,
+    6
+   ],
+   "treatment": "hero-blue",
+   "heroIndex": 9,
+   "heroCount": 2,
+   "zone": "chest",
+   "y": 1180,
+   "chinY": 1010,
+   "glass": null
+  },
+  {
+   "id": "cc-09",
+   "start": 34.94,
+   "end": 38.409,
+   "tokens": [
+    {
+     "text": "Bei",
+     "start": 35.02,
+     "end": 35.139
+    },
+    {
+     "text": "Craiss",
+     "start": 35.259,
+     "end": 35.599
+    },
+    {
+     "text": "passt",
+     "start": 35.719,
+     "end": 35.959
+    },
+    {
+     "text": "optimal",
+     "start": 36.199,
+     "end": 36.679
+    },
+    {
+     "text": "viele",
+     "start": 36.759,
+     "end": 36.98
+    },
+    {
+     "text": "Kollegen,",
+     "start": 37.02,
+     "end": 37.479
+    },
+    {
+     "text": "alles",
+     "start": 37.559,
+     "end": 37.84
+    },
+    {
+     "text": "gut.",
+     "start": 37.919,
+     "end": 38.219
+    }
+   ],
+   "pages": [
+    0,
+    5
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-10",
+   "start": 38.459,
+   "end": 44.699,
+   "tokens": [
+    {
+     "text": "Kollegen",
+     "start": 38.539,
+     "end": 39.099
+    },
+    {
+     "text": "mit",
+     "start": 39.459,
+     "end": 39.66
+    },
+    {
+     "text": "Ungari,",
+     "start": 39.939,
+     "end": 40.379
+    },
+    {
+     "text": "Tschechien,",
+     "start": 40.419,
+     "end": 40.879
+    },
+    {
+     "text": "Romanische,",
+     "start": 41.079,
+     "end": 41.779
+    },
+    {
+     "text": "Lituanier,",
+     "start": 41.84,
+     "end": 42.559
+    },
+    {
+     "text": "alles",
+     "start": 42.66,
+     "end": 43.079
+    },
+    {
+     "text": "internationale.",
+     "start": 43.16,
+     "end": 44.099
+    }
+   ],
+   "pages": [
+    0,
+    3,
+    5
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  }
+ ]
+}

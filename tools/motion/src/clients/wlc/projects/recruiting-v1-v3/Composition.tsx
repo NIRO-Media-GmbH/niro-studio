@@ -236,7 +236,9 @@ export const wlcV3OverlayDefaults: WlcReporterOverlayProps = {
     {
       chips: [
         { label: "ANGEBOTE", startSec: 78.0 },
-        { label: "KUNDENBESUCHE", startSec: 81.5 },
+        // Kundenwunsch Runde 2 (Replay 1:23,6) — Cornelia schreibt
+        // „von Kundenbesuche", grammatisch korrigiert zu „Kundenbesuchen"
+        { label: "VOR- & NACHBEREITUNG VON KUNDENBESUCHEN", startSec: 81.5 },
       ],
       endSec: 85.5,
     },
@@ -981,6 +983,16 @@ const ChipStack: React.FC<{
   const { fps, width, height } = useVideoConfig();
   const F = (sec: number) => Math.round(sec * fps);
   const firstF = F(chips[0]?.startSec ?? 0);
+  // Lange Wortlaute (z. B. „VOR- & NACHBEREITUNG VON KUNDENBESUCHEN")
+  // dürfen die Safe Zone rechts nicht sprengen — EINE Größe pro Gruppe
+  // (0,75 statt nomineller Breite: Puffer für letterSpacing 0.04em)
+  const chipFont = Math.min(
+    height * 0.019,
+    ...chips.map(
+      (c) =>
+        fitText({ text: c.label, withinWidth: width * 0.75, fontFamily: FONT_BOLD, fontWeight: "normal" }).fontSize
+    )
+  );
   if (frame < firstF || frame > outF) return null;
   const fadeOut = interpolate(frame, [outF - Math.round(fps * 0.2), outF], [1, 0], {
     extrapolateLeft: "clamp",
@@ -1013,7 +1025,7 @@ const ChipStack: React.FC<{
               padding: `${height * 0.006}px ${height * 0.016}px`,
               fontFamily: FONT_BOLD,
               fontWeight: "normal" as const,
-              fontSize: height * 0.019,
+              fontSize: chipFont,
               lineHeight: 1.1,
               color: WUERTH_WEISS,
               textTransform: "uppercase",

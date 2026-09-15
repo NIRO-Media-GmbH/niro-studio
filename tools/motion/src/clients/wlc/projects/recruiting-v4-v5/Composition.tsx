@@ -104,10 +104,11 @@ export const wlcV4OverlayDefaults: WlcTalkOverlayProps = {
     { text: "… UND DICH FRAGST, OB'S DAS WAR …", highlight: "DAS WAR …", startSec: 2.8, endSec: 5.6 },
   ],
   splash: {
-    // Kundenwunsch 21.07./30.07. (Kommentar 6, David): nur die
-    // Gruppenleiter-Einblendung — Zeitstrahl komplett entfernt
+    // Kundenwunsch Runde 2 (Replay 0:21) + David 31.08.: GRUPPENLEITER.
+    // bleibt, graue Bar bekommt Cornelias vollen Wortlaut
+    // „WLC Würth-Logistik | Standort Kupferzell"
     name: "GRUPPENLEITER.",
-    role: "WLC KUPFERZELL",
+    role: "WLC WÜRTH-LOGISTIK | STANDORT KUPFERZELL",
     startSec: 7.6,
     endSec: 11.8,
   },

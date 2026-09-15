@@ -1,0 +1,19 @@
+{
+  "name": "Taxodia GmbH x Steuerkanzlei Ludwig",
+  "colors": {
+    "primary": "#9ABC44",
+    "secondary": "#7B9636",
+    "accent": "#667D2D",
+    "background": "#FFFFFF",
+    "text": "#000000"
+  },
+  "fonts": {
+    "heading": "Urbanist",
+    "body": "Urbanist"
+  },
+  "logo": "clients/taxodia/logos/taxodia-logo.svg",
+  "style": {
+    "borderRadius": 18,
+    "animationSpeed": "normal"
+  }
+}

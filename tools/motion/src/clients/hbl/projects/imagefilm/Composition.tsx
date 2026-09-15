@@ -136,8 +136,33 @@ type SaeulenTexte = {
   saeule1Titel: string;
   saeule2Nr: string;
   saeule2Titel: string;
+  saeule2Sub?: string;
   mitOutro: boolean;
 };
+
+// Säule mit Sub (Kundenfeedback 08/26): Titel kleiner (72 statt 86),
+// damit „Die Digitalisierung deiner Personalabteilung" 2-zeilig in die
+// 1240er-Säule passt (Umbruch via \n im Prop, whiteSpace pre-line).
+const SAEULE_TITEL_STIL = (sc: number, mitSub: boolean): React.CSSProperties => ({
+  marginTop: 36 * sc,
+  fontFamily: FONT_HEAD,
+  fontSize: (mitSub ? 72 : 86) * sc,
+  fontWeight: 400,
+  color: GRAU,
+  textTransform: "uppercase",
+  letterSpacing: (mitSub ? 6 : 8) * sc,
+  lineHeight: 1.25,
+  whiteSpace: "pre-line",
+});
+
+const SAEULE_SUB_STIL = (sc: number): React.CSSProperties => ({
+  marginTop: 26 * sc,
+  fontFamily: FONT,
+  fontSize: 46 * sc,
+  fontWeight: 500,
+  color: GRAU,
+  letterSpacing: 2 * sc,
+});
 
 const SaeulenVisual: Vis<SaeulenTexte> = (p) => {
   const { frame, fps, sc } = useStage();
@@ -150,7 +175,7 @@ const SaeulenVisual: Vis<SaeulenTexte> = (p) => {
   const zeile = easeIn(frame, fps, 22);
   const out = p.mitOutro ? outFade(frame, outAt, 12) : 1;
 
-  const saeule = (nr: string, titel: string, drive: number, dir: 1 | -1) => (
+  const saeule = (nr: string, titel: string, drive: number, dir: 1 | -1, sub?: string) => (
     <div
       style={{
         width: 1240 * sc,
@@ -162,20 +187,8 @@ const SaeulenVisual: Vis<SaeulenTexte> = (p) => {
       <div style={{ fontFamily: FONT_HEAD, fontSize: 210 * sc, fontWeight: 400, color: ROT, lineHeight: 1 }}>
         {nr}
       </div>
-      <div
-        style={{
-          marginTop: 36 * sc,
-          fontFamily: FONT_HEAD,
-          fontSize: 86 * sc,
-          fontWeight: 400,
-          color: GRAU,
-          textTransform: "uppercase",
-          letterSpacing: 8 * sc,
-          lineHeight: 1.25,
-        }}
-      >
-        {titel}
-      </div>
+      <div style={SAEULE_TITEL_STIL(sc, Boolean(sub))}>{titel}</div>
+      {sub ? <div style={SAEULE_SUB_STIL(sc)}>{sub}</div> : null}
     </div>
   );
 
@@ -196,7 +209,9 @@ const SaeulenVisual: Vis<SaeulenTexte> = (p) => {
           style={{
             marginTop: 170 * sc,
             display: "flex",
-            alignItems: "center",
+            // flex-start statt center: die Nummern 01/02 fluchten exakt,
+            // der Säule-2-Sub darf unten überstehen (Kundenfeedback 08/26)
+            alignItems: "flex-start",
             justifyContent: "center",
             gap: 130 * sc,
           }}
@@ -216,7 +231,7 @@ const SaeulenVisual: Vis<SaeulenTexte> = (p) => {
             />
             <div style={{ width: 6 * sc, height: 190 * sc, borderRadius: 999, background: GRAU, opacity: 0.45 }} />
           </div>
-          {saeule(p.saeule2Nr, p.saeule2Titel, s2, 1)}
+          {saeule(p.saeule2Nr, p.saeule2Titel, s2, 1, p.saeule2Sub)}
         </div>
         <div
           style={{
@@ -265,7 +280,7 @@ const SaeulenFokusVisual: Vis<SaeulenFokusTexte> = (p) => {
   // Abstand Säulen-Mitte ↔ Bild-Mitte im Row-Layout (1240 + 130 + 54 + 130 + 1240)
   const versatz = 777 * sc;
 
-  const saeule = (nr: string, titel: string, drive: number, dir: 1 | -1, imFokus: boolean) => {
+  const saeule = (nr: string, titel: string, drive: number, dir: 1 | -1, imFokus: boolean, sub?: string) => {
     const einflug = (1 - drive) * 70 * sc * dir;
     const fokusX = imFokus ? -dir * versatz * sw : -dir * 160 * sc * sw;
     const fokusY = imFokus ? 60 * sc * sw : 0;
@@ -284,20 +299,8 @@ const SaeulenFokusVisual: Vis<SaeulenFokusTexte> = (p) => {
         <div style={{ fontFamily: FONT_HEAD, fontSize: 210 * sc, fontWeight: 400, color: ROT, lineHeight: 1 }}>
           {nr}
         </div>
-        <div
-          style={{
-            marginTop: 36 * sc,
-            fontFamily: FONT_HEAD,
-            fontSize: 86 * sc,
-            fontWeight: 400,
-            color: GRAU,
-            textTransform: "uppercase",
-            letterSpacing: 8 * sc,
-            lineHeight: 1.25,
-          }}
-        >
-          {titel}
-        </div>
+        <div style={SAEULE_TITEL_STIL(sc, Boolean(sub))}>{titel}</div>
+        {sub ? <div style={SAEULE_SUB_STIL(sc)}>{sub}</div> : null}
       </div>
     );
   };
@@ -319,7 +322,9 @@ const SaeulenFokusVisual: Vis<SaeulenFokusTexte> = (p) => {
           style={{
             marginTop: 170 * sc,
             display: "flex",
-            alignItems: "center",
+            // flex-start statt center: die Nummern 01/02 fluchten exakt,
+            // der Säule-2-Sub darf unten überstehen (Kundenfeedback 08/26)
+            alignItems: "flex-start",
             justifyContent: "center",
             gap: 130 * sc,
           }}
@@ -346,7 +351,7 @@ const SaeulenFokusVisual: Vis<SaeulenFokusTexte> = (p) => {
             />
             <div style={{ width: 6 * sc, height: 190 * sc, borderRadius: 999, background: GRAU, opacity: 0.45 }} />
           </div>
-          {saeule(p.saeule2Nr, p.saeule2Titel, s2, 1, p.fokus === "2")}
+          {saeule(p.saeule2Nr, p.saeule2Titel, s2, 1, p.fokus === "2", p.saeule2Sub)}
         </div>
         <div
           style={{
@@ -377,6 +382,8 @@ type OpenerTexte = SaeulenTexte & {
   fokus: "1" | "2";
   saeulenAtSec: number;
   fokusAtSec: number;
+  banner?: string;
+  bannerAtSec?: number;
 };
 
 const OpenerVisual: Vis<OpenerTexte> = (p) => {
@@ -387,6 +394,11 @@ const OpenerVisual: Vis<OpenerTexte> = (p) => {
   const logo = easeIn(frame, fps, 10);
   const head = easeIn(frame, fps, 32);
   const zeile = easeIn(frame, fps, 55);
+  // HBL-Claim „Personal. Lohn. Digital!" (Kundenwunsch 0:02,97) — erscheint
+  // in Phase 1 unten, bleibt über die Säulen-Phase stehen (sonst nur 0,8 s
+  // lesbar), weicht erst mit dem Fokus-Switch. Position/Stil = rote
+  // Klartextzeile der Säulen-Grafik (bottom 210, N27 58, Versalien).
+  const bannerIn = easeIn(frame, fps, t(p.bannerAtSec ?? 2.9));
   // Phase 2: Headline/Zeile weichen, Säulen erscheinen
   const wechsel = interpolate(frame, [t(p.saeulenAtSec), t(p.saeulenAtSec) + 12], [0, 1], {
     extrapolateLeft: "clamp",
@@ -405,7 +417,7 @@ const OpenerVisual: Vis<OpenerTexte> = (p) => {
   const out = p.mitOutro ? outFade(frame, outAt, 12) : 1;
   const versatz = 777 * sc;
 
-  const saeule = (nr: string, titel: string, drive: number, dir: 1 | -1, imFokus: boolean) => {
+  const saeule = (nr: string, titel: string, drive: number, dir: 1 | -1, imFokus: boolean, sub?: string) => {
     const einflug = (1 - drive) * 70 * sc * dir;
     const fokusX = imFokus ? -dir * versatz * sw : -dir * 160 * sc * sw;
     const scale = imFokus ? 1 + 0.5 * sw : 1;
@@ -423,20 +435,8 @@ const OpenerVisual: Vis<OpenerTexte> = (p) => {
         <div style={{ fontFamily: FONT_HEAD, fontSize: 210 * sc, fontWeight: 400, color: ROT, lineHeight: 1 }}>
           {nr}
         </div>
-        <div
-          style={{
-            marginTop: 36 * sc,
-            fontFamily: FONT_HEAD,
-            fontSize: 86 * sc,
-            fontWeight: 400,
-            color: GRAU,
-            textTransform: "uppercase",
-            letterSpacing: 8 * sc,
-            lineHeight: 1.25,
-          }}
-        >
-          {titel}
-        </div>
+        <div style={SAEULE_TITEL_STIL(sc, Boolean(sub))}>{titel}</div>
+        {sub ? <div style={SAEULE_SUB_STIL(sc)}>{sub}</div> : null}
       </div>
     );
   };
@@ -498,7 +498,9 @@ const OpenerVisual: Vis<OpenerTexte> = (p) => {
           style={{
             marginTop: 170 * sc,
             display: "flex",
-            alignItems: "center",
+            // flex-start statt center: die Nummern 01/02 fluchten exakt,
+            // der Säule-2-Sub darf unten überstehen (Kundenfeedback 08/26)
+            alignItems: "flex-start",
             justifyContent: "center",
             gap: 130 * sc,
             opacity: wechsel,
@@ -526,8 +528,26 @@ const OpenerVisual: Vis<OpenerTexte> = (p) => {
             />
             <div style={{ width: 6 * sc, height: 190 * sc, borderRadius: 999, background: GRAU, opacity: 0.45 }} />
           </div>
-          {saeule(p.saeule2Nr, p.saeule2Titel, s2, 1, p.fokus === "2")}
+          {saeule(p.saeule2Nr, p.saeule2Titel, s2, 1, p.fokus === "2", p.saeule2Sub)}
         </div>
+        {/* Banner-Claim unten — überdauert den Phasenwechsel, geht mit dem Fokus */}
+        {p.banner ? (
+          <div
+            style={{
+              position: "absolute",
+              bottom: 210 * sc,
+              fontFamily: FONT_HEAD,
+              fontSize: 58 * sc,
+              fontWeight: 400,
+              color: ROT,
+              textTransform: "uppercase",
+              letterSpacing: 12 * sc,
+              opacity: bannerIn * (1 - sw),
+            }}
+          >
+            {p.banner}
+          </div>
+        ) : null}
       </AbsoluteFill>
     </AbsoluteFill>
   );
@@ -1294,6 +1314,7 @@ type EndcardTexte = {
   saeule1Titel: string;
   saeule2Nr: string;
   saeule2Titel: string;
+  saeule2Sub?: string;
   website: string;
 };
 
@@ -1306,7 +1327,7 @@ const EndcardVisual: React.FC<EndcardTexte> = (p) => {
   const s2 = easeIn(frame, fps, 22);
   const web = popIn(frame, fps, 32);
 
-  const saeule = (nr: string, titel: string, drive: number, dir: 1 | -1) => (
+  const saeule = (nr: string, titel: string, drive: number, dir: 1 | -1, sub?: string) => (
     <div
       style={{
         display: "flex",
@@ -1318,17 +1339,35 @@ const EndcardVisual: React.FC<EndcardTexte> = (p) => {
       }}
     >
       <span style={{ fontSize: 84 * sc, fontWeight: 400, color: ROT }}>{nr}</span>
-      <span
-        style={{
-          fontSize: 60 * sc,
-          fontWeight: 400,
-          color: GRAU,
-          textTransform: "uppercase",
-          letterSpacing: 7 * sc,
-        }}
-      >
-        {titel}
-      </span>
+      <div style={{ display: "flex", flexDirection: "column", textAlign: sub ? "left" : undefined }}>
+        <span
+          style={{
+            fontSize: 60 * sc,
+            fontWeight: 400,
+            color: GRAU,
+            textTransform: "uppercase",
+            letterSpacing: 7 * sc,
+            lineHeight: 1.22,
+            whiteSpace: "pre-line",
+          }}
+        >
+          {titel}
+        </span>
+        {sub ? (
+          <span
+            style={{
+              marginTop: 14 * sc,
+              fontFamily: FONT,
+              fontSize: 40 * sc,
+              fontWeight: 500,
+              color: GRAU,
+              letterSpacing: 2 * sc,
+            }}
+          >
+            {sub}
+          </span>
+        ) : null}
+      </div>
     </div>
   );
 
@@ -1351,7 +1390,7 @@ const EndcardVisual: React.FC<EndcardTexte> = (p) => {
               transform: `scale(${punkt})`,
             }}
           />
-          {saeule(p.saeule2Nr, p.saeule2Titel, s2, 1)}
+          {saeule(p.saeule2Nr, p.saeule2Titel, s2, 1, p.saeule2Sub)}
         </div>
         <div
           style={{
@@ -1378,12 +1417,18 @@ const EndcardVisual: React.FC<EndcardTexte> = (p) => {
 // Einzel-Kompositionen (registriert; Texte als Props)
 // ============================================================
 
+// Texte lt. Kundenfeedback 08/26 (Susan/Anne Christine, Review-Kommentare):
+// Klartextzeile „nur Digitalisierung, nicht HR-Digitalisierung (identisch mit
+// Website)" · Säule 2 groß „Die Digitalisierung deiner Personalabteilung"
+// (Website-Hero: „Wir digitalisieren deine Personalabteilung"), klein darunter
+// „HR-Software & Prozesse". Umbruch der Säule 2 via \n gesetzt.
 export const saeulenGrafikSchema = projectPropsSchema.extend({
   klartextzeile: z.string().describe("Klartextzeile unter den Säulen"),
   saeule1Nr: z.string().describe("Nummer Säule 1"),
   saeule1Titel: z.string().describe("Titel Säule 1"),
   saeule2Nr: z.string().describe("Nummer Säule 2"),
-  saeule2Titel: z.string().describe("Titel Säule 2"),
+  saeule2Titel: z.string().describe("Titel Säule 2 (\\n = fester Umbruch)"),
+  saeule2Sub: z.string().optional().describe("Kleine Zeile unter Säule 2"),
   mitOutro: z.boolean().describe("Am Ende ausblenden"),
 });
 export type SaeulenGrafikProps = z.infer<typeof saeulenGrafikSchema>;
@@ -1393,11 +1438,12 @@ export const saeulenGrafikDefaults: SaeulenGrafikProps = {
   durationInSeconds: 6,
   transparent: true,
   review: REVIEW_DEFAULTS,
-  klartextzeile: "Dein Partner für Lohnabrechnung & HR-Digitalisierung",
+  klartextzeile: "Dein Partner für Lohnabrechnung & Digitalisierung",
   saeule1Nr: "01",
   saeule1Titel: "Dein externes Lohnbüro",
   saeule2Nr: "02",
-  saeule2Titel: "HR-Software & Prozesse",
+  saeule2Titel: "Die Digitalisierung\ndeiner Personalabteilung",
+  saeule2Sub: "HR-Software & Prozesse",
   mitOutro: true,
 };
 export const HblSaeulenGrafik: React.FC<SaeulenGrafikProps> = (p) =>
@@ -1414,11 +1460,12 @@ const saeulenFokusBase = {
   durationInSeconds: 6.5,
   transparent: true,
   review: REVIEW_DEFAULTS,
-  klartextzeile: "Dein Partner für Lohnabrechnung & HR-Digitalisierung",
+  klartextzeile: "Dein Partner für Lohnabrechnung & Digitalisierung",
   saeule1Nr: "01",
   saeule1Titel: "Dein externes Lohnbüro",
   saeule2Nr: "02",
-  saeule2Titel: "HR-Software & Prozesse",
+  saeule2Titel: "Die Digitalisierung\ndeiner Personalabteilung",
+  saeule2Sub: "HR-Software & Prozesse",
   mitOutro: true,
   switchAtSec: 3,
 };
@@ -1432,6 +1479,8 @@ export const openerSchema = saeulenGrafikSchema.extend({
   fokus: z.enum(["1", "2"]).describe("Säule im Schluss-Fokus"),
   saeulenAtSec: z.number().step(0.1).describe("Säulen erscheinen bei (Sek)"),
   fokusAtSec: z.number().step(0.1).describe("Fokus startet bei (Sek)"),
+  banner: z.string().optional().describe("Banner-Claim unten (Kundenasset)"),
+  bannerAtSec: z.number().step(0.1).optional().describe("Banner erscheint bei (Sek)"),
 });
 export type OpenerProps = z.infer<typeof openerSchema>;
 export const openerDefaults: OpenerProps = {
@@ -1441,15 +1490,18 @@ export const openerDefaults: OpenerProps = {
   transparent: true,
   review: REVIEW_DEFAULTS,
   headline: "Deine HR-Agentur",
-  klartextzeile: "Dein Partner für Lohnabrechnung & HR-Digitalisierung",
+  klartextzeile: "Dein Partner für Lohnabrechnung & Digitalisierung",
   saeule1Nr: "01",
   saeule1Titel: "Dein externes Lohnbüro",
   saeule2Nr: "02",
-  saeule2Titel: "HR-Software & Prozesse",
+  saeule2Titel: "Die Digitalisierung\ndeiner Personalabteilung",
+  saeule2Sub: "HR-Software & Prozesse",
   mitOutro: true,
   fokus: "1",
   saeulenAtSec: 3.6,
   fokusAtSec: 6.4,
+  banner: "Personal. Lohn. Digital!",
+  bannerAtSec: 2.9,
 };
 export const HblOpener: React.FC<OpenerProps> = (p) => Standalone(p, <OpenerVisual {...p} />);
 
@@ -1684,10 +1736,13 @@ export const endcardSchema = projectPropsSchema.extend({
   saeule1Nr: z.string().describe("Nummer Säule 1"),
   saeule1Titel: z.string().describe("Titel Säule 1"),
   saeule2Nr: z.string().describe("Nummer Säule 2"),
-  saeule2Titel: z.string().describe("Titel Säule 2"),
+  saeule2Titel: z.string().describe("Titel Säule 2 (\\n = fester Umbruch)"),
+  saeule2Sub: z.string().optional().describe("Kleine Zeile unter Säule 2"),
   website: z.string().describe("Website"),
 });
 export type EndcardProps = z.infer<typeof endcardSchema>;
+// „Grafik anpassen wie am Start" (Kundenfeedback 08/26, TC 2:47) →
+// Säule 2 wie im Opener: groß Digitalisierung, klein HR-Software & Prozesse.
 export const endcardDefaults: EndcardProps = {
   format: "landscape-4k" as const,
   fps: 25 as const,
@@ -1697,7 +1752,8 @@ export const endcardDefaults: EndcardProps = {
   saeule1Nr: "01",
   saeule1Titel: "Dein externes Lohnbüro",
   saeule2Nr: "02",
-  saeule2Titel: "HR-Software & Prozesse",
+  saeule2Titel: "Die Digitalisierung\ndeiner Personalabteilung",
+  saeule2Sub: "HR-Software & Prozesse",
   website: "www.hbl-management.com",
 };
 export const HblEndcard: React.FC<EndcardProps> = (p) => Standalone(p, <EndcardVisual {...p} />);
@@ -1721,6 +1777,7 @@ export const imagefilmMasterSchema = projectPropsSchema.extend({
     saeule1Titel: z.string(),
     saeule2Nr: z.string(),
     saeule2Titel: z.string(),
+    saeule2Sub: z.string().optional(),
   }).describe("Säulen-Grafik (Lücke nach Hook)"),
   titel01: timing({ nr: z.string(), titel: z.string() }).describe("Titel 01 (über S1)"),
   subMitUns: timing({
@@ -1739,6 +1796,7 @@ export const imagefilmMasterSchema = projectPropsSchema.extend({
     saeule1Titel: z.string(),
     saeule2Nr: z.string(),
     saeule2Titel: z.string(),
+    saeule2Sub: z.string().optional(),
     website: z.string(),
   }).describe("Endcard (nach A5, ohne Out)"),
 });
@@ -1754,11 +1812,12 @@ export const imagefilmMasterDefaults: ImagefilmMasterProps = {
   saeulen: {
     startSec: 3.9, // Hook-Out 0:04,0 · S1 startet 0:06,6 — Karte überlappt S1-Anfang bewusst
     durationSec: 4.5,
-    klartextzeile: "Dein Partner für Lohnabrechnung & HR-Digitalisierung",
+    klartextzeile: "Dein Partner für Lohnabrechnung & Digitalisierung",
     saeule1Nr: "01",
     saeule1Titel: "Dein externes Lohnbüro",
     saeule2Nr: "02",
-    saeule2Titel: "HR-Software & Prozesse",
+    saeule2Titel: "Die Digitalisierung\ndeiner Personalabteilung",
+    saeule2Sub: "HR-Software & Prozesse",
   },
   titel01: { startSec: 8.6, durationSec: 3, nr: "01", titel: "Dein externes Lohnbüro" },
   subMitUns: {
@@ -1811,7 +1870,8 @@ export const imagefilmMasterDefaults: ImagefilmMasterProps = {
     saeule1Nr: "01",
     saeule1Titel: "Dein externes Lohnbüro",
     saeule2Nr: "02",
-    saeule2Titel: "HR-Software & Prozesse",
+    saeule2Titel: "Die Digitalisierung\ndeiner Personalabteilung",
+    saeule2Sub: "HR-Software & Prozesse",
     website: "www.hbl-management.com",
   },
 };

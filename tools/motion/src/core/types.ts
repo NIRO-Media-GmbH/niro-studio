@@ -55,7 +55,7 @@ export interface CorporateIdentity {
 // --- Format & Rendering ---
 
 export type VideoFormat = "landscape" | "portrait" | "portrait-4k" | "landscape-4k";
-export type FPSOption = 24 | 25 | 30 | 60;
+export type FPSOption = 24 | 25 | 30 | 50 | 60;
 
 export interface FormatDimensions {
   width: number;

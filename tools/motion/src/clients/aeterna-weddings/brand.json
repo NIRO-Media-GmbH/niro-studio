@@ -1,0 +1,19 @@
+{
+  "name": "Aeterna Weddings",
+  "colors": {
+    "primary": "#C1A67A",
+    "secondary": "#9C8156",
+    "accent": "#3B352F",
+    "background": "#FCFBF8",
+    "text": "#3B352F"
+  },
+  "fonts": {
+    "heading": "Playfair Display",
+    "body": "Red Hat Text"
+  },
+  "logo": "clients/aeterna-weddings/aeterna-logo.svg",
+  "style": {
+    "borderRadius": 14,
+    "animationSpeed": "slow"
+  }
+}

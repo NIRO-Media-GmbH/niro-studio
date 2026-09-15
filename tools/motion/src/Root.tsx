@@ -6,6 +6,18 @@
 import React from "react";
 import { Composition, Folder } from "remotion";
 import { getCalculateMetadata } from "./core/format-utils";
+import {
+  AeternaMesseScreen, messeScreenSchema, messeScreenDefaults,
+} from "./clients/aeterna-weddings/projects/messe-screen/Composition";
+import {
+  MekZertifikat, zertifikatSchema, zertifikatCacDefaults, zertifikatWeaningDefaults,
+} from "./clients/mek/projects/imagefilm/Zertifikate";
+import {
+  MekImagefilmGrafikKomplett, grafikKomplettSchema, grafikKomplettDefaults, calculateGrafikKomplett,
+} from "./clients/mek/projects/imagefilm/Grafikebene";
+import {
+  TaxodiaGrafikebene, grafikSchema as taxodiaGrafikSchema, grafikDefaults as taxodiaGrafikDefaults, calculateGrafik as calculateTaxodiaGrafik,
+} from "./clients/taxodia/projects/erklaervideo/Grafikebene";
 
 const REVIEW_DEFAULTS = {
   showGuides: false,
@@ -73,6 +85,7 @@ import { RemDachbeschichtungV2Premium, remDachV2PremiumSchema, remDachV2PremiumD
 import { RemGewerbedachReinigung, remGewerbedachSchema, remGewerbedachDefaults } from "./clients/rem-maler/projects/gewerbedach-reinigung/Composition";
 import { RemGewerbedachOverlay, remGewerbedachOverlaySchema, remGewerbedachOverlayDefaults } from "./clients/rem-maler/projects/gewerbedach-overlay/Composition";
 import { ManLagerCta, manLagerCtaSchema, manLagerCtaDefaults } from "./clients/man/projects/lager-ausbildung-cta/Composition";
+import { ManLagerCtaWeb, manLagerCtaWebSchema, manLagerCtaWebDefaults } from "./clients/man/projects/lager-ausbildung-cta/CompositionWeb";
 import {
   ManWzFrame, manWzFrameSchema,
   manWzFrameSoloDefaults, manWzFrameVersetztDefaults, manWzFrameDuoDefaults,
@@ -113,6 +126,9 @@ import {
   BumbleCleanV2Interior, v2InteriorSchema, v2InteriorDefaults,
 } from "./clients/bumble-clean/projects/schnittplan-social/V2InteriorDeepClean";
 import {
+  BumbleCleanAdZeit, adZeitSchema, adZeitDefaults,
+} from "./clients/bumble-clean/projects/cinematic-ad/AdZeit";
+import {
   HblSaeulenGrafik, saeulenGrafikSchema, saeulenGrafikDefaults,
   HblSaeulenFokus, saeulenFokusSchema, saeulenFokus01Defaults, saeulenFokus02Defaults,
   HblOpener, openerSchema, openerDefaults,
@@ -135,6 +151,43 @@ import {
   lohiBwUntertitelSchema,
   lohiBwAd1Defaults, lohiBwAd2Defaults, lohiBwAd3Defaults, lohiBwAd4Defaults,
 } from "./clients/lohi-bw/projects/untertitel/Composition";
+import {
+  SetzerFleischkaeseVsLeberkaese,
+  setzerFleischkaeseSchema,
+  setzerFleischkaeseDefaults,
+} from "./clients/setzer/projects/fleischkaese-vs-leberkaese/Composition";
+import {
+  SetzerPfefferbeisser,
+  setzerPfefferbeisserSchema,
+  setzerPfefferbeisserDefaults,
+} from "./clients/setzer/projects/pfefferbeisser/Composition";
+import {
+  SetzerFleischsalatZutaten,
+  setzerFleischsalatZutatenSchema,
+  setzerFleischsalatZutatenDefaults,
+} from "./clients/setzer/projects/fleischsalat-zutaten/Composition";
+import {
+  CraissArbeitsalltag, craissArbeitsalltagSchema, craissArbeitsalltagDefaults, craissArbeitsalltagPreviewDefaults,
+} from "./clients/craiss/projects/arbeitsalltag/Composition";
+import {
+  CraissErsterTag, craissErsterTagSchema, craissErsterTagDefaults, craissErsterTagPreviewDefaults,
+} from "./clients/craiss/projects/erster-tag/Composition";
+import {
+  CraissFunnel, craissFunnelSchema, craissFunnelDefaults, craissFunnelPreviewDefaults,
+} from "./clients/craiss/projects/funnel/Composition";
+import {
+  CraissTestimonial, craissTestimonialSchema, craissTestimonialDefaults, craissTestimonialPreviewDefaults,
+} from "./clients/craiss/projects/testimonial/Composition";
+import {
+  CraissVieleJahre, craissVieleJahreSchema, craissVieleJahreDefaults, craissVieleJahrePreviewDefaults,
+} from "./clients/craiss/projects/viele-jahre/Composition";
+import { CraissErsterTagSubtitled, craissErsterTagSubtitledSchema, craissErsterTagSubtitledDefaults } from "./clients/craiss/projects/erster-tag/CompositionSubtitled";
+import { CraissArbeitsalltagSubtitled, craissArbeitsalltagSubtitledSchema, craissArbeitsalltagSubtitledDefaults } from "./clients/craiss/projects/arbeitsalltag/CompositionSubtitled";
+import { CraissVieleJahreSubtitled, craissVieleJahreSubtitledSchema, craissVieleJahreSubtitledDefaults } from "./clients/craiss/projects/viele-jahre/CompositionSubtitled";
+import { CraissFunnelSubtitled, craissFunnelSubtitledSchema, craissFunnelSubtitledDefaults } from "./clients/craiss/projects/funnel/CompositionSubtitled";
+import { CraissTestimonialSubtitled, craissTestimonialSubtitledSchema, craissTestimonialSubtitledDefaults } from "./clients/craiss/projects/testimonial/CompositionSubtitled";
+import { CraissVorschau, craissVorschauSchema, craissVorschauDefaults, craissAlphaDefaults } from "./clients/craiss/projects/vorschau/Composition";
+import { DoldEndcard, doldEndcardSchema, doldEndcardDefaults } from "./clients/dold/projects/recruiting-endcard/Composition";
 import { SWBifazialeModule, swBifazialeModuleSchema } from "./clients/sw-projektentwicklung/projects/bifaziale-module/Composition";
 import { SWGottwollshausen, swGottwollshausenSchema } from "./clients/sw-projektentwicklung/projects/gottwollshausen/Composition";
 import { SWFlachdach, swFlachdachSchema } from "./clients/sw-projektentwicklung/projects/flachdach/Composition";
@@ -142,6 +195,7 @@ import { SWBauerSolar, swBauerSolarSchema } from "./clients/sw-projektentwicklun
 import { SWSmartino, swSmartinoSchema } from "./clients/sw-projektentwicklung/projects/smartino/Composition";
 import { SWRecruiting, swRecruitingSchema } from "./clients/sw-projektentwicklung/projects/recruiting/Composition";
 import { SUBTITLE_DEFAULTS as SW_SUBTITLES } from "./clients/sw-projektentwicklung/Subtitles";
+import { SchmittNeuerSpielstand, schmittNeuerSpielstandSchema, schmittNeuerSpielstandDefaults, schmittNeuerSpielstandMetadata } from "./clients/schmitt/projects/neuer-spielstand/Composition";
 
 
 export const RemotionRoot: React.FC = () => {
@@ -578,6 +632,206 @@ export const RemotionRoot: React.FC = () => {
           />
         </Folder>
 
+        <Folder name="Craiss">
+          <Composition
+            id="Craiss-Arbeitsalltag"
+            component={CraissArbeitsalltag}
+            schema={craissArbeitsalltagSchema}
+            defaultProps={craissArbeitsalltagDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-Arbeitsalltag-Preview"
+            component={CraissArbeitsalltag}
+            schema={craissArbeitsalltagSchema}
+            defaultProps={craissArbeitsalltagPreviewDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-ErsterTag"
+            component={CraissErsterTag}
+            schema={craissErsterTagSchema}
+            defaultProps={craissErsterTagDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-ErsterTag-Preview"
+            component={CraissErsterTag}
+            schema={craissErsterTagSchema}
+            defaultProps={craissErsterTagPreviewDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-Funnel"
+            component={CraissFunnel}
+            schema={craissFunnelSchema}
+            defaultProps={craissFunnelDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-Funnel-Preview"
+            component={CraissFunnel}
+            schema={craissFunnelSchema}
+            defaultProps={craissFunnelPreviewDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-Testimonial"
+            component={CraissTestimonial}
+            schema={craissTestimonialSchema}
+            defaultProps={craissTestimonialDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-Testimonial-Preview"
+            component={CraissTestimonial}
+            schema={craissTestimonialSchema}
+            defaultProps={craissTestimonialPreviewDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-VieleJahre"
+            component={CraissVieleJahre}
+            schema={craissVieleJahreSchema}
+            defaultProps={craissVieleJahreDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Craiss-VieleJahre-Preview"
+            component={CraissVieleJahre}
+            schema={craissVieleJahreSchema}
+            defaultProps={craissVieleJahrePreviewDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          {/* Untertitel-Spuren auf den fertigen Schnitten (01 V3, 02 V3, 03 V3, 04 V4, 05 V2):
+              Studio zeigt den Schnitt darunter, Render = Alpha-Overlay 2160×3840.
+              Eigener Unterordner, damit sie nicht mit den alten Hook/CTA-„-Preview"-Comps
+              (V1/V2-Footage, ohne Untertitel) verwechselt werden. */}
+          <Folder name="Untertitel-Final">
+            <Composition
+              id="Craiss-ErsterTag-Untertitel"
+              component={CraissErsterTagSubtitled}
+              schema={craissErsterTagSubtitledSchema}
+              defaultProps={craissErsterTagSubtitledDefaults}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Arbeitsalltag-Untertitel"
+              component={CraissArbeitsalltagSubtitled}
+              schema={craissArbeitsalltagSubtitledSchema}
+              defaultProps={craissArbeitsalltagSubtitledDefaults}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-VieleJahre-Untertitel"
+              component={CraissVieleJahreSubtitled}
+              schema={craissVieleJahreSubtitledSchema}
+              defaultProps={craissVieleJahreSubtitledDefaults}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Funnel-Untertitel"
+              component={CraissFunnelSubtitled}
+              schema={craissFunnelSubtitledSchema}
+              defaultProps={craissFunnelSubtitledDefaults}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Testimonial-Untertitel"
+              component={CraissTestimonialSubtitled}
+              schema={craissTestimonialSubtitledSchema}
+              defaultProps={craissTestimonialSubtitledDefaults}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+          </Folder>
+          {/* Abnahme-Vorschau: Schnitt ohne Animation + aktuelle Animationen + Untertitel */}
+          <Folder name="Vorschau-Neu">
+            <Composition
+              id="Craiss-Vorschau-01-ErsterTag"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissVorschauDefaults("01")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Vorschau-02-Arbeitsalltag"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissVorschauDefaults("02")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Vorschau-03-VieleJahre"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissVorschauDefaults("03")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Vorschau-04-Funnel"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissVorschauDefaults("04")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Vorschau-05-Testimonial"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissVorschauDefaults("05")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+          </Folder>
+          {/* Lieferung: pro Video eine Alpha-Datei (alle Animationen + Untertitel), 2160×3840 */}
+          <Folder name="Alpha-Komplett">
+            <Composition
+              id="Craiss-Alpha-01-ErsterTag"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissAlphaDefaults("01")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Alpha-02-Arbeitsalltag"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissAlphaDefaults("02")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Alpha-03-VieleJahre"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissAlphaDefaults("03")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Alpha-04-Funnel"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissAlphaDefaults("04")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+            <Composition
+              id="Craiss-Alpha-05-Testimonial"
+              component={CraissVorschau}
+              schema={craissVorschauSchema}
+              defaultProps={craissAlphaDefaults("05")}
+              calculateMetadata={({ props }) => getCalculateMetadata(props)}
+            />
+          </Folder>
+        </Folder>
+
+        <Folder name="Dold">
+          <Composition
+            id="Dold-RecruitingEndcard"
+            component={DoldEndcard}
+            schema={doldEndcardSchema}
+            defaultProps={doldEndcardDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
         <Folder name="BremsenSchneider">
           <Composition
             id="BremsenSchneider-CTA"
@@ -833,6 +1087,13 @@ export const RemotionRoot: React.FC = () => {
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
           />
           <Composition
+            id="MAN-LagerCTA-Web"
+            component={ManLagerCtaWeb}
+            schema={manLagerCtaWebSchema}
+            defaultProps={manLagerCtaWebDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
             id="MAN-WZ-Frame-Solo"
             component={ManWzFrame}
             schema={manWzFrameSchema}
@@ -910,6 +1171,13 @@ export const RemotionRoot: React.FC = () => {
             component={BumbleCleanV2Interior}
             schema={v2InteriorSchema}
             defaultProps={v2InteriorDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="bumble-clean-ad-zeit"
+            component={BumbleCleanAdZeit}
+            schema={adZeitSchema}
+            defaultProps={adZeitDefaults}
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
           />
         </Folder>
@@ -1247,6 +1515,30 @@ export const RemotionRoot: React.FC = () => {
           />
         </Folder>
 
+        <Folder name="Setzer">
+          <Composition
+            id="Setzer-Fleischkaese-vs-Leberkaese"
+            component={SetzerFleischkaeseVsLeberkaese}
+            schema={setzerFleischkaeseSchema}
+            defaultProps={setzerFleischkaeseDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Setzer-Pfefferbeisser"
+            component={SetzerPfefferbeisser}
+            schema={setzerPfefferbeisserSchema}
+            defaultProps={setzerPfefferbeisserDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="Setzer-Fleischsalat-Zutaten"
+            component={SetzerFleischsalatZutaten}
+            schema={setzerFleischsalatZutatenSchema}
+            defaultProps={setzerFleischsalatZutatenDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
         <Folder name="NIRO">
           <Composition
             id="Niro-CutterAd"
@@ -1254,6 +1546,60 @@ export const RemotionRoot: React.FC = () => {
             schema={niroCutterAdSchema}
             defaultProps={niroCutterAdDefaults}
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
+        <Folder name="Schmitt">
+          <Composition
+            id="Schmitt-NeuerSpielstand"
+            component={SchmittNeuerSpielstand}
+            schema={schmittNeuerSpielstandSchema}
+            defaultProps={schmittNeuerSpielstandDefaults}
+            calculateMetadata={schmittNeuerSpielstandMetadata}
+          />
+        </Folder>
+
+        <Folder name="AeternaWeddings">
+          <Composition
+            id="Aeterna-MesseScreen"
+            component={AeternaMesseScreen}
+            schema={messeScreenSchema}
+            defaultProps={messeScreenDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+        </Folder>
+
+        <Folder name="MEK">
+          <Composition
+            id="MEK-Imagefilm-Zertifikat-CAC"
+            component={MekZertifikat}
+            schema={zertifikatSchema}
+            defaultProps={zertifikatCacDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MEK-Imagefilm-Zertifikat-Weaning"
+            component={MekZertifikat}
+            schema={zertifikatSchema}
+            defaultProps={zertifikatWeaningDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="MEK-Imagefilm-Grafik-Komplett"
+            component={MekImagefilmGrafikKomplett}
+            schema={grafikKomplettSchema}
+            defaultProps={grafikKomplettDefaults}
+            calculateMetadata={calculateGrafikKomplett}
+          />
+        </Folder>
+
+        <Folder name="Taxodia">
+          <Composition
+            id="Taxodia-Erklaervideo-Grafikebene"
+            component={TaxodiaGrafikebene}
+            schema={taxodiaGrafikSchema}
+            defaultProps={taxodiaGrafikDefaults}
+            calculateMetadata={calculateTaxodiaGrafik}
           />
         </Folder>
       </Folder>

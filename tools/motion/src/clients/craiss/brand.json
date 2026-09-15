@@ -1,0 +1,19 @@
+{
+  "name": "Craiss Generation Logistik",
+  "colors": {
+    "primary": "#CD202C",
+    "secondary": "#002F5F",
+    "accent": "#E4E4E4",
+    "background": "#FFFFFF",
+    "text": "#3D3D3D"
+  },
+  "fonts": {
+    "heading": "LaskiSlabBlack",
+    "body": "LaskiSlabRegular"
+  },
+  "logo": "clients/craiss/logo.svg",
+  "style": {
+    "borderRadius": 6,
+    "animationSpeed": "normal"
+  }
+}

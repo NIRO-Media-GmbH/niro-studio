@@ -1,0 +1,19 @@
+{
+  "name": "Schmitt Gruppe",
+  "colors": {
+    "primary": "#2554A5",
+    "secondary": "#233359",
+    "accent": "#F2B233",
+    "background": "#0E1422",
+    "text": "#FFFFFF"
+  },
+  "fonts": {
+    "heading": "Barlow Condensed",
+    "body": "Barlow Condensed"
+  },
+  "logo": "",
+  "style": {
+    "borderRadius": 6,
+    "animationSpeed": "normal"
+  }
+}

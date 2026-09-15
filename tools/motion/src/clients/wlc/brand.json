@@ -23,8 +23,8 @@
     "gruen": "#008448"
   },
   "fonts": {
-    "heading": "Wuerth Global Extra Bold Cond",
-    "body": "Wuerth Global Book"
+    "heading": "Wuerth Sans Black Cond",
+    "body": "Wuerth Sans Book"
   },
   "logo": "clients/wlc/logo-white.png",
   "assets": {
@@ -36,5 +36,5 @@
     "borderRadius": 0,
     "animationSpeed": "fast"
   },
-  "notes": "Quelle: WLC Corporate Design Richtlinien 2025 (Stand 01/2025). Extra Bold Cond NUR für Titel, IMMER VERSALIEN. Text nur in Schwarz/Rot/Weiß. Grau-Stufen = Layoutfarben (Flächen/Linien, nie Text). Signalfarben sparsam, nie als Textfarbe. Hartes Tabu Projekt Recruiting: kein Deutschland-Wording."
+  "notes": "Quelle: WLC Corporate Design Richtlinien 2025 (Stand 01/2025). Schrift-Umstellung 09.09.2026: neue Hausschrift Wuerth Sans V1_000 (BlackCond/Black/Book) ersetzt die alte Familie Wuerth (Extra Bold Cond/Bold/Book). Extra Bold Cond NUR für Titel, IMMER VERSALIEN. Text nur in Schwarz/Rot/Weiß. Grau-Stufen = Layoutfarben (Flächen/Linien, nie Text). Signalfarben sparsam, nie als Textfarbe. Hartes Tabu Projekt Recruiting: kein Deutschland-Wording."
 }

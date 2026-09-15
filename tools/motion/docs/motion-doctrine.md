@@ -109,6 +109,11 @@ unsichtbar. Richtwerte:
 - Nur `transform` + `opacity` animieren — nie `width/height/top/left`,
   nie `letter-spacing` oder `filter: blur` am Wort-Entrance (Reflow kann
   Zeilenumbruch springen lassen).
+- Einzel-Properties `scale` und `rotate` im Inline-Style immer als String
+  setzen (`scale: String(x)`, `rotate: \`${deg}deg\``): React 18 hängt an
+  Zahlen „px“ an, der Wert ist ungültig und die Animation fällt ohne
+  Fehlermeldung aus (Schmitt 2026-09). `transform: \`scale(${x})\`` ist
+  unkritisch.
 - Layout-Konstanten (Positionen, Breiten) vorab berechnen, nicht pro
   Frame messen. Wortbreiten-Schätzung: `fontSize × Zeichen × 0,55`
   (kursiv 0,50, Versalien-fett 0,62) — gegen die längste Zeile nach

@@ -1,0 +1,1052 @@
+{
+ "video": "viele-jahre-v3",
+ "cues": [
+  {
+   "id": "cc-01",
+   "start": 0.039,
+   "end": 0.459,
+   "tokens": [
+    {
+     "text": "Dzień",
+     "start": 0.119,
+     "end": 0.239
+    },
+    {
+     "text": "dobry.",
+     "start": 0.28,
+     "end": 0.479
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-02",
+   "start": 0.459,
+   "end": 1.1,
+   "tokens": [
+    {
+     "text": "Bias",
+     "start": 0.539,
+     "end": 0.799
+    },
+    {
+     "text": "tol.",
+     "start": 0.919,
+     "end": 1.1
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-03",
+   "start": 1.119,
+   "end": 1.759,
+   "tokens": [
+    {
+     "text": "Buna",
+     "start": 1.199,
+     "end": 1.379
+    },
+    {
+     "text": "ziua.",
+     "start": 1.439,
+     "end": 1.759
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-04",
+   "start": 1.759,
+   "end": 2.709,
+   "tokens": [
+    {
+     "text": "Zdravím.",
+     "start": 1.839,
+     "end": 2.399
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-05",
+   "start": 2.759,
+   "end": 5.25,
+   "tokens": [
+    {
+     "text": "Wir",
+     "start": 2.839,
+     "end": 2.899
+    },
+    {
+     "text": "haben",
+     "start": 2.919,
+     "end": 3.039
+    },
+    {
+     "text": "hier",
+     "start": 3.079,
+     "end": 3.159
+    },
+    {
+     "text": "in",
+     "start": 3.179,
+     "end": 3.22
+    },
+    {
+     "text": "der",
+     "start": 3.279,
+     "end": 3.359
+    },
+    {
+     "text": "Dispo",
+     "start": 3.419,
+     "end": 3.72
+    },
+    {
+     "text": "die",
+     "start": 3.759,
+     "end": 3.859
+    },
+    {
+     "text": "verschiedensten",
+     "start": 3.919,
+     "end": 4.579
+    },
+    {
+     "text": "Sprachen.",
+     "start": 4.699,
+     "end": 5.179
+    }
+   ],
+   "pages": [
+    0,
+    5
+   ],
+   "treatment": "hero-red",
+   "zone": "chest",
+   "glass": null,
+   "heroIndex": 8,
+   "heroCount": 1,
+   "y": 1150,
+   "chinY": 950
+  },
+  {
+   "id": "cc-06",
+   "start": 5.3,
+   "end": 6.639,
+   "tokens": [
+    {
+     "text": "Das",
+     "start": 5.38,
+     "end": 5.5
+    },
+    {
+     "text": "macht",
+     "start": 5.539,
+     "end": 5.679
+    },
+    {
+     "text": "es",
+     "start": 5.719,
+     "end": 5.819
+    },
+    {
+     "text": "für",
+     "start": 5.819,
+     "end": 5.92
+    },
+    {
+     "text": "jeden",
+     "start": 5.94,
+     "end": 6.059
+    },
+    {
+     "text": "einfach.",
+     "start": 6.159,
+     "end": 6.639
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "hero-white",
+   "zone": "chest",
+   "glass": null,
+   "y": 1150,
+   "chinY": 950,
+   "heroIndex": 5,
+   "heroCount": 1
+  },
+  {
+   "id": "cc-07",
+   "start": 6.659,
+   "end": 12.349,
+   "tokens": [
+    {
+     "text": "Kollegen,",
+     "start": 6.739,
+     "end": 7.299
+    },
+    {
+     "text": "mit",
+     "start": 7.639,
+     "end": 7.859
+    },
+    {
+     "text": "Ungari,",
+     "start": 8.119,
+     "end": 8.539
+    },
+    {
+     "text": "Tschechien,",
+     "start": 8.619,
+     "end": 9.079
+    },
+    {
+     "text": "Romanische,",
+     "start": 9.279,
+     "end": 9.84
+    },
+    {
+     "text": "Litauen,",
+     "start": 10.039,
+     "end": 10.76
+    },
+    {
+     "text": "alles",
+     "start": 10.8,
+     "end": 11.14
+    },
+    {
+     "text": "Internationale.",
+     "start": 11.359,
+     "end": 12.219
+    }
+   ],
+   "pages": [
+    0,
+    4,
+    7
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  },
+  {
+   "id": "cc-08",
+   "start": 12.399,
+   "end": 17.399,
+   "tokens": [
+    {
+     "text": "Ich",
+     "start": 12.479,
+     "end": 12.539
+    },
+    {
+     "text": "konnte",
+     "start": 12.599,
+     "end": 12.799
+    },
+    {
+     "text": "früher",
+     "start": 12.859,
+     "end": 13
+    },
+    {
+     "text": "selber",
+     "start": 13.059,
+     "end": 13.319
+    },
+    {
+     "text": "kein",
+     "start": 13.359,
+     "end": 13.539
+    },
+    {
+     "text": "Deutsch",
+     "start": 13.599,
+     "end": 13.96
+    },
+    {
+     "text": "und",
+     "start": 14.019,
+     "end": 14.159
+    },
+    {
+     "text": "dadurch",
+     "start": 14.179,
+     "end": 14.439
+    },
+    {
+     "text": "weiß",
+     "start": 14.519,
+     "end": 14.719
+    },
+    {
+     "text": "ich,",
+     "start": 14.779,
+     "end": 14.859
+    },
+    {
+     "text": "wie",
+     "start": 14.899,
+     "end": 14.96
+    },
+    {
+     "text": "ich",
+     "start": 14.979,
+     "end": 15.059
+    },
+    {
+     "text": "mit",
+     "start": 15.099,
+     "end": 15.199
+    },
+    {
+     "text": "dem",
+     "start": 15.219,
+     "end": 15.319
+    },
+    {
+     "text": "Fahrer",
+     "start": 15.399,
+     "end": 15.699
+    },
+    {
+     "text": "zu",
+     "start": 15.759,
+     "end": 15.859
+    },
+    {
+     "text": "reden",
+     "start": 15.92,
+     "end": 16.139
+    },
+    {
+     "text": "habe,",
+     "start": 16.18,
+     "end": 16.279
+    },
+    {
+     "text": "damit",
+     "start": 16.359,
+     "end": 16.539
+    },
+    {
+     "text": "er",
+     "start": 16.6,
+     "end": 16.639
+    },
+    {
+     "text": "mich",
+     "start": 16.699,
+     "end": 16.779
+    },
+    {
+     "text": "versteht.",
+     "start": 16.859,
+     "end": 17.42
+    }
+   ],
+   "pages": [
+    0,
+    5,
+    10,
+    15,
+    20
+   ],
+   "treatment": "hero-blue",
+   "zone": "chest",
+   "glass": null,
+   "y": 1150,
+   "chinY": 830,
+   "heroIndex": 5,
+   "heroCount": 1
+  },
+  {
+   "id": "cc-09",
+   "start": 17.399,
+   "end": 21.339,
+   "tokens": [
+    {
+     "text": "Außerdem",
+     "start": 17.479,
+     "end": 17.84
+    },
+    {
+     "text": "sprechen",
+     "start": 17.92,
+     "end": 18.28
+    },
+    {
+     "text": "wir",
+     "start": 18.34,
+     "end": 18.5
+    },
+    {
+     "text": "hier",
+     "start": 18.579,
+     "end": 18.699
+    },
+    {
+     "text": "im",
+     "start": 18.739,
+     "end": 18.819
+    },
+    {
+     "text": "Büro",
+     "start": 18.859,
+     "end": 19.059
+    },
+    {
+     "text": "auch",
+     "start": 19.079,
+     "end": 19.159
+    },
+    {
+     "text": "viele",
+     "start": 19.239,
+     "end": 19.379
+    },
+    {
+     "text": "Sprachen,",
+     "start": 19.439,
+     "end": 19.879
+    },
+    {
+     "text": "zum",
+     "start": 20.02,
+     "end": 20.079
+    },
+    {
+     "text": "Beispiel",
+     "start": 20.119,
+     "end": 20.299
+    },
+    {
+     "text": "Arabisch,",
+     "start": 20.379,
+     "end": 20.799
+    },
+    {
+     "text": "Polnisch.",
+     "start": 20.899,
+     "end": 21.339
+    }
+   ],
+   "pages": [
+    0,
+    4,
+    9
+   ],
+   "treatment": "wordbox",
+   "zone": "chest",
+   "glass": null,
+   "boxIndices": [
+    11,
+    12
+   ],
+   "y": 1200,
+   "chinY": 1060
+  },
+  {
+   "id": "cc-10",
+   "start": 21.34,
+   "end": 26.799,
+   "tokens": [
+    {
+     "text": "Unsere",
+     "start": 21.42,
+     "end": 21.599
+    },
+    {
+     "text": "litauischen",
+     "start": 21.659,
+     "end": 22.159
+    },
+    {
+     "text": "und",
+     "start": 22.199,
+     "end": 22.28
+    },
+    {
+     "text": "tschechischen",
+     "start": 22.299,
+     "end": 22.619
+    },
+    {
+     "text": "Fahrer",
+     "start": 22.719,
+     "end": 22.939
+    },
+    {
+     "text": "verstehen",
+     "start": 23,
+     "end": 23.279
+    },
+    {
+     "text": "ebenso",
+     "start": 23.34,
+     "end": 23.579
+    },
+    {
+     "text": "Polnisch,",
+     "start": 23.68,
+     "end": 24.02
+    },
+    {
+     "text": "von",
+     "start": 24.059,
+     "end": 24.159
+    },
+    {
+     "text": "daher",
+     "start": 24.199,
+     "end": 24.479
+    },
+    {
+     "text": "ist",
+     "start": 24.739,
+     "end": 24.84
+    },
+    {
+     "text": "überhaupt",
+     "start": 24.899,
+     "end": 25.18
+    },
+    {
+     "text": "kein",
+     "start": 25.239,
+     "end": 25.42
+    },
+    {
+     "text": "Problem",
+     "start": 25.5,
+     "end": 25.779
+    },
+    {
+     "text": "mit",
+     "start": 25.84,
+     "end": 25.899
+    },
+    {
+     "text": "der",
+     "start": 25.939,
+     "end": 26.039
+    },
+    {
+     "text": "Kommunikation.",
+     "start": 26.079,
+     "end": 26.799
+    }
+   ],
+   "pages": [
+    0,
+    2,
+    6,
+    11,
+    14
+   ],
+   "treatment": "hero-red",
+   "zone": "chest",
+   "glass": null,
+   "heroIndex": 12,
+   "heroCount": 2,
+   "y": 1200,
+   "chinY": 1060
+  },
+  {
+   "id": "cc-11",
+   "start": 26.799,
+   "end": 30.799,
+   "tokens": [
+    {
+     "text": "Es",
+     "start": 26.879,
+     "end": 26.959
+    },
+    {
+     "text": "ist",
+     "start": 27,
+     "end": 27.079
+    },
+    {
+     "text": "wichtig,",
+     "start": 27.119,
+     "end": 27.379
+    },
+    {
+     "text": "dass",
+     "start": 27.439,
+     "end": 27.519
+    },
+    {
+     "text": "der",
+     "start": 27.559,
+     "end": 27.619
+    },
+    {
+     "text": "Fahrer",
+     "start": 27.699,
+     "end": 27.92
+    },
+    {
+     "text": "freundlich",
+     "start": 27.979,
+     "end": 28.34
+    },
+    {
+     "text": "und",
+     "start": 28.379,
+     "end": 28.479
+    },
+    {
+     "text": "respektvoll",
+     "start": 28.519,
+     "end": 29.099
+    },
+    {
+     "text": "ist",
+     "start": 29.159,
+     "end": 29.279
+    },
+    {
+     "text": "und",
+     "start": 29.379,
+     "end": 29.459
+    },
+    {
+     "text": "dass",
+     "start": 29.479,
+     "end": 29.599
+    },
+    {
+     "text": "er",
+     "start": 29.639,
+     "end": 29.679
+    },
+    {
+     "text": "einfach",
+     "start": 29.719,
+     "end": 29.979
+    },
+    {
+     "text": "lernbereit",
+     "start": 30.039,
+     "end": 30.579
+    },
+    {
+     "text": "ist.",
+     "start": 30.639,
+     "end": 30.799
+    }
+   ],
+   "pages": [
+    0,
+    3,
+    7,
+    13
+   ],
+   "treatment": "hero-white",
+   "zone": "chest",
+   "glass": null,
+   "heroIndex": 8,
+   "heroCount": 1,
+   "y": 1100,
+   "chinY": 650
+  },
+  {
+   "id": "cc-12",
+   "start": 30.84,
+   "end": 32.37,
+   "tokens": [
+    {
+     "text": "Craiss",
+     "start": 30.92,
+     "end": 31.179
+    },
+    {
+     "text": "ist",
+     "start": 31.26,
+     "end": 31.359
+    },
+    {
+     "text": "gute",
+     "start": 31.399,
+     "end": 31.599
+    },
+    {
+     "text": "Atmosphäre.",
+     "start": 31.719,
+     "end": 32.239
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "hero-blue",
+   "zone": "chest",
+   "glass": null,
+   "y": 1150,
+   "heroIndex": 2,
+   "heroCount": 2
+  },
+  {
+   "id": "cc-13",
+   "start": 32.42,
+   "end": 34.819,
+   "tokens": [
+    {
+     "text": "Fünfzig",
+     "start": 32.5,
+     "end": 32.799
+    },
+    {
+     "text": "Jahr",
+     "start": 32.919,
+     "end": 33.02
+    },
+    {
+     "text": "hier",
+     "start": 33.079,
+     "end": 33.159
+    },
+    {
+     "text": "in",
+     "start": 33.219,
+     "end": 33.279
+    },
+    {
+     "text": "der",
+     "start": 33.299,
+     "end": 33.38
+    },
+    {
+     "text": "Firma,",
+     "start": 33.439,
+     "end": 33.859
+    },
+    {
+     "text": "über",
+     "start": 33.959,
+     "end": 34.119
+    },
+    {
+     "text": "fünfzig",
+     "start": 34.2,
+     "end": 34.479
+    },
+    {
+     "text": "Jahr.",
+     "start": 34.599,
+     "end": 34.819
+    }
+   ],
+   "pages": [
+    0,
+    3
+   ],
+   "treatment": "hero-red",
+   "zone": "chest",
+   "glass": null,
+   "heroIndex": 0,
+   "heroCount": 2,
+   "y": 1150,
+   "chinY": 840
+  },
+  {
+   "id": "cc-14",
+   "start": 34.859,
+   "end": 40.539,
+   "tokens": [
+    {
+     "text": "Trotzdem,",
+     "start": 34.939,
+     "end": 35.399
+    },
+    {
+     "text": "dass",
+     "start": 35.719,
+     "end": 35.84
+    },
+    {
+     "text": "ich",
+     "start": 35.919,
+     "end": 35.959
+    },
+    {
+     "text": "in",
+     "start": 36.04,
+     "end": 36.119
+    },
+    {
+     "text": "Rente",
+     "start": 36.239,
+     "end": 36.5
+    },
+    {
+     "text": "bin,",
+     "start": 36.54,
+     "end": 36.779
+    },
+    {
+     "text": "möchte",
+     "start": 37.119,
+     "end": 37.299
+    },
+    {
+     "text": "ich",
+     "start": 37.36,
+     "end": 37.419
+    },
+    {
+     "text": "noch",
+     "start": 37.439,
+     "end": 37.54
+    },
+    {
+     "text": "gern",
+     "start": 37.599,
+     "end": 37.779
+    },
+    {
+     "text": "fahren",
+     "start": 37.879,
+     "end": 38.219
+    },
+    {
+     "text": "und",
+     "start": 38.5,
+     "end": 38.559
+    },
+    {
+     "text": "bei",
+     "start": 38.599,
+     "end": 38.68
+    },
+    {
+     "text": "Craiss",
+     "start": 38.819,
+     "end": 39.239
+    },
+    {
+     "text": "passt",
+     "start": 39.299,
+     "end": 39.7
+    },
+    {
+     "text": "optimal.",
+     "start": 39.759,
+     "end": 40.559
+    }
+   ],
+   "pages": [
+    0,
+    6,
+    11
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": {
+    "text": "RENTE",
+    "startSec": 36.239,
+    "zone": "top",
+    "y": 100
+   },
+   "y": 1150
+  },
+  {
+   "id": "cc-15",
+   "start": 40.539,
+   "end": 44.109,
+   "tokens": [
+    {
+     "text": "Viele",
+     "start": 40.619,
+     "end": 40.779
+    },
+    {
+     "text": "Fahrer",
+     "start": 40.86,
+     "end": 41.119
+    },
+    {
+     "text": "wundern",
+     "start": 41.159,
+     "end": 41.5
+    },
+    {
+     "text": "sich,",
+     "start": 41.54,
+     "end": 41.739
+    },
+    {
+     "text": "dass",
+     "start": 41.799,
+     "end": 42.099
+    },
+    {
+     "text": "wir",
+     "start": 42.399,
+     "end": 42.559
+    },
+    {
+     "text": "in",
+     "start": 42.619,
+     "end": 42.7
+    },
+    {
+     "text": "so",
+     "start": 42.799,
+     "end": 42.879
+    },
+    {
+     "text": "engem",
+     "start": 42.919,
+     "end": 43.159
+    },
+    {
+     "text": "Kontakt",
+     "start": 43.2,
+     "end": 43.559
+    },
+    {
+     "text": "stehen.",
+     "start": 43.619,
+     "end": 43.959
+    }
+   ],
+   "pages": [
+    0,
+    4,
+    9
+   ],
+   "treatment": "hero-white",
+   "zone": "chest",
+   "glass": null,
+   "y": 1150,
+   "heroIndex": 9,
+   "heroCount": 1
+  },
+  {
+   "id": "cc-16",
+   "start": 44.159,
+   "end": 45.6,
+   "tokens": [
+    {
+     "text": "Du",
+     "start": 44.239,
+     "end": 44.299
+    },
+    {
+     "text": "bist",
+     "start": 44.34,
+     "end": 44.479
+    },
+    {
+     "text": "keine",
+     "start": 44.52,
+     "end": 44.719
+    },
+    {
+     "text": "Zahl.",
+     "start": 44.84,
+     "end": 45.039
+    }
+   ],
+   "pages": [
+    0
+   ],
+   "treatment": "wordbox",
+   "zone": "chest",
+   "glass": null,
+   "y": 1180,
+   "chinY": 1010
+  },
+  {
+   "id": "cc-17",
+   "start": 45.6,
+   "end": 47.519,
+   "tokens": [
+    {
+     "text": "Das",
+     "start": 45.079,
+     "end": 45.139
+    },
+    {
+     "text": "ist",
+     "start": 45.18,
+     "end": 45.239
+    },
+    {
+     "text": "mir",
+     "start": 45.239,
+     "end": 45.36
+    },
+    {
+     "text": "sehr",
+     "start": 45.379,
+     "end": 45.5
+    },
+    {
+     "text": "wichtig,",
+     "start": 45.559,
+     "end": 45.799
+    },
+    {
+     "text": "dass",
+     "start": 45.84,
+     "end": 45.919
+    },
+    {
+     "text": "du",
+     "start": 45.959,
+     "end": 46.02
+    },
+    {
+     "text": "das",
+     "start": 46.059,
+     "end": 46.099
+    },
+    {
+     "text": "auch",
+     "start": 46.119,
+     "end": 46.279
+    },
+    {
+     "text": "fühlst.",
+     "start": 46.319,
+     "end": 46.919
+    }
+   ],
+   "pages": [
+    0,
+    5
+   ],
+   "treatment": "rail",
+   "zone": "chest",
+   "glass": null
+  }
+ ]
+}

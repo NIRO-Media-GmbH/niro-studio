@@ -1,0 +1,19 @@
+{
+  "name": "Dold Holzwerke",
+  "colors": {
+    "primary": "#00694D",
+    "secondary": "#424242",
+    "accent": "#F6EA5E",
+    "background": "#FFFFFF",
+    "text": "#424242"
+  },
+  "fonts": {
+    "heading": "Roboto",
+    "body": "Roboto"
+  },
+  "logo": "clients/dold/logo.svg",
+  "style": {
+    "borderRadius": 12,
+    "animationSpeed": "normal"
+  }
+}
