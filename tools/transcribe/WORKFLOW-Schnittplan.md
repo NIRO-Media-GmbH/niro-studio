@@ -52,28 +52,40 @@ Erster Dreh/`, Session-Protokoll 2026-07-08/09).
    warnbox = Projekt-Hauptregel, kapitel_farben, dateiname), dann
    `venv/bin/python scripts/render_schnittplan_pdf.py "<Chargen-Ordner>"`.
    **Seitenzahl je Kapitel prüfen** (pypdf) — Budget unten einhalten, sonst
-   Datei kürzen (nicht das Layout quetschen).
+   Datei kürzen (nicht das Layout quetschen); fast leere Schlussseiten
+   vermeiden (letzte Bullets zusammenziehen).
+   **Zitat-Prüfung darf nicht leerlaufen:** `verify_plans.py` muss die Zitate
+   auch erkennen (Zähler „Zitat-Fragmente" > 0). Die Pläne schließen Zitate mit
+   ASCII-`"` — Regex `„([^“”"]+)["“”]`, Vorlage `projects/Steuerkanzlei Ludwig x
+   Taxodia/…/_intern/verify_plans.py` (mit Leerlauf-Schutz und Gegentest).
 9. **Protokoll.** `Protokoll.md` im Chargen-Ordner fortschreiben.
 
 ## Format-Standard Cutter-Plan (verbindlich, Quelle: David-Feedback WLC)
 
-- **Umfang-Budget: max. 2 PDF-Seiten pro Video** (A4 quer; Richtwert
-  < 6.000 Zeichen je MD, Video mit vielen Beats < 6.500 nur wenn nötig)
-  **+ genau 1 Übersichtsseite** vorne. Keine Transkript-Wände — Detail
-  gehört in die Dossier-Langfassung, nicht in die Cutter-PDF.
+- **Umfang: Lesbarkeit vor Seitenbudget** (User 14.09.2026, ersetzt die alte
+  2-Seiten-Grenze): Rappold (60-s-Ads) „3–4 Seiten pro Video" ok, Taxodia
+  (5-min-Erklärvideo) „so viele Seiten wie nötig, nicht über 20" — das ganze
+  PDF bleibt bei max. 20 Seiten, **+ genau 1 Übersichtsseite** vorne. Keine
+  Transkript-Wände — Langfassung und Clip-Funde gehören ins Dossier.
 - **Quellenangabe IMMER dreiteilig:** `<Person> (<Rolle/Position>) ·
   <Ordner>/<Datei> · <von–bis>` — nie nur der Dateiname. Gerade wenn
   Ordnername ≠ echte Rolle (WLC: Ordner „Lagerleiter", Person Gruppenleiter).
   Hooks: `Hooks/<Ordner>/<Datei> · <von–bis> (<wer/was>)`.
 - **Personen-Namen in JEDER Spalte, nie nackte Dateinamen** (David, 2026-07-23,
-  MAN): Auch die Bild-/B-Roll-Spalte nennt Ordner + sichtbare Personen mit Name
-  (Rolle), wo identifiziert; nicht identifizierbare Personen als „n. n."
-  kennzeichnen, nie stillschweigend weglassen. Nur ohne Personen im Bild reicht
-  Ordnername + Bildbeschreibung. Keine ungeprüften Namens-Behauptungen —
-  im Zweifel „vor Nutzung im Clip verifizieren" vermerken.
+  MAN): sichtbare Personen mit Name (Rolle), wo identifiziert; nicht
+  identifizierbare Personen als „n. n." kennzeichnen, nie stillschweigend
+  weglassen. Keine ungeprüften Namens-Behauptungen — im Zweifel „vor Nutzung
+  im Clip verifizieren" vermerken.
+- **Bild-Spalte = „Bild-Vorschlag" nur mit Motiven** (User 14.09.2026, generell):
+  keine B-Roll-Clip- oder Ordner-Verweise, der Cutter wählt den B-Roll selbst.
+  Interview-Bild (Kamera-A/B) und Ton-Quellen bleiben konkret; Sperr- und
+  Datenschutzhinweise zu einzelnen Clips bleiben als Warnung; die Clip-Funde
+  der Sichtung stehen im internen Dossier.
+- **Captions/Einblendungen** bringen neue, website-belegte Fakten und
+  wiederholen nie das Gesagte (User 14.09.2026); Beleg im Kommentar nennen.
 - **Sektionen je Video:** Titel [Zuordnung] · Ziel & Story (max 3 Sätze inkl.
   Ziellänge) · Material (erlaubt/verboten, 3–4 Zeilen) · Ablauf/Szenen-Tabelle
-  (# | Szene | O-Ton wörtlich | Quelle | Bild | Sound | Caption | **Kommentar**)
+  (# | Szene | O-Ton wörtlich | Quelle | Bild-Vorschlag | Sound | Caption | **Kommentar**)
   · Alternativen & Abweichungen (Bullets) · Offen (Bullets).
 - **Kommentar-Spalte (NIRO)** ist Pflicht: Take-Wahl, Warnungen (Regie im Take,
   Artefakte), Schnitt-Hinweise — Telegrammstil, max ~15 Wörter.
@@ -82,8 +94,9 @@ Erster Dreh/`, Session-Protokoll 2026-07-08/09).
   O-Tönen bekommen Unterzeilen (2a/2b …), jede mit eigener Quelle, eigenem Bild
   und eigenem Kommentar. Lieber wird das Dokument länger; das Seiten-Budget darf
   dafür eher ausgereizt werden als Zeilen zusammenzulegen.
-- **Zitate wörtlich** (inkl. Versprecher), lange Zitate mit `[…]` mittig
-  kürzen — Anfang/Ende wörtlich, damit der Cutter In/Out findet. Keine Szene
-  der Langfassung streichen, nur komprimieren.
+- **Zitate wörtlich und vollständig** (inkl. Versprecher; User 14.09.2026:
+  volle Zitate schlagen Kürzung). `[…]` nur für echte Innenschnitte — die
+  Quelle nennt dann mehrere Bereiche mit „+". Keine Szene der Langfassung
+  streichen.
 - Alle Beats müssen abgedeckt sein; kritische Warnungen (Tabus, gesperrte
   Clips, Kannibalisierungs-Sperren zwischen Videos) müssen die Kürzung überleben.
