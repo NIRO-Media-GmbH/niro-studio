@@ -1,0 +1,295 @@
+{
+ "projekt": "Taxodia 09.26",
+ "timeline": "AutoCut video-1-taxodia-weg 2026-09-15 0941 (roh)",
+ "normalize_ok": true,
+ "timeline_kurz_aktiviert": false,
+ "optionen": {
+  "normalizationMode": "True Peak",
+  "targetLevel": -3.0,
+  "setLevelMode": "INDEPENDENT"
+ },
+ "voice_isolation_ok": true,
+ "voice_isolation_vorher": {
+  "isEnabled": false,
+  "amount": 0
+ },
+ "voice_isolation_nachher": {
+  "isEnabled": true,
+  "amount": 50
+ },
+ "gespeichert": true,
+ "aktive_timeline": "AutoCut video-1-taxodia-weg 2026-09-15 0941 (roh)",
+ "clips": [
+  {
+   "clip": "FX3_0222",
+   "rec_in_f": 0,
+   "dauer_f": 60,
+   "true_peak_dbfs": -22.2,
+   "soll_gain_db": 19.2,
+   "ist_audio_volume_db": 19.3,
+   "diff_db": 0.1
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 85,
+   "dauer_f": 148,
+   "true_peak_dbfs": -18.0,
+   "soll_gain_db": 15.0,
+   "ist_audio_volume_db": 14.9,
+   "diff_db": -0.1
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 258,
+   "dauer_f": 87,
+   "true_peak_dbfs": -18.1,
+   "soll_gain_db": 15.1,
+   "ist_audio_volume_db": 15.200000000000001,
+   "diff_db": 0.1
+  },
+  {
+   "clip": "FX3_0222",
+   "rec_in_f": 470,
+   "dauer_f": 198,
+   "true_peak_dbfs": -20.8,
+   "soll_gain_db": 17.8,
+   "ist_audio_volume_db": 17.8,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0222",
+   "rec_in_f": 693,
+   "dauer_f": 299,
+   "true_peak_dbfs": -19.8,
+   "soll_gain_db": 16.8,
+   "ist_audio_volume_db": 16.8,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 1017,
+   "dauer_f": 289,
+   "true_peak_dbfs": -20.3,
+   "soll_gain_db": 17.3,
+   "ist_audio_volume_db": 17.3,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0222",
+   "rec_in_f": 1331,
+   "dauer_f": 98,
+   "true_peak_dbfs": -18.0,
+   "soll_gain_db": 15.0,
+   "ist_audio_volume_db": 14.9,
+   "diff_db": -0.1
+  },
+  {
+   "clip": "FX3_0222",
+   "rec_in_f": 1429,
+   "dauer_f": 235,
+   "true_peak_dbfs": -18.7,
+   "soll_gain_db": 15.7,
+   "ist_audio_volume_db": 15.700000000000001,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 1689,
+   "dauer_f": 534,
+   "true_peak_dbfs": -18.9,
+   "soll_gain_db": 15.9,
+   "ist_audio_volume_db": 15.8,
+   "diff_db": -0.1
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 2248,
+   "dauer_f": 390,
+   "true_peak_dbfs": -16.9,
+   "soll_gain_db": 13.9,
+   "ist_audio_volume_db": 14.0,
+   "diff_db": 0.1
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 2663,
+   "dauer_f": 445,
+   "true_peak_dbfs": -17.1,
+   "soll_gain_db": 14.1,
+   "ist_audio_volume_db": 14.0,
+   "diff_db": -0.1
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 3133,
+   "dauer_f": 137,
+   "true_peak_dbfs": -15.6,
+   "soll_gain_db": 12.6,
+   "ist_audio_volume_db": 12.700000000000001,
+   "diff_db": 0.1
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 3270,
+   "dauer_f": 57,
+   "true_peak_dbfs": -17.9,
+   "soll_gain_db": 14.9,
+   "ist_audio_volume_db": 14.9,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 3327,
+   "dauer_f": 217,
+   "true_peak_dbfs": -17.9,
+   "soll_gain_db": 14.9,
+   "ist_audio_volume_db": 14.9,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0222",
+   "rec_in_f": 3569,
+   "dauer_f": 262,
+   "true_peak_dbfs": -20.9,
+   "soll_gain_db": 17.9,
+   "ist_audio_volume_db": 18.0,
+   "diff_db": 0.1
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 3856,
+   "dauer_f": 145,
+   "true_peak_dbfs": -17.2,
+   "soll_gain_db": 14.2,
+   "ist_audio_volume_db": 14.3,
+   "diff_db": 0.1
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 4026,
+   "dauer_f": 186,
+   "true_peak_dbfs": -17.2,
+   "soll_gain_db": 14.2,
+   "ist_audio_volume_db": 14.200000000000001,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 4237,
+   "dauer_f": 17,
+   "true_peak_dbfs": -18.0,
+   "soll_gain_db": 15.0,
+   "ist_audio_volume_db": 15.0,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 4254,
+   "dauer_f": 75,
+   "true_peak_dbfs": -20.3,
+   "soll_gain_db": 17.3,
+   "ist_audio_volume_db": 17.2,
+   "diff_db": -0.1
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 4329,
+   "dauer_f": 480,
+   "true_peak_dbfs": -18.8,
+   "soll_gain_db": 15.8,
+   "ist_audio_volume_db": 15.8,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0222",
+   "rec_in_f": 4834,
+   "dauer_f": 97,
+   "true_peak_dbfs": -20.2,
+   "soll_gain_db": 17.2,
+   "ist_audio_volume_db": 17.2,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0222",
+   "rec_in_f": 4956,
+   "dauer_f": 94,
+   "true_peak_dbfs": -24.3,
+   "soll_gain_db": 21.3,
+   "ist_audio_volume_db": 21.200000000000003,
+   "diff_db": -0.1
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 5075,
+   "dauer_f": 312,
+   "true_peak_dbfs": -15.4,
+   "soll_gain_db": 12.4,
+   "ist_audio_volume_db": 12.3,
+   "diff_db": -0.1
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 5387,
+   "dauer_f": 67,
+   "true_peak_dbfs": -16.9,
+   "soll_gain_db": 13.9,
+   "ist_audio_volume_db": 14.0,
+   "diff_db": 0.1
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 5479,
+   "dauer_f": 404,
+   "true_peak_dbfs": -17.4,
+   "soll_gain_db": 14.4,
+   "ist_audio_volume_db": 14.4,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 5908,
+   "dauer_f": 99,
+   "true_peak_dbfs": -18.0,
+   "soll_gain_db": 15.0,
+   "ist_audio_volume_db": 15.0,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 6032,
+   "dauer_f": 25,
+   "true_peak_dbfs": -16.5,
+   "soll_gain_db": 13.5,
+   "ist_audio_volume_db": 13.5,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 6057,
+   "dauer_f": 82,
+   "true_peak_dbfs": -16.7,
+   "soll_gain_db": 13.7,
+   "ist_audio_volume_db": 13.700000000000001,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0223",
+   "rec_in_f": 6139,
+   "dauer_f": 210,
+   "true_peak_dbfs": -17.0,
+   "soll_gain_db": 14.0,
+   "ist_audio_volume_db": 14.0,
+   "diff_db": 0.0
+  },
+  {
+   "clip": "FX3_0228",
+   "rec_in_f": 6374,
+   "dauer_f": 271,
+   "true_peak_dbfs": -15.2,
+   "soll_gain_db": 12.2,
+   "ist_audio_volume_db": 12.3,
+   "diff_db": 0.1
+  }
+ ],
+ "abweichungen_ueber_0_5_db": 0
+}

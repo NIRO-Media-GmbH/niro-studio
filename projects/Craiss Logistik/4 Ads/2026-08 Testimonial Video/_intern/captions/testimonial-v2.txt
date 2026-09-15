@@ -1,0 +1,28 @@
+# testimonial-v2 — 05_Testimonial_Video_V2.scribe.json
+# 23 Seiten, 99 Woerter; 13 Seiten (ganz oder teils) sichtbar
+# freie Fenster (s): 2.48–3.48, 5.68–6.84, 8.76–28.20, 31.68–35.28, 37.28–39.28
+# Spalte: SICHT = ganz sichtbar, nn% = teilweise, · = liegt komplett unter Grafik
+
+  1    0.04 –   2.04    ·   Ich mach meine Arbeit.
+  2    3.14 –   5.06    ·   Jeden Tag ist gute Tag.
+  3    6.68 –   9.10    ·   Die Freiheit, die Ruhe im Lkw.
+  4   10.86 –  12.00  SICHT Bei Kleine habe ich gesehen
+  5   11.94 –  13.24  SICHT immer Lkw und ich habe
+  6   13.18 –  14.55  SICHT gesagt, ich mag Lkw fahren
+  7   14.60 –  16.98  SICHT und für mich ist Liebe Job.
+  8   17.54 –  19.18  SICHT Ich melde Chef Werkstatt
+  9   19.22 –  20.66  SICHT und Chef Werkstatt sagen, muss
+ 10   20.64 –  22.46  SICHT warten zehn Minuten.
+ 11   23.94 –  25.37  SICHT Ich habe Mercedes
+ 12   25.42 –  26.87  SICHT und das ist gut.
+ 13   26.92 –  28.30   94%  Bei Firma Craiss arbeite
+ 14   28.26 –  29.86    ·   Nahverkehr, jeden Tag zu Hause
+ 15   29.82 –  30.78    ·   und ist besser für mich,
+ 16   30.74 –  31.95    ·   für meine Familie.
+ 17   32.00 –  33.95  SICHT Trotzdem, dass ich in Rente bin,
+ 18   34.00 –  35.41   91%  möchte ich noch gern fahren.
+ 19   35.46 –  37.50    ·   Bei Craiss passt optimal viele
+ 20   37.46 –  38.93  SICHT Kollegen, alles gut.
+ 21   38.98 –  40.90    ·   Kollegen mit Ungari,
+ 22   40.86 –  42.30    ·   Tschechien, Romanische,
+ 23   42.28 –  45.22    ·   Lituanier, alles internationale.

@@ -1,0 +1,229 @@
+{
+ "fps": 25.0,
+ "paare": [
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Christian_Chefarzt Intensivstation/FX3_9651.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Christian_Chefarzt Intensivstation/a7MK4_20260624_9937.MP4",
+   "offset_s": -1.785,
+   "offset_frames": -45,
+   "confidence": 13.97,
+   "overlap_ref": [
+    1.78,
+    338.75
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Christian_Chefarzt Intensivstation/FX3_9652.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Christian_Chefarzt Intensivstation/a7MK4_20260624_9937.MP4",
+   "offset_s": 265.44,
+   "offset_frames": 6636,
+   "confidence": 1.04,
+   "overlap_ref": [
+    0.0,
+    71.52
+   ],
+   "drift_frames": 0.0,
+   "ok": false,
+   "note": "Konfidenz 1.0 unter 4"
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Marina_Notaufnahme/FX3_9558.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Marina_Notaufnahme/a7MK4_20260624_9890.MP4",
+   "offset_s": 1.19,
+   "offset_frames": 30,
+   "confidence": 21.72,
+   "overlap_ref": [
+    0.0,
+    459.36
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Martina_Notaufnahme/FX3_9554.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Martina_Notaufnahme/a7MK4_20260624_9888.MP4",
+   "offset_s": 237.17,
+   "offset_frames": 5929,
+   "confidence": 19.6,
+   "overlap_ref": [
+    0.0,
+    724.27
+   ],
+   "drift_frames": 0.12,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Martina_Notaufnahme/FX3_9555.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Martina_Notaufnahme/a7MK4_20260624_9888.MP4",
+   "offset_s": 226.795,
+   "offset_frames": 5670,
+   "confidence": 1.12,
+   "overlap_ref": [
+    0.0,
+    27.84
+   ],
+   "drift_frames": 0.0,
+   "ok": false,
+   "note": "Konfidenz 1.1 unter 4"
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Sandra_Notaufnahme/FX3_9556.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Sandra_Notaufnahme/a7MK4_20260624_9889.MP4",
+   "offset_s": 1.365,
+   "offset_frames": 34,
+   "confidence": 13.93,
+   "overlap_ref": [
+    0.0,
+    414.72
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Sandra_Notaufnahme/FX3_9557.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Sandra_Notaufnahme/a7MK4_20260624_9889.MP4",
+   "offset_s": 442.55,
+   "offset_frames": 11064,
+   "confidence": 10.57,
+   "overlap_ref": [
+    0.0,
+    227.52
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Simona und Katja_Intensivstation/FX3_9649.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Simona und Katja_Intensivstation/a7MK4_20260624_9934.MP4",
+   "offset_s": -44.73,
+   "offset_frames": -1118,
+   "confidence": 5.88,
+   "overlap_ref": [
+    44.73,
+    162.33
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Simona und Katja_Intensivstation/FX3_9649.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Simona und Katja_Intensivstation/a7MK4_20260624_9935.MP4",
+   "offset_s": -164.725,
+   "offset_frames": -4118,
+   "confidence": 20.71,
+   "overlap_ref": [
+    164.72,
+    806.49
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Sodan_Intensivstation/FX3_9650.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 1/Sortiert/Interviews/Sodan_Intensivstation/a7MK4_20260624_9936.MP4",
+   "offset_s": -15.825,
+   "offset_frames": -396,
+   "confidence": 16.14,
+   "overlap_ref": [
+    15.82,
+    619.2
+   ],
+   "drift_frames": 0.13,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/FX3_9992.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/a7MK4_20260702_9983.MP4",
+   "offset_s": 1.645,
+   "offset_frames": 41,
+   "confidence": 32.91,
+   "overlap_ref": [
+    0.0,
+    1266.52
+   ],
+   "drift_frames": 0.12,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Jessi_Intensivstation/FX3_9993.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Jessi_Intensivstation/a7MK4_20260702_9984.MP4",
+   "offset_s": 2.205,
+   "offset_frames": 55,
+   "confidence": 18.69,
+   "overlap_ref": [
+    0.0,
+    453.6
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Johanna_Notaufnahme/FX3_9981.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Johanna_Notaufnahme/a7MK4_20260702_9966.MP4",
+   "offset_s": 1.95,
+   "offset_frames": 49,
+   "confidence": 19.74,
+   "overlap_ref": [
+    0.0,
+    603.84
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Marcel_Leiter Notaufnahme_1/FX3_9982.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Marcel_Leiter Notaufnahme_1/a7MK4_20260702_9967.MP4",
+   "offset_s": -12.645,
+   "offset_frames": -316,
+   "confidence": 21.98,
+   "overlap_ref": [
+    12.64,
+    565.44
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Marcel_Leiter Notaufnahme_2/FX3_9995.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Marcel_Leiter Notaufnahme_2/a7MK4_20260702_9986.MP4",
+   "offset_s": -8.19,
+   "offset_frames": -205,
+   "confidence": 10.24,
+   "overlap_ref": [
+    8.19,
+    192.96
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Ramona_Leiterin Intensivstation/FX3_9994.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Ramona_Leiterin Intensivstation/a7MK4_20260702_9985.MP4",
+   "offset_s": -1.435,
+   "offset_frames": -36,
+   "confidence": 29.23,
+   "overlap_ref": [
+    1.44,
+    807.36
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  }
+ ]
+}

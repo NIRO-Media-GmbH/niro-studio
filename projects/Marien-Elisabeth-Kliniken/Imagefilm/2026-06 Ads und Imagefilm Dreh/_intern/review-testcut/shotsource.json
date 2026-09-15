@@ -1,0 +1,1266 @@
+[
+ {
+  "von": 0.0,
+  "bis": 2.96,
+  "key": "KI_hf_20260904_093556",
+  "standort": "KI-generiert",
+  "ordner": "06_AI Generiert",
+  "datei": "hf_20260904_093556_b8f4e7b7-97f4-4b33-9bcd-72d7b2ec4aad.mp4",
+  "score": 0.718,
+  "quellzeit": 1.5,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "KI_hf_20260904_094333",
+   0.625
+  ]
+ },
+ {
+  "von": 2.96,
+  "bis": 3.64,
+  "key": "broll_1_FX3_9535.MP4",
+  "standort": "Standort 1",
+  "ordner": "Rettungswagen",
+  "datei": "FX3_9535.MP4",
+  "score": 0.807,
+  "quellzeit": 65.5,
+  "zoom": 1.43,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_a7MK4_20260702_9966",
+   0.429
+  ]
+ },
+ {
+  "von": 3.64,
+  "bis": 4.44,
+  "key": "broll_1_a7MK4_20260624_9854.MP4",
+  "standort": "Standort 1",
+  "ordner": "Rettungswagen",
+  "datei": "a7MK4_20260624_9854.MP4",
+  "score": 0.679,
+  "quellzeit": 1.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9903.MP4",
+   0.625
+  ]
+ },
+ {
+  "von": 4.44,
+  "bis": 5.16,
+  "key": "broll_1_FX3_9546.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9546.MP4",
+  "score": 0.96,
+  "quellzeit": 62.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9913.MP4",
+   0.548
+  ]
+ },
+ {
+  "von": 5.16,
+  "bis": 5.84,
+  "key": "broll_1_a7MK4_20260624_9882.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "a7MK4_20260624_9882.MP4",
+  "score": 0.58,
+  "quellzeit": 6.5,
+  "zoom": 2.0,
+  "treffer": 1,
+  "zweitbester": [
+   "broll_1_FX3_9537.MP4",
+   0.541
+  ]
+ },
+ {
+  "von": 5.84,
+  "bis": 6.56,
+  "key": "broll_1_FX3_9535.MP4",
+  "standort": "Standort 1",
+  "ordner": "Rettungswagen",
+  "datei": "FX3_9535.MP4",
+  "score": 0.529,
+  "quellzeit": 192.5,
+  "zoom": 1.67,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_FX3_0025.MP4",
+   0.416
+  ]
+ },
+ {
+  "von": 6.56,
+  "bis": 7.24,
+  "key": "broll_1_FX3_9512.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9512.MP4",
+  "score": 0.947,
+  "quellzeit": 0.5,
+  "zoom": 2.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9511.MP4",
+   0.841
+  ]
+ },
+ {
+  "von": 7.24,
+  "bis": 7.92,
+  "key": "broll_1_a7MK4_20260624_9809.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "a7MK4_20260624_9809.MP4",
+  "score": 0.794,
+  "quellzeit": 4.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9683.MP4",
+   0.528
+  ]
+ },
+ {
+  "von": 7.92,
+  "bis": 8.68,
+  "key": "broll_1_FX3_9513.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9513.MP4",
+  "score": 0.983,
+  "quellzeit": 38.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_a7MK4_20260702_0006.MP4",
+   0.414
+  ]
+ },
+ {
+  "von": 8.68,
+  "bis": 9.44,
+  "key": "broll_1_FX3_9531.MP4",
+  "standort": "Standort 1",
+  "ordner": "Rettungswagen",
+  "datei": "FX3_9531.MP4",
+  "score": 0.501,
+  "quellzeit": 51.5,
+  "zoom": 1.43,
+  "treffer": 1,
+  "zweitbester": [
+   "Actioncam_1_DJI_20260624141255_0013_D",
+   0.499
+  ]
+ },
+ {
+  "von": 9.44,
+  "bis": 10.16,
+  "key": "broll_1_FX3_9538.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9538.MP4",
+  "score": 0.907,
+  "quellzeit": 10.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9569.MP4",
+   0.465
+  ]
+ },
+ {
+  "von": 10.16,
+  "bis": 10.88,
+  "key": "broll_1_a7MK4_20260624_9866.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "a7MK4_20260624_9866.MP4",
+  "score": 0.991,
+  "quellzeit": 2.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9664.MP4",
+   0.502
+  ]
+ },
+ {
+  "von": 10.88,
+  "bis": 11.6,
+  "key": "broll_1_FX3_9545.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9545.MP4",
+  "score": 0.891,
+  "quellzeit": 2.0,
+  "zoom": 1.67,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9880.MP4",
+   0.652
+  ]
+ },
+ {
+  "von": 11.6,
+  "bis": 12.36,
+  "key": "broll_1_FX3_9524.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9524.MP4",
+  "score": 0.856,
+  "quellzeit": 2.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_FX3_0033.MP4",
+   0.387
+  ]
+ },
+ {
+  "von": 12.36,
+  "bis": 13.08,
+  "key": "broll_1_FX3_9544.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9544.MP4",
+  "score": 0.999,
+  "quellzeit": 42.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_a7MK4_20260702_0713.MP4",
+   0.56
+  ]
+ },
+ {
+  "von": 13.08,
+  "bis": 13.88,
+  "key": "broll_1_FX3_9543.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9543.MP4",
+  "score": 0.99,
+  "quellzeit": 20.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "Actioncam_1_DJI_20260624141255_0013_D",
+   0.48
+  ]
+ },
+ {
+  "von": 13.88,
+  "bis": 14.84,
+  "key": "broll_1_a7MK4_20260624_9877.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "a7MK4_20260624_9877.MP4",
+  "score": 0.808,
+  "quellzeit": 1.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_a7MK4_20260624_9935",
+   0.456
+  ]
+ },
+ {
+  "von": 14.84,
+  "bis": 16.56,
+  "key": "broll_1_FX3_9540.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9540.MP4",
+  "score": 0.994,
+  "quellzeit": 10.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9870.MP4",
+   0.528
+  ]
+ },
+ {
+  "von": 16.56,
+  "bis": 18.52,
+  "key": "Mavic_1_DJI_0405",
+  "standort": "Standort 1",
+  "ordner": "Mavic",
+  "datei": "DJI_0405",
+  "score": 0.878,
+  "quellzeit": 7.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "Mavic_1_DJI_0407",
+   0.547
+  ]
+ },
+ {
+  "von": 18.52,
+  "bis": 21.2,
+  "key": "Mavic_2_DJI_0419",
+  "standort": "Standort 2",
+  "ordner": "Mavic",
+  "datei": "DJI_0419",
+  "score": 0.783,
+  "quellzeit": 5.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "Mavic_2_DJI_0418",
+   0.71
+  ]
+ },
+ {
+  "von": 21.2,
+  "bis": 23.04,
+  "key": "iv_1_FX3_9557",
+  "standort": "Standort 1",
+  "ordner": "Interview Sandra_Notaufnahme",
+  "datei": "FX3_9557",
+  "score": 0.997,
+  "quellzeit": 214.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_FX3_9556",
+   0.829
+  ]
+ },
+ {
+  "von": 23.04,
+  "bis": 27.0,
+  "key": "iv_1_a7MK4_20260624_9889",
+  "standort": "Standort 1",
+  "ordner": "Interview Sandra_Notaufnahme",
+  "datei": "a7MK4_20260624_9889",
+  "score": 0.967,
+  "quellzeit": 664.0,
+  "zoom": 1.0,
+  "treffer": 1,
+  "zweitbester": [
+   "iv_1_a7MK4_20260624_9888",
+   0.646
+  ]
+ },
+ {
+  "von": 27.0,
+  "bis": 28.96,
+  "key": "broll_2_FX3_9985.MP4",
+  "standort": "Standort 2",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9985.MP4",
+  "score": 0.782,
+  "quellzeit": 27.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_a7MK4_20260702_0715.MP4",
+   0.602
+  ]
+ },
+ {
+  "von": 28.96,
+  "bis": 30.84,
+  "key": "broll_2_a7MK4_20260702_9973.MP4",
+  "standort": "Standort 2",
+  "ordner": "Notaufnahme",
+  "datei": "a7MK4_20260702_9973.MP4",
+  "score": 0.905,
+  "quellzeit": 1.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9810.MP4",
+   0.611
+  ]
+ },
+ {
+  "von": 30.84,
+  "bis": 34.64,
+  "key": "iv_1_a7MK4_20260624_9936",
+  "standort": "Standort 1",
+  "ordner": "Interview Sodan_Intensivstation",
+  "datei": "a7MK4_20260624_9936",
+  "score": 0.986,
+  "quellzeit": 292.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_FX3_9650",
+   0.538
+  ]
+ },
+ {
+  "von": 34.64,
+  "bis": 36.8,
+  "key": "iv_2_FX3_9994",
+  "standort": "Standort 2",
+  "ordner": "Interview Ramona_Leiterin Intensivstation",
+  "datei": "FX3_9994",
+  "score": 0.975,
+  "quellzeit": 464.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_FX3_9993",
+   0.875
+  ]
+ },
+ {
+  "von": 36.8,
+  "bis": 37.68,
+  "key": "iv_2_a7MK4_20260702_9985",
+  "standort": "Standort 2",
+  "ordner": "Interview Ramona_Leiterin Intensivstation",
+  "datei": "a7MK4_20260702_9985",
+  "score": 0.973,
+  "quellzeit": 672.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_a7MK4_20260702_9983",
+   0.613
+  ]
+ },
+ {
+  "von": 37.68,
+  "bis": 39.08,
+  "key": "broll_2_FX3_0006.MP4",
+  "standort": "Standort 2",
+  "ordner": "Beatmungszimmer",
+  "datei": "FX3_0006.MP4",
+  "score": 0.693,
+  "quellzeit": 5.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9907.MP4",
+   0.587
+  ]
+ },
+ {
+  "von": 39.08,
+  "bis": 42.28,
+  "key": "broll_2_FX3_0003.MP4",
+  "standort": "Standort 2",
+  "ordner": "Beatmungszimmer",
+  "datei": "FX3_0003.MP4",
+  "score": 0.837,
+  "quellzeit": 25.0,
+  "zoom": 1.11,
+  "treffer": 1,
+  "zweitbester": [
+   "Actioncam_1_DJI_20260624112353_0010_D",
+   0.589
+  ]
+ },
+ {
+  "von": 42.28,
+  "bis": 43.72,
+  "key": "iv_2_FX3_9993",
+  "standort": "Standort 2",
+  "ordner": "Interview Jessi_Intensivstation",
+  "datei": "FX3_9993",
+  "score": 0.999,
+  "quellzeit": 318.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_FX3_9992",
+   0.868
+  ]
+ },
+ {
+  "von": 43.72,
+  "bis": 45.44,
+  "key": "iv_2_a7MK4_20260702_9984",
+  "standort": "Standort 2",
+  "ordner": "Interview Jessi_Intensivstation",
+  "datei": "a7MK4_20260702_9984",
+  "score": 0.859,
+  "quellzeit": 206.0,
+  "zoom": 1.25,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_a7MK4_20260702_9986",
+   0.726
+  ]
+ },
+ {
+  "von": 45.44,
+  "bis": 47.04,
+  "key": "broll_1_FX3_9645.MP4",
+  "standort": "Standort 1",
+  "ordner": "Verwaltung",
+  "datei": "FX3_9645.MP4",
+  "score": 0.866,
+  "quellzeit": 18.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_a7MK4_20260702_9974.MP4",
+   0.512
+  ]
+ },
+ {
+  "von": 47.04,
+  "bis": 48.2,
+  "key": "broll_1_FX3_9646.MP4",
+  "standort": "Standort 1",
+  "ordner": "Verwaltung",
+  "datei": "FX3_9646.MP4",
+  "score": 0.86,
+  "quellzeit": 14.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_a7MK4_20260702_9988.MP4",
+   0.663
+  ]
+ },
+ {
+  "von": 48.2,
+  "bis": 49.32,
+  "key": "iv_1_FX3_9558",
+  "standort": "Standort 1",
+  "ordner": "Interview Marina_Notaufnahme",
+  "datei": "FX3_9558",
+  "score": 0.999,
+  "quellzeit": 214.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_FX3_9554",
+   0.657
+  ]
+ },
+ {
+  "von": 49.32,
+  "bis": 50.92,
+  "key": "broll_1_FX3_9522.MP4",
+  "standort": "Standort 1",
+  "ordner": "Notaufnahme",
+  "datei": "FX3_9522.MP4",
+  "score": 0.998,
+  "quellzeit": 8.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9829.MP4",
+   0.41
+  ]
+ },
+ {
+  "von": 50.92,
+  "bis": 52.04,
+  "key": "iv_1_a7MK4_20260624_9890",
+  "standort": "Standort 1",
+  "ordner": "Interview Marina_Notaufnahme",
+  "datei": "a7MK4_20260624_9890",
+  "score": 0.885,
+  "quellzeit": 244.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_FX3_9558",
+   0.67
+  ]
+ },
+ {
+  "von": 52.04,
+  "bis": 54.16,
+  "key": "broll_2_FX3_0060.MP4",
+  "standort": "Standort 2",
+  "ordner": "Außenbereich",
+  "datei": "FX3_0060.MP4",
+  "score": 0.999,
+  "quellzeit": 1.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9882.MP4",
+   0.559
+  ]
+ },
+ {
+  "von": 54.16,
+  "bis": 56.48,
+  "key": "iv_1_FX3_9554",
+  "standort": "Standort 1",
+  "ordner": "Interview Martina_Notaufnahme",
+  "datei": "FX3_9554",
+  "score": 0.993,
+  "quellzeit": 322.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_a7MK4_20260624_9888",
+   0.977
+  ]
+ },
+ {
+  "von": 56.48,
+  "bis": 60.56,
+  "key": "broll_1_FX3_9636.MP4",
+  "standort": "Standort 1",
+  "ordner": "Durch Flur laufen",
+  "datei": "FX3_9636.MP4",
+  "score": 0.811,
+  "quellzeit": 4.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9585.MP4",
+   0.678
+  ]
+ },
+ {
+  "von": 60.56,
+  "bis": 63.48,
+  "key": "iv_1_a7MK4_20260624_9888",
+  "standort": "Standort 1",
+  "ordner": "Interview Martina_Notaufnahme",
+  "datei": "a7MK4_20260624_9888",
+  "score": 0.96,
+  "quellzeit": 586.0,
+  "zoom": 1.0,
+  "treffer": 1,
+  "zweitbester": [
+   "iv_1_FX3_9554",
+   0.662
+  ]
+ },
+ {
+  "von": 63.48,
+  "bis": 66.92,
+  "key": "broll_1_FX3_9624.MP4",
+  "standort": "Standort 1",
+  "ordner": "Medikamentenraum",
+  "datei": "FX3_9624.MP4",
+  "score": 0.777,
+  "quellzeit": 1.5,
+  "zoom": 1.11,
+  "treffer": 1,
+  "zweitbester": [
+   "broll_1_FX3_9625.MP4",
+   0.612
+  ]
+ },
+ {
+  "von": 66.92,
+  "bis": 68.08,
+  "key": "broll_1_FX3_9627.MP4",
+  "standort": "Standort 1",
+  "ordner": "Medikamentenraum",
+  "datei": "FX3_9627.MP4",
+  "score": 0.856,
+  "quellzeit": 18.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9854.MP4",
+   0.601
+  ]
+ },
+ {
+  "von": 68.08,
+  "bis": 69.44,
+  "key": "broll_1_FX3_9628.MP4",
+  "standort": "Standort 1",
+  "ordner": "Medikamentenraum",
+  "datei": "FX3_9628.MP4",
+  "score": 0.957,
+  "quellzeit": 13.5,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9629.MP4",
+   0.755
+  ]
+ },
+ {
+  "von": 69.44,
+  "bis": 70.92,
+  "key": "iv_1_a7MK4_20260624_9935",
+  "standort": "Standort 1",
+  "ordner": "Interview Simona und Katja_Intensivstation",
+  "datei": "a7MK4_20260624_9935",
+  "score": 0.987,
+  "quellzeit": 314.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_a7MK4_20260624_9934",
+   0.553
+  ]
+ },
+ {
+  "von": 70.92,
+  "bis": 72.32,
+  "key": "broll_1_FX3_9632.MP4",
+  "standort": "Standort 1",
+  "ordner": "Kolleginnen am Tablet",
+  "datei": "FX3_9632.MP4",
+  "score": 0.859,
+  "quellzeit": 5.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_FX3_0022.MP4",
+   0.429
+  ]
+ },
+ {
+  "von": 72.32,
+  "bis": 74.4,
+  "key": "broll_1_FX3_9631.MP4",
+  "standort": "Standort 1",
+  "ordner": "Kolleginnen am Tablet",
+  "datei": "FX3_9631.MP4",
+  "score": 0.864,
+  "quellzeit": 5.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9634.MP4",
+   0.516
+  ]
+ },
+ {
+  "von": 74.4,
+  "bis": 75.08,
+  "key": "Mavic_1_DJI_0409",
+  "standort": "Standort 1",
+  "ordner": "Mavic",
+  "datei": "DJI_0409",
+  "score": 0.771,
+  "quellzeit": 7.5,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9885.MP4",
+   0.456
+  ]
+ },
+ {
+  "von": 75.08,
+  "bis": 75.72,
+  "key": "Mavic_1_DJI_0410",
+  "standort": "Standort 1",
+  "ordner": "Mavic",
+  "datei": "DJI_0410",
+  "score": 0.772,
+  "quellzeit": 0.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9542.MP4",
+   0.512
+  ]
+ },
+ {
+  "von": 75.72,
+  "bis": 76.56,
+  "key": "Mavic_1_DJI_0411",
+  "standort": "Standort 1",
+  "ordner": "Mavic",
+  "datei": "DJI_0411",
+  "score": 0.839,
+  "quellzeit": 11.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "Actioncam_2_DJI_20260702115528_0012_D",
+   0.702
+  ]
+ },
+ {
+  "von": 76.56,
+  "bis": 77.04,
+  "key": "Mavic_2_DJI_0417",
+  "standort": "Standort 2",
+  "ordner": "Mavic",
+  "datei": "DJI_0417",
+  "score": 0.743,
+  "quellzeit": 3.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "Actioncam_2_DJI_20260702123006_0013_D",
+   0.361
+  ]
+ },
+ {
+  "von": 77.04,
+  "bis": 77.88,
+  "key": "Mavic_2_DJI_0418",
+  "standort": "Standort 2",
+  "ordner": "Mavic",
+  "datei": "DJI_0418",
+  "score": 0.493,
+  "quellzeit": 32.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9901.MP4",
+   0.405
+  ]
+ },
+ {
+  "von": 77.88,
+  "bis": 81.84,
+  "key": "iv_2_a7MK4_20260702_9983",
+  "standort": "Standort 2",
+  "ordner": "Interview Alina_Intensivstation",
+  "datei": "a7MK4_20260702_9983",
+  "score": 0.92,
+  "quellzeit": 398.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9599.MP4",
+   0.665
+  ]
+ },
+ {
+  "von": 81.84,
+  "bis": 84.2,
+  "key": "iv_2_FX3_9992",
+  "standort": "Standort 2",
+  "ordner": "Interview Alina_Intensivstation",
+  "datei": "FX3_9992",
+  "score": 0.971,
+  "quellzeit": 400.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_FX3_9993",
+   0.866
+  ]
+ },
+ {
+  "von": 84.2,
+  "bis": 85.84,
+  "key": "broll_2_FX3_0004.MP4",
+  "standort": "Standort 2",
+  "ordner": "Beatmungszimmer",
+  "datei": "FX3_0004.MP4",
+  "score": 0.75,
+  "quellzeit": 57.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9615.MP4",
+   0.658
+  ]
+ },
+ {
+  "von": 85.84,
+  "bis": 87.24,
+  "key": "broll_2_FX3_0004.MP4",
+  "standort": "Standort 2",
+  "ordner": "Beatmungszimmer",
+  "datei": "FX3_0004.MP4",
+  "score": 0.72,
+  "quellzeit": 17.5,
+  "zoom": 1.43,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_FX3_9986.MP4",
+   0.446
+  ]
+ },
+ {
+  "von": 87.24,
+  "bis": 89.04,
+  "key": "broll_2_FX3_0004.MP4",
+  "standort": "Standort 2",
+  "ordner": "Beatmungszimmer",
+  "datei": "FX3_0004.MP4",
+  "score": 0.924,
+  "quellzeit": 60.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_a7MK4_20260702_0003.MP4",
+   0.488
+  ]
+ },
+ {
+  "von": 89.04,
+  "bis": 90.0,
+  "key": "iv_1_FX3_9651",
+  "standort": "Standort 1",
+  "ordner": "Interview Christian_Chefarzt Intensivstation",
+  "datei": "FX3_9651",
+  "score": 0.995,
+  "quellzeit": 176.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_FX3_9652",
+   0.475
+  ]
+ },
+ {
+  "von": 90.0,
+  "bis": 91.4,
+  "key": "broll_2_FX3_0029.MP4",
+  "standort": "Standort 2",
+  "ordner": "Schönes Zimmer",
+  "datei": "FX3_0029.MP4",
+  "score": 0.857,
+  "quellzeit": 5.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_FX3_0033.MP4",
+   0.538
+  ]
+ },
+ {
+  "von": 91.4,
+  "bis": 96.04,
+  "key": "iv_1_a7MK4_20260624_9937",
+  "standort": "Standort 1",
+  "ordner": "Interview Christian_Chefarzt Intensivstation",
+  "datei": "a7MK4_20260624_9937",
+  "score": 0.968,
+  "quellzeit": 182.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_FX3_9652",
+   0.546
+  ]
+ },
+ {
+  "von": 96.04,
+  "bis": 98.16,
+  "key": "broll_1_FX3_9616.MP4",
+  "standort": "Standort 1",
+  "ordner": "Mobiles Röntgengerät",
+  "datei": "FX3_9616.MP4",
+  "score": 0.975,
+  "quellzeit": 22.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9542.MP4",
+   0.634
+  ]
+ },
+ {
+  "von": 98.16,
+  "bis": 99.12,
+  "key": "iv_2_a7MK4_20260702_9985",
+  "standort": "Standort 2",
+  "ordner": "Interview Ramona_Leiterin Intensivstation",
+  "datei": "a7MK4_20260702_9985",
+  "score": 0.952,
+  "quellzeit": 178.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_a7MK4_20260702_9983",
+   0.754
+  ]
+ },
+ {
+  "von": 99.12,
+  "bis": 100.2,
+  "key": "iv_2_FX3_9994",
+  "standort": "Standort 2",
+  "ordner": "Interview Ramona_Leiterin Intensivstation",
+  "datei": "FX3_9994",
+  "score": 0.969,
+  "quellzeit": 182.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_FX3_9993",
+   0.873
+  ]
+ },
+ {
+  "von": 100.2,
+  "bis": 101.32,
+  "key": "broll_1_FX3_9591.MP4",
+  "standort": "Standort 1",
+  "ordner": "Röntgenanalyse",
+  "datei": "FX3_9591.MP4",
+  "score": 0.999,
+  "quellzeit": 11.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9899.MP4",
+   0.65
+  ]
+ },
+ {
+  "von": 101.32,
+  "bis": 102.6,
+  "key": "broll_1_FX3_9594.MP4",
+  "standort": "Standort 1",
+  "ordner": "Röntgenanalyse",
+  "datei": "FX3_9594.MP4",
+  "score": 0.869,
+  "quellzeit": 5.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9930.MP4",
+   0.611
+  ]
+ },
+ {
+  "von": 102.6,
+  "bis": 105.04,
+  "key": "broll_1_FX3_9597.MP4",
+  "standort": "Standort 1",
+  "ordner": "Röntgenanalyse",
+  "datei": "FX3_9597.MP4",
+  "score": 0.63,
+  "quellzeit": 2.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9855.MP4",
+   0.543
+  ]
+ },
+ {
+  "von": 105.04,
+  "bis": 106.84,
+  "key": "iv_2_FX3_9981",
+  "standort": "Standort 2",
+  "ordner": "Interview Johanna_Notaufnahme",
+  "datei": "FX3_9981",
+  "score": 0.993,
+  "quellzeit": 224.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9537.MP4",
+   0.523
+  ]
+ },
+ {
+  "von": 106.84,
+  "bis": 108.76,
+  "key": "iv_2_a7MK4_20260702_9966",
+  "standort": "Standort 2",
+  "ordner": "Interview Johanna_Notaufnahme",
+  "datei": "a7MK4_20260702_9966",
+  "score": 0.989,
+  "quellzeit": 228.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9646.MP4",
+   0.449
+  ]
+ },
+ {
+  "von": 108.76,
+  "bis": 110.12,
+  "key": "broll_1_FX3_9582.MP4",
+  "standort": "Standort 1",
+  "ordner": "Intensivstation",
+  "datei": "FX3_9582.MP4",
+  "score": 0.95,
+  "quellzeit": 1.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9882.MP4",
+   0.665
+  ]
+ },
+ {
+  "von": 110.12,
+  "bis": 112.12,
+  "key": "broll_1_a7MK4_20260624_9933.MP4",
+  "standort": "Standort 1",
+  "ordner": "Intensivstation",
+  "datei": "a7MK4_20260624_9933.MP4",
+  "score": 0.906,
+  "quellzeit": 7.5,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9932.MP4",
+   0.674
+  ]
+ },
+ {
+  "von": 112.12,
+  "bis": 114.24,
+  "key": "broll_1_a7MK4_20260624_9930.MP4",
+  "standort": "Standort 1",
+  "ordner": "Intensivstation",
+  "datei": "a7MK4_20260624_9930.MP4",
+  "score": 0.984,
+  "quellzeit": 13.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9537.MP4",
+   0.684
+  ]
+ },
+ {
+  "von": 114.24,
+  "bis": 116.16,
+  "key": "broll_2_FX3_0012.MP4",
+  "standort": "Standort 2",
+  "ordner": "Kolleginnen am Tisch",
+  "datei": "FX3_0012.MP4",
+  "score": 0.697,
+  "quellzeit": 4.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_a7MK4_20260624_9882.MP4",
+   0.428
+  ]
+ },
+ {
+  "von": 116.16,
+  "bis": 117.6,
+  "key": "broll_2_FX3_0010.MP4",
+  "standort": "Standort 2",
+  "ordner": "Kolleginnen am Tisch",
+  "datei": "FX3_0010.MP4",
+  "score": 0.999,
+  "quellzeit": 3.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_FX3_0011.MP4",
+   0.701
+  ]
+ },
+ {
+  "von": 117.6,
+  "bis": 120.52,
+  "key": "iv_2_FX3_9982",
+  "standort": "Standort 2",
+  "ordner": "Interview Marcel_Leiter Notaufnahme_1",
+  "datei": "FX3_9982",
+  "score": 0.927,
+  "quellzeit": 416.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_2_a7MK4_20260702_9967",
+   0.94
+  ]
+ },
+ {
+  "von": 120.52,
+  "bis": 122.16,
+  "key": "broll_2_FX3_9999.MP4",
+  "standort": "Standort 2",
+  "ordner": "Intensivstation",
+  "datei": "FX3_9999.MP4",
+  "score": 0.866,
+  "quellzeit": 22.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "Actioncam_1_DJI_20260624115205_0012_D",
+   0.625
+  ]
+ },
+ {
+  "von": 122.16,
+  "bis": 123.88,
+  "key": "broll_2_FX3_9998.MP4",
+  "standort": "Standort 2",
+  "ordner": "Intensivstation",
+  "datei": "FX3_9998.MP4",
+  "score": 0.847,
+  "quellzeit": 3.5,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9607.MP4",
+   0.587
+  ]
+ },
+ {
+  "von": 123.88,
+  "bis": 126.08,
+  "key": "broll_1_FX3_9680.MP4",
+  "standort": "Standort 1",
+  "ordner": "Eingangsbereich",
+  "datei": "FX3_9680.MP4",
+  "score": 0.883,
+  "quellzeit": 0.0,
+  "zoom": 1.11,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_1_FX3_9681.MP4",
+   0.803
+  ]
+ },
+ {
+  "von": 126.08,
+  "bis": 127.0,
+  "key": "iv_1_FX3_9649",
+  "standort": "Standort 1",
+  "ordner": "Interview Simona und Katja_Intensivstation",
+  "datei": "FX3_9649",
+  "score": 0.991,
+  "quellzeit": 504.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_FX3_0007.MP4",
+   0.38
+  ]
+ },
+ {
+  "von": 127.0,
+  "bis": 129.72,
+  "key": "iv_1_a7MK4_20260624_9935",
+  "standort": "Standort 1",
+  "ordner": "Interview Simona und Katja_Intensivstation",
+  "datei": "a7MK4_20260624_9935",
+  "score": 0.983,
+  "quellzeit": 340.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "iv_1_a7MK4_20260624_9934",
+   0.748
+  ]
+ },
+ {
+  "von": 129.72,
+  "bis": 134.24,
+  "key": "iv_1_FX3_9649",
+  "standort": "Standort 1",
+  "ordner": "Interview Simona und Katja_Intensivstation",
+  "datei": "FX3_9649",
+  "score": 0.988,
+  "quellzeit": 520.0,
+  "zoom": 1.0,
+  "treffer": 2,
+  "zweitbester": [
+   "broll_2_a7MK4_20260702_0710.MP4",
+   0.399
+  ]
+ }
+]

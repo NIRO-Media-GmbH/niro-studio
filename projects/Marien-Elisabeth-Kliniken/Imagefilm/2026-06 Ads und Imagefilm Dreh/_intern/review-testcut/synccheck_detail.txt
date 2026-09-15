@@ -1,0 +1,24 @@
+ 21.20– 23.04 FX3_9557 Kamera FX3_9557 Zoom 1.0: synchron 100% | Score Ø1.00
+ 23.04– 27.00 FX3_9557 Kamera a7MK4_20260624_9889 Zoom 1.0: synchron  52% | Score Ø0.63
+ 30.84– 34.64 FX3_9650 Kamera a7MK4_20260624_9936 Zoom 1.0: synchron  41% | Score Ø0.76 | abweichend: 33.76s Δ-155.28, 33.88s Δ-155.28, 34.00s Δ-155.28, 34.12s Δ-155.28, 34.24s Δ-155.28, 34.36s Δ-155.28, 34.48s Δ-155.28, 34.60s Δ-155.28
+ 34.64– 36.80 FX3_9994 Kamera FX3_9994 Zoom 1.0: synchron  94% | Score Ø1.00 | abweichend: 36.72s Δ-0.52
+ 36.80– 37.68 FX3_9994 Kamera a7MK4_20260702_9985 Zoom 1.0: synchron 100% | Score Ø1.00
+ 42.28– 43.72 FX3_9993 Kamera FX3_9993 Zoom 1.0: synchron 100% | Score Ø1.00
+ 43.72– 45.44 FX3_9993 Kamera a7MK4_20260702_9984 Zoom 1.4: synchron  93% | Score Ø0.94 | abweichend: 44.96s Δ-0.28
+ 48.20– 49.32 FX3_9558 Kamera FX3_9558 Zoom 1.0: synchron 100% | Score Ø1.00
+ 50.92– 52.04 FX3_9558 Kamera a7MK4_20260624_9890 Zoom 1.0: synchron 100% | Score Ø1.00
+ 54.16– 56.48 FX3_9554 Kamera FX3_9554 Zoom 1.0: synchron  53% | Score Ø0.71
+ 60.56– 63.48 FX3_9554 Kamera a7MK4_20260624_9888 Zoom 1.0: synchron  54% | Score Ø0.63
+ 69.44– 70.92 FX3_9649 Kamera a7MK4_20260624_9935 Zoom 1.0: synchron 100% | Score Ø1.00
+ 77.88– 81.84 FX3_9992 Kamera a7MK4_20260702_9983 Zoom 1.0: synchron  97% | Score Ø1.00 | abweichend: 81.76s Δ-0.40
+ 81.84– 84.20 FX3_9992 Kamera FX3_9992 Zoom 1.0: synchron 100% | Score Ø1.00
+ 89.04– 90.00 FX3_9651 Kamera FX3_9651 Zoom 1.0: synchron 100% | Score Ø1.00
+ 91.40– 96.04 FX3_9651 Kamera a7MK4_20260624_9937 Zoom 1.0: synchron  50% | Score Ø0.61
+ 98.16– 99.12 FX3_9994 Kamera a7MK4_20260702_9985 Zoom 1.0: synchron  88% | Score Ø1.00 | abweichend: 99.04s Δ-3.04
+ 99.12–100.20 FX3_9994 Kamera FX3_9994 Zoom 1.0: synchron 100% | Score Ø1.00
+105.04–106.84 FX3_9981 Kamera FX3_9981 Zoom 1.0: synchron 100% | Score Ø1.00
+106.84–108.76 FX3_9981 Kamera a7MK4_20260702_9966 Zoom 1.0: synchron 100% | Score Ø1.00
+117.60–120.52 FX3_9982 Kamera a7MK4_20260702_9967 Zoom 1.0: synchron  54% | Score Ø0.64
+126.08–127.00 FX3_9649 Kamera FX3_9649 Zoom 1.0: synchron 100% | Score Ø1.00
+127.00–129.72 FX3_9649 Kamera a7MK4_20260624_9935 Zoom 1.0: synchron 100% | Score Ø1.00
+129.72–134.24 FX3_9649 Kamera FX3_9649 Zoom 1.0: synchron 100% | Score Ø1.00

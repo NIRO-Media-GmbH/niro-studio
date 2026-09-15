@@ -1,0 +1,258 @@
+[
+  {
+    "video": "Video 1 - Der schnellere Weg nach oben.mp4",
+    "yellowTop": [
+      [
+        "#FFD900",
+        39998
+      ],
+      [
+        "#FFDA00",
+        2008
+      ],
+      [
+        "#FFD800",
+        1719
+      ],
+      [
+        "#FFDB00",
+        1107
+      ],
+      [
+        "#FFDD00",
+        837
+      ]
+    ],
+    "badge": null,
+    "boxes": [
+      {
+        "boxCount": 1,
+        "startSec": 1.8,
+        "endSec": 4.4,
+        "topFrac": 0.4948,
+        "botFrac": 0.5396,
+        "leftFrac": 0.3111,
+        "rightFrac": 0.687
+      },
+      {
+        "boxCount": 1,
+        "startSec": 5.6,
+        "endSec": 7.6,
+        "topFrac": 0.4948,
+        "botFrac": 0.5396,
+        "leftFrac": 0.2593,
+        "rightFrac": 0.7389
+      },
+      {
+        "boxCount": 3,
+        "startSec": 18.4,
+        "endSec": 22.0,
+        "topFrac": 0.4948,
+        "botFrac": 0.5396,
+        "leftFrac": 0.2222,
+        "rightFrac": 0.7759
+      },
+      {
+        "boxCount": 1,
+        "startSec": 29.6,
+        "endSec": 31.2,
+        "topFrac": 0.4948,
+        "botFrac": 0.5396,
+        "leftFrac": 0.2889,
+        "rightFrac": 0.7093
+      },
+      {
+        "boxCount": 1,
+        "startSec": 37.8,
+        "endSec": 44.4,
+        "topFrac": 0.4948,
+        "botFrac": 0.5396,
+        "leftFrac": 0.2704,
+        "rightFrac": 0.7278
+      }
+    ]
+  },
+  {
+    "video": "Video 2 - Raus aus dem Fristen-Hamsterrad.mp4",
+    "yellowTop": [
+      [
+        "#FFD900",
+        20733
+      ],
+      [
+        "#FFD800",
+        1143
+      ],
+      [
+        "#FFDA00",
+        1069
+      ],
+      [
+        "#FED700",
+        513
+      ],
+      [
+        "#FFDB00",
+        501
+      ]
+    ],
+    "badge": null,
+    "boxes": [
+      {
+        "boxCount": 1,
+        "startSec": 13.2,
+        "endSec": 15.0,
+        "topFrac": 0.7552,
+        "botFrac": 0.7979,
+        "leftFrac": 0.3019,
+        "rightFrac": 0.6981
+      },
+      {
+        "boxCount": 1,
+        "startSec": 18.2,
+        "endSec": 20.0,
+        "topFrac": 0.4948,
+        "botFrac": 0.5396,
+        "leftFrac": 0.337,
+        "rightFrac": 0.6611
+      },
+      {
+        "boxCount": 1,
+        "startSec": 22.4,
+        "endSec": 24.0,
+        "topFrac": 0.4958,
+        "botFrac": 0.5385,
+        "leftFrac": 0.3241,
+        "rightFrac": 0.6759
+      },
+      {
+        "boxCount": 1,
+        "startSec": 24.8,
+        "endSec": 26.4,
+        "topFrac": 0.4948,
+        "botFrac": 0.5396,
+        "leftFrac": 0.2593,
+        "rightFrac": 0.7389
+      },
+      {
+        "boxCount": 1,
+        "startSec": 31.8,
+        "endSec": 33.4,
+        "topFrac": 0.4958,
+        "botFrac": 0.5385,
+        "leftFrac": 0.2926,
+        "rightFrac": 0.7056
+      },
+      {
+        "boxCount": 1,
+        "startSec": 34.4,
+        "endSec": 35.6,
+        "topFrac": 0.4958,
+        "botFrac": 0.5385,
+        "leftFrac": 0.3444,
+        "rightFrac": 0.6519
+      }
+    ]
+  },
+  {
+    "video": "Video 3 - Wieder mit Menschen arbeiten.mp4",
+    "yellowTop": [
+      [
+        "#FFD900",
+        21055
+      ],
+      [
+        "#FFD800",
+        1297
+      ],
+      [
+        "#FFDA00",
+        1067
+      ],
+      [
+        "#FFDB00",
+        792
+      ],
+      [
+        "#FFDD00",
+        561
+      ]
+    ],
+    "badge": null,
+    "boxes": [
+      {
+        "boxCount": 2,
+        "startSec": 12.4,
+        "endSec": 15.4,
+        "topFrac": 0.4958,
+        "botFrac": 0.5385,
+        "leftFrac": 0.2815,
+        "rightFrac": 0.7167
+      },
+      {
+        "boxCount": 1,
+        "startSec": 21.4,
+        "endSec": 23.0,
+        "topFrac": 0.4958,
+        "botFrac": 0.5385,
+        "leftFrac": 0.2963,
+        "rightFrac": 0.7019
+      },
+      {
+        "boxCount": 4,
+        "startSec": 23.8,
+        "endSec": 28.6,
+        "topFrac": 0.4948,
+        "botFrac": 0.5396,
+        "leftFrac": 0.1852,
+        "rightFrac": 0.813
+      }
+    ]
+  },
+  {
+    "video": "Video 4 - Der Steuerjob, der sich nach deinem Leben richtet.mp4",
+    "yellowTop": [
+      [
+        "#FFD900",
+        8647
+      ],
+      [
+        "#FFD800",
+        374
+      ],
+      [
+        "#FFDB00",
+        333
+      ],
+      [
+        "#FFDA00",
+        317
+      ],
+      [
+        "#FFDE00",
+        271
+      ]
+    ],
+    "badge": null,
+    "boxes": [
+      {
+        "boxCount": 1,
+        "startSec": 12.8,
+        "endSec": 14.4,
+        "topFrac": 0.4958,
+        "botFrac": 0.5396,
+        "leftFrac": 0.2741,
+        "rightFrac": 0.7259
+      },
+      {
+        "boxCount": 2,
+        "startSec": 27.8,
+        "endSec": 29.6,
+        "topFrac": 0.4958,
+        "botFrac": 0.5385,
+        "leftFrac": 0.263,
+        "rightFrac": 0.7352
+      }
+    ]
+  }
+]

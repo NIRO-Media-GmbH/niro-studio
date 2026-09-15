@@ -1,0 +1,195 @@
+{
+  "projekt": "Förch / Recruiting — Serie Ausbildung (StuZubi), Dreh 30.06.2026 Stammhaus Neuenstadt",
+  "quelle": "Material/Konzept/Theo Förch - Recruiting-Videos - Google Sheets(1-4).pdf",
+  "hinweise": {
+    "hauptregel": "Werbeanzeigen A/B/C: immer Bewegung im Bild, jeder Szenenwechsel sitzt auf einer Bewegung (Match-Cut, Whip-Pan, Walk-through). Kein statisches Talking-Head.",
+    "tabus": [
+      "Keine Gehaltsvergleiche, keine Lohnniveau-Versprechen (Kunden-Veto, gilt projektweit).",
+      "Berufe-/Studiengangs-Liste war bei Konzeptstand nicht final geklärt — konkrete Berufsnennungen im Schnitt nur, wenn im O-Ton belegt; keine zusätzlichen Berufe erfinden.",
+      "AZ-G-L informativ, kein Conversion-Pitch-Ton."
+    ],
+    "endcards": "AZ-A/B/C: 'Mach Zukunft mit uns.' + CTA 'Klick auf den Button, trag dich ein, und wir lernen uns persönlich kennen.' — AZ-F: 'Mach Zukunft mit uns' + Karriere-URL — AZ-G–L: Link zur passenden Stellenanzeige/Studiengang — AZ-M: karriere.foerch.com. Berufstitel auf Job-Endcards IMMER mit (m/w/d).",
+    "zahlen_anker": "über 60 Jahre / seit 1963 Familienunternehmen; 3.500 Mitarbeiter; 33 Standorte D; 22 Tochtergesellschaften; 55 Länder; 100.000 Artikel/Produkte; 300.000 Kunden; 65.000 Stellplätze; 10.000 Pakete/Tag; rund 20 Wege rein; Logistikzentrum seit 2016",
+    "gestrichen": "AZ-D und AZ-E am 26.06. gestrichen (ersetzt durch F + G–L). Lücke im Alphabet ist gewollt.",
+    "animationen": "AZ-A.5 (Doppellaufbahn-Grafik), AZ-B.5 (Europa-Karte 22 Töchter, Push-out aus AZ-B.4-Gruppenbild), alle Endcards = Post-Production, kein Drehmaterial nötig."
+  },
+  "videos": [
+    {
+      "nr": "AZ-A",
+      "titel": "Werbeanzeige: Hand oder Kopf — bei Förch geht beides",
+      "zuordnung": "Werbeanzeige / Schiene Ausbildung A (Mehrere Wege rein)",
+      "rows": [
+        {"id": "A-Hook-A", "typ": "scripted", "text": "Du weißt noch nicht, ob Ausbildung oder Studium? Bei Förch musst du dich nicht entscheiden. (TH, Person geht durchs Stammhaus/dreht sich in Kamera, Schnitt auf Handgeste)"},
+        {"id": "A-Hook-B", "typ": "scripted", "text": "Hand oder Kopf – wer hat dir gesagt, dass du dich jetzt schon entscheiden musst? (TH Eingang/Flur)"},
+        {"id": "A-Hook-C", "typ": "visual", "text": "Split-Screen: links Werkzeug-Hand (Lager), rechts Bildschirm-Hand (IT). VO: 'Beides geht. Bei Förch.'"},
+        {"id": "A-1", "typ": "scripted", "text": "Werkzeug-Cut Lager (+ Werkstatt-Anteil tbd.): 'Wenn du gerne mit den Händen arbeitest – bei uns kannst du Fachlagerist werden, oder Elektroniker für Betriebstechnik.' Match-Cut Hand am Scanner/Werkzeug."},
+        {"id": "A-2", "typ": "scripted", "text": "Bildschirm-Cut IT (+ Variante Kaufmann am Schreibtisch): 'Wenn du lieber mit dem Kopf arbeitest – bei uns geht Fachinformatik, Kaufmann oder ein duales Studium.' Match-Cut Hand an Maus/Tastatur."},
+        {"id": "A-3", "typ": "scripted", "text": "Gruppe Studierender im Workshop (Besprechungsraum): 'Insgesamt rund 20 Wege rein.' Whip-Pan-Übergang."},
+        {"id": "A-4", "typ": "scripted", "text": "Mitarbeit-Szene Lager (Paket scannen): 'Egal welchen Weg du nimmst – du bist von Anfang an aktiver Teil des Teams und übernimmst Verantwortung.' Walk-through-Übergang."},
+        {"id": "A-5", "typ": "visual", "text": "Animation Doppellaufbahn (zwei Wege wachsen nach oben): 'Und danach: Fachexpertin oder Führungskraft. Plus Übernahmechance, plus Auslandserfahrung wenn du willst.' Push-In aus A-4."},
+        {"id": "A-End", "typ": "visual", "text": "Endcard: 'Mach Zukunft mit uns.' + CTA 'Klick auf den Button, trag dich ein, und wir lernen uns persönlich kennen.'"}
+      ]
+    },
+    {
+      "nr": "AZ-B",
+      "titel": "Werbeanzeige: Hier bist du nicht Azubi Nr. 487",
+      "zuordnung": "Werbeanzeige / Schiene Ausbildung B (Mittelstand statt Konzern)",
+      "rows": [
+        {"id": "B-Hook-A", "typ": "scripted", "text": "Bei deinem letzten Praktikum hat sich keiner deinen Namen gemerkt? (TH Eingang/Flur)"},
+        {"id": "B-Hook-B", "typ": "scripted", "text": "Konzern-Azubi heißt: durchgereicht werden. Bei uns kennt dich dein Ausbilder. (TH Eingang/Flur)"},
+        {"id": "B-Hook-C", "typ": "visual", "text": "Anonymes Großraumbüro (lange leere Schreibtischreihen), harter Cut zu kleiner Azubi-Gruppe im Gespräch. VO: 'Bei uns sieht das anders aus.'"},
+        {"id": "B-1", "typ": "scripted", "text": "Persönliche Atmosphäre Besprechungsraum: 'Familiäres Arbeitsumfeld – trotz 3.500 Leuten. Deine Ausbilder kennen dich vom ersten Tag bis zum Abschluss.' Zuwendungs-Übergang."},
+        {"id": "B-2", "typ": "scripted", "text": "Paten-/Buddy-Szene: 'Plus Patenmodell für den Start – du wirst nicht ins kalte Wasser geworfen.' Match-on-Action Übergabe."},
+        {"id": "B-3", "typ": "scripted", "text": "Konkrete Tätigkeit: 'Training on the Job ab dem ersten Tag. Du übernimmst Verantwortung, nicht Kopier-Aufgaben.' (alternativ im Fachbereich drehbar)"},
+        {"id": "B-4", "typ": "scripted", "text": "Mitarbeiter-Gruppe/Teamevent (Eingang/Außen): 'Gemeinschaft, Freundschaft und Verantwortung – das sind hier echte Werte, keine Floskel.' Liefert Gruppen-Aufnahme für B-5-Push-out."},
+        {"id": "B-5", "typ": "visual", "text": "Animation Europa-Karte 22 Tochtergesellschaften: 'Und wenn du raus willst – 22 Tochtergesellschaften in Europa. Familiär und international.' Push-out aus B-4."},
+        {"id": "B-End", "typ": "visual", "text": "Endcard: 'Mach Zukunft mit uns.' + CTA."}
+      ]
+    },
+    {
+      "nr": "AZ-C",
+      "titel": "Werbeanzeige: Was du nach drei Jahren wirklich kannst",
+      "zuordnung": "Werbeanzeige / Schiene Ausbildung C (Echtes Geschäft)",
+      "rows": [
+        {"id": "C-Hook-A", "typ": "scripted", "text": "Was kannst du nach 3 Jahren Ausbildung eigentlich wirklich? (TH Eingang/Flur)"},
+        {"id": "C-Hook-B", "typ": "scripted", "text": "Tabellen pauken oder ein echtes Geschäft verstehen – wofür entscheidest du dich? (TH Eingang/Flur)"},
+        {"id": "C-Hook-C", "typ": "visual", "text": "Robotik/Hochregallager in Bewegung. VO: '10.000 Pakete am Tag gehen hier raus. Bald auch dank dir.'"},
+        {"id": "C-1", "typ": "scripted", "text": "Projekt-Mitarbeit Lager: 'Bei Förch lernst du nicht aus Büchern. Du wirst von Anfang an aktiver Teil des Teams.' Zugreifen/Übergabe-Übergang."},
+        {"id": "C-2", "typ": "scripted", "text": "Ware in Bewegung: 'Du siehst, wie 100.000 Produkte zu 300.000 Kunden in 55 Länder gehen – in Werkstätten und Industriebetriebe.' Match auf Warenbewegung, Förderband/Robotik."},
+        {"id": "C-3", "typ": "scripted", "text": "Abteilungswechsel als echter Gang (Lager-Tür → IT → Vertrieb/Procurement): 'Durch regelmäßige Abteilungswechsel siehst du die ganze Welt von Förch – Lager, IT, Vertrieb, Procurement.' Walk-through-Segmente."},
+        {"id": "C-4", "typ": "scripted", "text": "Workshop/Feedback-Gespräch: 'Plus: regelmäßige Feedbackgespräche und Workshops – du wirst gezielt gefördert.'"},
+        {"id": "C-5", "typ": "scripted", "text": "Outro-TH Eingang/Flur (Push-In): 'Nach 3 Jahren weißt du nicht nur Theorie – du verstehst ein echtes Geschäft. Mit guter Übernahmechance.'"},
+        {"id": "C-End", "typ": "visual", "text": "Endcard: 'Mach Zukunft mit uns.' + CTA."}
+      ]
+    },
+    {
+      "nr": "AZ-F",
+      "titel": "Förch-Intro (übergreifend, HR-Sprecher:in)",
+      "zuordnung": "Erklär-Video / längstes Video 60–90 Sek / Karriereseite ganz oben",
+      "rows": [
+        {"id": "F-Hook-A", "typ": "scripted", "text": "Du kennst Förch vielleicht nicht. Lass mich dir kurz zeigen, was wir machen und wie du bei uns anfangen kannst. (HR-TH, evtl. vor Stammhaus-Fassade)"},
+        {"id": "F-Hook-B", "typ": "scripted", "text": "60 Jahre Familienunternehmen, 3.500 Leute, 55 Länder – und trotzdem vermutlich nicht bei dir auf dem Radar."},
+        {"id": "F-Hook-C", "typ": "visual", "text": "Schnitt durch Unternehmens-Eindrücke (Lager, Büro, Werkstatt-Termin). VO HR: 'Wir verkaufen, was Werkstätten brauchen. Und wir bilden die Leute aus, die das machen.'"},
+        {"id": "F-TH", "typ": "interview", "text": "HR-Sprecher:in komplett: Vorstellung (Name, Team Ausbildung) · Förch-Basics (60 Jahre, Familienunternehmen, Werkstattbedarf) · Größe (3.500 MA, 33 Standorte, 22 Töchter, 55 Länder) · Wege rein 1: Ausbildung Verwaltung/IT/Logistik · Wege rein 2: duales Studium BA · Versprechen (frühe Einbindung, Verantwortung) · Kultur (offen, familiär) · Entwicklung (Training on the Job, Workshops, Patenmodell, Feedback, Doppellaufbahn) · Benefits (Jobrad, Fitness, Rabatte) · Perspektiven (Übernahme, regional+international) · Schluss 'Mach Zukunft mit uns' + Karriere-URL"},
+        {"id": "F-BRoll", "typ": "visual", "text": "B-Roll-Eindrücke Lager / Büro-IT / Kultur-Teamwork / Werkstatt-Termin (tbd.) für den Schnitt."}
+      ]
+    },
+    {
+      "nr": "AZ-G",
+      "titel": "Bereichs-Video Logistik Ausbildung (Fachlagerist)",
+      "zuordnung": "Bereichs-Erklärvideo / interview-basiert / Person: Tobias",
+      "rows": [
+        {"id": "G-Hook-A", "typ": "scripted", "text": "Was macht eigentlich ein Fachlagerist bei Förch?"},
+        {"id": "G-Hook-B", "typ": "scripted", "text": "Du denkst Lager-Ausbildung ist Kartons schleppen? Bei uns sieht das anders aus."},
+        {"id": "G-Hook-C", "typ": "visual", "text": "Großaufnahme moderner Lagertechnik in Bewegung. VO: 'Hier sortiert kein Mensch mehr. Hier organisiert ein Mensch.'"},
+        {"id": "G-1", "typ": "interview", "text": "Vorstellung Azubi (Name, Ausbildung zum Fachlageristen)"},
+        {"id": "G-2", "typ": "interview", "text": "Praxisnahe Mitarbeit von Anfang an, direkte Einbindung in die gesamte Logistik"},
+        {"id": "G-3", "typ": "interview", "text": "Stationen: Wareneingang, Kommissionierung, Verpackung, Versand"},
+        {"id": "G-4", "typ": "interview", "text": "Moderne/automatisierte Logistikprozesse; Substanz: 65.000 Stellplätze, Robotik, automatisches Hochregallager"},
+        {"id": "G-5", "typ": "interview", "text": "Theorie+Praxis verzahnt, sichtbare Arbeitsergebnisse; Zusatzqualifikationen z. B. SAP"},
+        {"id": "G-6", "typ": "interview", "text": "Outro: praktische Arbeit + moderne Logistiktechnologie, Weiterentwicklung z. B. Logistikmeister"},
+        {"id": "G-End", "typ": "visual", "text": "Endcard Link Stellenanzeige Fachlagerist (m/w/d)"}
+      ]
+    },
+    {
+      "nr": "AZ-H",
+      "titel": "Bereichs-Video Logistik Duales Studium (Warenwirtschaft und Logistik)",
+      "zuordnung": "Bereichs-Erklärvideo / interview-basiert / Person: Alisa",
+      "rows": [
+        {"id": "H-Hook-A", "typ": "scripted", "text": "Logistik studieren – und gleichzeitig die ganze Supply Chain im echten Geschäft sehen?"},
+        {"id": "H-Hook-B", "typ": "scripted", "text": "End-to-End-Prozesse – aus dem Buch oder aus dem Lager? Bei uns geht beides."},
+        {"id": "H-Hook-C", "typ": "visual", "text": "Split-Screen Hörsaal / Logistik-Praxis. VO: 'Eine Phase Hörsaal, eine Phase die ganze Lieferkette.'"},
+        {"id": "H-1", "typ": "interview", "text": "Vorstellung DH-Student:in (Name, Warenwirtschaft und Logistik dual)"},
+        {"id": "H-2", "typ": "interview", "text": "Aufbau: Theorie-Phasen Duale Hochschule im Wechsel mit Praxis bei Förch"},
+        {"id": "H-3", "typ": "interview", "text": "End-to-End-Prozesse entlang der Supply Chain; operative Praxis: 100.000 Artikel täglich verfügbar halten"},
+        {"id": "H-4", "typ": "interview", "text": "Prozessorientiertes Denken: Logistik als System; Kombination Operation + Strategie"},
+        {"id": "H-5", "typ": "interview", "text": "Outro: BA-Abschluss nach 3 Jahren + ganzheitliches Verständnis"},
+        {"id": "H-End", "typ": "visual", "text": "Endcard Link dualer Studiengang (m/w/d)"}
+      ]
+    },
+    {
+      "nr": "AZ-I",
+      "titel": "Bereichs-Video IT Ausbildung (Fachinformatik)",
+      "zuordnung": "Bereichs-Erklärvideo / interview-basiert / Person: Mia",
+      "rows": [
+        {"id": "I-Hook-A", "typ": "scripted", "text": "Fachinformatik in einem Familienunternehmen – klingt nach alten Systemen?"},
+        {"id": "I-Hook-B", "typ": "scripted", "text": "Echte IT-Projekte statt nur Theorie – und Verantwortung von Anfang an."},
+        {"id": "I-Hook-C", "typ": "visual", "text": "Schneller Cut: Code-Bildschirm, Server-Infrastruktur, System-Dashboard. VO: 'Wir bauen das hier alles selbst.'"},
+        {"id": "I-1", "typ": "interview", "text": "Vorstellung Azubi (Name, Fachinformatik Anwendungsentwicklung oder Systemintegration)"},
+        {"id": "I-2", "typ": "interview", "text": "Mitarbeit an realen IT-Projekten; eigenverantwortliche Entwicklung/Umsetzung"},
+        {"id": "I-3", "typ": "interview", "text": "Moderne Technologien: SAP, eigener Webshop, automatisiertes Lager mit Schnittstellen"},
+        {"id": "I-4", "typ": "interview", "text": "Individuelle Förderung: Workshops, Prüfungsvorbereitung"},
+        {"id": "I-5", "typ": "interview", "text": "Outro: praxisorientierter IT-Einstieg mit echten Projekten und Verantwortung"},
+        {"id": "I-End", "typ": "visual", "text": "Endcard Link Stellenanzeige Fachinformatik (m/w/d)"}
+      ]
+    },
+    {
+      "nr": "AZ-J",
+      "titel": "Bereichs-Video IT Duales Studium (Wirtschaftsinformatik)",
+      "zuordnung": "Bereichs-Erklärvideo / interview-basiert / Person: Luis",
+      "rows": [
+        {"id": "J-Hook-A", "typ": "scripted", "text": "Wirtschaftsinformatik studieren – aber mit eigenen Projekten von Anfang an?"},
+        {"id": "J-Hook-B", "typ": "scripted", "text": "Data Science und Cyber Security – im Hörsaal oder in einem echten Unternehmen?"},
+        {"id": "J-Hook-C", "typ": "visual", "text": "Wechsel-Schnitt Hörsaal / IT-Projekt-Praxis (Code, Daten-Dashboard). VO: 'Theorie und echte Themen – immer parallel.'"},
+        {"id": "J-1", "typ": "interview", "text": "Vorstellung DH-Student:in (Name, Wirtschaftsinformatik dual)"},
+        {"id": "J-2", "typ": "interview", "text": "Aufbau: Theorie an der Hochschule im Wechsel mit Praxis bei Förch"},
+        {"id": "J-3", "typ": "interview", "text": "Eigenständige Projektarbeit während des Studiums; Data Science, Cyber Security"},
+        {"id": "J-4", "typ": "interview", "text": "Enge Betreuung in Praxisphasen und Abschlussarbeiten"},
+        {"id": "J-5", "typ": "interview", "text": "Outro: schneller Kompetenzaufbau durch direkte Praxiserfahrung"},
+        {"id": "J-End", "typ": "visual", "text": "Endcard Link dualer Studiengang Wirtschaftsinformatik (m/w/d)"}
+      ]
+    },
+    {
+      "nr": "AZ-K",
+      "titel": "Bereichs-Video Kaufmännisch Ausbildung (Kaufleute Groß- und Außenhandel)",
+      "zuordnung": "Bereichs-Erklärvideo / interview-basiert / Person: Emili",
+      "rows": [
+        {"id": "K-Hook-A", "typ": "scripted", "text": "Kaufmännische Ausbildung klingt nach Schreibtisch – bei uns ist sie deutlich mehr."},
+        {"id": "K-Hook-B", "typ": "scripted", "text": "Großhandel, Außenhandel, Fremdsprachen, Auslandserfahrung – alles in einer Ausbildung."},
+        {"id": "K-Hook-C", "typ": "visual", "text": "Schnelle Cuts kaufmännische Tätigkeiten (Telefon, Bildschirm, Werkstatt-Termin). VO: 'Das alles ist kaufmännischer Bereich.'"},
+        {"id": "K-1", "typ": "interview", "text": "Vorstellung Azubi (Name, Kaufmann/Kauffrau Groß- und Außenhandelsmanagement)"},
+        {"id": "K-2", "typ": "interview", "text": "Abwechslungsreicher Büroalltag: Organisation, Kommunikation, kaufmännische Prozesse; aktive Mitarbeit im Tagesgeschäft"},
+        {"id": "K-3", "typ": "interview", "text": "Abteilungsdurchlauf: Vertrieb, Procurement, Buchhaltung, Marketing; ganzheitliches Verständnis"},
+        {"id": "K-4", "typ": "interview", "text": "Zusatzqualifikationen (z. B. Fremdsprachen), Auslandserfahrung als Option"},
+        {"id": "K-5", "typ": "interview", "text": "Outro: praxisnahe, breit aufgestellte kaufmännische Ausbildung"},
+        {"id": "K-End", "typ": "visual", "text": "Endcard Link Stellenanzeige Kaufleute Groß- und Außenhandel (m/w/d)"}
+      ]
+    },
+    {
+      "nr": "AZ-L",
+      "titel": "Bereichs-Video Kaufmännisch Duales Studium (BWL Internationaler Handel)",
+      "zuordnung": "Bereichs-Erklärvideo / interview-basiert / Person: Fabian",
+      "rows": [
+        {"id": "L-Hook-A", "typ": "scripted", "text": "BWL studieren und gleichzeitig im echten Unternehmen Verantwortung übernehmen – geht das?"},
+        {"id": "L-Hook-B", "typ": "scripted", "text": "Theorie aus dem Hörsaal direkt am nächsten Tag anwenden – bei uns ja."},
+        {"id": "L-Hook-C", "typ": "visual", "text": "Wechsel-Schnitt Hörsaal / Procurement-Telefonat / internationale Kommunikation. VO: 'Studium und echtes Geschäft. Parallel.'"},
+        {"id": "L-1", "typ": "interview", "text": "Vorstellung DH-Student:in (Name, BWL Internationaler oder Int. Technischer Handel dual)"},
+        {"id": "L-2", "typ": "interview", "text": "Aufbau: BWL-Theorie im Wechsel mit Praxis; Theorie direkt angewendet"},
+        {"id": "L-3", "typ": "interview", "text": "Eigenständiges Arbeiten, frühe Verantwortung, Projekte; Einblicke in verschiedene Bereiche"},
+        {"id": "L-4", "typ": "interview", "text": "Auslandsaufenthalte/Abschlussarbeiten unterstützt; 22 Tochtergesellschaften in Europa"},
+        {"id": "L-5", "typ": "interview", "text": "Outro: praxisnahes Studium mit direktem Berufs-Bezug"},
+        {"id": "L-End", "typ": "visual", "text": "Endcard Link dualer Studiengang BWL Internationaler Handel (m/w/d)"}
+      ]
+    },
+    {
+      "nr": "AZ-M",
+      "titel": "Bewerbungsprozess (HR-Vorstellung)",
+      "zuordnung": "Erklär-Video / 3 HR-Personen / Casting lief bei Konzeptstand noch",
+      "rows": [
+        {"id": "M-Hook", "typ": "scripted", "text": "Hook A/B: 'Du fragst dich, wie eine Bewerbung bei uns abläuft? Hier sind wir – und die Antwort.' / '4 Schritte, 3 Gesichter – so läuft deine Bewerbung bei Förch.'"},
+        {"id": "M-1", "typ": "interview", "text": "Vorstellung drei HR-Verantwortliche (Name + Rolle: Recruiting / Ausbildungsleitung / Personalentwicklung)"},
+        {"id": "M-2", "typ": "interview", "text": "4 Schritte: Karriereseite (kein langes Anschreiben) → Online-Gespräch → Vor-Ort-Gespräch mit Fachbereich → ggf. Probearbeiten"},
+        {"id": "M-3", "typ": "interview", "text": "Outro: alle drei im Bild"},
+        {"id": "M-End", "typ": "visual", "text": "Endcard karriere.foerch.com"}
+      ]
+    },
+    {
+      "nr": "EXTRA",
+      "titel": "1 Wort 1 Bereich (Lager) — Zusatzformat, nicht im Konzept",
+      "zuordnung": "Social-Zusatz / im Footage vorhanden, Zweck per Transkript klären",
+      "rows": [
+        {"id": "X-1", "typ": "interview", "text": "Kurze Ein-Wort-Statements pro Bereich? Inhalt unklar — Transkript entscheidet."}
+      ]
+    }
+  ]
+}

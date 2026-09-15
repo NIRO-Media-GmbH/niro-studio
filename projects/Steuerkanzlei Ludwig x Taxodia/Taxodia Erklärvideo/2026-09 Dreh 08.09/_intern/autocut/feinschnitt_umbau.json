@@ -1,0 +1,27 @@
+{
+ "projekt": "Taxodia 09.26",
+ "timeline": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
+ "aktiv_vorher": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
+ "bin_vorher": "B-Roll",
+ "v2_umgebaut": true,
+ "v4_umgebaut": true,
+ "gespeichert": true,
+ "v1_unveraendert": true,
+ "v2_identisch": true,
+ "v4_identisch": true,
+ "v2": {
+  "stuecke": 41,
+  "aktiv": 12
+ },
+ "v4_clips": 20,
+ "audio": {
+  "A1": 30,
+  "A2": 4,
+  "A3": 4
+ },
+ "v3": 30,
+ "ende": 6845,
+ "aktiv_nachher": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
+ "bin_nachher": "B-Roll",
+ "warnungen": []
+}

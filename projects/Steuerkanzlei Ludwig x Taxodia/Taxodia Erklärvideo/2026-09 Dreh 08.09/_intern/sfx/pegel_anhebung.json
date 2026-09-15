@@ -1,0 +1,357 @@
+{
+ "gespeichert": true,
+ "items": [
+  {
+   "spur": "A4",
+   "start": 54,
+   "sfx": "Whoosh 2-4.wav",
+   "vorher": -19.4,
+   "neu": -5.4,
+   "gesetzt": true,
+   "readback": -5.4
+  },
+  {
+   "spur": "A4",
+   "start": 227,
+   "sfx": "Whoosh 2-2.wav",
+   "vorher": -19.0,
+   "neu": -9.2,
+   "gesetzt": true,
+   "readback": -9.2
+  },
+  {
+   "spur": "A4",
+   "start": 362,
+   "sfx": "Shimmer and fast airy whoosh.wav",
+   "vorher": -11.2,
+   "neu": -9.1,
+   "gesetzt": true,
+   "readback": -9.1
+  },
+  {
+   "spur": "A4",
+   "start": 480,
+   "sfx": "Ninja Jump 5.wav",
+   "vorher": -21.3,
+   "neu": -9.3,
+   "gesetzt": true,
+   "readback": -9.3
+  },
+  {
+   "spur": "A4",
+   "start": 548,
+   "sfx": "Whoosh 2-3.wav",
+   "vorher": -25.6,
+   "neu": -12.4,
+   "gesetzt": true,
+   "readback": -12.4
+  },
+  {
+   "spur": "A5",
+   "start": 562,
+   "sfx": "Pop Notification.wav",
+   "vorher": -20.8,
+   "neu": -12.1,
+   "gesetzt": true,
+   "readback": -12.1
+  },
+  {
+   "spur": "A4",
+   "start": 579,
+   "sfx": "Cinematic Whoosh (19).wav",
+   "vorher": -23.1,
+   "neu": -13.7,
+   "gesetzt": true,
+   "readback": -13.7
+  },
+  {
+   "spur": "A4",
+   "start": 620,
+   "sfx": "Whoosh Airy Motion Soft Transition.wav",
+   "vorher": -24.4,
+   "neu": -13.3,
+   "gesetzt": true,
+   "readback": -13.3
+  },
+  {
+   "spur": "A4",
+   "start": 681,
+   "sfx": "Woosh_AI004.mp3",
+   "vorher": -2.9,
+   "neu": 4.9,
+   "gesetzt": true,
+   "readback": 4.9
+  },
+  {
+   "spur": "A4",
+   "start": 1025,
+   "sfx": "Ninja Jump 1.wav",
+   "vorher": -21.1,
+   "neu": -7.2,
+   "gesetzt": true,
+   "readback": -7.2
+  },
+  {
+   "spur": "A4",
+   "start": 1663,
+   "sfx": "Whoosh 2-1.wav",
+   "vorher": -17.9,
+   "neu": -13.2,
+   "gesetzt": true,
+   "readback": -13.2
+  },
+  {
+   "spur": "A4",
+   "start": 1704,
+   "sfx": "Whoosh Airy Motion Soft Transition.wav",
+   "vorher": -25.4,
+   "neu": -13.3,
+   "gesetzt": true,
+   "readback": -13.3
+  },
+  {
+   "spur": "A4",
+   "start": 1858,
+   "sfx": "Whoosh 2-5.wav",
+   "vorher": -23.0,
+   "neu": -9.9,
+   "gesetzt": true,
+   "readback": -9.9
+  },
+  {
+   "spur": "A5",
+   "start": 1870,
+   "sfx": "Pop Notification.wav",
+   "vorher": -20.8,
+   "neu": -12.1,
+   "gesetzt": true,
+   "readback": -12.1
+  },
+  {
+   "spur": "A4",
+   "start": 1880,
+   "sfx": "Menu Select.wav",
+   "vorher": -21.8,
+   "neu": -8.7,
+   "gesetzt": true,
+   "readback": -8.7
+  },
+  {
+   "spur": "A4",
+   "start": 1918,
+   "sfx": "Digital Interface Notification.wav",
+   "vorher": -21.4,
+   "neu": -11.1,
+   "gesetzt": true,
+   "readback": -11.1
+  },
+  {
+   "spur": "A4",
+   "start": 1970,
+   "sfx": "Riser Woosh_AI005.mp3",
+   "vorher": -24.4,
+   "neu": -14.4,
+   "gesetzt": true,
+   "readback": -14.4
+  },
+  {
+   "spur": "A4",
+   "start": 2511,
+   "sfx": "Ninja Jump 6.wav",
+   "vorher": -22.1,
+   "neu": -8.3,
+   "gesetzt": true,
+   "readback": -8.3
+  },
+  {
+   "spur": "A4",
+   "start": 2881,
+   "sfx": "Ninja Jump 5.wav",
+   "vorher": -21.3,
+   "neu": -9.3,
+   "gesetzt": true,
+   "readback": -9.3
+  },
+  {
+   "spur": "A4",
+   "start": 3218,
+   "sfx": "Whoosh 2-2.wav",
+   "vorher": -25.0,
+   "neu": -13.2,
+   "gesetzt": true,
+   "readback": -13.2
+  },
+  {
+   "spur": "A5",
+   "start": 3232,
+   "sfx": "Smartphone User Interface Click Single.wav",
+   "vorher": -20.3,
+   "neu": -7.1,
+   "gesetzt": true,
+   "readback": -7.1
+  },
+  {
+   "spur": "A4",
+   "start": 3327,
+   "sfx": "Menu Select.wav",
+   "vorher": -20.8,
+   "neu": -8.7,
+   "gesetzt": true,
+   "readback": -8.7
+  },
+  {
+   "spur": "A4",
+   "start": 3372,
+   "sfx": "Smartphone User Interface Click Single.wav",
+   "vorher": -20.3,
+   "neu": -7.1,
+   "gesetzt": true,
+   "readback": -7.1
+  },
+  {
+   "spur": "A4",
+   "start": 3419,
+   "sfx": "Pop Notification.wav",
+   "vorher": -20.8,
+   "neu": -12.1,
+   "gesetzt": true,
+   "readback": -12.1
+  },
+  {
+   "spur": "A4",
+   "start": 3578,
+   "sfx": "Woosh_AI004.mp3",
+   "vorher": -8.9,
+   "neu": 4.9,
+   "gesetzt": true,
+   "readback": 4.9
+  },
+  {
+   "spur": "A4",
+   "start": 3651,
+   "sfx": "Ninja Jump 1.wav",
+   "vorher": -21.1,
+   "neu": -7.2,
+   "gesetzt": true,
+   "readback": -7.2
+  },
+  {
+   "spur": "A4",
+   "start": 3829,
+   "sfx": "Whoosh 2-4.wav",
+   "vorher": -13.4,
+   "neu": -8.9,
+   "gesetzt": true,
+   "readback": -8.9
+  },
+  {
+   "spur": "A4",
+   "start": 3878,
+   "sfx": "Riser Woosh_AI005.mp3",
+   "vorher": -26.4,
+   "neu": -14.4,
+   "gesetzt": true,
+   "readback": -14.4
+  },
+  {
+   "spur": "A4",
+   "start": 4840,
+   "sfx": "Ninja Jump 6.wav",
+   "vorher": -22.1,
+   "neu": -8.3,
+   "gesetzt": true,
+   "readback": -8.3
+  },
+  {
+   "spur": "A4",
+   "start": 4966,
+   "sfx": "Ninja Jump 5.wav",
+   "vorher": -21.3,
+   "neu": -9.3,
+   "gesetzt": true,
+   "readback": -9.3
+  },
+  {
+   "spur": "A4",
+   "start": 5452,
+   "sfx": "Whoosh 2-3.wav",
+   "vorher": -17.6,
+   "neu": -9.6,
+   "gesetzt": true,
+   "readback": -9.6
+  },
+  {
+   "spur": "A4",
+   "start": 5488,
+   "sfx": "Woosh_AI004.mp3",
+   "vorher": -8.9,
+   "neu": 4.9,
+   "gesetzt": true,
+   "readback": 4.9
+  },
+  {
+   "spur": "A4",
+   "start": 6005,
+   "sfx": "Whoosh 2-5.wav",
+   "vorher": -15.0,
+   "neu": -9.7,
+   "gesetzt": true,
+   "readback": -9.7
+  },
+  {
+   "spur": "A4",
+   "start": 6045,
+   "sfx": "Riser Woosh_AI005.mp3",
+   "vorher": -26.4,
+   "neu": -14.4,
+   "gesetzt": true,
+   "readback": -14.4
+  },
+  {
+   "spur": "A4",
+   "start": 6348,
+   "sfx": "Whoosh 2-1.wav",
+   "vorher": -17.9,
+   "neu": -13.2,
+   "gesetzt": true,
+   "readback": -13.2
+  },
+  {
+   "spur": "A4",
+   "start": 6373,
+   "sfx": "Woosh_AI004.mp3",
+   "vorher": -8.9,
+   "neu": 4.9,
+   "gesetzt": true,
+   "readback": 4.9
+  },
+  {
+   "spur": "A4",
+   "start": 6635,
+   "sfx": "Whoosh 2-3.wav",
+   "vorher": -18.6,
+   "neu": -12.3,
+   "gesetzt": true,
+   "readback": -12.3
+  },
+  {
+   "spur": "A5",
+   "start": 6645,
+   "sfx": "Shimmer and fast airy whoosh.wav",
+   "vorher": -12.2,
+   "neu": -9.1,
+   "gesetzt": true,
+   "readback": -9.1
+  },
+  {
+   "spur": "A4",
+   "start": 6689,
+   "sfx": "Digital Interface Notification.wav",
+   "vorher": -13.4,
+   "neu": -7.1,
+   "gesetzt": true,
+   "readback": -7.1
+  }
+ ],
+ "fehler": []
+}

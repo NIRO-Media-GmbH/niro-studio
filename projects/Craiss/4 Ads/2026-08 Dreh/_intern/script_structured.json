@@ -1,0 +1,132 @@
+{
+  "kunde": "Craiss Generation Logistik GmbH & Co. KG",
+  "projekt": "Recruiting-Videos (4 Ads + Funnel)",
+  "drehtag": "2026-08-10",
+  "drehtag_drohne": "2026-06-28",
+  "quelle": "Google-Sheet 'Craiss Logistik - Recruiting-Videos' (4 Tabs, Stand 24.06.2026)",
+  "hinweise": {
+    "zielgruppe_global": "Berufskraftfahrer:innen mit Führerschein CE",
+    "cta_standard": "Klick auf den Button, trag dich ein, und wir lernen uns persönlich kennen.",
+    "mwd_pflicht": "Jede Job-/CTA-Endcard braucht '(m/w/d)' am Berufstitel (David-Regel 2026-07-15).",
+    "nur_website_infos": "Zahlen/Claims nur verwenden, wenn website-/kundenbelegt (David-Regel 2026-08-01). '95 Jahre' ist im Konzept mehrfach gesetzt, Beweis-Card-Zahlen sind Craiss-Hausaufgabe und noch offen.",
+    "max_2_takes": "Nie 3+ Takes derselben Person hintereinander (David-Regel 2026-08-02).",
+    "staerkste_aussage_zuerst": "Sekunde 0 = stärkster O-Ton, Vorstellung erst als Beat 2 (David-Regel 2026-08-07).",
+    "tabus": [
+      "Shell-Tankstelle nicht im Bild (Logo) — Rastplatz-Szene 2.3b",
+      "Hr. Craiss war laut Konzept-Stand 24.06. nicht als Sprecher geplant (K4 ohne Geschäftsführung)",
+      "Kein sichtbares Mikrofon in K2 (Doku-Begleitung, Beschluss 24./25.06.)"
+    ],
+    "kamera": {
+      "ton": "FX3 (David bestätigt 12.08.2026) — Zitate + Timecodes",
+      "kontext": "a7MK4 — Wer-ist-wer/Interviewer, nie Tonquelle",
+      "hinweis": "Beide Kameras laufen zeitversetzt, Timecodes NICHT übertragbar."
+    }
+  },
+  "personen_soll": [
+    {"name": "Carsten Alt", "rolle": "interner Fahrerlehrer", "status": "bestätigt", "videos": [1], "usp": "interner Fahrerlehrer ist in der Branche selten"},
+    {"name": "Tomasz", "rolle": "Disponent, Dispo Bretten", "status": "bestätigt", "videos": [2, 3], "hinweis": "K2 von hinten/Halbseite, K3 frontal/sympathisch"},
+    {"name": "Liviu", "rolle": "Werkstatt-Mitarbeiter Bretten", "status": "bestätigt", "videos": [2]},
+    {"name": "Opa Didi", "rolle": "Rentner-Fahrer, 30 Jahre dabei", "status": "bestätigt", "videos": [3], "kernsatz": "Craiss gibt's bereits seit 95 Jahren - und ich bin seit 30 Jahren ein Teil davon."},
+    {"name": "Klaus-Martin Andreas", "rolle": "Recruiting / Fuhrpark", "status": "bestätigt", "videos": [4], "hinweis": "führt die NIRO-Crew durch die Standorte"},
+    {"name": "Eva", "rolle": "Personal", "status": "bestätigt", "videos": [4], "offen": "Nachname-Schreibweise am Drehtag klären"},
+    {"name": "Hr. Craiss", "rolle": "Geschäftsführung", "status": "laut Konzept NICHT im Dreh (29.06. in Berlin)", "videos": []},
+    {"name": "Haupt-Fahrer K1 (neu)", "rolle": "Platzhalter, am Drehtag gecastet", "status": "casting", "videos": [1]},
+    {"name": "Haupt-Fahrer K2", "rolle": "Platzhalter, Nahverkehr, am Drehtag gecastet", "status": "casting", "videos": [2]},
+    {"name": "Fahrer Fernverkehr", "rolle": "Platzhalter, Rastplatz-Auftritt", "status": "casting", "videos": [2]},
+    {"name": "Langjährige Fahrer:innen", "rolle": "2-3, verschiedene Nationalitäten", "status": "casting", "videos": [3, 5]},
+    {"name": "Be-/Entlade-Mitarbeiter:in", "rolle": "Mühlacker EDL-Lager", "status": "vor Ort", "videos": [2]}
+  ],
+  "drehorte": [
+    "Heidelsheim (Hof)",
+    "Bretten (LKW-Werkstatt)",
+    "Bretten (Dispo)",
+    "Rastplatz / Parkbucht zwischen Heidelsheim und Mühlacker",
+    "Mühlacker (EDL-Lager)",
+    "Mühlacker Turm (Kißlingweg 69) — Office",
+    "Fahrt / Landstraße / Bundesstraße"
+  ],
+  "videos": [
+    {
+      "nr": 1,
+      "titel": "Dein erster Tag bei uns",
+      "zielgruppe": "Berufskraftfahrer:innen mit CE, die ihren ersten Tag bei einem neuen Arbeitgeber starten",
+      "pain": "Unsicherheit vor dem ersten Arbeitstag — werde ich vernünftig eingearbeitet, wer hilft mir, werde ich gut aufgenommen?",
+      "form": "Storytelling-Bogen ohne Interview: Ankommen Bretten → Einweisung Heidelsheim → Probetour → Rückkehr",
+      "rows": [
+        {"id": "1.1", "typ": "scripted", "ort": "Bretten (Werkstatt)", "text": "Begrüßung: Carsten Alt übergibt Warnweste + Bert (Maskottchen), Handschlag. Carsten: 'Hi. Willkommen bei uns. Egal ob du schon lange fährst oder gerade frisch angefangen hast - wir nehmen dich heute mit. Hier, die Warnweste, und das ist Bert, unser Maskottchen.' CAPTION: 'Dein erster Tag bei uns.'"},
+        {"id": "1.5", "typ": "scripted", "ort": "Heidelsheim (Hof)", "text": "Einweisung am LKW, Tablet erklären: 'Pass auf, das hier ist deine wichtigste Sache. Aufträge, Karten, Kommunikation. Alles auf einem Tablet.' Rundgang ums Fahrzeug, erster Blick ins Cockpit, Bert in die Ablage."},
+        {"id": "1.6", "typ": "visual", "ort": "Fahrt / Landstraße", "text": "Probetour: Kabine, Drohne von außen, Lenkrad-Perspektive. Optionaler Dialog: Fahrer 'Hab heute Vormittag noch ein bisschen Bammel gehabt.' / Carsten: 'Kennen wir. Geht jedem so. Du machst das gut.'"},
+        {"id": "1.7", "typ": "scripted", "ort": "Bretten (Werkstatt)", "text": "Rückkehr: 'Na, wie war's?' / 'Lief gut. Macht Spaß.' Schulterklopfen. VOICE-OVER: 'Bei uns startest du nicht allein.'"},
+        {"id": "1.8", "typ": "visual", "ort": "Postproduktion", "text": "Endcard: Craiss-Logo + URL + CTA"}
+      ]
+    },
+    {
+      "nr": 2,
+      "titel": "Einblick in meinen Arbeitsalltag",
+      "zielgruppe": "Berufskraftfahrer:innen mit CE, die wissen wollen, wie der Alltag bei Craiss wirklich aussieht",
+      "pain": "Passt der Job zu meinem Leben? Kann ich mich auf Fahrzeug, Dispo und Kollegen verlassen?",
+      "form": "Doku-Begleitung (kein Reporter-Mode, kein sichtbares Mikro, Hände frei)",
+      "rows": [
+        {"id": "2.1", "typ": "scripted", "ort": "Heidelsheim (Hof)", "text": "Hook: Fahrer vor seinem Craiss-LKW: 'Hi, ich bin [Name], seit [X] Jahren bei Craiss. Ich nehme euch heute mal mit auf meinen Tag. Kommt mit.'"},
+        {"id": "2.2", "typ": "visual", "ort": "Heidelsheim (Hof)", "text": "Kollegen begrüßen über den Hof: 'Servus.' / 'Fahr vorsichtig.' / 'Bis später.'"},
+        {"id": "2.3a", "typ": "scripted", "ort": "Heidelsheim (Hof)", "text": "Nahverkehr-Statement + Personen-Switch-Brücke: 'Ich fahr Nahverkehr. Ist mir wichtig, weil ich abends meine Familie sehe. Konnte ich mir aussuchen.' Brücke: '… aber ich kenne viele Kollegen, die lieber Fernverkehr fahren - weil…'"},
+        {"id": "2.3b", "typ": "interview", "ort": "Rastplatz", "text": "Fernverkehr-Statement in eigenen Worten: 'Ich liebe Fernverkehr. Bin gern unterwegs, sehe was von der Welt. Konnte ich mir auch aussuchen.' + Drohne über Bundesstraße"},
+        {"id": "2.3c", "typ": "scripted", "ort": "Heidelsheim (Hof)", "text": "Closing der Switch-Sequenz: 'Das ist das Schöne hier - du suchst dir aus, was zu deinem Leben passt.'"},
+        {"id": "2.4", "typ": "visual", "ort": "Heidelsheim (Hof)", "text": "Recruiting-Hook Fuhrpark: Drohnen-Schwenk über neue LKWs ohne Fahrer. CAPTION/VO: 'Wir suchen Kollegen.'"},
+        {"id": "2.5", "typ": "visual", "ort": "Fahrt", "text": "Cockpit-Mitfahrt Action-Cam, Speed-Ramps, Tablet-Insert, Tankvorgang"},
+        {"id": "2.6", "typ": "interview", "ort": "Bretten (Dispo)", "text": "Dispo-Anruf während Tour als SPLIT-SCREEN. Links Cockpit/Headset, rechts Tomasz von hinten + zwei Monitore (Landkarte + Auftragsliste). VO Fahrer: 'Egal ob Stau, Ware noch nicht da oder eine Frage zur Tour - es ist immer jemand erreichbar.'"},
+        {"id": "2.7", "typ": "interview", "ort": "Bretten (Werkstatt)", "text": "Routinemäßiger 6-Wochen-Check mit Liviu. Liviu-O-Ton: 'Wir machen hier vieles selber - Routine-Checks, Reifen, Plane, kleinere Sachen. Die großen Sachen gehen zu MAN oder Mercedes.' KEIN Defekt, kein Drama."},
+        {"id": "2.8", "typ": "visual", "ort": "Mühlacker (EDL-Lager)", "text": "Be-/Entladen, kurzes Gespräch mit Lager-Mitarbeiter:in"},
+        {"id": "2.9", "typ": "scripted", "ort": "Heidelsheim (Hof)", "text": "End-Szene: 'Das war mein Tag. Schön, dass ihr dabei wart.' CAPTION: 'Dein Tag bei Craiss könnte auch so aussehen.'"},
+        {"id": "2.10", "typ": "visual", "ort": "Postproduktion", "text": "Endcard"}
+      ]
+    },
+    {
+      "nr": 3,
+      "titel": "Viele Jahre. Viele Geschichten.",
+      "zielgruppe": "Berufskraftfahrer:innen mit CE, gerne mit ausländischer Herkunft, Stabilitätssuchende",
+      "pain": "Bin ich hier nur eine Nummer? Werde ich willkommen geheißen? Kann ich mir vorstellen, hier langfristig zu arbeiten?",
+      "form": "Multi-Voice mit langjährigen Fahrer:innen verschiedener Nationalitäten",
+      "rows": [
+        {"id": "3.1", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Multi-Voice-Begrüßung, je 0,5-1 Sek: 'Hallo' / 'Cześć' / 'Bună ziua' … Tomasz schließt: 'Hallo. Bei uns spricht jeder dich an - egal in welcher Sprache.' CAPTION: 'Viele Jahre. Viele Geschichten.'"},
+        {"id": "3.2", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Off: 'Wie lange bist du schon bei Craiss?' → kurze Antworten je 3-5 Sek. Off: 'Warum so lange?' → Atmosphäre, Kollegen, Gehört-Werden"},
+        {"id": "3.3", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Opa Didi als 95-Jahre-Anker: 'Craiss gibt's bereits seit 95 Jahren - und ich bin seit 30 Jahren ein Teil davon.'"},
+        {"id": "3.4", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Off: 'Wie wurdest du hier aufgenommen, als du angefangen hast?' → 2-3 Fahrer:innen verschiedener Nationalitäten"},
+        {"id": "3.5", "typ": "interview", "ort": "Bretten (Dispo)", "text": "Tomasz frontal am Dispo-Arbeitsplatz: mehrsprachige Dispo, 'Die Kommunikation mit den Fahrern macht mir am meisten Spaß', immer erreichbar, Übersetzungs-Tools"},
+        {"id": "3.6", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Off: 'Witzige Erfahrung während einer Tour? Coolste Tour?' → 1-2 Antworten mit Humor"},
+        {"id": "3.6b", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Off: 'Was magst du an deinem Job?' → 2-3 Antworten breit gefächert"},
+        {"id": "3.7", "typ": "visual", "ort": "Postproduktion", "text": "BEWEIS-CARD-OUTRO: konkrete Zahlen (Mitarbeiterzahl, Anzahl LKW, langjährige Mitarbeiter-Quote) — Craiss-Hausaufgabe, noch OFFEN"},
+        {"id": "3.8", "typ": "visual", "ort": "Postproduktion", "text": "Endcard"}
+      ]
+    },
+    {
+      "nr": 4,
+      "titel": "Funnel Video",
+      "zielgruppe": "Besucher:innen der Landingpage, kurz vor dem Bewerbungs-Klick",
+      "pain": "Was passiert nach dem Klick? Wer wartet auf mich? Wie einfach ist der Bewerbungsprozess?",
+      "form": "Zwei Sprech-Blöcke im Office-Setting Mühlacker Turm, B-Roll cross-asset",
+      "rows": [
+        {"id": "4.1", "typ": "interview", "ort": "Mühlacker Turm", "text": "Block 1 Unternehmensvorstellung (Klaus-Martin Andreas): 'Herzlich willkommen bei Craiss. Schön, dass du dich für uns interessierst. Wir sind ein Familienunternehmen, das seit 95 Jahren auf der Straße ist. Bei uns sind die Menschen wichtiger als die Kilometer. Für unser Team suchen wir Leute wie dich.'"},
+        {"id": "4.2", "typ": "interview", "ort": "Mühlacker Turm", "text": "Block 2 Bewerbungsprozess (Eva): 'Hi, ich bin Eva und kümmere mich bei Craiss um die Bewerbungen. … Du musst keinen Lebenslauf schicken, kein Anschreiben formulieren. Trag dich einfach unten ein, dann melden wir uns innerhalb von 24 Stunden. Schau, dass du ans Telefon gehst, auch wenn die Nummer unbekannt ist.'"},
+        {"id": "4.3", "typ": "visual", "ort": "Postproduktion", "text": "Endcard + Bewirb-dich-Button-Hinweis, VO Eva oder neutral"}
+      ]
+    },
+    {
+      "nr": 5,
+      "titel": "Testimonial Video",
+      "zielgruppe": "Skeptische Bewerber:innen, die werbe-müde sind und ehrliche Stimmen suchen",
+      "pain": "Stimmt das, was die Firma da erzählt? Wie sind die Kollegen wirklich? Würde ich hier dazugehören?",
+      "form": "2-3 Fahrer:innen beantworten dieselben Fragen, Multi-Voice-Schnitt mit B-Roll. OHNE Geschäftsführung.",
+      "rows": [
+        {"id": "5.1", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Hook Multi-Voice: 'Was magst du an deinem Job bei Craiss?' je 2-3 Sek. CAPTION: 'Das sagen unsere Fahrer.'"},
+        {"id": "5.2", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Onboarding: 'Wie war dein erster Tag bei uns?' 2-3 Antworten je 4-6 Sek"},
+        {"id": "5.3", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Verlässlichkeit: 'Was läuft hier wirklich anders als bei anderen Speditionen?' → Dispo-Erreichbarkeit, eigene Werkstatt, schnelle Hilfe"},
+        {"id": "5.4", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Mitbestimmung: 'Konntest du selbst entscheiden, ob du Nah- oder Fernverkehr fährst?' 1-2 Antworten"},
+        {"id": "5.5", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Authentizität mit Humor: 'Erinnerst du dich an eine lustige Sache von einer Tour?' 1 Antwort, gerne mit Lachen"},
+        {"id": "5.6", "typ": "interview", "ort": "Heidelsheim (Hof)", "text": "Empfehlung: 'Würdest du jemand anderem empfehlen, bei uns anzufangen?' 2-3 Antworten"},
+        {"id": "5.7", "typ": "visual", "ort": "Postproduktion", "text": "Schnitt-Mosaik aus B-Roll aller Drehorte. CAPTION/VO: 'Mach dir selbst ein Bild.'"},
+        {"id": "5.8", "typ": "visual", "ort": "Postproduktion", "text": "Endcard"}
+      ]
+    }
+  ]
+}

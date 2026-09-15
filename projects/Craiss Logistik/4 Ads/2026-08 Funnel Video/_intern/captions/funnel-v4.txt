@@ -1,0 +1,44 @@
+# funnel-v4 — 04_Funnel_Video_V4.scribe.json
+# 39 Seiten, 144 Woerter; 19 Seiten (ganz oder teils) sichtbar
+# freie Fenster (s): 4.68–6.40, 8.16–22.16, 28.60–33.36, 44.76–47.76, 50.60–51.20
+# Spalte: SICHT = ganz sichtbar, nn% = teilweise, · = liegt komplett unter Grafik
+
+  1    0.14 –   1.30    ·   Mein Name ist Michael Craiss.
+  2    1.28 –   2.24    ·   Ich bin geschäftsführender
+  3    2.20 –   3.49    ·   Gesellschafter des
+  4    3.54 –   5.00    ·   Logistikunternehmens Craiss
+  5    4.98 –   6.13  SICHT mit Sitz in Mühlacker.
+  6    6.18 –   7.47    ·   Wir sind ein Familienunternehmen.
+  7    7.52 –   8.68   45%  Ein Riesenvorteil ist,
+  8    8.68 –   9.68  SICHT dass wir eine schöne
+  9    9.68 –  11.53  SICHT Kommunikationskultur pflegen
+ 10   11.58 –  12.46  SICHT und das macht, glaube ich,
+ 11   12.42 –  12.92  SICHT auch ein bisschen
+ 12   12.88 –  14.57  SICHT den Unterschied zum
+ 13   14.62 –  16.44  SICHT nullachtfünfzehn-Arbeitsverhältnis,
+ 14   16.46 –  17.84  SICHT dass wir sagen, wir schauen,
+ 15   17.82 –  18.40  SICHT dass die Leute
+ 16   18.36 –  19.41  SICHT auch bei uns ankommen.
+ 17   19.46 –  21.04  SICHT Und dafür stehen wir.
+ 18   22.60 –  24.34    ·   Hi, mein Name ist Eva.
+ 19   24.32 –  24.92    ·   Ich bin eine
+ 20   24.92 –  26.40    ·   der Hauptansprechpartnerinnen
+ 21   26.40 –  27.90    ·   bei Craiss, wenn du dich
+ 22   27.86 –  29.27   47%  bei uns bewerben möchtest.
+ 23   29.32 –  30.42  SICHT Wenn du bei uns starten
+ 24   30.38 –  32.17  SICHT möchtest, ist das ganz einfach:
+ 25   32.22 –  33.44   94%  Du musst keinen Lebenslauf
+ 26   33.42 –  34.88    ·   schicken und kein Anschreiben
+ 27   34.86 –  35.57    ·   formulieren.
+ 28   35.62 –  36.98    ·   Trag dich einfach ein,
+ 29   36.94 –  38.42    ·   dann melden wir uns zeitnah
+ 30   38.38 –  39.58    ·   telefonisch bei dir.
+ 31   39.62 –  40.20    ·   Schau bitte,
+ 32   40.18 –  41.90    ·   dass du erreichbar bist und ans
+ 33   41.88 –  42.98    ·   Telefon gehst, auch
+ 34   42.94 –  44.34    ·   wenn du die Nummer nicht kennst.
+ 35   44.30 –  45.76   68%  Wenn bei diesem Telefonat
+ 36   45.76 –  47.20  SICHT alles passt, dann lernen
+ 37   47.16 –  48.44   47%  wir uns auch kurz darauf
+ 38   48.44 –  50.20    ·   persönlich kennen.
+ 39   51.52 –  53.46    ·   Wir freuen uns auf dich.

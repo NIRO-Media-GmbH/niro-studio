@@ -1,0 +1,407 @@
+{
+ "projekt": "Taxodia 09.26",
+ "timeline": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
+ "aktiv": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
+ "versatz": {},
+ "sfx_aus_user_bin": 17,
+ "sfx_neu_importiert": 0,
+ "spurnamen": {
+  "4": true,
+  "5": true
+ },
+ "gesetzt": [
+  {
+   "spur": "A4",
+   "start": 54,
+   "element": "flash-fachkraeftemangel",
+   "sfx": "Whoosh 2-4.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 227,
+   "element": "flash-quereinsteiger",
+   "sfx": "Whoosh 2-2.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 362,
+   "element": "titel",
+   "sfx": "Shimmer and fast airy whoosh.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 480,
+   "element": "bauchbinde-ludwig",
+   "sfx": "Ninja Jump 5.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 548,
+   "element": "karte-ilshofen",
+   "sfx": "Whoosh 2-3.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 579,
+   "element": "karte-ilshofen",
+   "sfx": "Cinematic Whoosh (19).wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 620,
+   "element": "karte-ilshofen",
+   "sfx": "Whoosh Airy Motion Soft Transition.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 681,
+   "element": "karte-ilshofen",
+   "sfx": "Woosh_AI004.mp3",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 1025,
+   "element": "bauchbinde-hein",
+   "sfx": "Ninja Jump 1.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 1663,
+   "element": "blende-taxodia",
+   "sfx": "Whoosh 2-1.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 1704,
+   "element": "blende-taxodia",
+   "sfx": "Whoosh Airy Motion Soft Transition.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 1858,
+   "element": "karte-taxodia",
+   "sfx": "Whoosh 2-5.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 1880,
+   "element": "karte-taxodia",
+   "sfx": "Menu Select.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 1918,
+   "element": "karte-taxodia",
+   "sfx": "Digital Interface Notification.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 1970,
+   "element": "karte-taxodia",
+   "sfx": "Riser Woosh_AI005.mp3",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 2511,
+   "element": "software",
+   "sfx": "Ninja Jump 6.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 2881,
+   "element": "bachelor-professional",
+   "sfx": "Ninja Jump 5.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 3218,
+   "element": "taxodia-weg",
+   "sfx": "Whoosh 2-2.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 3327,
+   "element": "taxodia-weg",
+   "sfx": "Menu Select.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 3372,
+   "element": "taxodia-weg",
+   "sfx": "Smartphone User Interface Click Single.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 3419,
+   "element": "taxodia-weg",
+   "sfx": "Pop Notification.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 3578,
+   "element": "taxodia-weg",
+   "sfx": "Woosh_AI004.mp3",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 3651,
+   "element": "kosten",
+   "sfx": "Ninja Jump 1.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 3829,
+   "element": "blende-online",
+   "sfx": "Whoosh 2-4.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 3878,
+   "element": "blende-online",
+   "sfx": "Riser Woosh_AI005.mp3",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 4840,
+   "element": "monitoring",
+   "sfx": "Ninja Jump 6.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 4966,
+   "element": "abrechnung",
+   "sfx": "Ninja Jump 5.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 5452,
+   "element": "blende-ergebnis",
+   "sfx": "Whoosh 2-3.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 5488,
+   "element": "blende-ergebnis",
+   "sfx": "Woosh_AI004.mp3",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 6005,
+   "element": "blende-kanzleien",
+   "sfx": "Whoosh 2-5.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 6045,
+   "element": "blende-kanzleien",
+   "sfx": "Riser Woosh_AI005.mp3",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 6348,
+   "element": "blende-quereinsteiger",
+   "sfx": "Whoosh 2-1.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 6373,
+   "element": "blende-quereinsteiger",
+   "sfx": "Woosh_AI004.mp3",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 6635,
+   "element": "endcard",
+   "sfx": "Whoosh 2-3.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A4",
+   "start": 6689,
+   "element": "endcard",
+   "sfx": "Digital Interface Notification.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A5",
+   "start": 562,
+   "element": "karte-ilshofen",
+   "sfx": "Pop Notification.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A5",
+   "start": 1870,
+   "element": "karte-taxodia",
+   "sfx": "Pop Notification.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A5",
+   "start": 3232,
+   "element": "taxodia-weg",
+   "sfx": "Smartphone User Interface Click Single.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  },
+  {
+   "spur": "A5",
+   "start": 6645,
+   "element": "endcard",
+   "sfx": "Shimmer and fast airy whoosh.wav",
+   "pegel": true,
+   "fades": true,
+   "verknuepft": true,
+   "linked_readback": 1
+  }
+ ],
+ "gespeichert": true,
+ "bin_nachher": "video-1-taxodia-weg",
+ "warnungen": []
+}

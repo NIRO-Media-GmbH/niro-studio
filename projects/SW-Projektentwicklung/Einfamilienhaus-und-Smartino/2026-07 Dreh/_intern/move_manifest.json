@@ -1,0 +1,384 @@
+{
+  "moves": [
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Avata/DJI_20260608140300_0006_D.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Avata/DJI_20260608140300_0006_D.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Avata/DJI_20260608140300_0006_D_stabilized.mov",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Avata/DJI_20260608140300_0006_D_stabilized.mov"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0253.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/02_Bifaziale-Solarmodule/FX3_0253.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0254.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/02_Bifaziale-Solarmodule/FX3_0254.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0255.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0255.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0256.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0256.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0257.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0257.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0258.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0258.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0259.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0259.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0260.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/04_Flachdach-Erklaerung/FX3_0260.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0261.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0261.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0262.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0262.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0263.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0263.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0264.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0264.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0265.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/90_Regie-Besprechungen/FX3_0265.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0266.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0266.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0267.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0267.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0268.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0268.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0269.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0269.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0270.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0270.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0271.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0271.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0272.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0272.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0273.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0273.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0274.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0274.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0275.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0275.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0276.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0276.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0277.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0277.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0278.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0278.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0279.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0279.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0280.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0280.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0281.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0281.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0282.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0282.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0283.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0283.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0284.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0284.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0285.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0285.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0286.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0286.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0287.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0287.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0288.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0288.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0289.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0289.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0290.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0290.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0291.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0291.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-A FX3/FX3_0292.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-A FX3/FX3_0292.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0091.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/01_Projekt-Gottwolfshausen/a7MK4_20260721_0091.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0092.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/01_Projekt-Gottwolfshausen/a7MK4_20260721_0092.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0093.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/02_Bifaziale-Solarmodule/a7MK4_20260721_0093.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0094.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/02_Bifaziale-Solarmodule/a7MK4_20260721_0094.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0095.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0095.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0096.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0096.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0097.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/90_Regie-Besprechungen/a7MK4_20260721_0097.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0098.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/04_Flachdach-Erklaerung/a7MK4_20260721_0098.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0099.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0099.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0100.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0100.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0101.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0101.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0102.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0102.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0103.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0103.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0104.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/06_E-Auto-Wallbox-Ads/a7MK4_20260721_0104.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0105.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/06_E-Auto-Wallbox-Ads/a7MK4_20260721_0105.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0106.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/06_E-Auto-Wallbox-Ads/a7MK4_20260721_0106.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0107.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/90_Regie-Besprechungen/a7MK4_20260721_0107.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0108.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/06_E-Auto-Wallbox-Ads/a7MK4_20260721_0108.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0109.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/06_E-Auto-Wallbox-Ads/a7MK4_20260721_0109.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0110.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/03_BauSolar-Modul/a7MK4_20260721_0110.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0111.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0111.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0112.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0112.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0113.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0113.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0114.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0114.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0115.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0115.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0116.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0116.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0117.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0117.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0118.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0118.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0119.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0119.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0120.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0120.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0121.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0121.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0122.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0122.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0123.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0123.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0124.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/05_Hotel-Smartino/a7MK4_20260721_0124.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0125.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/05_Hotel-Smartino/a7MK4_20260721_0125.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0126.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/90_Regie-Besprechungen/a7MK4_20260721_0126.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0127.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/07_Recruiting-Elektromeister/a7MK4_20260721_0127.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0128.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/07_Recruiting-Elektromeister/a7MK4_20260721_0128.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0129.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/07_Recruiting-Elektromeister/a7MK4_20260721_0129.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0130.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/07_Recruiting-Elektromeister/a7MK4_20260721_0130.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0131.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/07_Recruiting-Elektromeister/a7MK4_20260721_0131.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0132.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/05_Hotel-Smartino/a7MK4_20260721_0132.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0133.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/05_Hotel-Smartino/a7MK4_20260721_0133.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0134.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Kamera-B A7iv/a7MK4_20260721_0134.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0135.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/07_Recruiting-Elektromeister/a7MK4_20260721_0135.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Kamera-B A7iv/a7MK4_20260721_0136.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/07_Recruiting-Elektromeister/a7MK4_20260721_0136.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Mavic/100MEDIA/DJI_0422.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Mavic/DJI_0422.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Mavic/100MEDIA/DJI_0423.MP4",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Mavic/DJI_0423.MP4"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Mavic/100MEDIA/DJI_0424.MOV",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Mavic/DJI_0424.MOV"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Mavic/100MEDIA/DJI_0425.MOV",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Mavic/DJI_0425.MOV"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Mavic/100MEDIA/DJI_0426.MOV",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Mavic/DJI_0426.MOV"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Mavic/100MEDIA/DJI_0427.MOV",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Mavic/DJI_0427.MOV"
+    },
+    {
+      "src": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/Mavic/100MEDIA/DJI_0428.MOV",
+      "dst": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/SW Projektentwicklung & Dienstleistung GmbH/02_Projekte/04_Projekt-21.07.26-Einfamilienhaus und Smartino/03_Medien/01_Footage/sortiert/99_B-Roll/Mavic/DJI_0428.MOV"
+    }
+  ]
+}

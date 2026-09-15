@@ -1,0 +1,24 @@
+{
+  "titel": "Steuerkanzlei Ludwig x Taxodia",
+  "untertitel": "Schnittanweisungen - Erklärvideo „Der Taxodia-Weg“ (16:9, 4-5 min)",
+  "stand": "Dreh 08.09.2026 - NIRO Media, Stand 14.09.2026",
+  "warnbox": "TON IMMER AUS DER FX3 (Kamera-B). a7 IV (Kamera-A) nur zweiter Winkel, FX3-Uhr ca. 8 min vor: nach Ton syncen. FX3-TON SEHR LEISE (-31 bis -39 LUFS, CH1 = CH2): je Take anheben; Ludwig ab FX3_0222 14:16 (Mikrotausch) ca. 4 dB lauter. ALLES S-LOG3 - LUT Pflicht. REGIE-/CREW-STIMMEN NIE IM SCHNITT. KEINE CLAIMS OHNE WEBSITE-BELEG in Captions/Cards: Platz 1+2 und Note 1,06 nie einblenden, Ampel-Grafik nur nach Freigabe, nie '30 Jahre', 'von Anfang an produktiv', Preise. GESPERRT: Veganer-Sprüche, Recruiter-Schelte, Wettbewerber-Aussage, Kurspreise/Gehalt, Fall der Landwirtin, Durchfaller. Monitor-Aufnahme mit Heins Kursplan (B-Roll C0255): Name und URL blurren. TAXODIA IST B2B: Kurs nur über den Arbeitgeber - die Endcard darf Quereinsteigern keine Direktbuchung versprechen.",
+  "kapitel_farben": {
+    "[Übersicht]": [
+      110,
+      110,
+      110
+    ],
+    "[Erklärvideo · 16:9]": [
+      0,
+      90,
+      160
+    ],
+    "[Anhang]": [
+      150,
+      150,
+      150
+    ]
+  },
+  "dateiname": "Taxodia-Schnittanweisungen.pdf"
+}

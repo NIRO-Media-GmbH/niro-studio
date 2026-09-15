@@ -1,0 +1,14 @@
+{
+  "titel": "Craiss Generation Logistik",
+  "untertitel": "Schnittanweisungen — 5 Recruiting-Videos",
+  "stand": "Dreh 10.08.2026 (Drohne 28.06.) — NIRO Media, Stand 13.08.2026",
+  "warnbox": "TON IMMER AUS DER FX3. a7MK4 ist nur 2. Winkel; die FX3-Uhr laeuft ~8 min vor - Timecodes NIE zwischen den Kameras uebertragen, nach Ton syncen. REGIE-STIMMEN (NIRO + Craiss-Begleitung) NIE im Schnitt: bei fast allen Fahrern klebt eine Fremdstimme 0-1 s vor dem In-Punkt. KONZEPT-ABWEICHUNGEN: Klaus-Martin Andreas hat nicht gedreht (K4 Block 1 = Michael Craiss); K1 und K2 wurden NICHT als Sprech-Szenen gedreht (kein Carsten Alt, kein Liviu, kein Fahrer-Hook) - beide laufen ueber B-Roll + VO. GESPERRT: Michael Craiss/FX3_0899 ab 15:02 komplett (Kenia-/Marokko-Recruiting, Willkommenspraemie 1000 EUR - vom Kunden selbst zweimal abgelehnt, Wettbewerber). Saemtliche Gehaltsaussagen aller Sprecher. Kundennennung DHL/Deutsche Post. Thomas Baranski 02:04-02:35 (Krankenhaus-Story). NIE '30 Jahre' einblenden - Opa Didi sagt 'ueber fuenfzig Jahr'. KEINE Rueckmeldefrist ins Bild - '24 Stunden' existiert in keinem Take. Untertitel bei Fahrer-O-Toenen Pflicht, gebrochenes Deutsch WOERTLICH lassen. Endcards immer mit '(m/w/d)'.",
+  "kapitel_farben": {
+    "[Story ohne Dialog]": [0, 90, 160],
+    "[Doku, VO-getragen]": [0, 130, 60],
+    "[Multi-Voice]": [200, 120, 0],
+    "[Landingpage]": [130, 60, 150],
+    "[Multi-Voice, OHNE Geschäftsführung]": [200, 16, 46]
+  },
+  "dateiname": "Craiss-Schnittanweisungen.pdf"
+}

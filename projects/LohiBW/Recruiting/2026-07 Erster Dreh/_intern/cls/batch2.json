@@ -1,0 +1,292 @@
+[
+  {
+    "name": "C9738.MP4",
+    "category": "scripted",
+    "video_nr": 1,
+    "row_id": "1_Szene10",
+    "confidence": "hoch",
+    "spoken_excerpt": "Also klick auf den Button, trag dich ein und wir lernen uns persönlich kennen.",
+    "person": null,
+    "note": "CTA-Zeile dreimal wiederholt mit Regieanweisungen dazwischen. Passt wörtlich auf 1_Szene10 (und strukturell auch auf 2_Szene7 / 3_Szene8 / 4_Szene7). Kontext unklar, aber der Text ist identisch mit Video 1 CTA."
+  },
+  {
+    "name": "C9739.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Auf der Seite.",
+    "person": null,
+    "note": "0,5 s, 3 Wörter — reine Regiefragment, kein Inhalt."
+  },
+  {
+    "name": "C9740.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "",
+    "person": null,
+    "note": "0 s Dauer, nur Knarzen — keine Sprache."
+  },
+  {
+    "name": "C9741.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Da können wir uns einfach so-- da haben wir diesen normalen Vordruck, den man da misst.",
+    "person": null,
+    "note": "42 s, aber nur informeller Regiekommentar über einen Vordruck; kein Skript-Match, keine Interviewantwort."
+  },
+  {
+    "name": "C9742.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "",
+    "person": null,
+    "note": "Vogelgezwitscher + Klickgeräusche, kurze Regieanweisung 'Gleich bisschen was tippen' — reines B-Roll-Setup ohne Inhalt."
+  },
+  {
+    "name": "C9743.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "",
+    "person": null,
+    "note": "0 s Dauer, nur Klickgeräusche."
+  },
+  {
+    "name": "C9744.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Okay, jetzt klingelt das Telefon.",
+    "person": null,
+    "note": "Regieanweisung für B-Roll-Telefonszene, kein Skript-Inhalt."
+  },
+  {
+    "name": "C9745.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Ich wünsche euch lieben einen wunderbar frohen guten Tag.",
+    "person": null,
+    "note": "Probe-/Aufwärmsatz einer Person am Telefon, kein Skript-Match. Kein Interviewinhalt."
+  },
+  {
+    "name": "C9746.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Den Hörer noch mal kurz ablegen und noch mal nehmen.",
+    "person": null,
+    "note": "Regieanweisung für B-Roll-Telefonszene."
+  },
+  {
+    "name": "C9747.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Ein bisschen freundlich dabei aussehen. Das ist dein Lieblingskunde, der da anruft.",
+    "person": null,
+    "note": "Regieanweisung + kurze Telefonspiel-Szene, kein Script-Inhalt."
+  },
+  {
+    "name": "C9748.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Noch mal: Telefon klingelt.",
+    "person": null,
+    "note": "Regieanweisung für Wiederholung der Telefonszene."
+  },
+  {
+    "name": "C9749.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "So. Schön.",
+    "person": null,
+    "note": "14 s, 2 Wörter — Regie-Kurzkommentar, kein Inhalt."
+  },
+  {
+    "name": "C9750.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Ja. Ähm...",
+    "person": null,
+    "note": "3 s, 2 Wörter — kein Inhalt."
+  },
+  {
+    "name": "C9751.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "dann könntest du ja eigentlich nicht so ein Stelldeschlag, sondern du hast ein bisschen Stellgefrag.",
+    "person": null,
+    "note": "Stark verzerrtes/unverständliches Transkript — wahrscheinlich Regiegespräch im Hintergrund, kein Skript-Match möglich."
+  },
+  {
+    "name": "C9752.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Einmal kurz stempeln, dann haben wir es trotzdem...",
+    "person": null,
+    "note": "Regieanweisung für B-Roll-Stempelszene, kein Inhalt."
+  },
+  {
+    "name": "C9753.MP4",
+    "category": "scripted",
+    "video_nr": 4,
+    "row_id": "4_Szene1",
+    "confidence": "hoch",
+    "spoken_excerpt": "Teilzeit klingt gut, bis die Saison kommt und aus Teilzeit wieder Vollzeit wird.",
+    "person": null,
+    "note": "Zeile mehrfach geprobt mit umfangreichen Regieanweisungen dazwischen. Wörtlicher Match auf 4_Szene1."
+  },
+  {
+    "name": "C9754.MP4",
+    "category": "scripted",
+    "video_nr": 3,
+    "row_id": "3_HookA",
+    "confidence": "hoch",
+    "spoken_excerpt": "Wann hat sich zuletzt jemand bei dir für deine Arbeit bedankt?",
+    "person": null,
+    "note": "Hook-Zeile mehrfach geprobt (Roman als Presenter). Direktor nennt 'Video drei, Szene eins oder Hook A'. Wörtlicher Match auf 3_HookA."
+  },
+  {
+    "name": "C9755.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Das ist schön. Da war ich live dabei bei uns.",
+    "person": null,
+    "note": "Informelles Gespräch mit Piepgeräuschen, kein Skript-Inhalt."
+  },
+  {
+    "name": "C9756.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Wenn sich alle so verkleidet hätten, wie sie doch auch gemacht haben.",
+    "person": null,
+    "note": "Informelles Pausengespräch, kein Skript-Inhalt."
+  },
+  {
+    "name": "C9757.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Ja, aber, Kinder, Herr Haug ist ganz schön gewaltig.",
+    "person": null,
+    "note": "Informelles Gespräch mit Namensnennung, kein Skript-Inhalt."
+  },
+  {
+    "name": "C9758.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Och, recht schön.",
+    "person": null,
+    "note": "5 s, informeller Kommentar, kein Inhalt."
+  },
+  {
+    "name": "C9759.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Sie meinen, wer der Herr mit roter Brille unten ist?",
+    "person": null,
+    "note": "4 s, informelles Gespräch über eine Person auf einem Foto/Bild, kein Inhalt."
+  },
+  {
+    "name": "C9760.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "",
+    "person": null,
+    "note": "0 s Dauer, nur Mausklick-Geräusch."
+  },
+  {
+    "name": "C9761.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Na, war es nicht? Nein. Wer hat es gesagt?",
+    "person": null,
+    "note": "Informelles Gespräch zwischen mehreren Personen, kein Inhalt."
+  },
+  {
+    "name": "C9762.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Aber sind die Bilder dann durcheinander oder sind die--",
+    "person": null,
+    "note": "Hintergrundgespräch, Frage über Bilder/Dateien, kein Inhalt."
+  },
+  {
+    "name": "C9763.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Es ist so, dass ich nach dem Büro gehe.",
+    "person": null,
+    "note": "8 s, informelles Gespräch, stark verzerrtes Transkript, kein Skript-Match."
+  },
+  {
+    "name": "C9764.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Sind. Die?",
+    "person": null,
+    "note": "4 s, 2 Wörter Fragment, kein Inhalt."
+  },
+  {
+    "name": "C9765.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "Wie abschauen würde? Ja, wenn Sie hier sind, wäre ich schon super cool.",
+    "person": null,
+    "note": "8 s, informelles Gespräch, kein Inhalt."
+  },
+  {
+    "name": "C9766.MP4",
+    "category": "broll",
+    "video_nr": null,
+    "row_id": null,
+    "confidence": "hoch",
+    "spoken_excerpt": "",
+    "person": null,
+    "note": "0 s Dauer, nur Schreibmaschinengeräusch — B-Roll-Aufnahme."
+  }
+]

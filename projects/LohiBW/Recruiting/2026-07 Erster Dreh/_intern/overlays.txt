@@ -1,0 +1,32 @@
+
+=== Video 1 - Der schnellere Weg nach oben.mp4
+  Gelb: [('#FFD900', 39998), ('#FFDA00', 2008), ('#FFD800', 1719)]
+  Badge: None
+  Box   1.80-  4.40s   y 49.5%-54.0%   x 31.1%-68.7%
+  Box   5.60-  7.60s   y 49.5%-54.0%   x 25.9%-73.9%
+  Box  18.40- 22.00s   y 49.5%-54.0%   x 22.2%-77.6%   ⚠ MEHRERE KÄSTEN (3) — Texte einzeln lesen!
+  Box  29.60- 31.20s   y 49.5%-54.0%   x 28.9%-70.9%
+  Box  37.80- 44.40s   y 49.5%-54.0%   x 27.0%-72.8%
+
+=== Video 2 - Raus aus dem Fristen-Hamsterrad.mp4
+  Gelb: [('#FFD900', 20733), ('#FFD800', 1143), ('#FFDA00', 1069)]
+  Badge: None
+  Box  13.20- 15.00s   y 75.5%-79.8%   x 30.2%-69.8%
+  Box  18.20- 20.00s   y 49.5%-54.0%   x 33.7%-66.1%
+  Box  22.40- 24.00s   y 49.6%-53.8%   x 32.4%-67.6%
+  Box  24.80- 26.40s   y 49.5%-54.0%   x 25.9%-73.9%
+  Box  31.80- 33.40s   y 49.6%-53.8%   x 29.3%-70.6%
+  Box  34.40- 35.60s   y 49.6%-53.8%   x 34.4%-65.2%
+
+=== Video 3 - Wieder mit Menschen arbeiten.mp4
+  Gelb: [('#FFD900', 21055), ('#FFD800', 1297), ('#FFDA00', 1067)]
+  Badge: None
+  Box  12.40- 15.40s   y 49.6%-53.8%   x 28.1%-71.7%   ⚠ MEHRERE KÄSTEN (2) — Texte einzeln lesen!
+  Box  21.40- 23.00s   y 49.6%-53.8%   x 29.6%-70.2%
+  Box  23.80- 28.60s   y 49.5%-54.0%   x 18.5%-81.3%   ⚠ MEHRERE KÄSTEN (4) — Texte einzeln lesen!
+
+=== Video 4 - Der Steuerjob, der sich nach deinem Leben richtet.mp4
+  Gelb: [('#FFD900', 8647), ('#FFD800', 374), ('#FFDB00', 333)]
+  Badge: None
+  Box  12.80- 14.40s   y 49.6%-54.0%   x 27.4%-72.6%
+  Box  27.80- 29.60s   y 49.6%-53.8%   x 26.3%-73.5%   ⚠ MEHRERE KÄSTEN (2) — Texte einzeln lesen!

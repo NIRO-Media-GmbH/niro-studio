@@ -1,0 +1,330 @@
+{
+ "ok": true,
+ "gemessen_am": "2026-09-09T17:08:21",
+ "resolve_version": "21.1.0.14",
+ "project": "MCP MEK Test",
+ "timelines": {
+  "A": "AutoCut PROBE API 1708",
+  "B": "AutoCut PROBE API 1708 SYNC"
+ },
+ "warnings": [],
+ "cleanup": null,
+ "fehler": null,
+ "baseline": {
+  "A": {
+   "name": "AutoCut PROBE API 1708",
+   "unique_id": "d7356406-89de-4cda-a360-7e0e3753efed",
+   "start_frame": 90000,
+   "end_frame": 90250,
+   "start_timecode": "01:00:00:00",
+   "fps": 25.0,
+   "width": 3840,
+   "height": 2160,
+   "tracks": {
+    "V1": {
+     "name": "Ton",
+     "items": [
+      {
+       "name": "ton_25p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/ton_25p.mov",
+       "start": 90000,
+       "end": 90100,
+       "duration": 100,
+       "src_in": 25,
+       "src_out": 125,
+       "enabled": true
+      },
+      {
+       "name": "ton_25p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/ton_25p.mov",
+       "start": 90100,
+       "end": 90200,
+       "duration": 100,
+       "src_in": 150,
+       "src_out": 249,
+       "enabled": true
+      }
+     ]
+    },
+    "V2": {
+     "name": "Video 2",
+     "items": []
+    },
+    "V3": {
+     "name": "B-Roll",
+     "items": [
+      {
+       "name": "zaehler_50p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/zaehler_50p.mov",
+       "start": 90000,
+       "end": 90050,
+       "duration": 50,
+       "src_in": 0,
+       "src_out": 100,
+       "enabled": true
+      },
+      {
+       "name": "zaehler_50p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/zaehler_50p.mov",
+       "start": 90100,
+       "end": 90150,
+       "duration": 50,
+       "src_in": 0,
+       "src_out": 100,
+       "enabled": true
+      },
+      {
+       "name": "zaehler_50p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/zaehler_50p.mov",
+       "start": 90150,
+       "end": 90200,
+       "duration": 50,
+       "src_in": 0,
+       "src_out": 100,
+       "enabled": true
+      },
+      {
+       "name": "zaehler_50p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/zaehler_50p.mov",
+       "start": 90200,
+       "end": 90250,
+       "duration": 50,
+       "src_in": 0,
+       "src_out": 100,
+       "enabled": true
+      }
+     ]
+    },
+    "V4": {
+     "name": "Grafik",
+     "items": []
+    },
+    "A1": {
+     "name": "Ton",
+     "items": [
+      {
+       "name": "ton_25p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/ton_25p.mov",
+       "start": 90000,
+       "end": 90100,
+       "duration": 100,
+       "src_in": 25,
+       "src_out": 125,
+       "enabled": true
+      },
+      {
+       "name": "ton_25p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/ton_25p.mov",
+       "start": 90100,
+       "end": 90200,
+       "duration": 100,
+       "src_in": 150,
+       "src_out": 249,
+       "enabled": true
+      }
+     ]
+    }
+   },
+   "markers": {},
+   "n_items": 8
+  },
+  "B": {
+   "name": "AutoCut PROBE API 1708 SYNC",
+   "unique_id": "c1bbee7d-312b-4bed-b41d-1ea8b445e445",
+   "start_frame": 90000,
+   "end_frame": 90400,
+   "start_timecode": "01:00:00:00",
+   "fps": 25.0,
+   "width": 3840,
+   "height": 2160,
+   "tracks": {
+    "V1": {
+     "name": "FX3",
+     "items": [
+      {
+       "name": "ton_25p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/ton_25p.mov",
+       "start": 90100,
+       "end": 90350,
+       "duration": 250,
+       "src_in": 0,
+       "src_out": 249,
+       "enabled": true
+      }
+     ]
+    },
+    "V2": {
+     "name": "a7IV",
+     "items": [
+      {
+       "name": "ton_25p_versetzt.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/ton_25p_versetzt.mov",
+       "start": 90100,
+       "end": 90400,
+       "duration": 300,
+       "src_in": 0,
+       "src_out": 299,
+       "enabled": true
+      }
+     ]
+    },
+    "A1": {
+     "name": "FX3 Ton",
+     "items": [
+      {
+       "name": "ton_25p.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/ton_25p.mov",
+       "start": 90100,
+       "end": 90350,
+       "duration": 250,
+       "src_in": 0,
+       "src_out": 249,
+       "enabled": true
+      }
+     ]
+    },
+    "A2": {
+     "name": "a7IV Ton",
+     "items": [
+      {
+       "name": "ton_25p_versetzt.mov",
+       "file": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/probe_api/ton_25p_versetzt.mov",
+       "start": 90100,
+       "end": 90400,
+       "duration": 300,
+       "src_in": 0,
+       "src_out": 299,
+       "enabled": true
+      }
+     ]
+    }
+   },
+   "markers": {},
+   "n_items": 4
+  }
+ },
+ "volume": {
+  "ok": true,
+  "soll": 9.0,
+  "ist": 9.0,
+  "enabled": true,
+  "set_returned": true
+ },
+ "normalize": {
+  "ok": true,
+  "modi": [
+   "Sample Peak Program",
+   "True Peak",
+   "ITU-R BS.1770-1",
+   "ITU-R BS.1770-4",
+   "ATSC A/85",
+   "EBU R128",
+   "OP-59",
+   "TR-B32",
+   "AGCOM 219/09/CSP",
+   "Netflix",
+   "YouTube",
+   "Disney - 2.0",
+   "Disney - 5.1+",
+   "TencentVideo"
+  ],
+  "tpk_ffmpeg": -12.0,
+  "soll": 9.0,
+  "ist": 8.9,
+  "diff": -0.1,
+  "set_returned": true
+ },
+ "speed": {
+  "a": {
+   "dauer_vorher": 50,
+   "dauer_nachher": 50,
+   "src_vorher": [
+    0,
+    100
+   ],
+   "src_nachher": [
+    0,
+    50
+   ],
+   "speed": {
+    "Percentage": 50.0
+   }
+  },
+  "gap": "behält_dauer",
+  "source_kept": false,
+  "blocked": {
+   "b_dauer_vorher": 50,
+   "b_dauer_nachher": 50,
+   "c_start_vorher": 90150,
+   "c_start_nachher": 90150
+  },
+  "ripple": "verschiebt",
+  "d_start_vorher": 90200,
+  "d_start_nachher": 90250,
+  "c_dauer_nachher": 100,
+  "speeds": [
+   {
+    "Percentage": 50.0
+   },
+   {
+    "Percentage": 50.0
+   },
+   {
+    "Percentage": 50.0
+   }
+  ],
+  "set_returned": [
+   true,
+   true,
+   true
+  ],
+  "ok": true
+ },
+ "fades": {
+  "ok": true,
+  "video_ok": true,
+  "ist": {
+   "FadeIn": 3.0,
+   "FadeOut": 5.0
+  },
+  "ist_video": {
+   "FadeIn": 3.0,
+   "FadeOut": 5.0
+  }
+ },
+ "transition": {
+  "ok": true,
+  "typ": "transition",
+  "dauer": 12
+ },
+ "autoalign": {
+  "moved": "keiner",
+  "delta_frames": 0,
+  "ok": false,
+  "set_returned": false
+ },
+ "inactive": {
+  "ok": true,
+  "fades_on_inactive_ok": true,
+  "ist": {
+   "FadeIn": 2.0,
+   "FadeOut": 2.0
+  },
+  "hinweis": "nur Befund, keine Pflicht"
+ },
+ "quickexport": {
+  "ok": true,
+  "status": "Render Complete",
+  "ms": 3026,
+  "wanddauer_s": 3.85,
+  "gewartet_s": 0,
+  "datei": "probe_api.mov",
+  "fehler": null
+ },
+ "alpha_import": {
+  "ok": true,
+  "start": 90025,
+  "dauer": 50,
+  "alpha_mode": "Straight"
+ }
+}

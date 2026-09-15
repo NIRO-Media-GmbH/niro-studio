@@ -1,0 +1,13 @@
+{
+  "titel": "Dold Holzwerke",
+  "untertitel": "Schnittanweisungen Recruiting-Reels R01-R26",
+  "stand": "Dreh 27./28.07.2026 · Stand 01.09.2026 (Neubau) · NIRO Media",
+  "warnbox": "PRIO 1: Video 01 — R06 \"Ein Tag als Baggerfahrer\" (Thomas Frey) wird zuerst geschnitten und geliefert.\nDieser Plan deckt ausschliesslich die Reels / Werbeanzeigen ab. Die Langformate kommen in einen separaten zweiten Schnittplan.",
+  "kapitel_farben": {
+    "PRIO 1": [200, 16, 46],
+    "FREIGABE OFFEN": [230, 120, 20],
+    "NACHDREH": [230, 120, 20],
+    "Projekt-Grundlagen": [40, 40, 40]
+  },
+  "dateiname": "Dold-Schnittanweisungen-Reels.pdf"
+}

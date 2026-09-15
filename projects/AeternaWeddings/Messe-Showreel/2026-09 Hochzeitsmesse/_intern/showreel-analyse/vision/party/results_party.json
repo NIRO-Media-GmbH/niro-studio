@@ -1,0 +1,10 @@
+[
+ {"id": "t1-267", "kategorie": "emotion_gaeste", "einstellung": "halbtotale", "paar_im_fokus": false, "tageszeit": "abend", "wert": 3, "flags": [], "motiv": "Gäste am Rand der Tanzfläche, Umarmung", "bester_frame": 2},
+ {"id": "t1-291", "kategorie": "party", "einstellung": "halbtotale", "paar_im_fokus": false, "tageszeit": "abend", "wert": 3, "flags": [], "motiv": "Tanzfläche mit Laserlicht, Handkamera", "bester_frame": 2},
+ {"id": "t1-297", "kategorie": "party", "einstellung": "halbtotale", "paar_im_fokus": false, "tageszeit": "abend", "wert": 3, "flags": [], "motiv": "Fotobox mit Minnie-Ohren und Krone", "bester_frame": 2},
+ {"id": "t1-303", "kategorie": "party", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "abend", "wert": 4, "flags": [], "motiv": "Ausgelassenes Tanzen unter Lichterketten", "bester_frame": 2},
+ {"id": "t1-305", "kategorie": "party", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "abend", "wert": 4, "flags": [], "motiv": "Glashaus-Party totale, Farblicht", "bester_frame": 2},
+ {"id": "t1-306", "kategorie": "party", "einstellung": "halbtotale", "paar_im_fokus": false, "tageszeit": "abend", "wert": 3, "flags": [], "motiv": "Gast mit Fliege tanzt", "bester_frame": 2},
+ {"id": "t1-312", "kategorie": "party", "einstellung": "halbtotale", "paar_im_fokus": false, "tageszeit": "abend", "wert": 3, "flags": [], "motiv": "Gast mit Drink im Nebel-Farblicht", "bester_frame": 1},
+ {"id": "t1-317", "kategorie": "abend_lichter", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "abend", "wert": 2, "flags": [], "motiv": "Gäste nachts vor dem Schloss", "bester_frame": 2}
+]

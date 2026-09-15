@@ -1,0 +1,1933 @@
+{
+ "projekt": "Taxodia 09.26",
+ "timeline": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
+ "items": [
+  {
+   "spur": "V1",
+   "start": 0,
+   "clip": "FX3_0222",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 85,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 258,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 470,
+   "clip": "FX3_0222",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 683,
+   "clip": "FX3_0222",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 1014,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 1331,
+   "clip": "FX3_0222",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 1429,
+   "clip": "FX3_0222",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 1689,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 2248,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 2663,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 3133,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 3270,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 3327,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 3569,
+   "clip": "FX3_0222",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 3856,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 4026,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 4237,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 4254,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 4329,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 4834,
+   "clip": "FX3_0222",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 4956,
+   "clip": "FX3_0222",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 5075,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 5387,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 5479,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 5920,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 6032,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 6057,
+   "clip": "FX3_0223",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 6139,
+   "clip": "FX3_0223",
+   "art": "punch-in",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.12,
+    "ZoomY": 1.12,
+    "Pan": -200.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.1932,
+    "ZoomY": 1.1932,
+    "Pan": -200.0,
+    "Tilt": 0.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V1",
+   "start": 6374,
+   "clip": "FX3_0228",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 0,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 85,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 258,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 470,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 683,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 760,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 1014,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 1331,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 1424,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 1429,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 1689,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 2118,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 2248,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 2319,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 2500,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 2663,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 2812,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 3005,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 3133,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 3270,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 3327,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 3569,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 3856,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4026,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4050,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4162,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4237,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4254,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4329,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4555,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4700,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4834,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 4956,
+   "clip": "a7MK4_20260908_0118",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 5075,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 5387,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 5396,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 5479,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 5500,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 5705,
+   "clip": "a7MK4_20260908_0119",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 5920,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": true,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "spur": "V2",
+   "start": 6374,
+   "clip": "a7MK4_20260908_0752",
+   "art": "normal",
+   "aktiv": false,
+   "vorher": {
+    "RotationAngle": 0.0,
+    "Pitch": 0.0,
+    "Yaw": 0.0,
+    "ZoomX": 1.0,
+    "ZoomY": 1.0,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "ziel": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  }
+ ],
+ "uebersprungen": [],
+ "gespeichert": true,
+ "zusammenfassung": {
+  "arten": {
+   "normal": 70,
+   "punch-in": 1
+  },
+  "uebersprungen": 0,
+  "fehler": []
+ }
+}

@@ -1,0 +1,170 @@
+[
+ {
+  "id": "t1-267",
+  "film": "t1",
+  "paar": "Lea & Sebastian",
+  "src_start": 26700,
+  "src_end": 26743,
+  "frames": 43,
+  "edge_in": 4,
+  "edge_out": 4,
+  "merged_shots": 1,
+  "luma_med": 57.5,
+  "sharp_c_med": 171.1,
+  "motion_med": 16.07,
+  "motion_max": 25.65,
+  "sat_med": 39.1,
+  "tech_flags": [],
+  "internal_cuts": [],
+  "rescued_from": [
+   "zu_kurz"
+  ]
+ },
+ {
+  "id": "t1-291",
+  "film": "t1",
+  "paar": "Lea & Sebastian",
+  "src_start": 29985,
+  "src_end": 30039,
+  "frames": 54,
+  "edge_in": 4,
+  "edge_out": 4,
+  "merged_shots": 1,
+  "luma_med": 48.6,
+  "sharp_c_med": 143.3,
+  "motion_med": 24.73,
+  "motion_max": 28.69,
+  "sat_med": 58.0,
+  "tech_flags": [],
+  "internal_cuts": [],
+  "rescued_from": [
+   "zu_kurz"
+  ]
+ },
+ {
+  "id": "t1-297",
+  "film": "t1",
+  "paar": "Lea & Sebastian",
+  "src_start": 30423,
+  "src_end": 30462,
+  "frames": 39,
+  "edge_in": 4,
+  "edge_out": 4,
+  "merged_shots": 1,
+  "luma_med": 51.8,
+  "sharp_c_med": 428.4,
+  "motion_med": 3.01,
+  "motion_max": 8.09,
+  "sat_med": 31.5,
+  "tech_flags": [],
+  "internal_cuts": [],
+  "rescued_from": [
+   "zu_kurz"
+  ]
+ },
+ {
+  "id": "t1-303",
+  "film": "t1",
+  "paar": "Lea & Sebastian",
+  "src_start": 30654,
+  "src_end": 30710,
+  "frames": 56,
+  "edge_in": 4,
+  "edge_out": 4,
+  "merged_shots": 1,
+  "luma_med": 56.7,
+  "sharp_c_med": 366.4,
+  "motion_med": 25.08,
+  "motion_max": 34.52,
+  "sat_med": 37.8,
+  "tech_flags": [],
+  "internal_cuts": [],
+  "rescued_from": [
+   "zu_kurz"
+  ]
+ },
+ {
+  "id": "t1-305",
+  "film": "t1",
+  "paar": "Lea & Sebastian",
+  "src_start": 30777,
+  "src_end": 30831,
+  "frames": 54,
+  "edge_in": 4,
+  "edge_out": 4,
+  "merged_shots": 1,
+  "luma_med": 53.2,
+  "sharp_c_med": 1466.0,
+  "motion_med": 4.88,
+  "motion_max": 7.0,
+  "sat_med": 43.7,
+  "tech_flags": [],
+  "internal_cuts": [],
+  "rescued_from": [
+   "zu_kurz"
+  ]
+ },
+ {
+  "id": "t1-306",
+  "film": "t1",
+  "paar": "Lea & Sebastian",
+  "src_start": 30831,
+  "src_end": 30891,
+  "frames": 60,
+  "edge_in": 4,
+  "edge_out": 4,
+  "merged_shots": 1,
+  "luma_med": 63.8,
+  "sharp_c_med": 77.0,
+  "motion_med": 32.46,
+  "motion_max": 52.9,
+  "sat_med": 32.9,
+  "tech_flags": [],
+  "internal_cuts": [],
+  "rescued_from": [
+   "zu_kurz"
+  ]
+ },
+ {
+  "id": "t1-312",
+  "film": "t1",
+  "paar": "Lea & Sebastian",
+  "src_start": 31362,
+  "src_end": 31419,
+  "frames": 57,
+  "edge_in": 4,
+  "edge_out": 4,
+  "merged_shots": 1,
+  "luma_med": 37.4,
+  "sharp_c_med": 63.1,
+  "motion_med": 17.47,
+  "motion_max": 40.23,
+  "sat_med": 48.1,
+  "tech_flags": [],
+  "internal_cuts": [],
+  "rescued_from": [
+   "zu_kurz"
+  ]
+ },
+ {
+  "id": "t1-317",
+  "film": "t1",
+  "paar": "Lea & Sebastian",
+  "src_start": 31685,
+  "src_end": 31730,
+  "frames": 45,
+  "edge_in": 4,
+  "edge_out": 4,
+  "merged_shots": 1,
+  "luma_med": 42.5,
+  "sharp_c_med": 240.1,
+  "motion_med": 3.42,
+  "motion_max": 4.87,
+  "sat_med": 41.4,
+  "tech_flags": [],
+  "internal_cuts": [],
+  "rescued_from": [
+   "zu_kurz"
+  ]
+ }
+]

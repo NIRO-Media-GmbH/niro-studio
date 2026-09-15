@@ -1,0 +1,2042 @@
+{
+  "source_file": "MEK Test1.mov",
+  "engine": "scribe",
+  "text": "[dramatische Musik] Fahren Sie es in den grünen Bereich. Ich bleib für den Rest meiner Zeit in der Notaufnahme, weil das mein Job ist. Das ist meins. Wenn sich die Gesichter verändern von schwerstkranken zu lächelnden Menschen, das nimmt man mit nach Hause. Es gibt einem schon was, wenn man merkt, dass die Patienten, denen geht's besser. Man ist Teil davon, dass es den Menschen besser geht. Sag immer, das ist die Familie, die ich nie haben wollte, aber [lacht] dieses einfach das Team, der Zusammenhalt ist einfach super. Das hat mich mega überrascht. Man lernt super schnell und es macht richtig Spaß und ich bin froh, hier zu sein. Ich arbeite jetzt schon über zehn Jahre hier und ich find's jeden Tag immer noch toll. Es ist spannend, es ist abwechslungsreich. Wir haben Action hier, wir haben gute Tage, wir haben schlechte Tage und unser Team ist auch einfach toll und das macht es für mich wertvoll. Wir arbeiten sehr miteinander zusammen und sehr harmonisch und das ist nicht überall so. Wir sind ja mit dem Elisabeth Krankenhaus auch zusammen. Das ist dann auch sehr schön, gerade da kommen wir sehr leicht rüber. Nächstes Jahr plane ich, die anderen Häuser mal zu sehen. Es ist interessant, wie so zwei Häuser, die sich ja kennen, jetzt zusammenwachsen und eben zu einem werden. Das ist 'n sehr spannender Prozess für uns alle. Fort- und Weiterbildungen werden, äh, finanziert auch. Nicht selbstverständlich. Das, äh, find ich schon auch wertschätzend. Was mich sehr überrascht hat, ist, dass man hier mit sehr vielen Ärzten auch per Du ist, auch immer noch mal nachfragen kann, Mensch, was war denn da jetzt eigentlich ganz genau los? Was ich ganz besonders hervorheben muss, dass man hier tatsächlich einfach noch Mensch ist. Also man wird immer gehört, wenn irgendwelche Themen sind. Es wird auch immer ernst genommen, wenn irgendwelche Themen sind. Das ist auch genau der Grund, warum ich schon seit vierundzwanzig Jahren hier bin, weil das einfach auch total Spaß macht, hier zu arbeiten und wir super Kollegen haben. [lacht]",
+  "words": [
+    {
+      "text": "Fahren",
+      "start": 14.96,
+      "end": 15.26,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Sie",
+      "start": 15.34,
+      "end": 15.39,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "es",
+      "start": 15.39,
+      "end": 15.39,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "in",
+      "start": 15.5,
+      "end": 15.58,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "den",
+      "start": 15.66,
+      "end": 15.67,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "grünen",
+      "start": 15.68,
+      "end": 15.9,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Bereich.",
+      "start": 15.92,
+      "end": 16.48,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Ich",
+      "start": 20.2,
+      "end": 20.28,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "bleib",
+      "start": 20.36,
+      "end": 20.72,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "für",
+      "start": 20.8,
+      "end": 20.88,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "den",
+      "start": 20.92,
+      "end": 21.06,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Rest",
+      "start": 21.12,
+      "end": 21.5,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "meiner",
+      "start": 21.54,
+      "end": 21.78,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Zeit",
+      "start": 21.84,
+      "end": 22.08,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "in",
+      "start": 22.14,
+      "end": 22.22,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "der",
+      "start": 22.24,
+      "end": 22.29,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Notaufnahme,",
+      "start": 22.32,
+      "end": 22.81,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "weil",
+      "start": 24.2,
+      "end": 24.28,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "das",
+      "start": 24.32,
+      "end": 24.43,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "mein",
+      "start": 24.56,
+      "end": 24.66,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Job",
+      "start": 24.68,
+      "end": 24.84,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "ist.",
+      "start": 24.88,
+      "end": 25.06,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Das",
+      "start": 25.48,
+      "end": 25.6,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "ist",
+      "start": 25.68,
+      "end": 25.84,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "meins.",
+      "start": 25.92,
+      "end": 26.24,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Wenn",
+      "start": 28.36,
+      "end": 28.52,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "sich",
+      "start": 28.56,
+      "end": 28.74,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "die",
+      "start": 28.78,
+      "end": 28.86,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Gesichter",
+      "start": 28.88,
+      "end": 29.28,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "verändern",
+      "start": 29.32,
+      "end": 29.92,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "von",
+      "start": 29.98,
+      "end": 30.06,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "schwerstkranken",
+      "start": 30.1,
+      "end": 30.78,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "zu",
+      "start": 30.92,
+      "end": 31.02,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "lächelnden",
+      "start": 31.06,
+      "end": 31.48,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Menschen,",
+      "start": 31.64,
+      "end": 31.96,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "das",
+      "start": 32.16,
+      "end": 32.259,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "nimmt",
+      "start": 32.28,
+      "end": 32.38,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "man",
+      "start": 32.42,
+      "end": 32.5,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "mit",
+      "start": 32.52,
+      "end": 32.619,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "nach",
+      "start": 32.66,
+      "end": 32.759,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Hause.",
+      "start": 32.78,
+      "end": 33.16,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Es",
+      "start": 34.18,
+      "end": 34.38,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "gibt",
+      "start": 34.4,
+      "end": 34.56,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "einem",
+      "start": 34.62,
+      "end": 34.76,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "schon",
+      "start": 34.78,
+      "end": 34.98,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "was,",
+      "start": 35.02,
+      "end": 35.16,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "wenn",
+      "start": 35.22,
+      "end": 35.34,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "man",
+      "start": 35.4,
+      "end": 35.54,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "merkt,",
+      "start": 35.58,
+      "end": 35.75,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "dass",
+      "start": 35.82,
+      "end": 35.94,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "die",
+      "start": 35.96,
+      "end": 36.04,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Patienten,",
+      "start": 36.08,
+      "end": 36.7,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "denen",
+      "start": 36.82,
+      "end": 36.96,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "geht's",
+      "start": 37.02,
+      "end": 37.2,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "besser.",
+      "start": 37.28,
+      "end": 37.56,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Man",
+      "start": 37.58,
+      "end": 37.72,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "ist",
+      "start": 37.76,
+      "end": 37.86,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Teil",
+      "start": 37.92,
+      "end": 38.1,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "davon,",
+      "start": 38.14,
+      "end": 38.4,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "dass",
+      "start": 38.46,
+      "end": 38.58,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "es",
+      "start": 38.62,
+      "end": 38.72,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "den",
+      "start": 38.76,
+      "end": 38.9,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Menschen",
+      "start": 38.94,
+      "end": 39.24,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "besser",
+      "start": 39.28,
+      "end": 39.54,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "geht.",
+      "start": 39.6,
+      "end": 39.9,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Sag",
+      "start": 40.94,
+      "end": 41.14,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "immer,",
+      "start": 41.18,
+      "end": 41.3,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "das",
+      "start": 41.32,
+      "end": 41.42,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "ist",
+      "start": 41.46,
+      "end": 41.54,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "die",
+      "start": 41.58,
+      "end": 41.68,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Familie,",
+      "start": 41.72,
+      "end": 42.1,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "die",
+      "start": 42.16,
+      "end": 42.24,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "ich",
+      "start": 42.26,
+      "end": 42.34,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "nie",
+      "start": 42.38,
+      "end": 42.46,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "haben",
+      "start": 42.52,
+      "end": 42.72,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "wollte,",
+      "start": 42.76,
+      "end": 43.16,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "aber",
+      "start": 43.3,
+      "end": 43.68,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "dieses",
+      "start": 43.75,
+      "end": 44.1,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "einfach",
+      "start": 44.16,
+      "end": 44.42,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "das",
+      "start": 44.44,
+      "end": 44.64,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Team,",
+      "start": 44.66,
+      "end": 44.9,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "der",
+      "start": 44.96,
+      "end": 45.04,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Zusammenhalt",
+      "start": 45.12,
+      "end": 45.56,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "ist",
+      "start": 45.58,
+      "end": 45.66,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "einfach",
+      "start": 45.68,
+      "end": 45.9,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "super.",
+      "start": 45.98,
+      "end": 46.2,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Das",
+      "start": 46.24,
+      "end": 46.34,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "hat",
+      "start": 46.36,
+      "end": 46.48,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "mich",
+      "start": 46.5,
+      "end": 46.6,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "mega",
+      "start": 46.68,
+      "end": 46.92,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "überrascht.",
+      "start": 46.96,
+      "end": 47.68,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Man",
+      "start": 48.22,
+      "end": 48.32,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "lernt",
+      "start": 48.34,
+      "end": 48.52,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "super",
+      "start": 48.66,
+      "end": 48.88,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "schnell",
+      "start": 48.92,
+      "end": 49.18,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "und",
+      "start": 49.22,
+      "end": 49.28,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "es",
+      "start": 49.3,
+      "end": 49.4,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "macht",
+      "start": 49.44,
+      "end": 49.56,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "richtig",
+      "start": 49.58,
+      "end": 49.82,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Spaß",
+      "start": 49.86,
+      "end": 50.3,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "und",
+      "start": 50.44,
+      "end": 50.68,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "ich",
+      "start": 50.78,
+      "end": 50.84,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "bin",
+      "start": 50.88,
+      "end": 50.98,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "froh,",
+      "start": 51.02,
+      "end": 51.14,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "hier",
+      "start": 51.17,
+      "end": 51.28,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "zu",
+      "start": 51.34,
+      "end": 51.42,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "sein.",
+      "start": 51.46,
+      "end": 51.78,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Ich",
+      "start": 53.42,
+      "end": 53.519,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "arbeite",
+      "start": 53.56,
+      "end": 53.8,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "jetzt",
+      "start": 53.82,
+      "end": 53.92,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "schon",
+      "start": 53.94,
+      "end": 54.08,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "über",
+      "start": 54.16,
+      "end": 54.36,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "zehn",
+      "start": 54.42,
+      "end": 54.56,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Jahre",
+      "start": 54.64,
+      "end": 54.92,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hier",
+      "start": 54.93,
+      "end": 55.13,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "und",
+      "start": 55.2,
+      "end": 55.3,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ich",
+      "start": 55.34,
+      "end": 55.44,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "find's",
+      "start": 55.48,
+      "end": 55.68,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "jeden",
+      "start": 55.7,
+      "end": 55.92,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Tag",
+      "start": 55.96,
+      "end": 56.12,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "immer",
+      "start": 56.16,
+      "end": 56.32,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "noch",
+      "start": 56.34,
+      "end": 56.48,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "toll.",
+      "start": 56.52,
+      "end": 56.8,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Es",
+      "start": 56.86,
+      "end": 56.96,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ist",
+      "start": 56.97,
+      "end": 56.97,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "spannend,",
+      "start": 57.06,
+      "end": 57.54,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "es",
+      "start": 57.6,
+      "end": 57.7,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ist",
+      "start": 57.74,
+      "end": 57.93,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "abwechslungsreich.",
+      "start": 57.98,
+      "end": 59.14,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Wir",
+      "start": 59.16,
+      "end": 59.23,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "haben",
+      "start": 59.24,
+      "end": 59.38,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Action",
+      "start": 59.42,
+      "end": 59.76,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hier,",
+      "start": 59.86,
+      "end": 60.24,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wir",
+      "start": 60.28,
+      "end": 60.35,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "haben",
+      "start": 60.38,
+      "end": 60.52,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "gute",
+      "start": 60.54,
+      "end": 60.74,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Tage,",
+      "start": 60.78,
+      "end": 61.0,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wir",
+      "start": 61.07,
+      "end": 61.13,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "haben",
+      "start": 61.14,
+      "end": 61.24,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "schlechte",
+      "start": 61.28,
+      "end": 61.64,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Tage",
+      "start": 61.7,
+      "end": 62.06,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "und",
+      "start": 62.1,
+      "end": 62.62,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "unser",
+      "start": 62.64,
+      "end": 62.84,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Team",
+      "start": 62.88,
+      "end": 63.04,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ist",
+      "start": 63.08,
+      "end": 63.14,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "auch",
+      "start": 63.16,
+      "end": 63.2,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "einfach",
+      "start": 63.22,
+      "end": 63.49,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "toll",
+      "start": 63.5,
+      "end": 63.74,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "und",
+      "start": 63.9,
+      "end": 64.0,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 64.01,
+      "end": 64.36,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "macht",
+      "start": 65.18,
+      "end": 65.32,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "es",
+      "start": 65.34,
+      "end": 65.46,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "für",
+      "start": 65.5,
+      "end": 65.58,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "mich",
+      "start": 65.62,
+      "end": 65.74,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wertvoll.",
+      "start": 65.78,
+      "end": 66.36,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Wir",
+      "start": 67.38,
+      "end": 67.57,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "arbeiten",
+      "start": 67.62,
+      "end": 68.02,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "sehr",
+      "start": 68.1,
+      "end": 68.48,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "miteinander",
+      "start": 68.52,
+      "end": 69.2,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "zusammen",
+      "start": 69.22,
+      "end": 69.74,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "und",
+      "start": 69.8,
+      "end": 69.97,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "sehr",
+      "start": 70.32,
+      "end": 70.46,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "harmonisch",
+      "start": 70.5,
+      "end": 71.82,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "und",
+      "start": 71.9,
+      "end": 72.14,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "das",
+      "start": 72.18,
+      "end": 72.32,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "ist",
+      "start": 72.38,
+      "end": 72.47,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "nicht",
+      "start": 72.5,
+      "end": 72.65,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "überall",
+      "start": 72.68,
+      "end": 73.02,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "so.",
+      "start": 73.12,
+      "end": 73.56,
+      "speaker": "speaker_6"
+    },
+    {
+      "text": "Wir",
+      "start": 77.68,
+      "end": 77.74,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "sind",
+      "start": 77.8,
+      "end": 77.92,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "ja",
+      "start": 77.96,
+      "end": 78.06,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "mit",
+      "start": 78.12,
+      "end": 78.28,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "dem",
+      "start": 78.32,
+      "end": 78.86,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Elisabeth",
+      "start": 78.88,
+      "end": 79.38,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Krankenhaus",
+      "start": 79.44,
+      "end": 80.08,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "auch",
+      "start": 80.18,
+      "end": 80.32,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "zusammen.",
+      "start": 80.38,
+      "end": 81.1,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Das",
+      "start": 81.14,
+      "end": 81.24,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "ist",
+      "start": 81.3,
+      "end": 81.38,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "dann",
+      "start": 81.42,
+      "end": 81.58,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "auch",
+      "start": 81.66,
+      "end": 81.8,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "sehr",
+      "start": 81.86,
+      "end": 81.99,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "schön,",
+      "start": 82.12,
+      "end": 82.36,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "gerade",
+      "start": 82.44,
+      "end": 82.7,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "da",
+      "start": 82.76,
+      "end": 82.78,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "kommen",
+      "start": 82.88,
+      "end": 83.02,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "wir",
+      "start": 83.06,
+      "end": 83.14,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "sehr",
+      "start": 83.18,
+      "end": 83.28,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "leicht",
+      "start": 83.32,
+      "end": 83.6,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "rüber.",
+      "start": 83.64,
+      "end": 84.04,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Nächstes",
+      "start": 84.32,
+      "end": 84.64,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Jahr",
+      "start": 84.68,
+      "end": 84.8,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "plane",
+      "start": 84.96,
+      "end": 85.21,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "ich,",
+      "start": 85.3,
+      "end": 85.42,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "die",
+      "start": 85.6,
+      "end": 85.68,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "anderen",
+      "start": 85.72,
+      "end": 85.96,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Häuser",
+      "start": 85.98,
+      "end": 86.24,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "mal",
+      "start": 86.3,
+      "end": 86.4,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "zu",
+      "start": 86.44,
+      "end": 86.56,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "sehen.",
+      "start": 86.6,
+      "end": 86.96,
+      "speaker": "speaker_5"
+    },
+    {
+      "text": "Es",
+      "start": 88.14,
+      "end": 88.23,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "ist",
+      "start": 88.24,
+      "end": 88.25,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "interessant,",
+      "start": 88.3,
+      "end": 88.76,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "wie",
+      "start": 88.78,
+      "end": 88.9,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "so",
+      "start": 88.94,
+      "end": 89.06,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "zwei",
+      "start": 89.14,
+      "end": 89.34,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "Häuser,",
+      "start": 89.36,
+      "end": 89.7,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "die",
+      "start": 89.78,
+      "end": 89.86,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "sich",
+      "start": 89.9,
+      "end": 90.04,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "ja",
+      "start": 90.08,
+      "end": 90.09,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "kennen,",
+      "start": 90.24,
+      "end": 90.48,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "jetzt",
+      "start": 90.6,
+      "end": 90.78,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "zusammenwachsen",
+      "start": 90.82,
+      "end": 91.64,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "und",
+      "start": 91.72,
+      "end": 91.92,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "eben",
+      "start": 91.96,
+      "end": 92.16,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "zu",
+      "start": 92.18,
+      "end": 92.3,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "einem",
+      "start": 92.38,
+      "end": 92.64,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "werden.",
+      "start": 92.66,
+      "end": 93.02,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "Das",
+      "start": 93.08,
+      "end": 93.2,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "ist",
+      "start": 93.22,
+      "end": 93.23,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "'n",
+      "start": 93.23,
+      "end": 93.36,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "sehr",
+      "start": 93.4,
+      "end": 93.55,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "spannender",
+      "start": 93.68,
+      "end": 94.14,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "Prozess",
+      "start": 94.2,
+      "end": 94.68,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "für",
+      "start": 94.73,
+      "end": 94.8,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "uns",
+      "start": 94.84,
+      "end": 94.96,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "alle.",
+      "start": 95.04,
+      "end": 96.34,
+      "speaker": "speaker_7"
+    },
+    {
+      "text": "Fort-",
+      "start": 96.38,
+      "end": 96.62,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "und",
+      "start": 96.64,
+      "end": 96.72,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Weiterbildungen",
+      "start": 96.8,
+      "end": 97.4,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "werden,",
+      "start": 97.46,
+      "end": 98.08,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "äh,",
+      "start": 98.09,
+      "end": 98.09,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "finanziert",
+      "start": 98.14,
+      "end": 98.86,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "auch.",
+      "start": 98.96,
+      "end": 99.15,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Nicht",
+      "start": 99.18,
+      "end": 99.4,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "selbstverständlich.",
+      "start": 99.44,
+      "end": 100.46,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Das,",
+      "start": 100.56,
+      "end": 101.05,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "äh,",
+      "start": 101.05,
+      "end": 101.05,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "find",
+      "start": 101.08,
+      "end": 101.22,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "ich",
+      "start": 101.24,
+      "end": 101.32,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "schon",
+      "start": 101.34,
+      "end": 101.57,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "auch",
+      "start": 101.64,
+      "end": 101.73,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "wertschätzend.",
+      "start": 101.86,
+      "end": 103.56,
+      "speaker": "speaker_4"
+    },
+    {
+      "text": "Was",
+      "start": 103.64,
+      "end": 103.77,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "mich",
+      "start": 103.82,
+      "end": 103.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sehr",
+      "start": 103.96,
+      "end": 104.07,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "überrascht",
+      "start": 104.12,
+      "end": 104.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hat,",
+      "start": 104.51,
+      "end": 104.66,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ist,",
+      "start": 104.77,
+      "end": 105.02,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dass",
+      "start": 105.03,
+      "end": 105.2,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "man",
+      "start": 105.24,
+      "end": 105.34,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hier",
+      "start": 105.36,
+      "end": 105.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "mit",
+      "start": 105.52,
+      "end": 105.62,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sehr",
+      "start": 105.66,
+      "end": 105.76,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "vielen",
+      "start": 105.84,
+      "end": 106.04,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Ärzten",
+      "start": 106.08,
+      "end": 106.34,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "auch",
+      "start": 106.38,
+      "end": 106.52,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "per",
+      "start": 106.54,
+      "end": 106.68,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Du",
+      "start": 106.7,
+      "end": 106.92,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ist,",
+      "start": 107.04,
+      "end": 107.28,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "auch",
+      "start": 107.34,
+      "end": 107.43,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "immer",
+      "start": 107.48,
+      "end": 107.62,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "noch",
+      "start": 107.64,
+      "end": 107.76,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "mal",
+      "start": 107.8,
+      "end": 107.88,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "nachfragen",
+      "start": 107.9,
+      "end": 108.34,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "kann,",
+      "start": 108.38,
+      "end": 108.55,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Mensch,",
+      "start": 108.6,
+      "end": 108.8,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "was",
+      "start": 108.86,
+      "end": 108.98,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "war",
+      "start": 109.0,
+      "end": 109.12,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "denn",
+      "start": 109.2,
+      "end": 109.23,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "da",
+      "start": 109.23,
+      "end": 109.32,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "jetzt",
+      "start": 109.36,
+      "end": 109.52,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "eigentlich",
+      "start": 109.54,
+      "end": 109.78,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ganz",
+      "start": 109.82,
+      "end": 110.02,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "genau",
+      "start": 110.04,
+      "end": 110.32,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "los?",
+      "start": 110.36,
+      "end": 110.82,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Was",
+      "start": 111.98,
+      "end": 112.08,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ich",
+      "start": 112.14,
+      "end": 112.58,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ganz",
+      "start": 112.62,
+      "end": 112.9,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "besonders",
+      "start": 112.92,
+      "end": 113.24,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "hervorheben",
+      "start": 113.26,
+      "end": 113.84,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "muss,",
+      "start": 113.9,
+      "end": 114.12,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "dass",
+      "start": 114.3,
+      "end": 114.38,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "man",
+      "start": 114.42,
+      "end": 114.62,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "hier",
+      "start": 114.86,
+      "end": 115.08,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "tatsächlich",
+      "start": 115.14,
+      "end": 115.52,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "einfach",
+      "start": 115.56,
+      "end": 115.76,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "noch",
+      "start": 115.8,
+      "end": 115.9,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Mensch",
+      "start": 115.98,
+      "end": 116.2,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ist.",
+      "start": 116.28,
+      "end": 116.42,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Also",
+      "start": 116.92,
+      "end": 117.24,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "man",
+      "start": 117.28,
+      "end": 117.4,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "wird",
+      "start": 117.44,
+      "end": 117.58,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "immer",
+      "start": 117.64,
+      "end": 117.8,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "gehört,",
+      "start": 117.82,
+      "end": 118.26,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "wenn",
+      "start": 118.32,
+      "end": 118.48,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "irgendwelche",
+      "start": 118.54,
+      "end": 118.92,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Themen",
+      "start": 118.96,
+      "end": 119.26,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "sind.",
+      "start": 119.36,
+      "end": 119.7,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Es",
+      "start": 119.74,
+      "end": 119.84,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "wird",
+      "start": 119.9,
+      "end": 120.0,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "auch",
+      "start": 120.02,
+      "end": 120.12,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "immer",
+      "start": 120.14,
+      "end": 120.3,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ernst",
+      "start": 120.34,
+      "end": 120.6,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "genommen,",
+      "start": 120.62,
+      "end": 120.9,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "wenn",
+      "start": 120.92,
+      "end": 121.06,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "irgendwelche",
+      "start": 121.08,
+      "end": 121.4,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Themen",
+      "start": 121.48,
+      "end": 121.76,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "sind.",
+      "start": 121.84,
+      "end": 122.02,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Das",
+      "start": 123.2,
+      "end": 123.32,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ist",
+      "start": 123.38,
+      "end": 123.48,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "auch",
+      "start": 123.52,
+      "end": 123.62,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "genau",
+      "start": 123.64,
+      "end": 123.84,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "der",
+      "start": 123.9,
+      "end": 123.98,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Grund,",
+      "start": 124.02,
+      "end": 124.18,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "warum",
+      "start": 124.26,
+      "end": 124.46,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ich",
+      "start": 124.52,
+      "end": 124.56,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "schon",
+      "start": 124.6,
+      "end": 124.76,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "seit",
+      "start": 124.78,
+      "end": 124.94,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "vierundzwanzig",
+      "start": 124.96,
+      "end": 125.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Jahren",
+      "start": 125.56,
+      "end": 125.78,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hier",
+      "start": 125.82,
+      "end": 125.95,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "bin,",
+      "start": 126.18,
+      "end": 126.42,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "weil",
+      "start": 126.68,
+      "end": 127.0,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 127.04,
+      "end": 127.18,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "einfach",
+      "start": 127.22,
+      "end": 127.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "auch",
+      "start": 127.54,
+      "end": 127.65,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "total",
+      "start": 127.66,
+      "end": 127.94,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Spaß",
+      "start": 127.98,
+      "end": 128.24,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "macht,",
+      "start": 128.28,
+      "end": 128.42,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hier",
+      "start": 128.44,
+      "end": 128.52,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "zu",
+      "start": 128.6,
+      "end": 128.699,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "arbeiten",
+      "start": 128.759,
+      "end": 129.64,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "und",
+      "start": 129.66,
+      "end": 129.72,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wir",
+      "start": 129.759,
+      "end": 129.81,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "super",
+      "start": 129.88,
+      "end": 130.1,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Kollegen",
+      "start": 130.12,
+      "end": 130.46,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "haben.",
+      "start": 130.5,
+      "end": 130.8,
+      "speaker": "speaker_1"
+    }
+  ],
+  "language": "de"
+}

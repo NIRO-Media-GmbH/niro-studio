@@ -1,0 +1,39 @@
+{
+  "titel": "Autohaus Rappold",
+  "untertitel": "Schnittanweisungen - 3 Recruiting-/Service-Ads + Image-Kurzfilm",
+  "stand": "Dreh 02.09.2026 - NIRO Media, Stand 14.09.2026",
+  "warnbox": "TON IMMER AUS DER FX3. a7MK4 ist nur 2. Winkel; die FX3-Uhr laeuft ca. 8 min vor - Timecodes NIE zwischen den Kameras uebertragen, nach Ton syncen. ALLES S-LOG3 - Look/LUT Pflicht. REGIE-STIMMEN (NIRO) NIE IM SCHNITT, Fragen enden oft direkt vor dem In-Punkt. FORMATE: Video 1-3 hochkant 9:16 (Crop aus UHD, Schluesselbox nativ hochkant), Video 4 quer 16:9. KEINE CLAIMS OHNE WEBSITE-BELEG in Captions/Cards (Schluesselbox/24/7, Camper-Verleih, Klima, Hebebuehnen) - nur O-Ton, Caption erst nach Freigabe. LAENGE: max. 60 s (NIRO-Standard, Konzept ohne Vorgabe) - nur Video 4 laut Konzept: Durchlauf ca. 30 s. iPAD-ANNAHME darf rein, aber nur als 'kommt'/'im Kommen'. NICHT ZEIGEN/BEHAUPTEN: puenktlicher Feierabend, 'jeden Donnerstag', 'neue Halle', Quereinstieg. GESPERRT: Gehalt, Familiengeschichte mit Unfalltod, Kundenfaelle mit Krankheit/Behinderung, Kraftausdruecke. Display-Daten, Kennzeichen und Codes blurren. Endcards immer mit '(m/w/d)'.",
+  "kapitel_farben": {
+    "[Übersicht]": [
+      110,
+      110,
+      110
+    ],
+    "Serviceberater · 9:16]": [
+      0,
+      90,
+      160
+    ],
+    "Kfz-Mechatroniker · 9:16]": [
+      200,
+      120,
+      0
+    ],
+    "[Schlüsselbox-Demo": [
+      0,
+      130,
+      60
+    ],
+    "[Image-Kurzfilm": [
+      130,
+      60,
+      150
+    ],
+    "[Anhang]": [
+      150,
+      150,
+      150
+    ]
+  },
+  "dateiname": "Rappold-Schnittanweisungen.pdf"
+}

@@ -1,0 +1,178 @@
+[
+  {
+    "name": "FX3_9709.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Ariana Leoni",
+    "confidence": "hoch",
+    "evidence": "Ich bin Ariana Leoni, arbeite, ähm, bei der Lohnsteuerhilfe Baden-Württemberg, einmal als Mitarbeiterin in Hechingen",
+    "note": ""
+  },
+  {
+    "name": "FX3_9710.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Julian Pross",
+    "confidence": "hoch",
+    "evidence": "Also ich bin der Julian Pross. Ähm, ich leite die Beratungsstelle in Sindelfingen.",
+    "note": ""
+  },
+  {
+    "name": "FX3_9711.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Manuel Miksch",
+    "confidence": "hoch",
+    "evidence": "Also ich heiß Manuel Miksch. Ich bin Beratungsstellenleiter in der Beratungsstelle in Pforzheim",
+    "note": ""
+  },
+  {
+    "name": "FX3_9712.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Manuel Miksch",
+    "confidence": "mittel",
+    "evidence": "Fortsetzung des 9711-Interviews; kein neuer Name genannt; spricht von Tochter/Familie in der Beratungsstelle (Pforzheim-Kontext)",
+    "note": "Continuation clip; no self-intro, inferred from 9711 context"
+  },
+  {
+    "name": "FX3_9713.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Claudia Kreher",
+    "confidence": "mittel",
+    "evidence": "Ich bin in Bad Kennstadt, die Beratungsstelle. Wir sind direkt gegenüber hier in der Straße — Kanzleiwechsler-Fragen, Stresslevel",
+    "note": "No self-intro; pre-interview briefing segment. Bad Cannstatt/Kennstadt reference matches Claudia Kreher (9714). Could be standalone interstitial clip between sessions."
+  },
+  {
+    "name": "FX3_9714.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Claudia Kreher",
+    "confidence": "hoch",
+    "evidence": "Ich bin die Claudia Kreher, komme von der Beratungsstelle Stuttgart, Bad Cannstatt und bin dort seit zehn Jahren Beratungsstellenleiterin.",
+    "note": ""
+  },
+  {
+    "name": "FX3_9715.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Suzan Baüsen",
+    "confidence": "hoch",
+    "evidence": "Ich heiße Suzan Baüsen. Alle nennen mich hier Suzi. Ich hab meine Ausbildung erfolgreich hier in der LOHI BW abgeschlossen.",
+    "note": "Surname spelled inconsistently by ASR (Baüzen/Baüsen/Baözen); best reading: Baüsen"
+  },
+  {
+    "name": "FX3_9716.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": null,
+    "confidence": "niedrig",
+    "evidence": "Dreht ihr hier im Flur was? Wir sind fertig. Ach so. Jetzt geht's weiter hier.",
+    "note": "Not an interview; 18.7s interstitial corridor clip, no interviewee present, no self-intro"
+  },
+  {
+    "name": "FX3_9717.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Nicholas Titz",
+    "confidence": "hoch",
+    "evidence": "Mein Name ist Nicholas Titz. Ich bin Beratungsstellenleiter bei der Lohnsteuerhilfe Baden-Württemberg in der Beratungsstelle Ludwigsburg.",
+    "note": ""
+  },
+  {
+    "name": "FX3_9718.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Stefan Engstler",
+    "confidence": "hoch",
+    "evidence": "Ich bin der Stefan Engstler. Ich arbeite in Herrenberg, bin dort Beratungsstellenleiter von der Beratungsstelle.",
+    "note": ""
+  },
+  {
+    "name": "FX3_9719.MP4",
+    "camera": "Kamera-A FX3 1",
+    "person": "Peter Lezoch",
+    "confidence": "mittel",
+    "evidence": "Ich bin Peter Lezach. Ich bin zunächst mal Mitarbeiter der Lori BW, Beratungsstellenleiter einer eigenen Beratungsstelle in Weiterstadt",
+    "note": "Surname unclear (ASR: Lezach/Lezoch); exact spelling uncertain"
+  },
+  {
+    "name": "a7MK4_20260627_9947.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Ariana Leoni",
+    "confidence": "hoch",
+    "evidence": "Ich bin Ariana Leoni, arbeite, ähm, bei der Lohnsteuerhilfe Baden-Württemberg, einmal, äh, als Mitarbeiterin in Hechingen",
+    "note": "Same session as FX3_9709"
+  },
+  {
+    "name": "a7MK4_20260627_9948.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Julian Pross",
+    "confidence": "hoch",
+    "evidence": "Okay, also ich bin der Julian Pross. Ähm, ich leite die Beratungsstelle in Sindelfingen.",
+    "note": "Same session as FX3_9710"
+  },
+  {
+    "name": "a7MK4_20260627_9949.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Manuel Miksch",
+    "confidence": "hoch",
+    "evidence": "Also ich heiß Manuel Mick. Ich bin Beratungsstellerleiter in der Beratungsstelle in Pforzheim",
+    "note": "ASR rendered surname as \"Mick\"; A-cam (9711) confirms \"Miksch\". Same session as FX3_9711"
+  },
+  {
+    "name": "a7MK4_20260627_9950.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Manuel Miksch",
+    "confidence": "mittel",
+    "evidence": "Wie bekommst du deine Arbeit oder wie bekommt man die Arbeit und das Privatleben bei der LOHI-BW unter einen Hut? (continuation)",
+    "note": "Continuation clip; no self-intro. Same session as FX3_9712"
+  },
+  {
+    "name": "a7MK4_20260627_9951.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Claudia Kreher",
+    "confidence": "mittel",
+    "evidence": "Bist du hier im Büro? Nein. Also ich bin in Bad Kennstadt, die Beratungsstellen, wir sind direkt gegenüber von der Straße.",
+    "note": "Pre-interview briefing; no self-intro. Bad Cannstatt reference matches Claudia Kreher (9952). Same session segment as FX3_9713"
+  },
+  {
+    "name": "a7MK4_20260627_9952.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Claudia Kreher",
+    "confidence": "hoch",
+    "evidence": "Ich bin die Claudia Kreher, komme von der Beratungsstelle Stuttgart/Bad Cannstatt und bin dort seit zehn Jahren Beratungsstellenleiterin.",
+    "note": "Same session as FX3_9714"
+  },
+  {
+    "name": "a7MK4_20260627_9953.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Suzan Baözen",
+    "confidence": "hoch",
+    "evidence": "Ich heiße Suzan Baözen. Alle nennen mich hier Suzi. Ich hab meine Ausbildung erfolgreich hier in der LogiBw abgeschlossen.",
+    "note": "Same session as FX3_9715; ASR surname variants: Baüzen/Baözen"
+  },
+  {
+    "name": "a7MK4_20260627_9954.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Nicholas Titz",
+    "confidence": "mittel",
+    "evidence": "Mein Name ist Nikolaus Dietz. Ich bin Beratungsstellenleiter bei der Lohnsteuer für Baden-Württemberg in der Beratungsstelle in Ludwigsburg.",
+    "note": "ASR rendered as \"Nikolaus Dietz\"; Kamera-A (9717) confirms \"Nicholas Titz\". Different take from 9955 but same person and session."
+  },
+  {
+    "name": "a7MK4_20260627_9955.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Nicholas Titz",
+    "confidence": "mittel",
+    "evidence": "Mein Name ist Nikolaus Litz. Ich bin Beratungsstellenleiter bei der Lohnsteuer für Baden-Württemberg in der Beratungsstelle Ludwigsburg.",
+    "note": "ASR rendered as \"Nikolaus Litz\"; Kamera-A (9717) confirms \"Nicholas Titz\". Same session as FX3_9717, different take than 9954"
+  },
+  {
+    "name": "a7MK4_20260627_9956.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Stefan Engstler",
+    "confidence": "mittel",
+    "evidence": "Ich bin der Herr Engster. Ich arbeite in Herrenberg, bin dort Beratungsstellenleiter in der Beratungsstelle.",
+    "note": "ASR dropped first name; rendered surname as \"Engster\". Kamera-A (9718) confirms \"Stefan Engstler\"."
+  },
+  {
+    "name": "a7MK4_20260627_9957.MP4",
+    "camera": "Kamera-B A7iv",
+    "person": "Peter Lezoch",
+    "confidence": "mittel",
+    "evidence": "Ich bin Peter Dietzoch. Ich, ähm, bin zunächst mal Mitarbeiter der LogiBW, Beratungsstellenleiter einer eigenen Beratungsstelle in Weiterstadt.",
+    "note": "ASR rendered as \"Dietzoch\"; Kamera-A (9719) gives \"Lezach/Lezoch\"; exact surname uncertain. Same session as FX3_9719."
+  }
+]

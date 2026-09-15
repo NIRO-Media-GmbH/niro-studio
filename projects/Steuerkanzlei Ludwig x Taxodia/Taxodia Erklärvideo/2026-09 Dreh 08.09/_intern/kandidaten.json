@@ -1,0 +1,1073 @@
+[
+ {
+  "id": "L_hook",
+  "clip": "FX3_0222",
+  "in": "02:03,3",
+  "out": "02:05,1",
+  "in_s": 123.3,
+  "out_s": 125.12,
+  "dauer_s": 1.8,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Anzeigen sind schon lange tot.",
+  "davor": "Und[2] da[2] hat[2] man[2] dann[2] natürlich[2] vieles[2] versucht,[2] aber[2]",
+  "danach": "Social[2] Media[2] ist[2] zweischneidig.[2]",
+  "luecke_davor_s": 0.54,
+  "luecke_danach_s": 0.76
+ },
+ {
+  "id": "L_intro",
+  "clip": "FX3_0222",
+  "in": "07:51,5",
+  "out": "08:15,0",
+  "in_s": 471.51,
+  "out_s": 495.01,
+  "dauer_s": 23.5,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Hallo, mein Name ist Friedrich Ludwig und ich bin Steuerberater seit 2000 und, äh, landwirtschaftliche Buchstelle und wir betreuen hier von Ilshofen aus in 'ner Steuerkanzlei mit circa vierzig Mitarbeitern, vor allem landwirtschaftliche Betriebe im Radius von fünfzig Kilometern, äh, mit anverwandtem Gewerbe, nachwachsenden Rohstoffen, erneuerbaren Energien und, äh, sind da Spezialisten in diesem Bereich.",
+  "davor": "",
+  "danach": "Gut.[1] Ja.[1] Ähm,[1]",
+  "luecke_davor_s": null,
+  "luecke_danach_s": 1.24
+ },
+ {
+  "id": "L_pain_a",
+  "clip": "FX3_0222",
+  "in": "08:41,8",
+  "out": "09:05,9",
+  "in_s": 521.77,
+  "out_s": 545.89,
+  "dauer_s": 24.1,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "In der Vergangenheit hat es immer gut funktioniert, dass es noch landwirtschaftlich ausgebildete, äh, Frauen und Männer gibt, die auch im Steuerbereich sich interessiert haben. Das ist aber zunehmend weniger geworden, weil die Landwirtschaft sehr unter Druck steht und weil da niemand mehr 'ne landwirtschaftliche Ausbildung macht, wenn er nicht selber 'n Betrieb führen kann oder Betrieb übernehmen kann. So sind uns diese, dieses Potenzial, diese, diese Menschen sind uns weggebrochen.",
+  "davor": "ausge--[2] anfangen.[2]",
+  "danach": "Da[2] gab's[2] niemand[2] mehr,[2] den[2] man[2] hier[2] zum[2]",
+  "luecke_davor_s": 1.74,
+  "luecke_danach_s": 0.06
+ },
+ {
+  "id": "L_pain_b",
+  "clip": "FX3_0222",
+  "in": "09:14,4",
+  "out": "09:25,9",
+  "in_s": 554.43,
+  "out_s": 565.85,
+  "dauer_s": 11.4,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Und da hat man dann alles versucht, Recruit, privates Recruiting, Social Media, direkte Personalvermittler und die Chancen waren relativ schlecht, da überhaupt jemand zu finden.",
+  "davor": "ihn[2] bei[2] uns[2] zu[2] beschäftigen[2] und[2] einzusetzen.[2]",
+  "danach": "Deshalb[2] ist[2] es[2] jetzt[2] gut,[2] dass[2]",
+  "luecke_davor_s": 0.88,
+  "luecke_danach_s": 1.16
+ },
+ {
+  "id": "L_pain_c",
+  "clip": "FX3_0222",
+  "in": "02:31,6",
+  "out": "02:39,3",
+  "in_s": 151.6,
+  "out_s": 159.34,
+  "dauer_s": 7.7,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Trotzdem war die, die, das Ergebnis halt immer so: „Ja, ich mach lieber Gewerbe. Landwirtschaft, äh, Landwirtschaft. Lass mich mit Landwirtschaft doch in Ruhe.\"",
+  "davor": "wo[2] man[2] den[2] dann[2] einstellen[2] konnte.[2]",
+  "danach": "Und,[2] äh,[2] ich[2] selber[2] bin[2] Landwirtschaftsmeister,[2]",
+  "luecke_davor_s": 0.5,
+  "luecke_danach_s": 0.84
+ },
+ {
+  "id": "L_kapazitaet",
+  "clip": "FX3_0222",
+  "in": "04:25,9",
+  "out": "04:49,5",
+  "in_s": 265.94,
+  "out_s": 289.5,
+  "dauer_s": 23.6,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Wie bilde ich die jetzt aus? Wir haben die Kapazitäten gar nicht. Wir haben eh 'n Mangel an Nachwuchskräften. Wir können nicht auch noch ein, zwei Leute abstellen, um da jeden Tag Händchen halten und die Ausbildung noch, äh, sicherstellen. Und deswegen ist 'ne Online-Ausbildung, wie Taxodia die anbildet, für uns 'n genialer Gewinn. Das ist für uns ein Glücksfall.",
+  "davor": "in[2] den[2] Vordergrund[2] gerückt[2] und[2] dann[2] die[2] Frage:[2]",
+  "danach": "Wir[2] kommen[2] entweder[2] dahin,[2] entweder[2] endlich[2] wieder[2] dahin[2] zurück,[2]",
+  "luecke_davor_s": 0.06,
+  "luecke_danach_s": 0.06
+ },
+ {
+  "id": "L_zurueck",
+  "clip": "FX3_0222",
+  "in": "05:30,7",
+  "out": "06:08,8",
+  "in_s": 330.66,
+  "out_s": 368.78,
+  "dauer_s": 38.1,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "und deswegen kommen wir jetzt wieder dahin zurück, wo wir vor 30 Jahren 'ne Präsenzausbildung hatten, die, die auf die Landwirtschaft gut vorbereitet hat, auf das landwirtschaftliche Steuerrecht gut vorbereitet hat. Nur dass es halt mit den neuen Medien, mit neuen Techniken, äh, voll mobil und voll digital jetzt jeder von überall aus machen kann und das sehr elegant sich auch in Arbeits-, Einarbeitungsphasen einbinden lässt. Und deswegen ist es 'n Glücksfall für uns, dass es 'ne Taxodia gibt und dass diese neuen Möglichkeiten uns, äh, dieses, dieses alte System der Fachkräfte zu Steuerfachmännern au-- und -frauen auszubilden, uns das wieder bietet. Wir sind da sehr glücklich darüber.",
+  "davor": "Okay.[2] Ähm,[2]",
+  "danach": "Gut.[1] Ja,[1] war[1] schon[1] mal[1] auf[1] jeden[1]",
+  "luecke_davor_s": 0.92,
+  "luecke_danach_s": 1.63
+ },
+ {
+  "id": "L_steuerrecht",
+  "clip": "FX3_0222",
+  "in": "10:38,1",
+  "out": "11:11,9",
+  "in_s": 638.07,
+  "out_s": 671.93,
+  "dauer_s": 33.9,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Im landwirtschaftlichen Bereich, wo man die Ansprache für 'n Betrieb, die Gedanken, die 'n Betriebsleiter hat, die seine, seine Fortentwicklung und seine, äh, Betriebsgestaltung angehen, wenn man da nicht mitdenken kann und mitfühlen kann, wie's der Familie geht und was die konkreten Probleme sind, ist man in der Beratung nicht mal halb so gut. Äh, da hilft das reine Steuerrecht gar nix. Ich brauch den, ich brauch die Querverbindung zwischen dem landwirtschaftlichen Fachwissen und den steuerlichen Regelungen, um den Betrieb optimal beraten zu können.",
+  "davor": "mag[2] im[2] normalen[2] Steuerrecht[2] funktionieren.[2]",
+  "danach": "Okay.[1] Ähm,[1]",
+  "luecke_davor_s": 0.06,
+  "luecke_danach_s": 1.86
+ },
+ {
+  "id": "L_nixhilft",
+  "clip": "FX3_0222",
+  "in": "11:01,6",
+  "out": "11:11,9",
+  "in_s": 661.57,
+  "out_s": 671.93,
+  "dauer_s": 10.4,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "da hilft das reine Steuerrecht gar nix. Ich brauch den, ich brauch die Querverbindung zwischen dem landwirtschaftlichen Fachwissen und den steuerlichen Regelungen, um den Betrieb optimal beraten zu können.",
+  "davor": "ist[2] man[2] in[2] der[2] Beratung[2] nicht[2] mal[2] halb[2] so[2] gut.[2] Äh,[2]",
+  "danach": "Okay.[1] Ähm,[1]",
+  "luecke_davor_s": 0.08,
+  "luecke_danach_s": 1.86
+ },
+ {
+  "id": "L_zwingend",
+  "clip": "FX3_0222",
+  "in": "12:32,7",
+  "out": "12:40,0",
+  "in_s": 752.67,
+  "out_s": 759.99,
+  "dauer_s": 7.3,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Wir brauchen zwingend und elementar, äh, Quereinsteiger, die den landwirtschaftlichen Hintergrund mitbringen, um erfolgreich zu sein.",
+  "davor": "ausgebildeten[2] Steuerfachleuten[2] Landwirte[2] betreuen[2] zu[2] können.[2]",
+  "danach": "Okay.[1] Ähm.[1]",
+  "luecke_davor_s": 0.04,
+  "luecke_danach_s": 1.6
+ },
+ {
+  "id": "L_andersrum",
+  "clip": "FX3_0222",
+  "in": "29:18,7",
+  "out": "29:48,0",
+  "in_s": 1758.71,
+  "out_s": 1788.05,
+  "dauer_s": 29.3,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Es ist viel leichter wie jemand, der zwar steuerlichen Crösus ist, aber dem kann ich keine Landwirtschaft beibringen. Das funktioniert gar net. Es gibt nur den einen Weg, wenn man wirklich fachlich gute Mitarbeiterinnen und Mitarbeiter haben möchte, dass die die Landwirtschaft haben, klassisch ausgebildet in welcher Form auch immer. Und dann ist die Steuer leicht zu lernen und andersrum funktioniert's letztendlich gar net.",
+  "davor": "bringen[2] und[2] dann[2] die[2] Steuer[2] dazulernen.[2]",
+  "danach": "Und[1] was[1] würdest[1] du[1] sagen,[1] ist[1] so[1] der[1] Vorteil[1]",
+  "luecke_davor_s": 0.04,
+  "luecke_danach_s": 0.06
+ },
+ {
+  "id": "L_produktiv",
+  "clip": "FX3_0222",
+  "in": "16:11,5",
+  "out": "16:25,4",
+  "in_s": 971.49,
+  "out_s": 985.35,
+  "dauer_s": 13.9,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Aber man kann vom Grundsatz her sagen, ab der ersten Hälfte dieser Taxodia-Fortbildung, äh, wenn die erste Hälfte ge-geschafft ist, dann kann man schon in gewissem Rahmen von Mitarbeit sprechen.",
+  "davor": "selbst,[2] selbst[2] so[2] sicher[2] ist,[2] dass[2] er[2] die[2] Zusammenhänge[2] dann[2] auch[2] umsetzen[2] kann.[2]",
+  "danach": "Was[1] sind[1] da[1] so[1] typische[1] Aufgaben,[1] die[1] man[1] zu[1] Anfang[1]",
+  "luecke_davor_s": 0.46,
+  "luecke_danach_s": 0.58
+ },
+ {
+  "id": "L_aufgaben",
+  "clip": "FX3_0222",
+  "in": "16:31,3",
+  "out": "16:55,0",
+  "in_s": 991.25,
+  "out_s": 1014.97,
+  "dauer_s": 23.7,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "zuerst mit Buchhaltungen an sich an. Äh, Beratungsthemen sind da noch eher im Hintergrund. Klassische Buchhaltung, äh, erste Bilanzarbeiten, dass man einfach schon in dieser, in dieser konkreten Abwicklung, wie die Buchhaltung dann aussehen muss, äh, anfängt und die Beratungsthemen und Themen, die rein steuerliche Fragen beantworten, die kommen dann später.",
+  "davor": "Anfang[1] an[1] übergibt?[1] Man[2] fa-fängt[2] natürlich[2]",
+  "danach": "Mhm.[1] Und[1] wie[1] viel[1] Freistellung[1]",
+  "luecke_davor_s": 0.04,
+  "luecke_danach_s": 1.08
+ },
+ {
+  "id": "L_deadline",
+  "clip": "FX3_0222",
+  "in": "19:16,7",
+  "out": "19:32,0",
+  "in_s": 1156.7,
+  "out_s": 1172.04,
+  "dauer_s": 15.3,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Sie haben halt Sonntagabend Deadline und dann muss es halt gemacht sein. Und das ist genau das System, das auch bei uns gilt. Wir haben Fristen, die Fristen müssen eingehalten werden. Und da ist es auch schon 'n, 'n gutes Standing, wenn man das hier schon lernt, weil man später in der Praxis auch braucht.",
+  "davor": "dieses,[2] diese[2] Themen[2] abarbeiten[2] können.[2]",
+  "danach": "Mhm.[1] Und,[1] ähm,[1]",
+  "luecke_davor_s": 0.08,
+  "luecke_danach_s": 0.79
+ },
+ {
+  "id": "L_jedewoche",
+  "clip": "FX3_0222",
+  "in": "19:45,8",
+  "out": "20:03,1",
+  "in_s": 1185.84,
+  "out_s": 1203.1,
+  "dauer_s": 17.3,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Das Controlling von Taxodia ist sehr angenehm. Es ist online für mich verfügbar. Ich schaue jede Woche. Ich sehe die Ergebnisse aller Klausuren, die geschrieben werden. Ich sehe den, den Fortschritt und die Disziplin, die ein, ein Auszubildender, ein Quereinsteiger an den Tag legt",
+  "davor": "rein.[2] Ich[2] habe[2] alle[2] Noten.[2] Du[1] schaust[1] jede[1] Woche[1] in[1] das[1] Controlling[1] rein.[1]",
+  "danach": "und[2] daran[2] kann[2] man[2] schon[2] auch[2] ablesen,[2] wie[2] er[2] später[2] funktioniert.[2]",
+  "luecke_davor_s": 0.26,
+  "luecke_danach_s": 0.32
+ },
+ {
+  "id": "L_fair",
+  "clip": "FX3_0222",
+  "in": "22:11,4",
+  "out": "22:37,4",
+  "in_s": 1331.43,
+  "out_s": 1357.36,
+  "dauer_s": 25.9,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "das Abrechnungssystem ist ja so schön. Jeder, jeder Kurs, jeder Abschnitt, der gemacht wird, wird bezahlt. Das ist sehr fair. Ich muss nicht Unsummen vor-vorausbezahlen, sondern so wie die Abschnitte geleistet werden, so werden sie auch bezahlt. Und dann ist es schon gut, wenn ich auch seh, äh, da brauche ich nicht ewig zuschauen, sondern ich seh früher, es ist schon schwierig. Und wenn was Schlimmes ist, dann bekomme ich ja Nachricht, da haben wir 'n Problem.",
+  "davor": "sieht,[2] äh,[2] funktioniert[2] das[2] auch,[2] ja.[2] Äh,[2]",
+  "danach": "Ja,[2] und[2] dann[2] kann[2] man[2] ja[2] da[2] Gespräche[2] führen,[2] dann[2] kann[2]",
+  "luecke_davor_s": 0.0,
+  "luecke_danach_s": 0.22
+ },
+ {
+  "id": "L_rechnung",
+  "clip": "FX3_0222",
+  "in": "23:38,5",
+  "out": "24:42,3",
+  "in_s": 1418.46,
+  "out_s": 1482.31,
+  "dauer_s": 63.8,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "ist es ein sehr adäquates Modell, was jetzt nicht teurer ist, als sich um Mitarbeiter zu bemühen, die 'ne fertige Ausbildung haben. Ist, ist ganz einfach zu rechnen, wenn man circa 10.000 Euro rechnet, was, was der gesamte Kurs mit den zwei Abschnitten kostet. Das ist jeweils, äh, 5.200, 5.500 zwischen Abschnitt eins und zwei, ist ungefähr, äh, jeweils 350 Stunden, insgesamt 720 Stunden. Wenn man das jetzt einfach mal rechnet, die 10.000 Euro und ich rechne 25 %, die ein Personalvermittler vom Jahresbrutto für so 'ne Vermittlung einer fertigen Kraft verlangt, dann ist es so, dass das sich ab 43.000 Jahresbrutto Gleich ist, ja. Das heißt bei dreitausendsechshundert Euro und das ist 'n Bruttogehalt, das wird ja bei uns in der Anfangsphase schon bezahlt. Also es ist auch, was die Kosten angeht, nicht teurer als einen einzigen, äh, Vermittlungs-, äh, Auftrag hier, hier zu geben.",
+  "davor": "vorne.[1] Wenn[2] man[2] das[2] aus[2] finanzieller[2] Sicht[2] betrachtet,[2]",
+  "danach": "Und[2] da[2] weiß[2] man[2] dann[2] auch[2] net[2] hundert[2] Prozent,[2] was[2] bekommst[2]",
+  "luecke_davor_s": 0.65,
+  "luecke_danach_s": 0.04
+ },
+ {
+  "id": "L_480",
+  "clip": "FX3_0222",
+  "in": "25:00,2",
+  "out": "25:17,7",
+  "in_s": 1500.17,
+  "out_s": 1517.69,
+  "dauer_s": 17.5,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Und wenn man überlegt, dass ich ja für vierhundertachtzig Euro zweiunddreißig Stunden Einstiegsprobephase sozusagen, äh, schon habe, um 'ne Vorprüfung für alle Kandidaten zu machen, dann ist es für uns 'n ganz klasse Modell, dass mer, dass mer wirklich, äh, gute Leute finden.",
+  "davor": "schon,[2] aber[2] beim[2] Personalvermittler[2] weiß[2] ich's[2] net.[2]",
+  "danach": "Okay.[1] Und,[1] ähm,[1]",
+  "luecke_davor_s": 0.44,
+  "luecke_danach_s": 1.0
+ },
+ {
+  "id": "L_online",
+  "clip": "FX3_0222",
+  "in": "26:47,3",
+  "out": "27:09,6",
+  "in_s": 1607.31,
+  "out_s": 1629.57,
+  "dauer_s": 22.3,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "man kann eine Ausbildung, wie's Taxodia macht, mit diesem, mit diesem Überwachen, mit diesem Kontrollieren, mit diesem Reflektieren, das kann man nicht mit 'ner klassischen Online-Ausbildung eines Fernkurses oder sonstigem un-ungeförderten, ungestützten, un-unterstützten, äh, Verfahren vergleichen. Und deswegen, hier funktioniert es.",
+  "davor": "der[2] Aus-[2] und[2] Fortbildung[2] benötigen.[2] Äh,[2]",
+  "danach": "Das[2] wär[2] der[2] Ratschlag,[2] den[2] ich[2] jedem[2] geben[2] kann.[2] Mal[2] probieren,[2]",
+  "luecke_davor_s": 0.3,
+  "luecke_danach_s": 0.08
+ },
+ {
+  "id": "L_probieren",
+  "clip": "FX3_0222",
+  "in": "27:09,6",
+  "out": "27:22,7",
+  "in_s": 1629.65,
+  "out_s": 1642.73,
+  "dauer_s": 13.1,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Das wär der Ratschlag, den ich jedem geben kann. Mal probieren, die Einsteigerphase mal probieren mit den zweiunddreißig Stunden. Dann wird sich rausstellen, dass es hier funktioniert, äh, was halt in vielen anderen Bereichen es dann nicht tut.",
+  "davor": "Verfahren[2] vergleichen.[2] Und[2] deswegen,[2] hier[2] funktioniert[2] es.[2]",
+  "danach": "Mhm.[1] Und[1] gibt's[1] irgendwas,[1]",
+  "luecke_davor_s": 0.08,
+  "luecke_danach_s": 1.22
+ },
+ {
+  "id": "L_empfehlung",
+  "clip": "FX3_0222",
+  "in": "32:46,8",
+  "out": "33:09,0",
+  "in_s": 1966.79,
+  "out_s": 1989.05,
+  "dauer_s": 22.3,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Deshalb ist Taxodia für alle, die sich mit landwirtschaftlicher Steuerberatung noch beschäftigen wollen, der erste und eigentlich beste Ansprechpartner, äh, weil er optimale Einbindung in den Betriebsablauf, optimale Vorbereitung der Bewerber und der Quereinsteiger bietet. Es ist für jeden, der das Thema überhaupt anfasst, die Lösung, die einfach alles bietet.",
+  "davor": "er[1] sich[1] das[1] auf[1] jeden[1] Fall[1] mal[1] anschauen[1] sollte?[1] Für[1] wen[1] ist[1] das[1] was?[1]",
+  "danach": "Okay,[1] gut.[1] Habt[1]",
+  "luecke_davor_s": 0.44,
+  "luecke_danach_s": 1.86
+ },
+ {
+  "id": "F_intro",
+  "clip": "FX3_0223",
+  "in": "00:46,1",
+  "out": "01:28,0",
+  "in_s": 46.12,
+  "out_s": 87.96,
+  "dauer_s": 41.8,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Hallo, ich bin Jörn Flamand. Ich bin Geschäftsführer der Taxodia GmbH. Die Taxodia ist eine reine Online-Steuerfachschule für den B2B-Bereich, ähm, mit dem Schwerpunkt des landwirtschaftlichen Steuerrechts. Wir haben uns spezialisiert auf die Quereinsteiger, die in die landwirtschaftlichen Buchstellen hineinkommen ohne steuerrechtliche Vorkenntnisse. In der Regel haben die irgendeinen, äh, Ausbildungsberuf bereits hinter sich und, äh, wir machen dann die klassische Weiterbildung im Steuerrecht, um diese Mitarbeiter dann praxistauglich einsatzbereit zu bekommen.",
+  "davor": "Okay?[1] Okay.[2]",
+  "danach": "Wir[2] haben[2] dazu[2] ein[2] eigenes[2] Learning-Management-System[2]",
+  "luecke_davor_s": 1.68,
+  "luecke_danach_s": 0.6
+ },
+ {
+  "id": "F_erfahrung",
+  "clip": "FX3_0223",
+  "in": "02:06,0",
+  "out": "02:24,1",
+  "in_s": 125.98,
+  "out_s": 144.08,
+  "dauer_s": 18.1,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "die Taxodia habe ich, äh, Anfang 2023 gegründet und davor war ich fünfundzwanzig Jahre Geschäftsführer einer Steuerakademie, in der wir bereits die Ausbildung in Präsenz, äh, oder diese Weiterbildungsmaßnahme in Präsenz durchgeführt haben.",
+  "davor": "auch[0] wirklich[0] funktioniert.[0] Ja,[2]",
+  "danach": "Und[2] dort,[2] äh,[2] habe[2] ich[2] sehr[2] viel[2] Erfahrung,[2]",
+  "luecke_davor_s": 0.18,
+  "luecke_danach_s": 0.48
+ },
+ {
+  "id": "F_fall",
+  "clip": "FX3_0223",
+  "in": "02:32,2",
+  "out": "03:17,0",
+  "in_s": 152.18,
+  "out_s": 196.96,
+  "dauer_s": 44.8,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Ein aktueller Fall in der Taxodia: Als ich gestartet bin mit der Taxodia in 2023, ist eine, äh, fünfzigjährige Landwirtin in den Beruf reingekommen, in eine Steuerkanzlei und hat dann im Jahr, äh, 23, 24 dann so über ein Jahr in etwa diesen Onlinekurs gemacht und jetzt in, äh, im letzten Jahr, in diesem Jahr, in 2026 dann die Prüfung abgelegt mit inzwischen dreiundfünfzig Jahren und hat ein Ergebnis von zwei Komma eins sechs erzielt bei einem Durchschnitt von drei Komma eins fünf. Also durchaus, äh, ein Zeichen, dass diese Ausbildung auf jeden Fall funktioniert.",
+  "davor": "Präsenzausbildung[2] zu[2] sehr[2] guten[2] Ergebnissen[2] führt.[2]",
+  "danach": "Okay.[0] Ähm,[0]",
+  "luecke_davor_s": 0.66,
+  "luecke_danach_s": 1.38
+ },
+ {
+  "id": "F_leichter",
+  "clip": "FX3_0223",
+  "in": "03:47,9",
+  "out": "03:53,3",
+  "in_s": 227.92,
+  "out_s": 233.28,
+  "dauer_s": 5.4,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Es ist leichter, einem Landwirt das Steuerrecht beizubringen, als einem Steuerrechtler die Landwirtschaft.",
+  "davor": "auch[2] in[2] der[2] Vorgängerorganisation[2] immer[2] den[2] Spruch:[2]",
+  "danach": "Und[2] insofern[2] haben[2] wir,[2] äh,[2] überwiegend[2]",
+  "luecke_davor_s": 0.32,
+  "luecke_danach_s": 0.48
+ },
+ {
+  "id": "F_einstieg",
+  "clip": "FX3_0223",
+  "in": "10:14,1",
+  "out": "10:53,5",
+  "in_s": 614.1,
+  "out_s": 653.54,
+  "dauer_s": 39.4,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Der Einstiegskurs hat zweiunddreißig Unterrichtsstunden, geht über vier Wochen. Man sollte also acht Unterrichtsstunden pro Woche sich Zeit nehmen. Das ist so die Bedingung, dass es nicht zu lange schleift. Und, äh, so lange bleibt man in seinem bisherigen Beruf. Wenn man dann sagt, es liegt mir, man hat das Gefühl, die Taxodia, wir sagen, wir können uns auch vorstellen, dass der Zugang zum Steuerrecht da ist. Der Arbeitgeber sagt: „Kann ich mir auch vorstellen\", dann, äh, würde man sagen, äh, man schafft ein Arbeitsverhältnis in der Steuerkanzlei und wird dann mit der dreiunddreißigsten Unterrichtsstunde im Kurs dann in der Kanzlei fortfahren.",
+  "davor": "und[2] der[2] dann[2] sagt:[2] „Ich[2] könnte[2] mir[2] vorstellen.\"[2]",
+  "danach": "Okay,[0] cool.[0] Alles[0] klar.[0] Ähm,[0]",
+  "luecke_davor_s": 0.4,
+  "luecke_danach_s": 0.72
+ },
+ {
+  "id": "F_bachelor",
+  "clip": "FX3_0223",
+  "in": "11:41,9",
+  "out": "11:59,2",
+  "in_s": 701.94,
+  "out_s": 719.16,
+  "dauer_s": 17.2,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Der Kurs, den wir anbieten, ist ein Vorbereitungskurs auf die Fortbildungsprüfung Bachelor Professional in landwirtschaftlichem Rechnungswesen und Steuern. Das war bisher der sogenannte Fachagrawert Rechnungswesen, der bereits seit 1975 so in der Form existiert.",
+  "davor": "Warte,[2] ich[2] will[2] noch[2] mal[2] anfangen.[2]",
+  "danach": "Und[2] der[2] Kurs,[2] den[2] wir[2] da[2] geschaffen[2] haben,[2]",
+  "luecke_davor_s": 1.68,
+  "luecke_danach_s": 0.62
+ },
+ {
+  "id": "F_teil1",
+  "clip": "FX3_0223",
+  "in": "14:54,1",
+  "out": "15:13,5",
+  "in_s": 894.11,
+  "out_s": 913.51,
+  "dauer_s": 19.4,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Wenn jemand nach dem ersten Teil des Kurses in der Kanzlei anfängt zu arbeiten, dann kann er auf jeden Fall die laufende Buchführung von landwirtschaftlichen Mandanten eigenständig und sicher übernehmen und beachtet dort die umsatzsteuerlichen und einkommensteuerlichen Besonderheiten. Dazu ist er auf jeden Fall in der Lage.",
+  "davor": "mal.[0] Ach[2] so.[2] Wenn[0] jemand[0] nach-[0] Genau.[2]",
+  "danach": "Mhm.[0] Und[0] wie[0] sieht[0] so[0] eine[0] einzelne[0]",
+  "luecke_davor_s": 1.1,
+  "luecke_danach_s": 0.87
+ },
+ {
+  "id": "F_lerneinheit",
+  "clip": "FX3_0223",
+  "in": "15:20,1",
+  "out": "16:01,3",
+  "in_s": 920.05,
+  "out_s": 961.31,
+  "dauer_s": 41.3,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Der gesamte Kurs, den haben wir modular aufgebaut. Die, äh, ein Modul besteht aus Lerneinheiten. Die Lerneinheiten wiederum sind, äh, Videos mit Skripten, da wo erklärt wird und der, diese Videos gehen fünfzehn Minuten, zwanzig, fünfundzwanzig Minuten und im Anschluss wird der Teilnehmer dann gleich eine Übungsaufgabe zu erledigen haben. Die Übungsaufgaben, äh, werden unmittelbar danach mit einem Lösungshinweis, den der Teilnehmer sich anzuschauen hat. Und so wechseln sich immer, äh, die, die, äh, Erklärvideos mit den Skripten als Lerneinheit ab mit den Übungen.",
+  "davor": "Lerneinheit[0] von[0] innen[0] aus?[0]",
+  "danach": "Die[2] Übungen,[2] die[2] gemacht[2] werden,[2] werden[2] größtenteils[2]",
+  "luecke_davor_s": 1.22,
+  "luecke_danach_s": 0.34
+ },
+ {
+  "id": "F_software",
+  "clip": "FX3_0223",
+  "in": "17:29,2",
+  "out": "17:40,1",
+  "in_s": 1049.17,
+  "out_s": 1060.05,
+  "dauer_s": 10.9,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Das heißt also, die Kanzlei bekommt den Mitarbeiter auf ihr das verwendete Programm getrimmt und trainiert und kann dann sofort in der Praxis eingesetzt werden.",
+  "davor": "Vergleichs-,[2] äh,[2] auswertung[2] haben[2] für[2] diesen[2] Betrieb.[2]",
+  "danach": "Mhm.[0] Ähm,[0] ja,[0]",
+  "luecke_davor_s": 0.4,
+  "luecke_danach_s": 0.74
+ },
+ {
+  "id": "F_reporting",
+  "clip": "FX3_0223",
+  "in": "20:07,2",
+  "out": "20:47,0",
+  "in_s": 1207.23,
+  "out_s": 1246.99,
+  "dauer_s": 39.8,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Grundsätzlich haben wir jedes Wochenende ein Reporting, bei dem wir die vergangene Woche anschauen und auswerten, ob der Teilnehmer im Soll ist. Hat er die Stunden, die vorgegeben sind, erreicht oder nicht erreicht. Und in der kommenden Woche wird, äh, von der Taxodia, von meiner Kollegin im Büro, wird dieses, äh, Controlling, äh, sehr genau durchgeschaut. Es werden gerade diejenigen, die hinterherhängen, die werden teilweise dann auch oder die werden angerufen. Wenn dort erhebliche Stunden im Rückstand sind, dann bekommen sie einen Anruf, weil wir dann wissen wollen: Haben Sie privat irgendwelche Probleme? Haben Sie, äh, Krankheiten, was auch immer, warum Sie hinterherhinken?",
+  "davor": "Auswertung[0] oder-[0] Ja,[2] genau,[2] das[2] machen[2] wir[2] so.[2]",
+  "danach": "Und[2] wenn[2] es[2] plausibel[2] ist,[2] dann[2] werden[2] wir[2] in[2] Abstimmung[2]",
+  "luecke_davor_s": 0.66,
+  "luecke_danach_s": 0.56
+ },
+ {
+  "id": "F_anfassbar",
+  "clip": "FX3_0223",
+  "in": "21:37,6",
+  "out": "21:44,6",
+  "in_s": 1297.61,
+  "out_s": 1304.59,
+  "dauer_s": 7.0,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "wir wollen eine anfassbare Steuerfachschule sein, dass wir die Teilnehmer bei Problemen nicht allein lassen, sondern zurückrufen.",
+  "davor": "wenn[2] jemand,[2] äh,[2] Schwierigkeiten[2] hat,[2] wir[2] sagen,[2]",
+  "danach": "Grundsätzlich[2] werden[2] bei[2] uns[2] die[2] ersten[2]",
+  "luecke_davor_s": 0.04,
+  "luecke_danach_s": 0.65
+ },
+ {
+  "id": "F_ampel",
+  "clip": "FX3_0223",
+  "in": "22:23,9",
+  "out": "23:04,9",
+  "in_s": 1343.93,
+  "out_s": 1384.93,
+  "dauer_s": 41.0,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Wir haben, um einen guten Überblick zu behalten, denn das ist bei der Online-Fortbildung das Allerwichtigste, dass keiner aus den Augen verloren wird, haben wir ein Controlling nach einem Ampelprinzip eingeführt. Wenn der Teilnehmer das Soll, die Unterrichtsstunden, die er dort einge, äh, gebucht hat, durchgeführt hat in der Woche, dann läuft die Ampel in Grün. Wenn der Teilnehmer, ähm, bis zu einer Woche im Rückstand ist, ist die Ampel in Gelb. Dann bekommt er die ersten Anrufe und wenn der Teilnehmer über eine Woche zurückhängt, dann ist die Ampel in Rot und dann werden wir definitiv Gespräche führen, sowohl mit dem Teilnehmer wie auch mit dem Vorgesetzten der Kanzlei.",
+  "davor": "Mhm.[2] Also[0] auf[0] dieses[0] Reporting[0] und[0] so.[0]",
+  "danach": "Okay,[0] und[0] vielleicht[0] noch[0] mal[0] an[0] dem[0] Beispiel:[0]",
+  "luecke_davor_s": 0.98,
+  "luecke_danach_s": 1.58
+ },
+ {
+  "id": "F_ernte",
+  "clip": "FX3_0223",
+  "in": "24:32,8",
+  "out": "24:44,5",
+  "in_s": 1472.85,
+  "out_s": 1484.49,
+  "dauer_s": 11.6,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Sollte jemand durch Krankheit, Urlaub oder Erntezeit in Verzug geraten sein, dann kann er auch in unterrichtsfreien Wochen die, das Verpasste nachholen.",
+  "davor": "und[0] kann[0] nachkommen[0] oder[0] so[0] was.[0] Genau.[2]",
+  "danach": "Selbst[2] wenn[2] da[2] eine[2] Klausur[2] bei[2] gewesen[2] ist,[2] kann[2] er[2] diese[2]",
+  "luecke_davor_s": 1.38,
+  "luecke_danach_s": 0.03
+ },
+ {
+  "id": "F_vorquali",
+  "clip": "FX3_0223",
+  "in": "25:05,7",
+  "out": "25:20,1",
+  "in_s": 1505.67,
+  "out_s": 1520.09,
+  "dauer_s": 14.4,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Um bei uns im Kurs zu starten, braucht man, ähm, was die persönlichen Qualifikationen angeht, eigentlich keine Vorqualifikationen. Hilfreich sind natürlich, äh, Zahlenverständnis und ein gewisser Zugang zum Steuerrecht.",
+  "davor": "starten?[0]",
+  "danach": "Aus[2] Sicht[2] der[2] Kanzlei[2] ist[2] es[2] wichtig,[2]",
+  "luecke_davor_s": 2.6,
+  "luecke_danach_s": 0.12
+ },
+ {
+  "id": "F_bezahl",
+  "clip": "FX3_0223",
+  "in": "26:35,4",
+  "out": "27:15,4",
+  "in_s": 1595.35,
+  "out_s": 1635.41,
+  "dauer_s": 40.1,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Deswegen haben wir unser Bezahlmodell so gewählt, dass wir nur die Module, die der Teilnehmer geöffnet hat, die werden dann im Folgemonat abgerechnet. Sollten wir feststellen, dass der Teilnehmer nicht geeignet ist, greifen wir insoweit ein, dass wir den Arbeitgeber anrufen und sagen, wir können sofort den Teilnehmer stoppen und sagen: „Überlegt, guckt euch an, ob das die richtige Person ist.“ Ähm, und wenn dann der Teilnehmer nicht weitermachen soll, dann werden keine weiteren Kosten anfallen, keine Stornokosten. Der Teilnehmer hat nur das gezahlt, was er tatsächlich genutzt hat. Und das schafft Transparenz und Vertrauen aus unserer Sicht.",
+  "davor": "haben,[2] die[2] nicht[2] in[2] der[2] Lage[2] sind,[2] nur[2] dass[2] sie[2] das[2] Geld[2] verdienen.[2]",
+  "danach": "Mhm.[0] Ähm,[0]",
+  "luecke_davor_s": 0.06,
+  "luecke_danach_s": 0.49
+ },
+ {
+  "id": "F_pruefung",
+  "clip": "FX3_0223",
+  "in": "27:48,2",
+  "out": "27:58,8",
+  "in_s": 1668.19,
+  "out_s": 1678.79,
+  "dauer_s": 10.6,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "In den zwei Wochen vor der eigentlichen Abschlussprüfung werden wir die Teilnehmer jeden Morgen neunzig Minuten im Onlineraum, äh, in Live-Präsenz haben",
+  "davor": "den[2] Teilnehmern[2] das[2] Steuerrecht[2] sehr[2] intensiv[2] beigebracht.[2]",
+  "danach": "und[2] dann[2] gehen[2] wir[2] ganz[2] konkret[2] auf[2] klausurdidaktisches[2]",
+  "luecke_davor_s": 0.5,
+  "luecke_danach_s": 0.44
+ },
+ {
+  "id": "F_ergebnis",
+  "clip": "FX3_0223",
+  "in": "29:40,4",
+  "out": "29:56,0",
+  "in_s": 1780.39,
+  "out_s": 1796.01,
+  "dauer_s": 15.6,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Wir haben, äh, in der Online-Ausbildung sogar die zwei Besten im, äh, in der Prüfung gehabt und, ähm, damit ist eigentlich der Beweis gegeben, dass es ein absolut ebenbürtiger Teil ist, online sich fortbilden zu lassen.",
+  "davor": "vergleichbar.[2] Das[2] hat[2] das[2] letzte[2] Ergebnis[2] gezeigt.[2]",
+  "danach": "Okay.[0] Und[0] wie[0] viele[0]",
+  "luecke_davor_s": 0.52,
+  "luecke_danach_s": 0.94
+ },
+ {
+  "id": "F_fuerwen",
+  "clip": "FX3_0223",
+  "in": "32:06,4",
+  "out": "32:20,2",
+  "in_s": 1926.37,
+  "out_s": 1940.16,
+  "dauer_s": 13.8,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Wir haben aber immer mehr das Problem, dass wir die Quereinsteiger, die bereits älter sind und Verpflichtungen haben, nicht in einen Präsenzkurs rein können. Und für diese Personen ist natürlich die Online-Ausbildung ideal, weil flexibel.",
+  "davor": "auf[2] lange[2] Zeit[2] stehen[2] bleiben.[2]",
+  "danach": "Ich[2] kann[2] nicht[2] für[2] eine[2] halbe[2] Woche[2] in[2] einen[2] Präsenzkurs[2] fahren.[2]",
+  "luecke_davor_s": 0.45,
+  "luecke_danach_s": 0.4
+ },
+ {
+  "id": "F_stolz",
+  "clip": "FX3_0223",
+  "in": "34:13,1",
+  "out": "34:44,8",
+  "in_s": 2053.06,
+  "out_s": 2084.76,
+  "dauer_s": 31.7,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "Das letzte Prüfungsergebnis im Bachelor Professional macht mich persönlich stolz, dass wir, äh, damit zeigen konnten, dass das Online-Format ebenbürtig ist zum Präsenzformat, was, äh, zu Anfang für viele so nicht glaubwürdig war oder nicht-- Die haben da nicht dran geglaubt, sagen wir mal so. Für mich war es von Anfang an, dass ich daran geglaubt habe, dass dieses Online-Format zu so einem Erfolg führen kann. Und das macht mich halt sehr glücklich, dass dieser Erfolg auch eingetreten ist.",
+  "davor": "persönlich[3] freut's,[3] macht[3] stolz.[3] Genau.[2]",
+  "danach": "Gut.[3] Jan,[3] gibt's[3] sonst[3] noch[3] irgendwas,[3]",
+  "luecke_davor_s": 0.42,
+  "luecke_danach_s": 1.08
+ },
+ {
+  "id": "F_cta",
+  "clip": "FX3_0223",
+  "in": "36:59,5",
+  "out": "37:36,6",
+  "in_s": 2219.5,
+  "out_s": 2256.6,
+  "dauer_s": 37.1,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "ich kann nur appellieren, im Zeitalter des Fachkräftemangels, äh, wo ich immer wieder höre, wir finden keine Mitarbeiter, wir haben nicht genügend, die Arbeit bleibt liegen: Testen Sie Mitarbeiter über das Taxodia-System. Schauen Sie, wer ist geeignet für Steuerrecht. Die Erfahrung zeigt, auf den ersten Blick nicht geeignete Mitarbeiter sind auf den zweiten Blick doch geeignet. Probieren Sie den Einstiegskurs aus. Es ist ein überschaubares, äh, äh, Engagement, was das Finanzielle angeht. Und Sie haben mit uns im Grunde auch ein Assessment Center an der Hand, wo wir Sie, äh, sehr zeitnah eine Rückmeldung geben werden.",
+  "davor": "direkt[2] in[2] die[2] Kamera?[2] Ja,[3] genau.[3] Okay.[2] Ja,[2]",
+  "danach": "Gut.[3]",
+  "luecke_davor_s": 0.08,
+  "luecke_danach_s": 1.22
+ },
+ {
+  "id": "F_preis",
+  "clip": "FX3_0223",
+  "in": "32:34,5",
+  "out": "32:47,6",
+  "in_s": 1954.55,
+  "out_s": 1967.58,
+  "dauer_s": 13.0,
+  "sprecher": [
+   "speaker_2"
+  ],
+  "text": "kann man fast sagen, dass ein Online-Kurs aufgrund der, äh, nicht vorhandenen Reisekosten und Hotelkosten nur die Hälfte in etwa kosten würde. Es wird knapp die Hälfte sein von dem, was vielleicht ein Präsenzkurs an, an Kosten verursachen wird.",
+  "davor": "Wenn[2] man[2] natürlich[2] den[2] Preisvergleich[2] macht,[2]",
+  "danach": "Gut,[3] und[3] jetzt[3]",
+  "luecke_davor_s": 0.01,
+  "luecke_danach_s": 2.36
+ },
+ {
+  "id": "H_intro",
+  "clip": "FX3_0228",
+  "in": "00:43,0",
+  "out": "00:59,7",
+  "in_s": 43.04,
+  "out_s": 59.7,
+  "dauer_s": 16.7,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Mein Name ist Jan-Philipp Heyn. Ich bin seit September 2024 bei der Steuerkanzlei Ludwig angestellt. Ich hab vorher Landwirtschaft dual studiert mit dem Schwerpunkt Agrarökonomie und parallel zum Beginn meiner Anstellung hab ich die Fortbildung zum Bachelor Professional, ähm, begonnen und jetzt mittlerweile auch abgeschlossen.",
+  "davor": "okay.[1] Da[1] mach[1] ich's[1] grad[1] noch[1] mal.[1] Ja.[1]",
+  "danach": "Was[0] war[0] so[0] deine[0] Motivation,[0] dass[0] du[0]",
+  "luecke_davor_s": 0.94,
+  "luecke_danach_s": 0.7
+ },
+ {
+  "id": "H_motivation",
+  "clip": "FX3_0228",
+  "in": "01:05,8",
+  "out": "01:13,1",
+  "in_s": 65.76,
+  "out_s": 73.08,
+  "dauer_s": 7.3,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Ich hab zu Hause 'n landwirtschaftlichen Betrieb und hab schon immer diese Betriebsleitertätigkeit, ähm, interessant gefunden und auch unter anderem so diese Steuerthemen.",
+  "davor": "du[0] in[0] diesen[0] Steuerbereich[0] gehen[0] wolltest?[0]",
+  "danach": "Und[1] nachdem[1] ich[1] mich[1] im[1] Studium[1] auf[1] die[1] Agrarökonomie,[1]",
+  "luecke_davor_s": 0.94,
+  "luecke_danach_s": 0.68
+ },
+ {
+  "id": "H_wahlfach",
+  "clip": "FX3_0228",
+  "in": "02:01,8",
+  "out": "02:14,5",
+  "in_s": 121.76,
+  "out_s": 134.48,
+  "dauer_s": 12.7,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "im Studium war, äh, Steuerrecht 'n Wahlfach. Also das war eher drauf vorbereitet, dass man als landwirtschaftlicher Betriebsleiter weiß, von was der Steuerberater spricht und nicht, was jetzt hier quasi das tägliche Doing in der Steuerkanzlei ist,",
+  "davor": "gereicht[0] so,[0] dass[0] ...[0] Ja,[1] also[1] bei[1] uns[1] im[1] Stu,[1]",
+  "danach": "dass[1] man[1] landwirtschaftliche[1] Betriebe[1] vollumfänglich[1] berät[1] und[1] auch[1]",
+  "luecke_davor_s": 0.42,
+  "luecke_danach_s": 0.04
+ },
+ {
+  "id": "H_beispiel",
+  "clip": "FX3_0228",
+  "in": "02:36,0",
+  "out": "02:40,6",
+  "in_s": 156.02,
+  "out_s": 160.58,
+  "dauer_s": 4.6,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "So was hab ich jetzt im Studium in dem Wahlfach gar nicht gehabt und in dem Kurs wurde das dann ausführlich besprochen.",
+  "davor": "nachträgliche[1] Anschaffungs-[1] und[1] Herstellungskosten[1] sind.[1]",
+  "danach": "Okay.[0] Und[0] genau,[0] eigener[0]",
+  "luecke_davor_s": 0.5,
+  "luecke_danach_s": 1.06
+ },
+ {
+  "id": "H_regen",
+  "clip": "FX3_0228",
+  "in": "03:08,4",
+  "out": "03:15,8",
+  "in_s": 188.44,
+  "out_s": 195.78,
+  "dauer_s": 7.3,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "wenn jetzt Regentage waren, hab ich geschaut, dass ich den Kurs vorziehe, dass ich dann, wenn wieder besseres Wetter ist, ich aufm Acker meiner Tätigkeit nachkommen kann.",
+  "davor": "immer[1] flexibel[1] eingeteilt[1] hab.[1] Ähm,[1] das[1] heißt,[1]",
+  "danach": "Es[1] war[1] schon[1] 'n[1] gewisser[1] Organisationsaufwand,[1] das[1] alles[1]",
+  "luecke_davor_s": 0.02,
+  "luecke_danach_s": 0.68
+ },
+ {
+  "id": "H_16std",
+  "clip": "FX3_0228",
+  "in": "03:43,8",
+  "out": "03:56,3",
+  "in_s": 223.82,
+  "out_s": 236.28,
+  "dauer_s": 12.5,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Ich hab den Kurs bei der Taxudo in Teilzeit absolviert. Das heißt, ich hatt immer 16 Stunden Unterricht pro Woche. Ich hab dann für mich, ähm, den Sonntagnachmittag, ähm, immer so als fixen Termin genommen, um die Woche zu wiederholen.",
+  "davor": "Stunden[0] pro[0] Woche[0] hast[0] du[0] wirklich[0] gelernt?[0]",
+  "danach": "Das[1] heißt,[1] wenn[1] ich[1] dann[1] so[1] die[1] 16[1] Stunden[1] Unterricht[1] hab[1] plus[1]",
+  "luecke_davor_s": 0.94,
+  "luecke_danach_s": 0.06
+ },
+ {
+  "id": "H_online",
+  "clip": "FX3_0228",
+  "in": "05:06,1",
+  "out": "05:23,6",
+  "in_s": 306.06,
+  "out_s": 323.58,
+  "dauer_s": 17.5,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Aber dadurch, dass der Kurs wirklich online konzipiert wurde und kein analoges oder kein Präsenzprogramm in online einfach überführt wurde, sondern wirklich als neuer Online-Kurs gedacht ist, ähm, ist der sehr schön geführt und man hat auch regelmäßige Rückmeldungen, wie's läuft. Von daher wurden die Zweifel, wo ich am Anfang hatte, sehr schnell genommen.",
+  "davor": "hab[1] ich[1] schon[1] Bedenken[1] gehabt,[1] ob[1] das[1] so[1] gut[1] funktioniert.[1]",
+  "danach": "Okay.[0] Ähm,[0]",
+  "luecke_davor_s": 0.42,
+  "luecke_danach_s": 1.6
+ },
+ {
+  "id": "H_mail",
+  "clip": "FX3_0228",
+  "in": "06:00,5",
+  "out": "06:05,7",
+  "in_s": 360.54,
+  "out_s": 365.74,
+  "dauer_s": 5.2,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "sobald man irgendwelche fachlichen Fragen hat, kann man sofort 'ne Mail schreiben und bekommt am gleichen Tag noch 'ne Antwort,",
+  "davor": "Tag[1] reduziert.[1] Und[1] was[1] auch[1] sehr[1] gut[1] ist,[1]",
+  "danach": "sodass[1] man[1] gedanklich[1] noch[1] in[1] dem[1] Stoff[1] drin[1] ist[1] und[1] nicht,[1]",
+  "luecke_davor_s": 0.32,
+  "luecke_danach_s": 0.44
+ },
+ {
+  "id": "H_praxis",
+  "clip": "FX3_0228",
+  "in": "08:22,2",
+  "out": "08:37,1",
+  "in_s": 502.15,
+  "out_s": 517.05,
+  "dauer_s": 14.9,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Man hat durch den Taxodia-Kurs hat man 'nen sehr durchgängigen Übergang von der Theorie in die Praxis, weil genau das Programm, mit der die Kanzlei arbeitet, mit dem wird man auch bei Taxodia geschult, sodass keine Lücken zwischen Theorie und Praxis, insbesondere beim Rechnungswesen entstehen.",
+  "davor": "genau[0] Theorie[0] versus[0] Praxis.[0] Ach[1] so,[1] genau.[1]",
+  "danach": "Und[1] während[1] dem[1]",
+  "luecke_davor_s": 0.32,
+  "luecke_danach_s": 0.92
+ },
+ {
+  "id": "H_wochen",
+  "clip": "FX3_0228",
+  "in": "09:05,2",
+  "out": "09:10,9",
+  "in_s": 545.2,
+  "out_s": 550.89,
+  "dauer_s": 5.7,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "nach den ersten fünf, sechs Wochen, wenn man sich gut fühlt und sicher fühlt, kann man schon die ersten Tätigkeiten übernehmen.",
+  "davor": "da[1] mit[1] hilft.[1] Aber[1] ich[1] würd[1] sagen,[1] ab[1] den,[1]",
+  "danach": "Mhm.[0] Und,[0] ähm,[0]",
+  "luecke_davor_s": 0.01,
+  "luecke_danach_s": 0.02
+ },
+ {
+  "id": "H_pruefung",
+  "clip": "FX3_0228",
+  "in": "10:10,6",
+  "out": "10:17,8",
+  "in_s": 610.57,
+  "out_s": 617.79,
+  "dauer_s": 7.2,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Also die letzten zwei Wochen vor der Abschlussprüfung hat man täglich 90 Minuten ein, ein, äh, Online-Meeting, also tatsächlich live,",
+  "davor": "ja,[0] was[0] für[0] 'n[0] Gefühl[0] hattest[0] du[0] auch[0] so[0] vor[0] der[0] Prüfung?[0]",
+  "danach": "nicht,[1] ähm,[1] aufgenommen[1] wie[1] vorher.[1] Und[1] da[1] geht[1]",
+  "luecke_davor_s": 0.48,
+  "luecke_danach_s": 0.12
+ },
+ {
+  "id": "H_flammann",
+  "clip": "FX3_0228",
+  "in": "10:27,9",
+  "out": "10:55,4",
+  "in_s": 627.91,
+  "out_s": 655.37,
+  "dauer_s": 27.5,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "durch die langjährige Erfahrung vom Herrn Flammann hat man da 'n sehr gutes Gefühl, weil man einfach merkt, dass er diese Prüfung schon sehr lang kennt und weiß, wie die Abläufe sind und nimmt einem da auch wenig so die Prüfungang, Prüfungsangst, sag ich mal, weil es ja doch, ich persönlich in dem Steuerrecht noch keine Abschlussprüfung hatte und nicht dann doch kein Gefühl hatte, wie läuft das ab. Und durch die langjährige Erfahrung wird es einem sehr gut genommen und man fühlt sich gut vorbereitet.",
+  "davor": "seine[1] eigenen[1] Schwerpunkte[1] nacharbeiten.[1] Und,[1] äh,[1]",
+  "danach": "Okay.[0] Ähm,[0]",
+  "luecke_davor_s": 0.08,
+  "luecke_danach_s": 1.58
+ },
+ {
+  "id": "H_vertrauen",
+  "clip": "FX3_0228",
+  "in": "11:58,0",
+  "out": "12:19,2",
+  "in_s": 718.03,
+  "out_s": 739.15,
+  "dauer_s": 21.1,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "nachdem ich die Fortbildung abgeschlossen hab, hab ich sehr viel Vertrauen in der Kanzlei bekommen. Ich hab, äh, komplexere, anspruchsvollere Mandate erhalten und hab auch das Gefühl, dass ich innerhalb von der, vom Kollegium, sag ich mal, jetzt nicht nur als der Quereinsteiger aus der Landwirtschaft gesehen werd, sondern wirklich jemand, wo, ähm, 'ne gute Grundlage im Steuerrecht sich erarbeitet hat.",
+  "davor": "grad.[1] Ähm,[1] äh,[1]",
+  "danach": "Okay.[0] Ähm,[0]",
+  "luecke_davor_s": 0.78,
+  "luecke_danach_s": 1.18
+ },
+ {
+  "id": "H_alleine",
+  "clip": "FX3_0228",
+  "in": "12:41,3",
+  "out": "12:53,7",
+  "in_s": 761.35,
+  "out_s": 773.69,
+  "dauer_s": 12.3,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Ich hätt gern vor dem Kurs gewusst, dass der so geführt ist, dass man auch jederzeit so schnell die E-Mails, die Fragen per E-Mail beantwortet bekommt, ähm, und man quasi trotz Onlinekurs nicht alleingelassen wird.",
+  "davor": "äh[1] ...[1]",
+  "danach": "Okay.[0] Ja,[0] und[0] jetzt[0] so[0]",
+  "luecke_davor_s": 1.95,
+  "luecke_danach_s": 1.66
+ },
+ {
+  "id": "H_note",
+  "clip": "FX3_0228",
+  "in": "13:29,1",
+  "out": "13:36,6",
+  "in_s": 809.13,
+  "out_s": 816.63,
+  "dauer_s": 7.5,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "mein Abschluss mit eins Komma null sechs bedeutet mir natürlich viel. Ich bin sehr stolz drauf. Hätt auch nicht erwartet, dass es so gut, ähm, äh, wird.",
+  "davor": "Okay.[1] Ähm,[1]",
+  "danach": "Natürlich[1] ist[1] mir[1] bewusst,[1] dass[1] es[1] jetzt[1] 'n[1] Grundstein[1] ist.[1] Das[1] ist[1] die[1] Grundlagenausbildung,[1]",
+  "luecke_davor_s": 0.78,
+  "luecke_danach_s": 0.06
+ },
+ {
+  "id": "H_empfehlung",
+  "clip": "FX3_0228",
+  "in": "13:56,4",
+  "out": "14:14,2",
+  "in_s": 836.43,
+  "out_s": 854.23,
+  "dauer_s": 17.8,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "ich würd die Fortbildung jedem empfehlen, der 'n landwirtschaftliches Hintergrundwissen hat, der auch, ähm, gerne landwirtschaftlichen Steuer sich mit beschäftigen würde, aber nicht die Möglichkeit hat, 'nen Präsenzkurs vor Ort zu machen, weil er einfach aus verschiedenen Gründen die Flexibilität braucht, sich die Tage frei einteilen zu können.",
+  "davor": "Und,[1] ähm,[1] ich[1] würd's[1] jedem[1] oder[1]",
+  "danach": "Und,[1] ähm,[1]",
+  "luecke_davor_s": 0.06,
+  "luecke_danach_s": 0.7
+ },
+ {
+  "id": "H_karriere",
+  "clip": "FX3_0228",
+  "in": "15:27,8",
+  "out": "15:36,6",
+  "in_s": 927.83,
+  "out_s": 936.59,
+  "dauer_s": 8.8,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "durch die Fortbildung vom Bachelor Professional hab ich jetzt die Grundlage geschaffen, weitere Karriereschritte zu gehen, sei es der Steuerfachwirt oder sei es dann später auch vielleicht der Steuerberater.",
+  "davor": "man[2] so[2] will,[2] ne?[2] Ähm,[1]",
+  "danach": "Okay.[0] Ja,[0] gibt's[0] sonst[0] noch[0]",
+  "luecke_davor_s": 0.56,
+  "luecke_danach_s": 1.38
+ },
+ {
+  "id": "H_ohne",
+  "clip": "FX3_0228",
+  "in": "15:43,1",
+  "out": "15:58,1",
+  "in_s": 943.09,
+  "out_s": 958.09,
+  "dauer_s": 15.0,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "ohne den Taxodia-Kurs wär ich ziemlich sicher nicht im Steuerrecht gelandet, weil für mich nach 'm Studium klar war, dass ich jetzt nicht 'n weiteren Präsenzlehrgang, ähm, äh, ähm, absolvieren möchte und dadurch hat mir die Taxodia jetzt überhaupt diesen Karriereweg ermöglicht.",
+  "davor": "was[0] du[0] gerne[0] sagen[0] würdest?[0] Ohne,[1]",
+  "danach": "Okay,[0] nice.[0] Dann[0] noch[0]",
+  "luecke_davor_s": 0.4,
+  "luecke_danach_s": 1.02
+ },
+ {
+  "id": "H_ohne_kurz",
+  "clip": "FX3_0228",
+  "in": "15:43,1",
+  "out": "15:46,0",
+  "in_s": 943.09,
+  "out_s": 945.99,
+  "dauer_s": 2.9,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "ohne den Taxodia-Kurs wär ich ziemlich sicher nicht im Steuerrecht gelandet,",
+  "davor": "was[0] du[0] gerne[0] sagen[0] würdest?[0] Ohne,[1]",
+  "danach": "weil[1] für[1] mich[1] nach[1] 'm[1] Studium[1] klar[1] war,[1] dass[1] ich[1] jetzt[1] nicht[1]",
+  "luecke_davor_s": 0.4,
+  "luecke_danach_s": 0.5
+ },
+ {
+  "id": "H_cta",
+  "clip": "FX3_0228",
+  "in": "21:35,2",
+  "out": "21:45,4",
+  "in_s": 1295.16,
+  "out_s": 1305.43,
+  "dauer_s": 10.3,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Also wenn auch du einen landwirtschaftlichen Hintergrund hast, auf der Suche nach einem zukunftssicherem Beruf im landwirtschaftlichen Bereich bist, dann teste den Taxodia-Einsteigerkurs und schau, ob auch das Steuerrecht für dich was ist.",
+  "davor": "die[1] Gruppe.[1] Okay.[1]",
+  "danach": "Nice.[0] Stark.[3] Genau[3]",
+  "luecke_davor_s": 0.71,
+  "luecke_danach_s": 1.28
+ },
+ {
+  "id": "H_cta_alt",
+  "clip": "FX3_0228",
+  "in": "20:08,2",
+  "out": "20:20,1",
+  "in_s": 1208.21,
+  "out_s": 1220.15,
+  "dauer_s": 11.9,
+  "sprecher": [
+   "speaker_1"
+  ],
+  "text": "Also wenn du auch einen landwirtschaftlichen Hintergrund hast und auf der Suche nach einem zukunftssicheren Beruf in der landwirtschaftlichen Branche bist, dann mach den Online-Kurs von der Taxodia und schau, ob nicht auch das Steuerrecht für dich was ist.",
+  "davor": "Kein[3] Stress,[3] alles[3] gut.[3]",
+  "danach": "Ja,[3] inhaltlich[3] war[3] alles[3] drin.[3]",
+  "luecke_davor_s": 1.34,
+  "luecke_danach_s": 1.68
+ }
+]

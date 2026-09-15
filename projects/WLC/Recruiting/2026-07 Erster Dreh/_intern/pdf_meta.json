@@ -1,0 +1,11 @@
+{
+  "titel": "WLC Würth Logistik",
+  "untertitel": "Recruiting-Videos - Schnittanweisungen",
+  "stand": "6 Videos - Dreh 18.05. (Adelsheim) & 20.05. (Kupferzell) - NIRO Media, Stand 13.07.2026",
+  "warnbox": "WICHTIGSTE REGEL - STANDORT-TRENNUNG\nJedes Video gehört zu GENAU EINEM Standort (Adelsheim ODER Kupferzell). Es darf ausschließlich Bild- und Tonmaterial dieses Standorts verwendet werden - kein einziger Clip vom jeweils anderen Standort. Ausnahmen: Video 6 (Employer-Brand) darf mischen; Video 5 per Entscheidung vom 13.07. ebenfalls (Auflagen im Kapitel Video 5). Die Regel gilt für O-Töne, B-Roll, Atmos und Schnittbilder.",
+  "kapitel_farben": {
+    "Adelsheim": [0, 90, 160],
+    "Kupferzell": [0, 130, 60]
+  },
+  "dateiname": "WLC-Schnittanweisungen.pdf"
+}

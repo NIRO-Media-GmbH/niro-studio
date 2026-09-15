@@ -1,0 +1,22 @@
+{
+ "cutlist_hash": "96f1916c0e79aa45034cbd516d7cca519f311f1344d648d4d6b40deb2d0a74c7",
+ "ok": true,
+ "errors": [],
+ "warnings": [
+  "Beat #26 (CTA Kanzleien): keine a7-Abdeckung für 2219.50–2232.46s (36:59.5–37:12.5) (V2 bleibt leer).",
+  "Beat #26 (CTA Kanzleien): keine a7-Abdeckung für 2235.39–2243.80s (37:15.4–37:23.8) (V2 bleibt leer)."
+ ],
+ "video": "video-1-taxodia-weg.md",
+ "geprueft_am": "2026-09-14T20:22:13",
+ "n_beats": 28,
+ "gesamtlaenge_s": 322.98,
+ "ziel_laenge_s": 300.0,
+ "hinweise": [
+  "Ziellänge laut User 14.09.2026: 4–5 min (ziel_laenge_s = oberer Wert 300).",
+  "„[…]“ bedeutet in diesem Plan einen echten Innenschnitt: die Quelle nennt dann mehrere Bereiche mit „+“ → ein Cut je Bereich (abweichend vom Standard „durchgehend“, im Plan so festgelegt).",
+  "Kamerapaare in media.json nach Person gruppiert (Material liegt nach Kamera getrennt in Kamera-A/Kamera-B).",
+  "Textsperren ohne Zeit gegengelesen: keine Preise/Gehalt, kein „von Anfang an produktiv“, keine Veganer- oder Recruiter-Passage in den Cut-Texten.",
+  "„die zwei Besten“ (#24) und Note 1,06 (#25) nur als O-Ton, keine Einblendung (nicht auf der Website).",
+  "Titel (#4) und Endcard (#28) sind Grafik-Platzhalter (Motion); B-Roll bleibt leer (Stufe 3 ausgesetzt)."
+ ]
+}

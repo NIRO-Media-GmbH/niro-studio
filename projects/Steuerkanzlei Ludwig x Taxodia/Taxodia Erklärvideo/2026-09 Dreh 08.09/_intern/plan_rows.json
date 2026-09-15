@@ -1,0 +1,346 @@
+[
+ {
+  "nr": 1,
+  "teil": 1,
+  "szene": "Kaltstart",
+  "person": "Ludwig",
+  "clip": "FX3_0222",
+  "bereiche": [
+   "02:03,3–02:05,1"
+  ],
+  "texte": [
+   "Anzeigen sind schon lange tot."
+  ],
+  "dauer_s": 1.8
+ },
+ {
+  "nr": 2,
+  "teil": 1,
+  "szene": "Kaltstart",
+  "person": "Flammann",
+  "clip": "FX3_0223",
+  "bereiche": [
+   "03:47,9–03:53,3"
+  ],
+  "texte": [
+   "Es ist leichter, einem Landwirt das Steuerrecht beizubringen, als einem Steuerrechtler die Landwirtschaft."
+  ],
+  "dauer_s": 5.4
+ },
+ {
+  "nr": 3,
+  "teil": 1,
+  "szene": "Kaltstart",
+  "person": "Hein",
+  "clip": "FX3_0228",
+  "bereiche": [
+   "15:43,1–15:46,0"
+  ],
+  "texte": [
+   "ohne den Taxodia-Kurs wär ich ziemlich sicher nicht im Steuerrecht gelandet,"
+  ],
+  "dauer_s": 2.9
+ },
+ {
+  "nr": 4,
+  "teil": 1,
+  "szene": "Titel",
+  "person": null,
+  "clip": null,
+  "bereiche": [],
+  "texte": [],
+  "dauer_s": 3.0
+ },
+ {
+  "nr": 5,
+  "teil": 1,
+  "szene": "Die Kanzlei",
+  "person": "Ludwig",
+  "clip": "FX3_0222",
+  "bereiche": [
+   "07:58,2–08:05,6"
+  ],
+  "texte": [
+   "wir betreuen hier von Ilshofen aus in 'ner Steuerkanzlei mit circa vierzig Mitarbeitern, vor allem landwirtschaftliche Betriebe im Radius von fünfzig Kilometern,"
+  ],
+  "dauer_s": 7.4
+ },
+ {
+  "nr": 6,
+  "teil": 1,
+  "szene": "Die Suche",
+  "person": "Ludwig",
+  "clip": "FX3_0222",
+  "bereiche": [
+   "09:14,4–09:25,9"
+  ],
+  "texte": [
+   "Und da hat man dann alles versucht, Recruit, privates Recruiting, Social Media, direkte Personalvermittler und die Chancen waren relativ schlecht, da überhaupt jemand zu finden."
+  ],
+  "dauer_s": 11.5
+ },
+ {
+  "nr": 7,
+  "teil": 1,
+  "szene": "Hein stellt sich vor",
+  "person": "Hein",
+  "clip": "FX3_0228",
+  "bereiche": [
+   "00:48,7–00:59,7"
+  ],
+  "texte": [
+   "Ich hab vorher Landwirtschaft dual studiert mit dem Schwerpunkt Agrarökonomie und parallel zum Beginn meiner Anstellung hab ich die Fortbildung zum Bachelor Professional, ähm, begonnen und jetzt mittlerweile auch abgeschlossen."
+  ],
+  "dauer_s": 11.0
+ },
+ {
+  "nr": 8,
+  "teil": 1,
+  "szene": "Die Entscheidung",
+  "person": "Ludwig",
+  "clip": "FX3_0222",
+  "bereiche": [
+   "04:25,9–04:29,8",
+   "04:40,1–04:49,5"
+  ],
+  "texte": [
+   "Wie bilde ich die jetzt aus? Wir haben die Kapazitäten gar nicht.",
+   "Und deswegen ist 'ne Online-Ausbildung, wie Taxodia die anbildet, für uns 'n genialer Gewinn. Das ist für uns ein Glücksfall."
+  ],
+  "dauer_s": 13.3
+ },
+ {
+  "nr": 9,
+  "teil": 1,
+  "szene": "Taxodia",
+  "person": "Flammann",
+  "clip": "FX3_0223",
+  "bereiche": [
+   "00:51,9–01:12,7"
+  ],
+  "texte": [
+   "Die Taxodia ist eine reine Online-Steuerfachschule für den B2B-Bereich, ähm, mit dem Schwerpunkt des landwirtschaftlichen Steuerrechts. Wir haben uns spezialisiert auf die Quereinsteiger, die in die landwirtschaftlichen Buchstellen hineinkommen ohne steuerrechtliche Vorkenntnisse."
+  ],
+  "dauer_s": 20.8
+ },
+ {
+  "nr": 10,
+  "teil": 1,
+  "szene": "Studium reicht nicht",
+  "person": "Hein",
+  "clip": "FX3_0228",
+  "bereiche": [
+   "02:01,8–02:17,1"
+  ],
+  "texte": [
+   "im Studium war, äh, Steuerrecht 'n Wahlfach. Also das war eher drauf vorbereitet, dass man als landwirtschaftlicher Betriebsleiter weiß, von was der Steuerberater spricht und nicht, was jetzt hier quasi das tägliche Doing in der Steuerkanzlei ist, dass man landwirtschaftliche Betriebe vollumfänglich berät"
+  ],
+  "dauer_s": 15.3
+ },
+ {
+  "nr": 11,
+  "teil": 1,
+  "szene": "Bachelor Professional",
+  "person": "Flammann",
+  "clip": "FX3_0223",
+  "bereiche": [
+   "11:41,9–11:59,2"
+  ],
+  "texte": [
+   "Der Kurs, den wir anbieten, ist ein Vorbereitungskurs auf die Fortbildungsprüfung Bachelor Professional in landwirtschaftlichem Rechnungswesen und Steuern. Das war bisher der sogenannte Fachagrawert Rechnungswesen, der bereits seit 1975 so in der Form existiert."
+  ],
+  "dauer_s": 17.3
+ },
+ {
+  "nr": 12,
+  "teil": 1,
+  "szene": "Der Einstieg",
+  "person": "Flammann",
+  "clip": "FX3_0223",
+  "bereiche": [
+   "10:14,1–10:19,3",
+   "10:27,1–10:29,3",
+   "10:45,2–10:53,5"
+  ],
+  "texte": [
+   "Der Einstiegskurs hat zweiunddreißig Unterrichtsstunden, geht über vier Wochen.",
+   "so lange bleibt man in seinem bisherigen Beruf.",
+   "man schafft ein Arbeitsverhältnis in der Steuerkanzlei und wird dann mit der dreiunddreißigsten Unterrichtsstunde im Kurs dann in der Kanzlei fortfahren."
+  ],
+  "dauer_s": 15.7
+ },
+ {
+  "nr": 13,
+  "teil": 1,
+  "szene": "Die Rechnung",
+  "person": "Ludwig",
+  "clip": "FX3_0222",
+  "bereiche": [
+   "24:32,1–24:42,3"
+  ],
+  "texte": [
+   "Also es ist auch, was die Kosten angeht, nicht teurer als einen einzigen, äh, Vermittlungs-, äh, Auftrag hier, hier zu geben."
+  ],
+  "dauer_s": 10.2
+ },
+ {
+  "nr": 14,
+  "teil": 1,
+  "szene": "Lernwoche",
+  "person": "Hein",
+  "clip": "FX3_0228",
+  "bereiche": [
+   "03:43,8–03:49,1"
+  ],
+  "texte": [
+   "Ich hab den Kurs bei der Taxudo in Teilzeit absolviert. Das heißt, ich hatt immer 16 Stunden Unterricht pro Woche."
+  ],
+  "dauer_s": 5.3
+ },
+ {
+  "nr": 15,
+  "teil": 1,
+  "szene": "Mitarbeit",
+  "person": "Hein",
+  "clip": "FX3_0228",
+  "bereiche": [
+   "09:03,4–09:10,9"
+  ],
+  "texte": [
+   "Aber ich würd sagen, ab den, nach den ersten fünf, sechs Wochen, wenn man sich gut fühlt und sicher fühlt, kann man schon die ersten Tätigkeiten übernehmen."
+  ],
+  "dauer_s": 7.5
+ },
+ {
+  "nr": 16,
+  "teil": 2,
+  "szene": "Ampel",
+  "person": "Flammann",
+  "clip": "FX3_0223",
+  "bereiche": [
+   "22:23,9–22:24,3",
+   "22:33,7–22:36,7",
+   "22:46,0–23:04,9"
+  ],
+  "texte": [
+   "Wir haben,",
+   "ein Controlling nach einem Ampelprinzip eingeführt.",
+   "Wenn der Teilnehmer, ähm, bis zu einer Woche im Rückstand ist, ist die Ampel in Gelb. Dann bekommt er die ersten Anrufe und wenn der Teilnehmer über eine Woche zurückhängt, dann ist die Ampel in Rot und dann werden wir definitiv Gespräche führen, sowohl mit dem Teilnehmer wie auch mit dem Vorgesetzten der Kanzlei."
+  ],
+  "dauer_s": 22.3
+ },
+ {
+  "nr": 17,
+  "teil": 2,
+  "szene": "Kanzlei wird informiert",
+  "person": "Ludwig",
+  "clip": "FX3_0222",
+  "bereiche": [
+   "22:33,7–22:37,4"
+  ],
+  "texte": [
+   "Und wenn was Schlimmes ist, dann bekomme ich ja Nachricht, da haben wir 'n Problem."
+  ],
+  "dauer_s": 3.7
+ },
+ {
+  "nr": 18,
+  "teil": 2,
+  "szene": "Faire Abrechnung",
+  "person": "Ludwig",
+  "clip": "FX3_0222",
+  "bereiche": [
+   "22:14,1–22:17,3"
+  ],
+  "texte": [
+   "jeder Kurs, jeder Abschnitt, der gemacht wird, wird bezahlt. Das ist sehr fair."
+  ],
+  "dauer_s": 3.2
+ },
+ {
+  "nr": 19,
+  "teil": 2,
+  "szene": "Zweifel an online",
+  "person": "Hein",
+  "clip": "FX3_0228",
+  "bereiche": [
+   "05:03,2–05:15,4",
+   "05:21,2–05:23,6"
+  ],
+  "texte": [
+   "hab ich schon Bedenken gehabt, ob das so gut funktioniert. Aber dadurch, dass der Kurs wirklich online konzipiert wurde und kein analoges oder kein Präsenzprogramm in online einfach überführt wurde, sondern wirklich als neuer Online-Kurs gedacht ist,",
+   "Von daher wurden die Zweifel, wo ich am Anfang hatte, sehr schnell genommen."
+  ],
+  "dauer_s": 14.6
+ },
+ {
+  "nr": 20,
+  "teil": 2,
+  "szene": "Ergebnis",
+  "person": "Flammann",
+  "clip": "FX3_0223",
+  "bereiche": [
+   "29:40,4–29:56,0"
+  ],
+  "texte": [
+   "Wir haben, äh, in der Online-Ausbildung sogar die zwei Besten im, äh, in der Prüfung gehabt und, ähm, damit ist eigentlich der Beweis gegeben, dass es ein absolut ebenbürtiger Teil ist, online sich fortbilden zu lassen."
+  ],
+  "dauer_s": 15.6
+ },
+ {
+  "nr": 21,
+  "teil": 2,
+  "szene": "Die Note",
+  "person": "Hein",
+  "clip": "FX3_0228",
+  "bereiche": [
+   "13:29,1–13:32,8"
+  ],
+  "texte": [
+   "mein Abschluss mit eins Komma null sechs bedeutet mir natürlich viel. Ich bin sehr stolz drauf."
+  ],
+  "dauer_s": 3.7
+ },
+ {
+  "nr": 22,
+  "teil": 2,
+  "szene": "CTA Kanzleien",
+  "person": "Flammann",
+  "clip": "FX3_0223",
+  "bereiche": [
+   "36:59,5–37:00,5",
+   "37:09,2–37:12,5",
+   "37:15,4–37:23,8"
+  ],
+  "texte": [
+   "ich kann nur appellieren,",
+   "Testen Sie Mitarbeiter über das Taxodia-System.",
+   "Die Erfahrung zeigt, auf den ersten Blick nicht geeignete Mitarbeiter sind auf den zweiten Blick doch geeignet. Probieren Sie den Einstiegskurs aus."
+  ],
+  "dauer_s": 12.7
+ },
+ {
+  "nr": 23,
+  "teil": 2,
+  "szene": "CTA Kandidaten",
+  "person": "Hein",
+  "clip": "FX3_0228",
+  "bereiche": [
+   "21:35,2–21:45,4"
+  ],
+  "texte": [
+   "Also wenn auch du einen landwirtschaftlichen Hintergrund hast, auf der Suche nach einem zukunftssicherem Beruf im landwirtschaftlichen Bereich bist, dann teste den Taxodia-Einsteigerkurs und schau, ob auch das Steuerrecht für dich was ist."
+  ],
+  "dauer_s": 10.2
+ },
+ {
+  "nr": 24,
+  "teil": 2,
+  "szene": "Endcard",
+  "person": null,
+  "clip": null,
+  "bereiche": [],
+  "texte": [],
+  "dauer_s": 7.0
+ }
+]

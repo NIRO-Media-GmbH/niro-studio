@@ -1,0 +1,640 @@
+{
+ "video": "testimonial-v2",
+ "source": "05_Testimonial_Video_V2.scribe.json",
+ "generated": "2026-09-11",
+ "pages": [
+  {
+   "start": 0.039,
+   "end": 2.039,
+   "tokens": [
+    {
+     "text": "Ich",
+     "start": 0.119,
+     "end": 0.259
+    },
+    {
+     "text": "mach",
+     "start": 0.299,
+     "end": 0.479
+    },
+    {
+     "text": "meine",
+     "start": 0.5,
+     "end": 0.779
+    },
+    {
+     "text": "Arbeit.",
+     "start": 0.819,
+     "end": 1.439
+    }
+   ]
+  },
+  {
+   "start": 3.14,
+   "end": 5.06,
+   "tokens": [
+    {
+     "text": "Jeden",
+     "start": 3.22,
+     "end": 3.5
+    },
+    {
+     "text": "Tag",
+     "start": 3.579,
+     "end": 3.779
+    },
+    {
+     "text": "ist",
+     "start": 3.799,
+     "end": 3.899
+    },
+    {
+     "text": "gute",
+     "start": 3.919,
+     "end": 4.139
+    },
+    {
+     "text": "Tag.",
+     "start": 4.179,
+     "end": 4.46
+    }
+   ]
+  },
+  {
+   "start": 6.679,
+   "end": 9.1,
+   "tokens": [
+    {
+     "text": "Die",
+     "start": 6.759,
+     "end": 6.879
+    },
+    {
+     "text": "Freiheit,",
+     "start": 6.92,
+     "end": 7.319
+    },
+    {
+     "text": "die",
+     "start": 7.339,
+     "end": 7.399
+    },
+    {
+     "text": "Ruhe",
+     "start": 7.46,
+     "end": 7.739
+    },
+    {
+     "text": "im",
+     "start": 8.039,
+     "end": 8.179
+    },
+    {
+     "text": "Lkw.",
+     "start": 8.239,
+     "end": 8.5
+    }
+   ]
+  },
+  {
+   "start": 10.859,
+   "end": 12,
+   "tokens": [
+    {
+     "text": "Bei",
+     "start": 10.939,
+     "end": 11.079
+    },
+    {
+     "text": "Kleine",
+     "start": 11.119,
+     "end": 11.399
+    },
+    {
+     "text": "habe",
+     "start": 11.479,
+     "end": 11.579
+    },
+    {
+     "text": "ich",
+     "start": 11.619,
+     "end": 11.699
+    },
+    {
+     "text": "gesehen",
+     "start": 11.719,
+     "end": 12
+    }
+   ]
+  },
+  {
+   "start": 11.939,
+   "end": 13.239,
+   "tokens": [
+    {
+     "text": "immer",
+     "start": 12.019,
+     "end": 12.199
+    },
+    {
+     "text": "Lkw",
+     "start": 12.239,
+     "end": 12.679
+    },
+    {
+     "text": "und",
+     "start": 12.92,
+     "end": 13
+    },
+    {
+     "text": "ich",
+     "start": 13.019,
+     "end": 13.099
+    },
+    {
+     "text": "habe",
+     "start": 13.1,
+     "end": 13.239
+    }
+   ]
+  },
+  {
+   "start": 13.179,
+   "end": 14.549,
+   "tokens": [
+    {
+     "text": "gesagt,",
+     "start": 13.259,
+     "end": 13.5
+    },
+    {
+     "text": "ich",
+     "start": 13.519,
+     "end": 13.619
+    },
+    {
+     "text": "mag",
+     "start": 13.619,
+     "end": 13.699
+    },
+    {
+     "text": "Lkw",
+     "start": 13.859,
+     "end": 14.06
+    },
+    {
+     "text": "fahren",
+     "start": 14.179,
+     "end": 14.519
+    }
+   ]
+  },
+  {
+   "start": 14.599,
+   "end": 16.979,
+   "tokens": [
+    {
+     "text": "und",
+     "start": 14.679,
+     "end": 14.9
+    },
+    {
+     "text": "für",
+     "start": 14.979,
+     "end": 15.139
+    },
+    {
+     "text": "mich",
+     "start": 15.159,
+     "end": 15.339
+    },
+    {
+     "text": "ist",
+     "start": 15.399,
+     "end": 15.6
+    },
+    {
+     "text": "Liebe",
+     "start": 15.739,
+     "end": 15.979
+    },
+    {
+     "text": "Job.",
+     "start": 16,
+     "end": 16.379
+    }
+   ]
+  },
+  {
+   "start": 17.539,
+   "end": 19.18,
+   "tokens": [
+    {
+     "text": "Ich",
+     "start": 17.619,
+     "end": 17.739
+    },
+    {
+     "text": "melde",
+     "start": 17.799,
+     "end": 18.139
+    },
+    {
+     "text": "Chef",
+     "start": 18.5,
+     "end": 18.659
+    },
+    {
+     "text": "Werkstatt",
+     "start": 18.739,
+     "end": 19.18
+    }
+   ]
+  },
+  {
+   "start": 19.219,
+   "end": 20.659,
+   "tokens": [
+    {
+     "text": "und",
+     "start": 19.299,
+     "end": 19.359
+    },
+    {
+     "text": "Chef",
+     "start": 19.5,
+     "end": 19.619
+    },
+    {
+     "text": "Werkstatt",
+     "start": 19.76,
+     "end": 19.959
+    },
+    {
+     "text": "sagen,",
+     "start": 20.039,
+     "end": 20.439
+    },
+    {
+     "text": "muss",
+     "start": 20.5,
+     "end": 20.659
+    }
+   ]
+  },
+  {
+   "start": 20.639,
+   "end": 22.459,
+   "tokens": [
+    {
+     "text": "warten",
+     "start": 20.719,
+     "end": 21
+    },
+    {
+     "text": "zehn",
+     "start": 21.039,
+     "end": 21.219
+    },
+    {
+     "text": "Minuten.",
+     "start": 21.239,
+     "end": 21.859
+    }
+   ]
+  },
+  {
+   "start": 23.939,
+   "end": 25.37,
+   "tokens": [
+    {
+     "text": "Ich",
+     "start": 24.019,
+     "end": 24.1
+    },
+    {
+     "text": "habe",
+     "start": 24.1,
+     "end": 24.42
+    },
+    {
+     "text": "Mercedes",
+     "start": 24.479,
+     "end": 25.079
+    }
+   ]
+  },
+  {
+   "start": 25.42,
+   "end": 26.87,
+   "tokens": [
+    {
+     "text": "und",
+     "start": 25.5,
+     "end": 25.639
+    },
+    {
+     "text": "das",
+     "start": 25.68,
+     "end": 25.799
+    },
+    {
+     "text": "ist",
+     "start": 25.879,
+     "end": 26
+    },
+    {
+     "text": "gut.",
+     "start": 26.119,
+     "end": 26.459
+    }
+   ]
+  },
+  {
+   "start": 26.92,
+   "end": 28.299,
+   "tokens": [
+    {
+     "text": "Bei",
+     "start": 27,
+     "end": 27.139
+    },
+    {
+     "text": "Firma",
+     "start": 27.199,
+     "end": 27.399
+    },
+    {
+     "text": "Craiss",
+     "start": 27.5,
+     "end": 27.84
+    },
+    {
+     "text": "arbeite",
+     "start": 28.059,
+     "end": 28.299
+    }
+   ]
+  },
+  {
+   "start": 28.26,
+   "end": 29.859,
+   "tokens": [
+    {
+     "text": "Nahverkehr,",
+     "start": 28.34,
+     "end": 28.859
+    },
+    {
+     "text": "jeden",
+     "start": 29.019,
+     "end": 29.219
+    },
+    {
+     "text": "Tag",
+     "start": 29.26,
+     "end": 29.379
+    },
+    {
+     "text": "zu",
+     "start": 29.42,
+     "end": 29.5
+    },
+    {
+     "text": "Hause",
+     "start": 29.519,
+     "end": 29.859
+    }
+   ]
+  },
+  {
+   "start": 29.819,
+   "end": 30.779,
+   "tokens": [
+    {
+     "text": "und",
+     "start": 29.899,
+     "end": 30
+    },
+    {
+     "text": "ist",
+     "start": 30.019,
+     "end": 30.139
+    },
+    {
+     "text": "besser",
+     "start": 30.179,
+     "end": 30.399
+    },
+    {
+     "text": "für",
+     "start": 30.479,
+     "end": 30.579
+    },
+    {
+     "text": "mich,",
+     "start": 30.619,
+     "end": 30.779
+    }
+   ]
+  },
+  {
+   "start": 30.739,
+   "end": 31.949,
+   "tokens": [
+    {
+     "text": "für",
+     "start": 30.819,
+     "end": 30.899
+    },
+    {
+     "text": "meine",
+     "start": 30.939,
+     "end": 31.139
+    },
+    {
+     "text": "Familie.",
+     "start": 31.199,
+     "end": 31.679
+    }
+   ]
+  },
+  {
+   "start": 31.999,
+   "end": 33.949,
+   "tokens": [
+    {
+     "text": "Trotzdem,",
+     "start": 32.079,
+     "end": 32.559
+    },
+    {
+     "text": "dass",
+     "start": 32.659,
+     "end": 32.799
+    },
+    {
+     "text": "ich",
+     "start": 32.88,
+     "end": 32.939
+    },
+    {
+     "text": "in",
+     "start": 32.979,
+     "end": 33.079
+    },
+    {
+     "text": "Rente",
+     "start": 33.2,
+     "end": 33.459
+    },
+    {
+     "text": "bin,",
+     "start": 33.52,
+     "end": 33.7
+    }
+   ]
+  },
+  {
+   "start": 33.999,
+   "end": 35.41,
+   "tokens": [
+    {
+     "text": "möchte",
+     "start": 34.079,
+     "end": 34.259
+    },
+    {
+     "text": "ich",
+     "start": 34.299,
+     "end": 34.36
+    },
+    {
+     "text": "noch",
+     "start": 34.399,
+     "end": 34.52
+    },
+    {
+     "text": "gern",
+     "start": 34.559,
+     "end": 34.719
+    },
+    {
+     "text": "fahren.",
+     "start": 34.819,
+     "end": 35.2
+    }
+   ]
+  },
+  {
+   "start": 35.46,
+   "end": 37.5,
+   "tokens": [
+    {
+     "text": "Bei",
+     "start": 35.54,
+     "end": 35.659
+    },
+    {
+     "text": "Craiss",
+     "start": 35.779,
+     "end": 36.119
+    },
+    {
+     "text": "passt",
+     "start": 36.239,
+     "end": 36.479
+    },
+    {
+     "text": "optimal",
+     "start": 36.719,
+     "end": 37.199
+    },
+    {
+     "text": "viele",
+     "start": 37.279,
+     "end": 37.5
+    }
+   ]
+  },
+  {
+   "start": 37.46,
+   "end": 38.929,
+   "tokens": [
+    {
+     "text": "Kollegen,",
+     "start": 37.54,
+     "end": 37.999
+    },
+    {
+     "text": "alles",
+     "start": 38.079,
+     "end": 38.36
+    },
+    {
+     "text": "gut.",
+     "start": 38.439,
+     "end": 38.739
+    }
+   ]
+  },
+  {
+   "start": 38.979,
+   "end": 40.899,
+   "tokens": [
+    {
+     "text": "Kollegen",
+     "start": 39.059,
+     "end": 39.619
+    },
+    {
+     "text": "mit",
+     "start": 39.979,
+     "end": 40.18
+    },
+    {
+     "text": "Ungari,",
+     "start": 40.459,
+     "end": 40.899
+    }
+   ]
+  },
+  {
+   "start": 40.859,
+   "end": 42.299,
+   "tokens": [
+    {
+     "text": "Tschechien,",
+     "start": 40.939,
+     "end": 41.399
+    },
+    {
+     "text": "Romanische,",
+     "start": 41.599,
+     "end": 42.299
+    }
+   ]
+  },
+  {
+   "start": 42.28,
+   "end": 45.219,
+   "tokens": [
+    {
+     "text": "Lituanier,",
+     "start": 42.36,
+     "end": 43.079
+    },
+    {
+     "text": "alles",
+     "start": 43.18,
+     "end": 43.599
+    },
+    {
+     "text": "internationale.",
+     "start": 43.68,
+     "end": 44.619
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,178 @@
+{
+ "ok": true,
+ "gemessen_am": "2026-09-04T00:31:57",
+ "resolve_version": "21.0.4.5",
+ "project": "Marien Elisabeth Klinikum Kassel - Imagefilm",
+ "project_id": "3ea4e60f-2f1d-4496-84b7-00520f56b088",
+ "timeline": "AutoCut PROBE 003157",
+ "warnings": [],
+ "timeline_geloescht": true,
+ "fx3": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/FX3_9992.MP4",
+ "a7": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/a7MK4_20260702_9983.MP4",
+ "offset_frames": 41,
+ "sync_paar": true,
+ "fenster": [
+  250,
+  322
+ ],
+ "checks": {
+  "start_timecode": true,
+  "resolution": true,
+  "tracks": true,
+  "record_frame_absolute": true,
+  "readback_append": true,
+  "a2_disabled": true,
+  "a1_enabled": true,
+  "marker_relative": true,
+  "v1_position": true,
+  "a1_position": true,
+  "v2_position": true,
+  "a2_position": true,
+  "v3_measure": true,
+  "v1_source": true
+ },
+ "proxy_FX3_9992": true,
+ "proxy_a7MK4_20260702_9983": true,
+ "start_frame": 90000,
+ "start_timecode": "01:00:00:00",
+ "settings": {
+  "useCustomSettings": "0",
+  "timelineResolutionWidth": "3840",
+  "timelineResolutionHeight": "2160",
+  "timelineFrameRate": 25.0,
+  "colorScienceMode": "davinciYRGBColorManagedv2",
+  "colorSpaceTimeline": "Rec.709 (Scene)",
+  "colorSpaceTimelineGamma": "",
+  "colorSpaceOutput": "Rec.709-A",
+  "colorSpaceOutputGamma": "ACEScc",
+  "separateColorSpaceAndGamma": "0",
+  "isAutoColorManage": "0",
+  "rcmPresetMode": "SDR Rec.709",
+  "useCATransform": "1",
+  "disableFusionToneMapping": "0",
+  "timelineInputResMismatchBehavior": "scaleToFit",
+  "timelineOutputResMismatchBehavior": "scaleToFit",
+  "videoMonitorFormat": "HD 1080p 25"
+ },
+ "end_frame_inclusive": false,
+ "measure_duration": 49,
+ "measure_start": 90000,
+ "record_frame_absolute": true,
+ "measure_start_expected": 90000,
+ "marker_keys": [
+  0,
+  36
+ ],
+ "marker_beyond_end_ok": true,
+ "readback": {
+  "name": "AutoCut PROBE 003157",
+  "unique_id": "1407e2d1-d78c-4138-b2e8-05ee8eb54eac",
+  "start_frame": 90000,
+  "end_frame": 90072,
+  "start_timecode": "01:00:00:00",
+  "fps": 25.0,
+  "width": 3840,
+  "height": 2160,
+  "tracks": {
+   "V1": {
+    "name": "FX3",
+    "items": [
+     {
+      "name": "FX3_9992.MP4",
+      "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/FX3_9992.MP4",
+      "start": 90000,
+      "end": 90072,
+      "duration": 72,
+      "src_in": 250,
+      "src_out": 321,
+      "enabled": true
+     }
+    ]
+   },
+   "V2": {
+    "name": "a7IV",
+    "items": [
+     {
+      "name": "a7MK4_20260702_9983.MP4",
+      "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/a7MK4_20260702_9983.MP4",
+      "start": 90000,
+      "end": 90072,
+      "duration": 72,
+      "src_in": 290,
+      "src_out": 362,
+      "enabled": true
+     }
+    ]
+   },
+   "V3": {
+    "name": "B-Roll",
+    "items": [
+     {
+      "name": "FX3_9992.MP4",
+      "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/FX3_9992.MP4",
+      "start": 90000,
+      "end": 90049,
+      "duration": 49,
+      "src_in": 100,
+      "src_out": 149,
+      "enabled": true
+     }
+    ]
+   },
+   "A1": {
+    "name": "FX3 Ton",
+    "items": [
+     {
+      "name": "FX3_9992.MP4",
+      "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/FX3_9992.MP4",
+      "start": 90000,
+      "end": 90072,
+      "duration": 72,
+      "src_in": 250,
+      "src_out": 321,
+      "enabled": true
+     }
+    ]
+   },
+   "A2": {
+    "name": "a7IV Ton stumm",
+    "items": [
+     {
+      "name": "a7MK4_20260702_9983.MP4",
+      "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Marien-Elisabeth-Kliniken Kassel gGmbH/02_Projekte/01_Projekt-2xAds1xImagefilm_24.06.26/03_Medien/01_Footage/Standort 2/Sortiert/Interviews/Alina_Intensivstation/a7MK4_20260702_9983.MP4",
+      "start": 90000,
+      "end": 90072,
+      "duration": 72,
+      "src_in": 290,
+      "src_out": 362,
+      "enabled": false
+     }
+    ]
+   }
+  },
+  "markers": {
+   "0": {
+    "color": "Blue",
+    "duration": 1,
+    "note": "AutoCut-Probe",
+    "name": "PROBE Start",
+    "customData": ""
+   },
+   "36": {
+    "color": "Yellow",
+    "duration": 1,
+    "note": "",
+    "name": "PROBE Mitte",
+    "customData": ""
+   },
+   "272": {
+    "color": "Red",
+    "duration": 1,
+    "note": "",
+    "name": "PROBE hinter Ende",
+    "customData": ""
+   }
+  },
+  "n_items": 5
+ }
+}

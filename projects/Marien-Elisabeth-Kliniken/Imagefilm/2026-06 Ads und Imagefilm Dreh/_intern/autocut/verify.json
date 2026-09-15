@@ -1,0 +1,16 @@
+{
+ "cutlist_hash": "bc417a10e929a82af51f029c0dc67e332377c68fef67d17a3feeaac3e94be865",
+ "ok": true,
+ "errors": [],
+ "warnings": [],
+ "video": "video-1-imagefilm-zwei-haeuser.md",
+ "geprueft_am": "2026-09-09T19:44:13",
+ "n_beats": 25,
+ "gesamtlaenge_s": 205.68,
+ "ziel_laenge_s": 185.0,
+ "hinweise": [
+  "Textsperren ohne Zeit (nicht prüfbar): Martina ‚gibt nichts, was es nicht gibt‘; Konkurrenz-Nennungen",
+  "#19/#20: Vorstellung Simona 00:51–00:58 nur als Stimm-Referenz (nicht im Schnitt)",
+  "„[…]“ im Plan = Kürzung nur in der PDF, Passage läuft durchgehend (Cutter-Standard); Ausnahmen laut Plan-Kommentar: #6 Falschstart getrimmt, #10 feste Fenster 00:40–00:45 + 00:52–00:57, #22 Jumpcuts"
+ ]
+}

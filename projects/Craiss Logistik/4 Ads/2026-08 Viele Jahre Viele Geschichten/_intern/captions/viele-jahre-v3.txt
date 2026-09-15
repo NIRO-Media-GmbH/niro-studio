@@ -1,0 +1,44 @@
+# viele-jahre-v3 — 03_Viele_Jahre_Viele_Geschichten_V3.scribe.json
+# 39 Seiten, 153 Woerter; 33 Seiten (ganz oder teils) sichtbar
+# freie Fenster (s): 3.00–7.60, 11.80–46.60
+# Spalte: SICHT = ganz sichtbar, nn% = teilweise, · = liegt komplett unter Grafik
+
+  1    0.04 –   0.48    ·   Dzień dobry.
+  2    0.46 –   1.10    ·   Bias tol.
+  3    1.12 –   1.76    ·   Buna ziua.
+  4    1.76 –   2.71    ·   Zdravím.
+  5    2.76 –   3.36    ·   Wir haben hier in der
+  6    3.34 –   5.25  SICHT Dispo die verschiedensten Sprachen.
+  7    5.30 –   6.64  SICHT Das macht es für jeden einfach.
+  8    6.66 –   9.15   38%  Kollegen, mit Ungari, Tschechien,
+  9    9.20 –  11.23    ·   Romanische, Litauen, alles
+ 10   11.28 –  12.35   52%  Internationale.
+ 11   12.40 –  13.54  SICHT Ich konnte früher selber kein
+ 12   13.52 –  14.86  SICHT Deutsch und dadurch weiß ich,
+ 13   14.82 –  15.70  SICHT wie ich mit dem Fahrer
+ 14   15.68 –  16.64  SICHT zu reden habe, damit er
+ 15   16.62 –  17.42  SICHT mich versteht.
+ 16   17.40 –  18.70  SICHT Außerdem sprechen wir hier
+ 17   18.66 –  19.89  SICHT im Büro auch viele Sprachen,
+ 18   19.94 –  21.34  SICHT zum Beispiel Arabisch, Polnisch.
+ 19   21.34 –  22.16  SICHT Unsere litauischen
+ 20   22.12 –  23.28  SICHT und tschechischen Fahrer verstehen
+ 21   23.26 –  24.84  SICHT ebenso Polnisch, von daher ist
+ 22   24.82 –  25.78  SICHT überhaupt kein Problem
+ 23   25.76 –  26.80  SICHT mit der Kommunikation.
+ 24   26.80 –  27.38  SICHT Es ist wichtig,
+ 25   27.36 –  28.34  SICHT dass der Fahrer freundlich
+ 26   28.30 –  29.68  SICHT und respektvoll ist und dass er
+ 27   29.64 –  30.80  SICHT einfach lernbereit ist.
+ 28   30.84 –  32.37  SICHT Craiss ist gute Atmosphäre.
+ 29   32.42 –  33.16  SICHT Fünfzig Jahr hier
+ 30   33.14 –  34.82  SICHT in der Firma, über fünfzig Jahr.
+ 31   34.86 –  36.99  SICHT Trotzdem, dass ich in Rente bin,
+ 32   37.04 –  38.37  SICHT möchte ich noch gern fahren
+ 33   38.42 –  40.56  SICHT und bei Craiss, was optimal ist.
+ 34   40.54 –  41.74  SICHT Viele Fahrer wundern sich,
+ 35   41.72 –  43.16  SICHT dass wir in so engem
+ 36   43.12 –  44.11  SICHT Kontakt stehen.
+ 37   44.16 –  45.04  SICHT Du bist keine Zahl.
+ 38   45.00 –  45.80  SICHT Das ist mir sehr wichtig,
+ 39   45.76 –  47.52   48%  dass du das auch fühlst.

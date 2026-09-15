@@ -1,0 +1,645 @@
+{
+ "format": {
+  "fps": 25.0,
+  "width": 3840,
+  "height": 2160,
+  "orientation": "16:9"
+ },
+ "clips": {
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0116.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0116.MP4",
+    "duration_s": 0.96,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 24,
+    "timecode": "13:54:35:05",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0116.mov",
+    "duration_s": 1.024,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 24,
+    "timecode": "13:54:35:05",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0116.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Friedrich Ludwig",
+   "fingerprint": "cb7729212543d971bbf813f83993df44e56d707126888408cf4d28452f5e3fac"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0117.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0117.MP4",
+    "duration_s": 382.56,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 9564,
+    "timecode": "13:56:40:11",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0117.mov",
+    "duration_s": 382.634667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 9564,
+    "timecode": "13:56:40:11",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0117.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Friedrich Ludwig",
+   "fingerprint": "8da2be65fb93a84375e8ed19fc97ef286061f8298d4b6ecb04668f167abfcf7a"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0118.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0118.MP4",
+    "duration_s": 2049.12,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 51228,
+    "timecode": "14:03:04:17",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0118.mov",
+    "duration_s": 2049.194667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 51228,
+    "timecode": "14:03:04:17",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0118.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Friedrich Ludwig",
+   "fingerprint": "43d36ecb51e28816f7ad531c62b0a6f0377fbefcfdb275a24fa2f76a585d7903"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0119.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0119.MP4",
+    "duration_s": 2060.16,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 51504,
+    "timecode": "15:04:02:14",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0119.mov",
+    "duration_s": 2060.224,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 51504,
+    "timecode": "15:04:02:14",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0119.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Jörn Flammann",
+   "fingerprint": "7c5b95870256cfe65701907fbe845366dd14b1c5e6c87ea8d29768071c91f4e6"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0748.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0748.MP4",
+    "duration_s": 121.44,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 3036,
+    "timecode": "15:40:46:14",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0748.mov",
+    "duration_s": 121.514667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 3036,
+    "timecode": "15:40:46:14",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0748.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Jörn Flammann",
+   "fingerprint": "20c283255ed6f72c0dfdfe0f5e1393ef775b25f2f470729fd2c258dbca6e0ea2"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0749.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0749.MP4",
+    "duration_s": 0.48,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 12,
+    "timecode": "17:06:27:13",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0749.mov",
+    "duration_s": 0.554667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 12,
+    "timecode": "17:06:27:13",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0749.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "bb9ba8f570cb9db2a9401be0d1b6f633b8346792d643ea7662b0b22f13e92567"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0750.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0750.MP4",
+    "duration_s": 393.6,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 9840,
+    "timecode": "17:09:14:01",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0750.mov",
+    "duration_s": 393.664,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 9840,
+    "timecode": "17:09:14:01",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0750.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "3fd90272f172eb68d28e1db52394e4844b916730ffb4b420171f207997d190ef"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0751.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0751.MP4",
+    "duration_s": 33.6,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 840,
+    "timecode": "17:19:06:10",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0751.mov",
+    "duration_s": 33.664,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 840,
+    "timecode": "17:19:06:10",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0751.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "0893c374068fd121a24baa917e5d179283f77529cf9f4b0a53b272fd8b2be1b6"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0752.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0752.MP4",
+    "duration_s": 1333.92,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 33348,
+    "timecode": "17:20:30:15",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0752.mov",
+    "duration_s": 1333.994667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 33348,
+    "timecode": "17:20:30:15",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/Proxy/a7MK4_20260908_0752.mov",
+   "kamera": "a7MK4",
+   "rolle": "kontext",
+   "ordner": "Kamera-A",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "0a5e4af36690d917c01f37f85cad09356cd99341f9358b83e1d900c86563d662"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0221.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0221.MP4",
+    "duration_s": 8.16,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 204,
+    "timecode": "16:37:17:00",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0221.mov",
+    "duration_s": 8.234667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 204,
+    "timecode": "16:37:17:00",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0221.mov",
+   "kamera": "FX3",
+   "rolle": "ton",
+   "ordner": "Kamera-B",
+   "person": "Friedrich Ludwig",
+   "fingerprint": "8c8a756b3d1cf84082ba6c0fd346b9b9d2c57b891ad543e109b431b7507c8282"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0222.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0222.MP4",
+    "duration_s": 2006.4,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 50160,
+    "timecode": "16:42:32:12",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0222.mov",
+    "duration_s": 2006.464,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 50160,
+    "timecode": "16:42:32:12",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0222.mov",
+   "kamera": "FX3",
+   "rolle": "ton",
+   "ordner": "Kamera-B",
+   "person": "Friedrich Ludwig",
+   "fingerprint": "d58853a89a95ff3be8af53f104ebff239822f38557dc0521b12635f65b103a69"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4",
+    "duration_s": 2264.16,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 56604,
+    "timecode": "17:43:46:09",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0223.mov",
+    "duration_s": 2264.234667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 56604,
+    "timecode": "17:43:46:09",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0223.mov",
+   "kamera": "FX3",
+   "rolle": "ton",
+   "ordner": "Kamera-B",
+   "person": "Jörn Flammann",
+   "fingerprint": "7af81a53176fb4eef0a3cba74c3e950ff21e064d971970e169222a6c0507203b"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0224.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0224.MP4",
+    "duration_s": 0.48,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 12,
+    "timecode": "19:50:03:21",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0224.mov",
+    "duration_s": 0.554667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 12,
+    "timecode": "19:50:03:21",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0224.mov",
+   "kamera": "FX3",
+   "rolle": "ton",
+   "ordner": "Kamera-B",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "b630203c7573b0e0944d4c94a6bdb7fda116579ccae98186af51f6beabbf657e"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0225.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0225.MP4",
+    "duration_s": 296.16,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 7404,
+    "timecode": "19:50:12:15",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0225.mov",
+    "duration_s": 296.234667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 7404,
+    "timecode": "19:50:12:15",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0225.mov",
+   "kamera": "FX3",
+   "rolle": "ton",
+   "ordner": "Kamera-B",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "d71326dc195b02ce9f5b142598d99db0b6ab400c1d39f5ffab35518bc9138654"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0226.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0226.MP4",
+    "duration_s": 47.04,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 1176,
+    "timecode": "19:58:19:01",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0226.mov",
+    "duration_s": 47.104,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 1176,
+    "timecode": "19:58:19:01",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0226.mov",
+   "kamera": "FX3",
+   "rolle": "ton",
+   "ordner": "Kamera-B",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "be755d86f27ea298dca3c43d08d7bd893bbd0a7d0fbb2dfe3981150ad9e63e8e"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0227.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0227.MP4",
+    "duration_s": 2.4,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 60,
+    "timecode": "19:59:06:24",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0227.mov",
+    "duration_s": 2.474667,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 60,
+    "timecode": "19:59:06:24",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0227.mov",
+   "kamera": "FX3",
+   "rolle": "ton",
+   "ordner": "Kamera-B",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "4fd049a97792d791b79eb0b49ec91c6d9dd1c80f19b4e5a7575c66fce01d06b6"
+  },
+  "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0228.MP4": {
+   "original": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0228.MP4",
+    "duration_s": 1314.24,
+    "fps": 25.0,
+    "width": 3840,
+    "height": 2160,
+    "rotation": 0,
+    "nb_frames": 32856,
+    "timecode": "19:59:38:21",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy": {
+    "path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0228.mov",
+    "duration_s": 1314.304,
+    "fps": 25.0,
+    "width": 1920,
+    "height": 1080,
+    "rotation": 0,
+    "nb_frames": 32856,
+    "timecode": "19:59:38:21",
+    "has_audio": true,
+    "sample_rate": 48000,
+    "channels": 2
+   },
+   "proxy_path": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/Proxy/FX3_0228.mov",
+   "kamera": "FX3",
+   "rolle": "ton",
+   "ordner": "Kamera-B",
+   "person": "Jan Philipp Hein",
+   "fingerprint": "8e4bccde227805e39255b57c93f8945cf89a0fe3c7d347303931137dacf6eed0"
+  }
+ },
+ "ordner": {
+  "Friedrich Ludwig": {
+   "ton": [
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0222.MP4"
+   ],
+   "kontext": [
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0118.MP4"
+   ]
+  },
+  "Jörn Flammann": {
+   "ton": [
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4"
+   ],
+   "kontext": [
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0119.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0748.MP4"
+   ]
+  },
+  "Jan Philipp Hein": {
+   "ton": [
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0228.MP4"
+   ],
+   "kontext": [
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0752.MP4"
+   ]
+  }
+ },
+ "ordner_original": {
+  "Kamera-A": {
+   "ton": [],
+   "kontext": [
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0116.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0117.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0118.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0119.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0748.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0749.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0750.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0751.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0752.MP4"
+   ]
+  },
+  "Kamera-B": {
+   "ton": [
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0221.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0222.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0224.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0225.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0226.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0227.MP4",
+    "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0228.MP4"
+   ],
+   "kontext": []
+  }
+ },
+ "hinweis_ordner": "Kamerapaare von Hand nach Person gruppiert (14.09.2026): Material liegt nach Kamera getrennt (Kamera-A/Kamera-B), prepare gruppiert nach Elternordner. Nur im Plan genutzte FX3-Clips; a7-Clips nach Aufnahmezeit/Überlappung gewählt. prepare überschreibt das bei erneutem Lauf."
+}

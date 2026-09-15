@@ -1,0 +1,1058 @@
+{
+  "source_file": "3 - Intensiv ist nicht gleich Intensiv.mp4",
+  "engine": "scribe",
+  "text": "Du bist Pflegefachkraft und glaubst, dass es moderne Intensivmedizin nur an großen Universitätskliniken gibt? Von der Ausstattung her ist es so, dass wir das gesamte Spektrum der Intensivmedizin abbilden können und da auch sehr stolz drauf sind, dass wir das hier an moderne Medizin in 'nem kleinen Krankenhaus machen können. Wir sind zertifiziert als Cardiac Arrest Center, das heißt für Patienten, die, ähm, nach einer Reanimation oder während einer Reanimation oder kurz vor einer Reanimation intensivmedizinische Hilfe benötigen, dafür sind wir zertifiziert. Wir arbeiten immer mehr an hochtechnisierten Geräten und wir sind hier mit den Ärzten auf Augenhöhe. Manchmal ist man ja auch abgelenkt durch die ganzen Geräte, die vielleicht, ähm, gerade laufen und dass man dann immer den Monitor noch mal im Blick behält. Wir nehmen die neuen Kollegen an die Hand und, äh, führen sie Schritt für Schritt ins System mit ein, in, in die Arbeit. Ja, also wenn das für dich interessant klingt, dann trag dich einfach ein oder komm bei uns vorbei, hospitiere ein paar Tage. Wir freuen uns, dich kennenzulernen.",
+  "words": [
+    {
+      "text": "Du",
+      "start": 0.099,
+      "end": 0.14,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "bist",
+      "start": 0.159,
+      "end": 0.259,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Pflegefachkraft",
+      "start": 0.299,
+      "end": 1.039,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "und",
+      "start": 1.059,
+      "end": 1.159,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "glaubst,",
+      "start": 1.179,
+      "end": 1.459,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "dass",
+      "start": 1.5,
+      "end": 1.599,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "es",
+      "start": 1.62,
+      "end": 1.74,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "moderne",
+      "start": 1.779,
+      "end": 2.099,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Intensivmedizin",
+      "start": 2.139,
+      "end": 3.079,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "nur",
+      "start": 3.139,
+      "end": 3.24,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "an",
+      "start": 3.279,
+      "end": 3.379,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "großen",
+      "start": 3.419,
+      "end": 3.639,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Universitätskliniken",
+      "start": 3.679,
+      "end": 4.579,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "gibt?",
+      "start": 4.639,
+      "end": 4.859,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Von",
+      "start": 10.079,
+      "end": 10.159,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "der",
+      "start": 10.179,
+      "end": 10.239,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Ausstattung",
+      "start": 10.279,
+      "end": 10.679,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "her",
+      "start": 10.76,
+      "end": 10.88,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ist",
+      "start": 10.939,
+      "end": 11.039,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "es",
+      "start": 11.059,
+      "end": 11.159,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "so,",
+      "start": 11.179,
+      "end": 11.3,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dass",
+      "start": 11.34,
+      "end": 11.439,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wir",
+      "start": 11.479,
+      "end": 11.539,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 11.579,
+      "end": 11.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "gesamte",
+      "start": 11.779,
+      "end": 12.119,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Spektrum",
+      "start": 12.199,
+      "end": 12.539,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "der",
+      "start": 12.579,
+      "end": 12.659,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Intensivmedizin",
+      "start": 12.679,
+      "end": 13.439,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "abbilden",
+      "start": 13.5,
+      "end": 13.859,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "können",
+      "start": 13.92,
+      "end": 14.119,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "und",
+      "start": 14.579,
+      "end": 14.64,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "da",
+      "start": 14.679,
+      "end": 14.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "auch",
+      "start": 14.819,
+      "end": 14.92,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sehr",
+      "start": 14.96,
+      "end": 15.059,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "stolz",
+      "start": 15.099,
+      "end": 15.299,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "drauf",
+      "start": 15.319,
+      "end": 15.46,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sind,",
+      "start": 15.519,
+      "end": 15.639,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dass",
+      "start": 15.679,
+      "end": 15.759,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wir",
+      "start": 15.819,
+      "end": 15.88,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 15.92,
+      "end": 16.059,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hier",
+      "start": 16.119,
+      "end": 16.319,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "an",
+      "start": 16.359,
+      "end": 16.479,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "moderne",
+      "start": 16.579,
+      "end": 16.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Medizin",
+      "start": 16.94,
+      "end": 17.379,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "in",
+      "start": 17.42,
+      "end": 17.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "'nem",
+      "start": 17.52,
+      "end": 17.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "kleinen",
+      "start": 18.039,
+      "end": 18.279,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Krankenhaus",
+      "start": 18.34,
+      "end": 18.719,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "machen",
+      "start": 18.76,
+      "end": 18.939,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "können.",
+      "start": 19.0,
+      "end": 19.279,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Wir",
+      "start": 19.979,
+      "end": 20.04,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sind",
+      "start": 20.079,
+      "end": 20.18,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "zertifiziert",
+      "start": 20.239,
+      "end": 20.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "als",
+      "start": 20.779,
+      "end": 20.879,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Cardiac",
+      "start": 20.939,
+      "end": 21.26,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Arrest",
+      "start": 21.299,
+      "end": 21.539,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Center,",
+      "start": 21.6,
+      "end": 21.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 21.959,
+      "end": 22.079,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "heißt",
+      "start": 22.159,
+      "end": 22.319,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "für",
+      "start": 22.5,
+      "end": 22.579,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Patienten,",
+      "start": 22.659,
+      "end": 23.199,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "die,",
+      "start": 23.359,
+      "end": 23.819,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ähm,",
+      "start": 23.879,
+      "end": 24.019,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "nach",
+      "start": 24.139,
+      "end": 24.279,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "einer",
+      "start": 24.319,
+      "end": 24.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Reanimation",
+      "start": 24.519,
+      "end": 25.199,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "oder",
+      "start": 25.239,
+      "end": 25.379,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "während",
+      "start": 25.459,
+      "end": 25.699,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "einer",
+      "start": 25.719,
+      "end": 25.879,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Reanimation",
+      "start": 25.92,
+      "end": 26.68,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "oder",
+      "start": 26.76,
+      "end": 26.939,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "kurz",
+      "start": 27.219,
+      "end": 27.42,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "vor",
+      "start": 27.479,
+      "end": 27.579,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "einer",
+      "start": 27.599,
+      "end": 27.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Reanimation",
+      "start": 27.779,
+      "end": 28.559,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "intensivmedizinische",
+      "start": 28.699,
+      "end": 29.6,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Hilfe",
+      "start": 29.659,
+      "end": 29.84,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "benötigen,",
+      "start": 29.899,
+      "end": 30.359,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dafür",
+      "start": 30.779,
+      "end": 30.959,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sind",
+      "start": 31.0,
+      "end": 31.099,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wir",
+      "start": 31.139,
+      "end": 31.219,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "zertifiziert.",
+      "start": 31.299,
+      "end": 31.979,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Wir",
+      "start": 36.02,
+      "end": 36.119,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "arbeiten",
+      "start": 36.219,
+      "end": 36.599,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "immer",
+      "start": 36.659,
+      "end": 36.819,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "mehr",
+      "start": 36.899,
+      "end": 37.099,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "an",
+      "start": 37.439,
+      "end": 37.599,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "hochtechnisierten",
+      "start": 37.7,
+      "end": 38.5,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Geräten",
+      "start": 38.559,
+      "end": 38.879,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "und",
+      "start": 38.959,
+      "end": 39.079,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "wir",
+      "start": 39.119,
+      "end": 39.2,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "sind",
+      "start": 39.239,
+      "end": 39.439,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "hier",
+      "start": 39.52,
+      "end": 39.619,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "mit",
+      "start": 39.68,
+      "end": 39.759,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "den",
+      "start": 39.779,
+      "end": 39.879,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Ärzten",
+      "start": 39.939,
+      "end": 40.2,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "auf",
+      "start": 40.239,
+      "end": 40.439,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Augenhöhe.",
+      "start": 40.579,
+      "end": 41.2,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Manchmal",
+      "start": 41.719,
+      "end": 41.959,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ist",
+      "start": 42.0,
+      "end": 42.079,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "man",
+      "start": 42.139,
+      "end": 42.2,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ja",
+      "start": 42.219,
+      "end": 42.259,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "auch",
+      "start": 42.279,
+      "end": 42.399,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "abgelenkt",
+      "start": 42.459,
+      "end": 42.879,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "durch",
+      "start": 42.919,
+      "end": 43.04,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "die",
+      "start": 43.079,
+      "end": 43.139,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ganzen",
+      "start": 43.18,
+      "end": 43.419,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Geräte,",
+      "start": 43.459,
+      "end": 43.86,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "die",
+      "start": 43.919,
+      "end": 44.119,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "vielleicht,",
+      "start": 44.319,
+      "end": 44.859,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ähm,",
+      "start": 44.899,
+      "end": 45.0,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "gerade",
+      "start": 45.099,
+      "end": 45.379,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "laufen",
+      "start": 45.439,
+      "end": 45.84,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "und",
+      "start": 45.899,
+      "end": 46.0,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "dass",
+      "start": 46.02,
+      "end": 46.139,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "man",
+      "start": 46.18,
+      "end": 46.259,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "dann",
+      "start": 46.299,
+      "end": 46.399,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "immer",
+      "start": 46.439,
+      "end": 46.599,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "den",
+      "start": 46.639,
+      "end": 46.719,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Monitor",
+      "start": 46.759,
+      "end": 47.139,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "noch",
+      "start": 47.18,
+      "end": 47.299,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "mal",
+      "start": 47.36,
+      "end": 47.459,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "im",
+      "start": 47.5,
+      "end": 47.619,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Blick",
+      "start": 47.68,
+      "end": 47.84,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "behält.",
+      "start": 47.879,
+      "end": 48.259,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Wir",
+      "start": 49.279,
+      "end": 49.34,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "nehmen",
+      "start": 49.379,
+      "end": 49.539,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "die",
+      "start": 49.579,
+      "end": 49.959,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "neuen",
+      "start": 50.02,
+      "end": 50.239,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Kollegen",
+      "start": 50.379,
+      "end": 50.86,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "an",
+      "start": 50.919,
+      "end": 50.979,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "die",
+      "start": 51.0,
+      "end": 51.079,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Hand",
+      "start": 51.139,
+      "end": 51.479,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "und,",
+      "start": 51.579,
+      "end": 51.839,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "äh,",
+      "start": 51.899,
+      "end": 52.139,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "führen",
+      "start": 52.199,
+      "end": 52.34,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "sie",
+      "start": 52.399,
+      "end": 52.479,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Schritt",
+      "start": 52.599,
+      "end": 52.799,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "für",
+      "start": 52.86,
+      "end": 52.919,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Schritt",
+      "start": 53.02,
+      "end": 53.559,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "ins",
+      "start": 53.639,
+      "end": 54.02,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "System",
+      "start": 54.079,
+      "end": 54.399,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "mit",
+      "start": 54.459,
+      "end": 54.619,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "ein,",
+      "start": 54.699,
+      "end": 54.899,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "in,",
+      "start": 55.059,
+      "end": 55.199,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "in",
+      "start": 55.239,
+      "end": 55.319,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "die",
+      "start": 55.36,
+      "end": 55.459,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Arbeit.",
+      "start": 55.559,
+      "end": 56.079,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Ja,",
+      "start": 57.139,
+      "end": 57.259,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "also",
+      "start": 57.299,
+      "end": 57.439,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wenn",
+      "start": 57.479,
+      "end": 57.579,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 57.619,
+      "end": 57.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "für",
+      "start": 57.779,
+      "end": 57.84,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dich",
+      "start": 57.879,
+      "end": 58.0,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "interessant",
+      "start": 58.059,
+      "end": 58.479,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "klingt,",
+      "start": 58.52,
+      "end": 58.759,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dann",
+      "start": 58.799,
+      "end": 58.979,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "trag",
+      "start": 59.159,
+      "end": 59.34,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dich",
+      "start": 59.399,
+      "end": 59.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "einfach",
+      "start": 59.559,
+      "end": 59.84,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ein",
+      "start": 59.919,
+      "end": 60.219,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "oder",
+      "start": 60.319,
+      "end": 60.459,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "komm",
+      "start": 60.52,
+      "end": 60.619,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "bei",
+      "start": 60.659,
+      "end": 60.7,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "uns",
+      "start": 60.719,
+      "end": 60.819,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "vorbei,",
+      "start": 60.859,
+      "end": 61.239,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hospitiere",
+      "start": 61.279,
+      "end": 61.719,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ein",
+      "start": 61.739,
+      "end": 61.84,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "paar",
+      "start": 61.84,
+      "end": 61.979,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Tage.",
+      "start": 62.039,
+      "end": 62.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Wir",
+      "start": 62.619,
+      "end": 62.68,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "freuen",
+      "start": 62.759,
+      "end": 62.919,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "uns,",
+      "start": 62.939,
+      "end": 63.039,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dich",
+      "start": 63.059,
+      "end": 63.159,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "kennenzulernen.",
+      "start": 63.199,
+      "end": 63.779,
+      "speaker": "speaker_1"
+    }
+  ],
+  "language": "de"
+}

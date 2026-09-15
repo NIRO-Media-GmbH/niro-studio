@@ -1,0 +1,14 @@
+[
+ {"id": "t1-053s01", "kategorie": "details", "einstellung": "detail", "paar_im_fokus": false, "tageszeit": "tag", "wert": 3, "flags": [], "motiv": "Fotografin-Kamera zeigt Paarbild", "bester_frame": 2},
+ {"id": "t1-053s02", "kategorie": "location", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "tag", "wert": 4, "flags": [], "motiv": "Drohne über Gutshof", "bester_frame": 2},
+ {"id": "t1-053s03", "kategorie": "trauung", "einstellung": "totale", "paar_im_fokus": true, "tageszeit": "tag", "wert": 5, "flags": [], "motiv": "Brautvater führt Braut durch Wald", "bester_frame": 2},
+ {"id": "t1-053s04", "kategorie": "trauung", "einstellung": "halbtotale", "paar_im_fokus": true, "tageszeit": "tag", "wert": 4, "flags": [], "motiv": "Vater und Braut unter Schirm", "bester_frame": 2},
+ {"id": "t1-002s01", "kategorie": "unbrauchbar", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "tag", "wert": 1, "flags": ["sw_effekt", "grafik"], "motiv": "S/W-Intro im Letterbox", "bester_frame": 2},
+ {"id": "t1-002s02", "kategorie": "unbrauchbar", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "tag", "wert": 1, "flags": ["text_im_bild"], "motiv": "Drohne mit Namenstitel", "bester_frame": 2},
+ {"id": "t1-002s03", "kategorie": "getting_ready", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "tag", "wert": 3, "flags": [], "motiv": "Styling-Zimmer, Braut wird frisiert", "bester_frame": 2},
+ {"id": "t1-079s01", "kategorie": "trauung", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "tag", "wert": 4, "flags": [], "motiv": "Zeremoniezelt im Wald, totale", "bester_frame": 2},
+ {"id": "t1-079s02", "kategorie": "location", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "tag", "wert": 2, "flags": [], "motiv": "FPV-Drohne über Allee, Bewegungsunschärfe", "bester_frame": 1},
+ {"id": "t1-029s01", "kategorie": "getting_ready", "einstellung": "nah", "paar_im_fokus": true, "tageszeit": "tag", "wert": 4, "flags": [], "motiv": "Bräutigam am Fenster, Gegenlicht", "bester_frame": 1},
+ {"id": "t1-029s02", "kategorie": "location", "einstellung": "totale", "paar_im_fokus": false, "tageszeit": "tag", "wert": 2, "flags": [], "motiv": "FPV-Drohne am Uhrturm, gekippt", "bester_frame": 3},
+ {"id": "t1-250s02", "kategorie": "reden_dinner", "einstellung": "halbtotale", "paar_im_fokus": true, "tageszeit": "abend", "wert": 2, "flags": [], "motiv": "Bräutigam von hinten, Kerzen-Bokeh", "bester_frame": 2}
+]

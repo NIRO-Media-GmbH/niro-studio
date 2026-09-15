@@ -1,0 +1,19 @@
+{
+  "name": "HBL Management GmbH",
+  "colors": {
+    "primary": "#FF1438",
+    "secondary": "#908385",
+    "accent": "#FF1438",
+    "background": "#FCF8EC",
+    "text": "#908385"
+  },
+  "fonts": {
+    "heading": "Futura",
+    "body": "Futura"
+  },
+  "logo": "clients/hbl/logo-rot.png",
+  "style": {
+    "borderRadius": 28,
+    "animationSpeed": "normal"
+  }
+}

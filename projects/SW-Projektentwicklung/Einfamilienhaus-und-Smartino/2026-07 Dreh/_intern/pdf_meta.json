@@ -1,0 +1,12 @@
+{
+  "titel": "SW Projektentwicklung",
+  "untertitel": "Schnittanweisungen — 5 Videos + 12 Werbeanzeigen",
+  "stand": "Dreh 21.07.2026 Gottwolfshausen + Hotel Smartino — NIRO Media, Stand 11.08.2026",
+  "warnbox": "KEIN KUNDENSKRIPT - ALLES GROBKONZEPT\nEs gab kein Konzept zum Dreh. Struktur ist aus dem Material abgeleitet; SW entscheidet nach Sichtung. KEINE Interviews im Material - alle Takes sind gescriptet, Sprecher immer Fabrice (Name vor Nutzung verifizieren). REGIE-STIMME (Jan/NIRO) NIE VERWENDEN. Multi-Cam (Bifazial, Flachdach): Ton IMMER aus FX3, a7MK4 nur 2. Winkel, 2-12 s versetzt - nach Ton syncen. GESPERRT: Rechenfehler Smartino-Ersparnis (a7_0125 00:25-00:32, 55.000 statt 45.000 kWh) + Wettbewerber-Klatsch in 99_B-Roll/FX3_0289 und FX3_0290. Bifazial-Mehrertrag = 5-20 %, NIE 25 % (ASR-Artefakt). Recruiting-Endcards immer mit (m/w/d).",
+  "kapitel_farben": {
+    "[Referenz]": [0, 90, 160],
+    "[Erklärvideo]": [0, 130, 60],
+    "[Werbeanzeigen]": [200, 120, 0]
+  },
+  "dateiname": "SW-Projektentwicklung-Schnittanweisungen.pdf"
+}

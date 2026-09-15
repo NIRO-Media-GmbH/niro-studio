@@ -1,0 +1,12 @@
+{
+  "titel": "Förch Recruiting — Serie Ausbildung",
+  "untertitel": "Schnittanweisungen für 9 Videos (3 Werbeanzeigen + 6 Bereichs-Videos)",
+  "stand": "Dreh 30.06.2026 Stammhaus Neuenstadt — NIRO Media, Stand 21.07.2026",
+  "warnbox": "TON + SPERREN\nInterview-Ton NUR aus a7MK4_* (C99xx ohne Mikro-Ton!). Timecodes = Position in der genannten Datei; Regie klebt an fast jedem Take — In/Out nach Gehör. GESPERRT: Tobias 09:44-10:28 (KI/'weniger Menschen'), alle Gehalts-Aussagen (Tobias 14:37, Emili 11:36), FX3_9930 ('Partnermodell'). AZ-L: Ausland NUR mit 'ueber die DHBW'-Framing. Keine SAP-/Data-Science-Captions (nicht belegt). Endcard-Berufe IMMER mit (m/w/d).",
+  "kapitel_farben": {
+    "Werbeanzeige": [0, 90, 160],
+    "Erklärvideo": [0, 130, 60],
+    "Anhang": [120, 120, 120]
+  },
+  "dateiname": "Foerch-Recruiting-Schnittanweisungen.pdf"
+}

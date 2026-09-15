@@ -1,0 +1,1048 @@
+{
+ "video": "bauer-solar",
+ "source": "03_BauerSolar-Modul_V1.srt",
+ "generated": "2026-09-03",
+ "pages": [
+  {
+   "start": 0.119,
+   "end": 1.67,
+   "tokens": [
+    {
+     "text": "Das",
+     "start": 0.199,
+     "end": 0.48
+    },
+    {
+     "text": "ist",
+     "start": 0.48,
+     "end": 0.639
+    },
+    {
+     "text": "unser",
+     "start": 0.639,
+     "end": 0.84
+    },
+    {
+     "text": "Solarmodul.",
+     "start": 0.84,
+     "end": 1.48
+    }
+   ]
+  },
+  {
+   "start": 1.72,
+   "end": 2.76,
+   "tokens": [
+    {
+     "text": "Wir",
+     "start": 1.8,
+     "end": 1.96
+    },
+    {
+     "text": "verwenden",
+     "start": 1.96,
+     "end": 2.36
+    },
+    {
+     "text": "die",
+     "start": 2.36,
+     "end": 2.519
+    },
+    {
+     "text": "Module",
+     "start": 2.519,
+     "end": 2.76
+    }
+   ]
+  },
+  {
+   "start": 2.68,
+   "end": 3.949,
+   "tokens": [
+    {
+     "text": "von",
+     "start": 2.76,
+     "end": 3.039
+    },
+    {
+     "text": "Bauer",
+     "start": 3.039,
+     "end": 3.239
+    },
+    {
+     "text": "Solar.",
+     "start": 3.239,
+     "end": 3.48
+    }
+   ]
+  },
+  {
+   "start": 3.999,
+   "end": 5.31,
+   "tokens": [
+    {
+     "text": "Das",
+     "start": 4.079,
+     "end": 4.239
+    },
+    {
+     "text": "ist",
+     "start": 4.239,
+     "end": 4.36
+    },
+    {
+     "text": "eine",
+     "start": 4.36,
+     "end": 4.48
+    },
+    {
+     "text": "German",
+     "start": 4.48,
+     "end": 4.719
+    },
+    {
+     "text": "Brand.",
+     "start": 4.719,
+     "end": 5.199
+    }
+   ]
+  },
+  {
+   "start": 5.36,
+   "end": 6.119,
+   "tokens": [
+    {
+     "text": "Haben",
+     "start": 5.44,
+     "end": 5.56
+    },
+    {
+     "text": "hier",
+     "start": 5.559,
+     "end": 5.719
+    },
+    {
+     "text": "jetzt",
+     "start": 5.719,
+     "end": 5.84
+    },
+    {
+     "text": "gerade",
+     "start": 5.84,
+     "end": 6.119
+    }
+   ]
+  },
+  {
+   "start": 6.039,
+   "end": 7.119,
+   "tokens": [
+    {
+     "text": "speziell",
+     "start": 6.119,
+     "end": 6.8
+    },
+    {
+     "text": "vor",
+     "start": 6.8,
+     "end": 6.96
+    },
+    {
+     "text": "uns",
+     "start": 6.96,
+     "end": 7.119
+    }
+   ]
+  },
+  {
+   "start": 7.039,
+   "end": 9.989,
+   "tokens": [
+    {
+     "text": "das",
+     "start": 7.119,
+     "end": 7.36
+    },
+    {
+     "text": "460-Watt-Solarmodul",
+     "start": 7.36,
+     "end": 9.239
+    },
+    {
+     "text": "von",
+     "start": 9.239,
+     "end": 9.4
+    },
+    {
+     "text": "denen.",
+     "start": 9.4,
+     "end": 9.599
+    }
+   ]
+  },
+  {
+   "start": 10.039,
+   "end": 10.4,
+   "tokens": [
+    {
+     "text": "Und",
+     "start": 10.119,
+     "end": 10.239
+    },
+    {
+     "text": "das",
+     "start": 10.239,
+     "end": 10.359
+    },
+    {
+     "text": "ist",
+     "start": 10.28,
+     "end": 10.4
+    }
+   ]
+  },
+  {
+   "start": 10.32,
+   "end": 12.87,
+   "tokens": [
+    {
+     "text": "quasi",
+     "start": 10.4,
+     "end": 10.639
+    },
+    {
+     "text": "ein",
+     "start": 10.639,
+     "end": 10.88
+    },
+    {
+     "text": "Glas-Glas-Bifazialmodul.",
+     "start": 10.88,
+     "end": 12.639
+    }
+   ]
+  },
+  {
+   "start": 12.92,
+   "end": 13.76,
+   "tokens": [
+    {
+     "text": "Wie",
+     "start": 13,
+     "end": 13.12
+    },
+    {
+     "text": "man",
+     "start": 13.12,
+     "end": 13.24
+    },
+    {
+     "text": "jetzt",
+     "start": 13.119,
+     "end": 13.32
+    },
+    {
+     "text": "hier",
+     "start": 13.32,
+     "end": 13.44
+    },
+    {
+     "text": "sieht,",
+     "start": 13.44,
+     "end": 13.76
+    }
+   ]
+  },
+  {
+   "start": 13.68,
+   "end": 16.109,
+   "tokens": [
+    {
+     "text": "man",
+     "start": 13.76,
+     "end": 14.079
+    },
+    {
+     "text": "kann",
+     "start": 14.079,
+     "end": 14.239
+    },
+    {
+     "text": "direkt",
+     "start": 14.239,
+     "end": 14.92
+    },
+    {
+     "text": "die",
+     "start": 14.92,
+     "end": 15.119
+    },
+    {
+     "text": "Zellen",
+     "start": 15.119,
+     "end": 15.4
+    },
+    {
+     "text": "erkennen.",
+     "start": 15.4,
+     "end": 15.76
+    }
+   ]
+  },
+  {
+   "start": 16.159,
+   "end": 17.4,
+   "tokens": [
+    {
+     "text": "Kann",
+     "start": 16.239,
+     "end": 16.4
+    },
+    {
+     "text": "wirklich",
+     "start": 16.4,
+     "end": 16.719
+    },
+    {
+     "text": "auch",
+     "start": 16.719,
+     "end": 16.96
+    },
+    {
+     "text": "das",
+     "start": 16.96,
+     "end": 17.119
+    },
+    {
+     "text": "Modul",
+     "start": 17.119,
+     "end": 17.4
+    }
+   ]
+  },
+  {
+   "start": 17.32,
+   "end": 19,
+   "tokens": [
+    {
+     "text": "theoretisch",
+     "start": 17.4,
+     "end": 18.28
+    },
+    {
+     "text": "als",
+     "start": 18.28,
+     "end": 18.559
+    },
+    {
+     "text": "Solar-Zaun",
+     "start": 18.559,
+     "end": 19
+    }
+   ]
+  },
+  {
+   "start": 18.92,
+   "end": 19.839,
+   "tokens": [
+    {
+     "text": "verwenden,",
+     "start": 19,
+     "end": 19.44
+    },
+    {
+     "text": "weil",
+     "start": 19.44,
+     "end": 19.599
+    },
+    {
+     "text": "ich",
+     "start": 19.599,
+     "end": 19.719
+    },
+    {
+     "text": "habe",
+     "start": 19.719,
+     "end": 19.839
+    }
+   ]
+  },
+  {
+   "start": 19.72,
+   "end": 20.959,
+   "tokens": [
+    {
+     "text": "von",
+     "start": 19.8,
+     "end": 19.96
+    },
+    {
+     "text": "beiden",
+     "start": 19.96,
+     "end": 20.119
+    },
+    {
+     "text": "Seiten",
+     "start": 20.119,
+     "end": 20.44
+    },
+    {
+     "text": "die",
+     "start": 20.44,
+     "end": 20.679
+    },
+    {
+     "text": "Produktion,",
+     "start": 20.679,
+     "end": 20.959
+    }
+   ]
+  },
+  {
+   "start": 20.879,
+   "end": 22.08,
+   "tokens": [
+    {
+     "text": "weil",
+     "start": 20.959,
+     "end": 21.239
+    },
+    {
+     "text": "die",
+     "start": 21.239,
+     "end": 21.519
+    },
+    {
+     "text": "Zellen",
+     "start": 21.519,
+     "end": 21.76
+    },
+    {
+     "text": "sind",
+     "start": 21.76,
+     "end": 21.96
+    },
+    {
+     "text": "auch",
+     "start": 21.96,
+     "end": 22.08
+    }
+   ]
+  },
+  {
+   "start": 21.999,
+   "end": 23.71,
+   "tokens": [
+    {
+     "text": "natürlich",
+     "start": 22.079,
+     "end": 22.36
+    },
+    {
+     "text": "von",
+     "start": 22.36,
+     "end": 22.559
+    },
+    {
+     "text": "der",
+     "start": 22.559,
+     "end": 22.679
+    },
+    {
+     "text": "Rückseite",
+     "start": 22.679,
+     "end": 23.079
+    },
+    {
+     "text": "aktiv.",
+     "start": 23.079,
+     "end": 23.44
+    }
+   ]
+  },
+  {
+   "start": 23.76,
+   "end": 24.44,
+   "tokens": [
+    {
+     "text": "Zusätzlich",
+     "start": 23.84,
+     "end": 24.14
+    },
+    {
+     "text": "haben",
+     "start": 24.14,
+     "end": 24.44
+    }
+   ]
+  },
+  {
+   "start": 24.36,
+   "end": 26.599,
+   "tokens": [
+    {
+     "text": "wir",
+     "start": 24.44,
+     "end": 24.739
+    },
+    {
+     "text": "hier",
+     "start": 24.739,
+     "end": 25.039
+    },
+    {
+     "text": "Stäubli-Stecker",
+     "start": 25.039,
+     "end": 25.96
+    },
+    {
+     "text": "und",
+     "start": 25.96,
+     "end": 26.32
+    },
+    {
+     "text": "keine",
+     "start": 26.32,
+     "end": 26.599
+    }
+   ]
+  },
+  {
+   "start": 26.519,
+   "end": 28.12,
+   "tokens": [
+    {
+     "text": "Standard-MC4-Stecker,",
+     "start": 26.599,
+     "end": 28
+    },
+    {
+     "text": "sondern",
+     "start": 28,
+     "end": 28.12
+    }
+   ]
+  },
+  {
+   "start": 28.039,
+   "end": 29.32,
+   "tokens": [
+    {
+     "text": "das",
+     "start": 28.119,
+     "end": 28.26
+    },
+    {
+     "text": "sind",
+     "start": 28.26,
+     "end": 28.4
+    },
+    {
+     "text": "direkt",
+     "start": 28.4,
+     "end": 28.639
+    },
+    {
+     "text": "Markenstecker",
+     "start": 28.639,
+     "end": 29.32
+    }
+   ]
+  },
+  {
+   "start": 29.24,
+   "end": 30.71,
+   "tokens": [
+    {
+     "text": "dran,",
+     "start": 29.32,
+     "end": 29.679
+    },
+    {
+     "text": "2",
+     "start": 29.679,
+     "end": 29.92
+    },
+    {
+     "text": "mm",
+     "start": 29.92,
+     "end": 30.199
+    }
+   ]
+  },
+  {
+   "start": 30.76,
+   "end": 31.83,
+   "tokens": [
+    {
+     "text": "Stärke,",
+     "start": 30.84,
+     "end": 31.119
+    },
+    {
+     "text": "das",
+     "start": 31.36,
+     "end": 31.48
+    },
+    {
+     "text": "heißt,",
+     "start": 31.48,
+     "end": 31.679
+    }
+   ]
+  },
+  {
+   "start": 31.88,
+   "end": 32.599,
+   "tokens": [
+    {
+     "text": "ihr",
+     "start": 31.96,
+     "end": 32.08
+    },
+    {
+     "text": "habt",
+     "start": 32.039,
+     "end": 32.199
+    },
+    {
+     "text": "direkt",
+     "start": 32.199,
+     "end": 32.599
+    }
+   ]
+  },
+  {
+   "start": 32.519,
+   "end": 34.429,
+   "tokens": [
+    {
+     "text": "Hagelwiderstandsklasse",
+     "start": 32.599,
+     "end": 33.96
+    },
+    {
+     "text": "3.",
+     "start": 33.96,
+     "end": 34.28
+    }
+   ]
+  },
+  {
+   "start": 34.479,
+   "end": 35.519,
+   "tokens": [
+    {
+     "text": "Vergleichsweise",
+     "start": 34.559,
+     "end": 35.239
+    },
+    {
+     "text": "andere",
+     "start": 35.239,
+     "end": 35.519
+    }
+   ]
+  },
+  {
+   "start": 35.439,
+   "end": 37.31,
+   "tokens": [
+    {
+     "text": "Hersteller",
+     "start": 35.519,
+     "end": 35.96
+    },
+    {
+     "text": "haben",
+     "start": 35.96,
+     "end": 36.08
+    },
+    {
+     "text": "nur",
+     "start": 36.079,
+     "end": 36.199
+    },
+    {
+     "text": "1,6",
+     "start": 36.199,
+     "end": 36.84
+    },
+    {
+     "text": "mm.",
+     "start": 36.84,
+     "end": 37.119
+    }
+   ]
+  },
+  {
+   "start": 37.36,
+   "end": 38.949,
+   "tokens": [
+    {
+     "text": "Also",
+     "start": 37.44,
+     "end": 37.72
+    },
+    {
+     "text": "die",
+     "start": 37.72,
+     "end": 38
+    },
+    {
+     "text": "sind",
+     "start": 38,
+     "end": 38.28
+    },
+    {
+     "text": "extrem",
+     "start": 38.28,
+     "end": 38.56
+    },
+    {
+     "text": "robust.",
+     "start": 38.56,
+     "end": 38.84
+    }
+   ]
+  },
+  {
+   "start": 38.999,
+   "end": 39.8,
+   "tokens": [
+    {
+     "text": "Und",
+     "start": 39.079,
+     "end": 39.32
+    },
+    {
+     "text": "wir",
+     "start": 39.32,
+     "end": 39.679
+    },
+    {
+     "text": "haben",
+     "start": 39.679,
+     "end": 39.8
+    }
+   ]
+  },
+  {
+   "start": 39.72,
+   "end": 41.029,
+   "tokens": [
+    {
+     "text": "die",
+     "start": 39.8,
+     "end": 39.92
+    },
+    {
+     "text": "Brandschutzklasse",
+     "start": 39.92,
+     "end": 40.519
+    },
+    {
+     "text": "A.",
+     "start": 40.519,
+     "end": 40.8
+    }
+   ]
+  },
+  {
+   "start": 41.079,
+   "end": 41.84,
+   "tokens": [
+    {
+     "text": "Wer",
+     "start": 41.159,
+     "end": 41.279
+    },
+    {
+     "text": "es",
+     "start": 41.279,
+     "end": 41.399
+    },
+    {
+     "text": "mir",
+     "start": 41.32,
+     "end": 41.44
+    },
+    {
+     "text": "natürlich",
+     "start": 41.44,
+     "end": 41.719
+    },
+    {
+     "text": "nicht",
+     "start": 41.719,
+     "end": 41.84
+    }
+   ]
+  },
+  {
+   "start": 41.76,
+   "end": 43.079,
+   "tokens": [
+    {
+     "text": "glaubt,",
+     "start": 41.84,
+     "end": 42.24
+    },
+    {
+     "text": "dass",
+     "start": 42.24,
+     "end": 42.639
+    },
+    {
+     "text": "die",
+     "start": 42.639,
+     "end": 42.8
+    },
+    {
+     "text": "Module",
+     "start": 42.8,
+     "end": 43.079
+    }
+   ]
+  },
+  {
+   "start": 42.999,
+   "end": 44.67,
+   "tokens": [
+    {
+     "text": "wirklich",
+     "start": 43.079,
+     "end": 43.44
+    },
+    {
+     "text": "so",
+     "start": 43.44,
+     "end": 43.719
+    },
+    {
+     "text": "robust",
+     "start": 43.719,
+     "end": 43.92
+    },
+    {
+     "text": "sind,",
+     "start": 43.92,
+     "end": 44.32
+    }
+   ]
+  },
+  {
+   "start": 44.72,
+   "end": 45.87,
+   "tokens": [
+    {
+     "text": "kann",
+     "start": 44.8,
+     "end": 44.92
+    },
+    {
+     "text": "natürlich",
+     "start": 44.92,
+     "end": 45.199
+    },
+    {
+     "text": "einfach",
+     "start": 45.199,
+     "end": 45.639
+    }
+   ]
+  },
+  {
+   "start": 45.92,
+   "end": 46.72,
+   "tokens": [
+    {
+     "text": "vorherige",
+     "start": 46,
+     "end": 46.48
+    },
+    {
+     "text": "Videos",
+     "start": 46.48,
+     "end": 46.6
+    },
+    {
+     "text": "anschauen.",
+     "start": 46.6,
+     "end": 46.72
+    }
+   ]
+  },
+  {
+   "start": 46.599,
+   "end": 48.989,
+   "tokens": [
+    {
+     "text": "Da",
+     "start": 46.679,
+     "end": 47.519
+    },
+    {
+     "text": "zeige",
+     "start": 47.519,
+     "end": 48.159
+    },
+    {
+     "text": "ich",
+     "start": 48.159,
+     "end": 48.279
+    },
+    {
+     "text": "euch",
+     "start": 48.239,
+     "end": 48.36
+    },
+    {
+     "text": "genau,",
+     "start": 48.36,
+     "end": 48.719
+    }
+   ]
+  },
+  {
+   "start": 49.039,
+   "end": 50.4,
+   "tokens": [
+    {
+     "text": "dass",
+     "start": 49.119,
+     "end": 49.32
+    },
+    {
+     "text": "die",
+     "start": 49.32,
+     "end": 49.48
+    },
+    {
+     "text": "Module",
+     "start": 49.48,
+     "end": 49.679
+    },
+    {
+     "text": "den",
+     "start": 49.679,
+     "end": 49.88
+    },
+    {
+     "text": "Härtetest",
+     "start": 49.88,
+     "end": 50.4
+    }
+   ]
+  },
+  {
+   "start": 50.32,
+   "end": 52.32,
+   "tokens": [
+    {
+     "text": "bestehen,",
+     "start": 50.4,
+     "end": 50.88
+    },
+    {
+     "text": "Feuertest",
+     "start": 51.079,
+     "end": 51.519
+    },
+    {
+     "text": "vor",
+     "start": 51.88,
+     "end": 52.079
+    },
+    {
+     "text": "allem",
+     "start": 52.079,
+     "end": 52.32
+    }
+   ]
+  },
+  {
+   "start": 52.24,
+   "end": 53.84,
+   "tokens": [
+    {
+     "text": "den",
+     "start": 52.32,
+     "end": 52.719
+    },
+    {
+     "text": "Schlagtest",
+     "start": 52.719,
+     "end": 53.239
+    },
+    {
+     "text": "mit",
+     "start": 53.239,
+     "end": 53.44
+    },
+    {
+     "text": "Gewicht.",
+     "start": 53.44,
+     "end": 53.84
+    }
+   ]
+  },
+  {
+   "start": 53.76,
+   "end": 55.28,
+   "tokens": [
+    {
+     "text": "Link",
+     "start": 53.84,
+     "end": 54.159
+    },
+    {
+     "text": "ist",
+     "start": 54.159,
+     "end": 54.48
+    },
+    {
+     "text": "unten",
+     "start": 54.48,
+     "end": 54.679
+    },
+    {
+     "text": "drin,",
+     "start": 54.679,
+     "end": 55
+    },
+    {
+     "text": "schaut",
+     "start": 55.119,
+     "end": 55.28
+    }
+   ]
+  },
+  {
+   "start": 55.2,
+   "end": 56.56,
+   "tokens": [
+    {
+     "text": "es",
+     "start": 55.28,
+     "end": 55.4
+    },
+    {
+     "text": "euch",
+     "start": 55.4,
+     "end": 55.52
+    },
+    {
+     "text": "gerne",
+     "start": 55.48,
+     "end": 55.719
+    },
+    {
+     "text": "an.",
+     "start": 55.719,
+     "end": 55.96
+    }
+   ]
+  }
+ ]
+}

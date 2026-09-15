@@ -1,0 +1,1724 @@
+{
+ "ziel": {
+  "X": 300,
+  "Y_a7": -325,
+  "Y_fx3": -550,
+  "seiten": {
+   "FX3_0222": 1,
+   "a7MK4_20260908_0118": 1,
+   "FX3_0223": 1,
+   "a7MK4_20260908_0119": 1,
+   "FX3_0228": -1,
+   "a7MK4_20260908_0752": -1
+  }
+ },
+ "v1": [
+  {
+   "start": 0,
+   "clip": "FX3_0222",
+   "vorher": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.2985,
+    "ZoomY": 1.2985,
+    "Pan": -110.7,
+    "Tilt": 225.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 85,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.1579,
+    "ZoomY": 1.1579,
+    "Pan": -178.8,
+    "Tilt": -106.7
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 258,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.383,
+    "ZoomY": 1.383,
+    "Pan": -234.9,
+    "Tilt": -352.3
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 470,
+   "clip": "FX3_0222",
+   "vorher": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.2669,
+    "ZoomY": 1.2669,
+    "Pan": 63.1,
+    "Tilt": 198.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 683,
+   "clip": "FX3_0222",
+   "vorher": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.3056,
+    "ZoomY": 1.3056,
+    "Pan": -29.9,
+    "Tilt": 236.3
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1014,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.3678,
+    "ZoomY": 1.3678,
+    "Pan": -368.1,
+    "Tilt": -340.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1331,
+   "clip": "FX3_0222",
+   "vorher": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.2289,
+    "ZoomY": 1.2289,
+    "Pan": -127.0,
+    "Tilt": 149.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1429,
+   "clip": "FX3_0222",
+   "vorher": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.3019,
+    "ZoomY": 1.3019,
+    "Pan": -5.5,
+    "Tilt": 233.5
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1689,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.1633,
+    "ZoomY": 1.1633,
+    "Pan": -151.4,
+    "Tilt": -111.6
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 2248,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.3565,
+    "ZoomY": 1.3565,
+    "Pan": -332.4,
+    "Tilt": -327.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 2663,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.3153,
+    "ZoomY": 1.3153,
+    "Pan": -557.6,
+    "Tilt": -232.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3133,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.1878,
+    "ZoomY": 1.1878,
+    "Pan": -166.0,
+    "Tilt": -138.6
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3270,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.32,
+    "ZoomY": 1.32,
+    "Pan": -459.4,
+    "Tilt": -292.3
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3327,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.3035,
+    "ZoomY": 1.3035,
+    "Pan": -478.0,
+    "Tilt": -275.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3569,
+   "clip": "FX3_0222",
+   "vorher": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.3333,
+    "ZoomY": 1.3333,
+    "Pan": -19.9,
+    "Tilt": 266.7
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3856,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.3869,
+    "ZoomY": 1.3869,
+    "Pan": -343.3,
+    "Tilt": -360.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4026,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.4613,
+    "ZoomY": 1.4613,
+    "Pan": -239.4,
+    "Tilt": -436.8
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4237,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.2536,
+    "ZoomY": 1.2536,
+    "Pan": -331.2,
+    "Tilt": -215.7
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4254,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.2421,
+    "ZoomY": 1.2421,
+    "Pan": -326.1,
+    "Tilt": -203.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4329,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.3035,
+    "ZoomY": 1.3035,
+    "Pan": -421.2,
+    "Tilt": -273.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4834,
+   "clip": "FX3_0222",
+   "vorher": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.3373,
+    "ZoomY": 1.3373,
+    "Pan": -40.9,
+    "Tilt": 270.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4956,
+   "clip": "FX3_0222",
+   "vorher": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.0825,
+    "ZoomY": 1.0825,
+    "Pan": -38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": 2.66,
+    "Pitch": -0.00264,
+    "Yaw": -0.00011,
+    "ZoomX": 1.3183,
+    "ZoomY": 1.3183,
+    "Pan": -161.1,
+    "Tilt": 243.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5075,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.364,
+    "ZoomY": 1.364,
+    "Pan": -303.2,
+    "Tilt": -334.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5387,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.4565,
+    "ZoomY": 1.4565,
+    "Pan": -331.4,
+    "Tilt": -434.8
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5479,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.2983,
+    "ZoomY": 1.2983,
+    "Pan": -335.7,
+    "Tilt": -264.3
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5920,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.5833,
+    "ZoomY": 1.5833,
+    "Pan": -243.9,
+    "Tilt": -568.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 6032,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.1415,
+    "ZoomY": 1.1415,
+    "Pan": -172.3,
+    "Tilt": -88.8
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 6057,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.0654,
+    "ZoomY": 1.0654,
+    "Pan": 0.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.1846,
+    "ZoomY": 1.1846,
+    "Pan": -290.2,
+    "Tilt": -139.7
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 6139,
+   "clip": "FX3_0223",
+   "vorher": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.1932,
+    "ZoomY": 1.1932,
+    "Pan": -200.0,
+    "Tilt": 0.0
+   },
+   "neu": {
+    "RotationAngle": 2.112,
+    "Pitch": 2e-05,
+    "Yaw": 0.0,
+    "ZoomX": 1.2734,
+    "ZoomY": 1.2734,
+    "Pan": -243.1,
+    "Tilt": -160.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 6374,
+   "clip": "FX3_0228",
+   "vorher": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.0598,
+    "ZoomY": 1.0598,
+    "Pan": 38.4,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 1.925,
+    "Pitch": 0.00355,
+    "Yaw": 0.00011,
+    "ZoomX": 1.57,
+    "ZoomY": 1.57,
+    "Pan": -206.7,
+    "Tilt": -552.8
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  }
+ ],
+ "v2": [
+  {
+   "start": 0,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.1558,
+    "ZoomY": 1.1558,
+    "Pan": 237.8,
+    "Tilt": 157.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 85,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1395,
+    "ZoomY": 1.1395,
+    "Pan": 63.9,
+    "Tilt": 117.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 258,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0948,
+    "ZoomY": 1.0948,
+    "Pan": -30.5,
+    "Tilt": 56.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 470,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.2585,
+    "ZoomY": 1.2585,
+    "Pan": 492.0,
+    "Tilt": 107.3
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 683,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.1885,
+    "ZoomY": 1.1885,
+    "Pan": 350.7,
+    "Tilt": 193.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 760,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.1885,
+    "ZoomY": 1.1885,
+    "Pan": 350.7,
+    "Tilt": 193.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1014,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1337,
+    "ZoomY": 1.1337,
+    "Pan": -45.8,
+    "Tilt": 98.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1331,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.2134,
+    "ZoomY": 1.2134,
+    "Pan": 405.6,
+    "Tilt": -9.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1424,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.2134,
+    "ZoomY": 1.2134,
+    "Pan": 405.6,
+    "Tilt": -9.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1429,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.2189,
+    "ZoomY": 1.2189,
+    "Pan": 415.7,
+    "Tilt": 179.5
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 1689,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1341,
+    "ZoomY": 1.1341,
+    "Pan": 153.5,
+    "Tilt": 110.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 2118,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1341,
+    "ZoomY": 1.1341,
+    "Pan": 153.5,
+    "Tilt": 110.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 2248,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1469,
+    "ZoomY": 1.1469,
+    "Pan": -33.0,
+    "Tilt": 112.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 2319,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1469,
+    "ZoomY": 1.1469,
+    "Pan": -33.0,
+    "Tilt": 112.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 2500,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1469,
+    "ZoomY": 1.1469,
+    "Pan": -33.0,
+    "Tilt": 112.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 2663,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1732,
+    "ZoomY": 1.1732,
+    "Pan": -256.4,
+    "Tilt": 158.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 2812,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1732,
+    "ZoomY": 1.1732,
+    "Pan": -256.4,
+    "Tilt": 158.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3005,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1732,
+    "ZoomY": 1.1732,
+    "Pan": -256.4,
+    "Tilt": 158.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3133,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1881,
+    "ZoomY": 1.1881,
+    "Pan": 256.2,
+    "Tilt": 166.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3270,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.091,
+    "ZoomY": 1.091,
+    "Pan": -54.2,
+    "Tilt": 66.7
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3327,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1153,
+    "ZoomY": 1.1153,
+    "Pan": -76.6,
+    "Tilt": 93.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3569,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.231,
+    "ZoomY": 1.231,
+    "Pan": 388.7,
+    "Tilt": 239.8
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 3856,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1295,
+    "ZoomY": 1.1295,
+    "Pan": -39.0,
+    "Tilt": 93.8
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4026,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1042,
+    "ZoomY": 1.1042,
+    "Pan": -6.9,
+    "Tilt": 65.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4050,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1042,
+    "ZoomY": 1.1042,
+    "Pan": -6.9,
+    "Tilt": 65.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4162,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1042,
+    "ZoomY": 1.1042,
+    "Pan": -6.9,
+    "Tilt": 65.9
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4237,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1437,
+    "ZoomY": 1.1437,
+    "Pan": 14.5,
+    "Tilt": 122.4
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4254,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1409,
+    "ZoomY": 1.1409,
+    "Pan": -46.0,
+    "Tilt": 120.3
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4329,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1317,
+    "ZoomY": 1.1317,
+    "Pan": 36.6,
+    "Tilt": 109.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4555,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1317,
+    "ZoomY": 1.1317,
+    "Pan": 36.6,
+    "Tilt": 109.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4700,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1317,
+    "ZoomY": 1.1317,
+    "Pan": 36.6,
+    "Tilt": 109.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4834,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.2452,
+    "ZoomY": 1.2452,
+    "Pan": 378.8,
+    "Tilt": 255.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 4956,
+   "clip": "a7MK4_20260908_0118",
+   "vorher": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.0172,
+    "ZoomY": 1.0172,
+    "Pan": 28.8,
+    "Tilt": 5.4
+   },
+   "neu": {
+    "RotationAngle": 0.503,
+    "Pitch": 0.00354,
+    "Yaw": 3e-05,
+    "ZoomX": 1.2085,
+    "ZoomY": 1.2085,
+    "Pan": 182.9,
+    "Tilt": 213.6
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5075,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1483,
+    "ZoomY": 1.1483,
+    "Pan": -13.5,
+    "Tilt": 113.5
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5387,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1062,
+    "ZoomY": 1.1062,
+    "Pan": -39.5,
+    "Tilt": 68.8
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5396,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.1062,
+    "ZoomY": 1.1062,
+    "Pan": -39.5,
+    "Tilt": 68.8
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5479,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1079,
+    "ZoomY": 1.1079,
+    "Pan": -5.7,
+    "Tilt": 84.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5500,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1079,
+    "ZoomY": 1.1079,
+    "Pan": -5.7,
+    "Tilt": 84.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5705,
+   "clip": "a7MK4_20260908_0119",
+   "vorher": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.0268,
+    "ZoomY": 1.0268,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -0.819,
+    "Pitch": -0.00348,
+    "Yaw": 4e-05,
+    "ZoomX": 1.1079,
+    "ZoomY": 1.1079,
+    "Pan": -5.7,
+    "Tilt": 84.1
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 5920,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0565,
+    "ZoomY": 1.0565,
+    "Pan": -39.1,
+    "Tilt": 15.2
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  },
+  {
+   "start": 6374,
+   "clip": "a7MK4_20260908_0752",
+   "vorher": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0384,
+    "ZoomY": 1.0384,
+    "Pan": 38.4,
+    "Tilt": -5.4
+   },
+   "neu": {
+    "RotationAngle": -1.229,
+    "Pitch": -0.00415,
+    "Yaw": 8e-05,
+    "ZoomX": 1.0592,
+    "ZoomY": 1.0592,
+    "Pan": -50.7,
+    "Tilt": -26.0
+   },
+   "gesetzt": true,
+   "readback_ok": true
+  }
+ ],
+ "gespeichert": true
+}

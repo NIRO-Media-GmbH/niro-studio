@@ -1,0 +1,1288 @@
+{
+ "projekt": "Taxodia 09.26",
+ "timeline": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
+ "modus": "--alle",
+ "aktiv": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
+ "items": [
+  {
+   "spur": "V1",
+   "start": 0,
+   "clip": "FX3_0222.MP4",
+   "gruppe": "Ludwig FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "Sony/SLog3SGamut3.CineToLC-709.cube",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 85,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 258,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 470,
+   "clip": "FX3_0222.MP4",
+   "gruppe": "Ludwig FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 683,
+   "clip": "FX3_0222.MP4",
+   "gruppe": "Ludwig FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 1014,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 1331,
+   "clip": "FX3_0222.MP4",
+   "gruppe": "Ludwig FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 1429,
+   "clip": "FX3_0222.MP4",
+   "gruppe": "Ludwig FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 1689,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 2248,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 2663,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 3133,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 3270,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 3327,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 3569,
+   "clip": "FX3_0222.MP4",
+   "gruppe": "Ludwig FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 3856,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 4026,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 4237,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 4254,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 4329,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 4834,
+   "clip": "FX3_0222.MP4",
+   "gruppe": "Ludwig FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 4956,
+   "clip": "FX3_0222.MP4",
+   "gruppe": "Ludwig FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 5075,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 5387,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 5479,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 5920,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 6032,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 6057,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 6139,
+   "clip": "FX3_0223.MP4",
+   "gruppe": "Flammann FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V1",
+   "start": 6374,
+   "clip": "FX3_0228.MP4",
+   "gruppe": "Hein FX3",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 0,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 85,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 258,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 470,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 683,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 760,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 1014,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 1331,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 1424,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 1429,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 1689,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 2118,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 2248,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 2319,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 2500,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 2663,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 2812,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 3005,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 3133,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 3270,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 3327,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 3569,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 3856,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4026,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4050,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4162,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4237,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4254,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4329,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4555,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4700,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4834,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 4956,
+   "clip": "a7MK4_20260908_0118.MP4",
+   "gruppe": "Ludwig a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 5075,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 5387,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 5396,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 5479,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 5500,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 5705,
+   "clip": "a7MK4_20260908_0119.MP4",
+   "gruppe": "Flammann a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 5920,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  },
+  {
+   "spur": "V2",
+   "start": 6374,
+   "clip": "a7MK4_20260908_0752.MP4",
+   "gruppe": "Hein a7_IV",
+   "vorher": {
+    "nodes": 1,
+    "lut": "",
+    "version": {
+     "versionName": "Version 1",
+     "versionType": 0
+    }
+   },
+   "cdl_gesetzt": true,
+   "lut_gesetzt": true,
+   "lut_readback": "Sony/SLog3SGamut3.CineToLC-709.cube",
+   "vergleich_modell": "ExportLUT fehlgeschlagen"
+  }
+ ],
+ "gespeichert": true,
+ "fehlgeschlagen": []
+}

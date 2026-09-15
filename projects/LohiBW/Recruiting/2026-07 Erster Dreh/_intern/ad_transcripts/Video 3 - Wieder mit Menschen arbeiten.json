@@ -1,0 +1,644 @@
+{
+  "source_file": "Video 3 - Wieder mit Menschen arbeiten.wav",
+  "engine": "scribe",
+  "text": "Wann hat sich zuletzt jemand bei dir für deine Arbeit bedankt? In vielen Kanzleien sitzt du im Hintergrund. Buchhaltung, Zahlen, Formulare, Kontakt nach außen wenig. Manche Mitglieder begleitet man über Jahre, teilweise sogar die ganze Familie. Auch wenn's traurig ist, wenn einer seinen Partner verloren hat, der sich immer den ganzen Sachverhalt gekümmert hat, können wir ihnen helfen. Und da kommt auch sehr, sehr viel Dankbarkeit und Wertschätzung bei uns an. Wenn du gern mit Menschen arbeitest und spüren willst, was deine Arbeit für eine Wirkung hat, dann passt du zu uns. Also klick auf den Button, trag dich ein und wir lernen uns persönlich kennen.",
+  "words": [
+    {
+      "text": "Wann",
+      "start": 0.079,
+      "end": 0.139,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "hat",
+      "start": 0.14,
+      "end": 0.299,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "sich",
+      "start": 0.319,
+      "end": 0.5,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "zuletzt",
+      "start": 0.56,
+      "end": 0.899,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "jemand",
+      "start": 0.939,
+      "end": 1.199,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "bei",
+      "start": 1.22,
+      "end": 1.36,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "dir",
+      "start": 1.419,
+      "end": 1.62,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "für",
+      "start": 2.039,
+      "end": 2.18,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "deine",
+      "start": 2.22,
+      "end": 2.46,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Arbeit",
+      "start": 2.539,
+      "end": 2.819,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "bedankt?",
+      "start": 2.879,
+      "end": 3.399,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "In",
+      "start": 3.74,
+      "end": 3.799,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "vielen",
+      "start": 3.859,
+      "end": 4.139,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Kanzleien",
+      "start": 4.199,
+      "end": 4.799,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sitzt",
+      "start": 5.059,
+      "end": 5.279,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "du",
+      "start": 5.319,
+      "end": 5.38,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "im",
+      "start": 5.42,
+      "end": 5.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Hintergrund.",
+      "start": 5.559,
+      "end": 6.159,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Buchhaltung,",
+      "start": 6.659,
+      "end": 7.259,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Zahlen,",
+      "start": 7.48,
+      "end": 8.019,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Formulare,",
+      "start": 8.179,
+      "end": 8.88,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Kontakt",
+      "start": 9.479,
+      "end": 9.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "nach",
+      "start": 9.939,
+      "end": 10.079,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "außen",
+      "start": 10.159,
+      "end": 10.439,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wenig.",
+      "start": 10.84,
+      "end": 11.279,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Manche",
+      "start": 11.699,
+      "end": 11.92,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Mitglieder",
+      "start": 11.979,
+      "end": 12.3,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "begleitet",
+      "start": 12.359,
+      "end": 12.739,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "man",
+      "start": 12.779,
+      "end": 12.88,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "über",
+      "start": 12.92,
+      "end": 13.079,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Jahre,",
+      "start": 13.139,
+      "end": 13.479,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "teilweise",
+      "start": 13.84,
+      "end": 14.38,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "sogar",
+      "start": 14.439,
+      "end": 14.659,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "die",
+      "start": 14.719,
+      "end": 14.779,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "ganze",
+      "start": 14.819,
+      "end": 15.059,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Familie.",
+      "start": 15.159,
+      "end": 15.719,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Auch",
+      "start": 16.039,
+      "end": 16.159,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "wenn's",
+      "start": 16.199,
+      "end": 16.379,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "traurig",
+      "start": 16.44,
+      "end": 16.779,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ist,",
+      "start": 16.84,
+      "end": 17.02,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "wenn",
+      "start": 17.1,
+      "end": 17.219,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "einer",
+      "start": 17.34,
+      "end": 17.539,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "seinen",
+      "start": 17.6,
+      "end": 17.799,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Partner",
+      "start": 17.859,
+      "end": 18.179,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "verloren",
+      "start": 18.26,
+      "end": 18.639,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "hat,",
+      "start": 18.699,
+      "end": 18.879,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "der",
+      "start": 18.92,
+      "end": 19.02,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "sich",
+      "start": 19.079,
+      "end": 19.22,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "immer",
+      "start": 19.26,
+      "end": 19.379,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "den",
+      "start": 19.579,
+      "end": 19.7,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ganzen",
+      "start": 19.719,
+      "end": 20.039,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Sachverhalt",
+      "start": 20.079,
+      "end": 20.579,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "gekümmert",
+      "start": 20.639,
+      "end": 21.02,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "hat,",
+      "start": 21.059,
+      "end": 21.159,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "können",
+      "start": 21.219,
+      "end": 21.399,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "wir",
+      "start": 21.439,
+      "end": 21.6,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ihnen",
+      "start": 21.639,
+      "end": 21.86,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "helfen.",
+      "start": 21.879,
+      "end": 22.319,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Und",
+      "start": 22.519,
+      "end": 22.639,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "da",
+      "start": 22.659,
+      "end": 22.739,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "kommt",
+      "start": 22.859,
+      "end": 23.019,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "auch",
+      "start": 23.039,
+      "end": 23.18,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "sehr,",
+      "start": 23.239,
+      "end": 23.379,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "sehr",
+      "start": 23.42,
+      "end": 23.52,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "viel",
+      "start": 23.6,
+      "end": 23.699,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Dankbarkeit",
+      "start": 23.76,
+      "end": 24.679,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "und",
+      "start": 24.739,
+      "end": 24.84,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Wertschätzung",
+      "start": 24.92,
+      "end": 25.519,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "bei",
+      "start": 25.559,
+      "end": 25.659,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "uns",
+      "start": 25.699,
+      "end": 25.879,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "an.",
+      "start": 25.959,
+      "end": 26.319,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Wenn",
+      "start": 26.359,
+      "end": 26.459,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "du",
+      "start": 26.5,
+      "end": 26.579,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "gern",
+      "start": 26.619,
+      "end": 26.759,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "mit",
+      "start": 26.799,
+      "end": 26.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Menschen",
+      "start": 26.939,
+      "end": 27.279,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "arbeitest",
+      "start": 27.359,
+      "end": 27.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "und",
+      "start": 27.959,
+      "end": 28.059,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "spüren",
+      "start": 28.099,
+      "end": 28.379,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "willst,",
+      "start": 28.459,
+      "end": 28.799,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "was",
+      "start": 28.92,
+      "end": 29.059,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "deine",
+      "start": 29.119,
+      "end": 29.359,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Arbeit",
+      "start": 29.439,
+      "end": 29.779,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "für",
+      "start": 29.819,
+      "end": 29.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "eine",
+      "start": 29.939,
+      "end": 30.139,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Wirkung",
+      "start": 30.199,
+      "end": 30.539,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "hat,",
+      "start": 30.599,
+      "end": 30.76,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dann",
+      "start": 31.019,
+      "end": 31.179,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "passt",
+      "start": 31.239,
+      "end": 31.42,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "du",
+      "start": 31.479,
+      "end": 31.619,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "zu",
+      "start": 31.679,
+      "end": 31.76,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "uns.",
+      "start": 31.84,
+      "end": 32.099,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Also",
+      "start": 32.419,
+      "end": 32.599,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "klick",
+      "start": 32.88,
+      "end": 33.04,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "auf",
+      "start": 33.079,
+      "end": 33.159,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "den",
+      "start": 33.2,
+      "end": 33.299,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Button,",
+      "start": 33.34,
+      "end": 33.739,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "trag",
+      "start": 33.799,
+      "end": 33.959,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "dich",
+      "start": 34.0,
+      "end": 34.119,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "ein",
+      "start": 34.18,
+      "end": 34.299,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "und",
+      "start": 34.54,
+      "end": 34.619,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "wir",
+      "start": 34.639,
+      "end": 34.7,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "lernen",
+      "start": 34.759,
+      "end": 34.899,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "uns",
+      "start": 34.939,
+      "end": 35.04,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "persönlich",
+      "start": 35.099,
+      "end": 35.439,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "kennen.",
+      "start": 35.479,
+      "end": 35.659,
+      "speaker": "speaker_0"
+    }
+  ],
+  "language": "de"
+}

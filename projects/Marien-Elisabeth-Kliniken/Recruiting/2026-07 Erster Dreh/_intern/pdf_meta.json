@@ -1,0 +1,12 @@
+{
+  "titel": "Marien-Elisabeth-Kliniken Kassel",
+  "untertitel": "Recruiting-Videos - Schnittanweisungen",
+  "stand": "5 Videos - Dreh 24.06. (Elisabeth) & 02.07. (Marien) - NIRO Media, Stand 22.07.2026",
+  "warnbox": "WICHTIGSTE REGEL - STANDORT-TRENNUNG\nJedes Video gehört zu GENAU EINEM Haus: V1+V3 = Elisabeth Krankenhaus Kassel (NAS 'Standort 1'), V2+V4 = Marienkrankenhaus (NAS 'Standort 2'). Es darf ausschließlich Bild- und Tonmaterial dieses Hauses verwendet werden - kein einziger Clip vom jeweils anderen. Einzige Ausnahme: Video 5 (Imagefilm) darf mischen. Die Regel gilt für O-Töne, B-Roll, Atmos, Drohne und Schnittbilder. Naming: Einzelvideos nennen NUR das eigene Haus; die Verbund-Marke gehört ausschließlich in den Imagefilm.",
+  "kapitel_farben": {
+    "Elisabeth]": [0, 90, 160],
+    "Marien]": [0, 130, 60],
+    "BEIDE": [120, 60, 160]
+  },
+  "dateiname": "MEK-Schnittanweisungen.pdf"
+}

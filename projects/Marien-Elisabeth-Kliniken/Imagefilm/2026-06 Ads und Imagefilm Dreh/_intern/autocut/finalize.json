@@ -1,0 +1,29 @@
+{
+ "status": "ok",
+ "timeline": "AutoCut video-1-imagefilm-zwei-haeuser 2026-09-09 1909",
+ "timeline_roh": "AutoCut video-1-imagefilm-zwei-haeuser 2026-09-09 1909 (roh)",
+ "roh_geloescht": false,
+ "xml_roh": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/xml/AutoCut video-1-imagefilm-zwei-haeuser 2026-09-09 1909.roh.xml",
+ "xml_final": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/xml/AutoCut video-1-imagefilm-zwei-haeuser 2026-09-09 1909.final.xml",
+ "xml_reexport": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/work/xml/AutoCut video-1-imagefilm-zwei-haeuser 2026-09-09 1909.reexport.xml",
+ "levels_set": 20,
+ "speeds_set": 11,
+ "items_geprueft": 128,
+ "markers": 49,
+ "warnings": [
+  "FX3_9649.MP4 12535–12902: Clipping-Verdacht: True Peak 0.1 dBFS im Original.",
+  "Spurname V1='FX3' nicht gesetzt.",
+  "Spurname V2='a7IV' nicht gesetzt.",
+  "Spurname V3='B-Roll' nicht gesetzt.",
+  "Spurname A1='FX3 Ton' nicht gesetzt.",
+  "Marker 'Szene 1.2 · beide Häuser (Plan #3) · 4 Shots' bei Frame 258 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline).",
+  "Marker 'Szene 1.3 · Standort 1 (Plan-Motive #4) · 6 Shots' bei Frame 433 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline).",
+  "Marker 'Szene 1.4 · Standort 2 (Plan-Motive #5) · 4 Shots' bei Frame 633 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline).",
+  "Marker 'Szene 11.2 · beide Häuser (Plan #17) · 2 Shots' bei Frame 3120 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline).",
+  "Marker 'Szene 17.2 · beide Häuser (Plan #24, Plan B) · 3 Shots' bei Frame 4968 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline).",
+  "Marker 'Szene 17.3 · Standort 2/Terasse · 3 Shots' bei Frame 5168 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline)."
+ ],
+ "ton_json": "/Users/jansantos/NIRO Studio/projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/ton.json",
+ "gestartet_am": "2026-09-09T19:10:43",
+ "gebaut_am": "2026-09-09T19:10:47"
+}

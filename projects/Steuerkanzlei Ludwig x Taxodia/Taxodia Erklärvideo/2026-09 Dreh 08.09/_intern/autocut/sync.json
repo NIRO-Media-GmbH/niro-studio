@@ -1,0 +1,61 @@
+{
+ "fps": 25.0,
+ "paare": [
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0222.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0118.MP4",
+   "offset_s": 39.425,
+   "offset_frames": 986,
+   "confidence": 45.46,
+   "overlap_ref": [
+    0.0,
+    2006.4
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0119.MP4",
+   "offset_s": 55.305,
+   "offset_frames": 1383,
+   "confidence": 31.08,
+   "overlap_ref": [
+    0.0,
+    2004.85
+   ],
+   "drift_frames": 0.13,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0748.MP4",
+   "offset_s": -2149.875,
+   "offset_frames": -53747,
+   "confidence": 3.74,
+   "overlap_ref": [
+    2149.88,
+    2264.16
+   ],
+   "drift_frames": 0.0,
+   "ok": false,
+   "note": "Konfidenz 3.7 unter 4"
+  },
+  {
+   "ref": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0228.MP4",
+   "other": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-A/a7MK4_20260908_0752.MP4",
+   "offset_s": 19.57,
+   "offset_frames": 489,
+   "confidence": 36.74,
+   "overlap_ref": [
+    0.0,
+    1314.24
+   ],
+   "drift_frames": 0.0,
+   "ok": true,
+   "note": ""
+  }
+ ]
+}

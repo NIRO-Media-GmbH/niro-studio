@@ -1,0 +1,153 @@
+{
+ "sfx_gruppen": {
+  "flash-fachkraeftemangel": 1,
+  "flash-quereinsteiger": 1,
+  "titel": 1,
+  "bauchbinde-ludwig": 1,
+  "karte-ilshofen": 5,
+  "bauchbinde-hein": 1,
+  "blende-taxodia": 2,
+  "karte-taxodia": 5,
+  "software": 1,
+  "bachelor-professional": 1,
+  "taxodia-weg": 6,
+  "kosten": 1,
+  "blende-online": 2,
+  "monitoring": 1,
+  "abrechnung": 1,
+  "blende-ergebnis": 2,
+  "blende-kanzleien": 2,
+  "blende-quereinsteiger": 2,
+  "endcard": 3
+ },
+ "a7_stueck": {
+  "start": 2812,
+  "hoeher_px_4k": 40,
+  "abstand_540p": 34.3,
+  "kopfraum_px": 216,
+  "vorher": {
+   "RotationAngle": -0.819,
+   "Pitch": -0.00348,
+   "Yaw": 4e-05,
+   "ZoomX": 1.1707,
+   "ZoomY": 1.1707,
+   "Pan": -305.2,
+   "Tilt": -16.6
+  },
+  "neu": {
+   "RotationAngle": -0.819,
+   "Pitch": -0.00348,
+   "Yaw": 4e-05,
+   "ZoomX": 1.1713,
+   "ZoomY": 1.1713,
+   "Pan": -305.5,
+   "Tilt": 23.3
+  }
+ },
+ "verknuepft": {
+  "flash-fachkraeftemangel": false,
+  "flash-quereinsteiger": false,
+  "titel": false,
+  "bauchbinde-ludwig": false,
+  "karte-ilshofen": false,
+  "bauchbinde-hein": false,
+  "blende-taxodia": false,
+  "karte-taxodia": false,
+  "software": false,
+  "bachelor-professional": false,
+  "taxodia-weg": false,
+  "kosten": false,
+  "blende-online": false,
+  "monitoring": false,
+  "abrechnung": false,
+  "blende-ergebnis": false,
+  "blende-kanzleien": false,
+  "blende-quereinsteiger": false,
+  "endcard": false
+ },
+ "sfx_ohne_link": [
+  [
+   "karte-ilshofen",
+   548
+  ],
+  [
+   "karte-ilshofen",
+   579
+  ],
+  [
+   "karte-ilshofen",
+   620
+  ],
+  [
+   "karte-ilshofen",
+   681
+  ],
+  [
+   "blende-taxodia",
+   1663
+  ],
+  [
+   "karte-taxodia",
+   1858
+  ],
+  [
+   "karte-taxodia",
+   1880
+  ],
+  [
+   "karte-taxodia",
+   1918
+  ],
+  [
+   "karte-taxodia",
+   1970
+  ],
+  [
+   "taxodia-weg",
+   3218
+  ],
+  [
+   "taxodia-weg",
+   3327
+  ],
+  [
+   "taxodia-weg",
+   3372
+  ],
+  [
+   "taxodia-weg",
+   3419
+  ],
+  [
+   "taxodia-weg",
+   3578
+  ],
+  [
+   "blende-online",
+   3829
+  ],
+  [
+   "blende-ergebnis",
+   5452
+  ],
+  [
+   "blende-kanzleien",
+   6005
+  ],
+  [
+   "blende-quereinsteiger",
+   6348
+  ],
+  [
+   "endcard",
+   6635
+  ],
+  [
+   "endcard",
+   6689
+  ]
+ ],
+ "a7_gesetzt": true,
+ "gespeichert": true,
+ "hinweis": "nachgesetzt nach 5 Versuchen"
+}

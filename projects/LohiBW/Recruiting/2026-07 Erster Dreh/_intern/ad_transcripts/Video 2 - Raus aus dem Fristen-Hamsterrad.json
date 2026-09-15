@@ -1,0 +1,674 @@
+{
+  "source_file": "Video 2 - Raus aus dem Fristen-Hamsterrad.wav",
+  "engine": "scribe",
+  "text": "Wie viele Abende hast du letztes Jahr im Büro verbracht? In der Kanzlei kennst du das wahrscheinlich. Umsatzsteuervoranmeldung, Lohnfristen, Jahresabschlüsse, immer Vorarbeiten, immer der nächste Stichtag. In einer Steuerkanzlei gibt's eben sehr, sehr viele Fristen, die man einhalten muss und bei uns in der Lohnsteuerhilfe, wir haben eben nur die Einkommensteuererklärung als Frist und dadurch ist das Ganze sehr, sehr entspannt. Bei der Louis BW machen wir ausschließlich private Einkommensteuer. Das heißt für dich keine Buchhaltung, keine Lohnabrechnung, keine Umsatzsteuer. Das heißt nicht, dass Langeweile herrscht. Du wirst fachlich gefordert und der Kalender ist voll, aber planbar. Also klick auf den Button, trag dich ein und wir lernen uns persönlich kennen.",
+  "words": [
+    {
+      "text": "Wie",
+      "start": 0.14,
+      "end": 0.259,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "viele",
+      "start": 0.28,
+      "end": 0.519,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Abende",
+      "start": 0.539,
+      "end": 0.819,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "hast",
+      "start": 0.879,
+      "end": 0.979,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "du",
+      "start": 1.019,
+      "end": 1.079,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "letztes",
+      "start": 1.12,
+      "end": 1.399,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Jahr",
+      "start": 1.439,
+      "end": 1.539,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "im",
+      "start": 1.559,
+      "end": 1.62,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Büro",
+      "start": 1.659,
+      "end": 1.879,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "verbracht?",
+      "start": 1.919,
+      "end": 2.339,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "In",
+      "start": 2.74,
+      "end": 2.779,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "der",
+      "start": 2.819,
+      "end": 2.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Kanzlei",
+      "start": 2.939,
+      "end": 3.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "kennst",
+      "start": 3.559,
+      "end": 3.779,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "du",
+      "start": 3.819,
+      "end": 3.919,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 3.98,
+      "end": 4.099,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wahrscheinlich.",
+      "start": 4.139,
+      "end": 4.819,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Umsatzsteuervoranmeldung,",
+      "start": 5.259,
+      "end": 6.46,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Lohnfristen,",
+      "start": 6.699,
+      "end": 7.379,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Jahresabschlüsse,",
+      "start": 7.599,
+      "end": 8.439,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "immer",
+      "start": 8.72,
+      "end": 8.88,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Vorarbeiten,",
+      "start": 8.979,
+      "end": 9.639,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "immer",
+      "start": 9.88,
+      "end": 10.039,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "der",
+      "start": 10.099,
+      "end": 10.179,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "nächste",
+      "start": 10.239,
+      "end": 10.519,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Stichtag.",
+      "start": 10.579,
+      "end": 11.079,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "In",
+      "start": 11.659,
+      "end": 11.779,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "einer",
+      "start": 11.8,
+      "end": 12.0,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Steuerkanzlei",
+      "start": 12.059,
+      "end": 12.779,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "gibt's",
+      "start": 12.859,
+      "end": 13.039,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "eben",
+      "start": 13.099,
+      "end": 13.239,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "sehr,",
+      "start": 13.34,
+      "end": 13.519,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "sehr",
+      "start": 13.559,
+      "end": 13.679,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "viele",
+      "start": 13.779,
+      "end": 13.939,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Fristen,",
+      "start": 14.019,
+      "end": 14.439,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "die",
+      "start": 14.719,
+      "end": 14.799,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "man",
+      "start": 14.839,
+      "end": 14.939,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "einhalten",
+      "start": 15.019,
+      "end": 15.539,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "muss",
+      "start": 15.619,
+      "end": 15.839,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "und",
+      "start": 15.979,
+      "end": 16.319,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "bei",
+      "start": 16.379,
+      "end": 16.459,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "uns",
+      "start": 16.52,
+      "end": 16.659,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "in",
+      "start": 16.699,
+      "end": 16.78,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "der",
+      "start": 16.78,
+      "end": 16.84,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Lohnsteuerhilfe,",
+      "start": 16.879,
+      "end": 17.579,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "wir",
+      "start": 17.659,
+      "end": 17.719,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "haben",
+      "start": 17.779,
+      "end": 17.899,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "eben",
+      "start": 18.0,
+      "end": 18.239,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "nur",
+      "start": 18.359,
+      "end": 18.659,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "die",
+      "start": 18.779,
+      "end": 18.899,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Einkommensteuererklärung",
+      "start": 19.0,
+      "end": 20.159,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "als",
+      "start": 20.239,
+      "end": 20.359,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Frist",
+      "start": 20.439,
+      "end": 20.799,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "und",
+      "start": 20.899,
+      "end": 21.159,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "dadurch",
+      "start": 21.219,
+      "end": 21.659,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "ist",
+      "start": 21.84,
+      "end": 21.899,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "das",
+      "start": 21.939,
+      "end": 22.039,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Ganze",
+      "start": 22.1,
+      "end": 22.519,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "sehr,",
+      "start": 22.639,
+      "end": 22.939,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "sehr",
+      "start": 23.0,
+      "end": 23.199,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "entspannt.",
+      "start": 23.299,
+      "end": 23.899,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Bei",
+      "start": 24.039,
+      "end": 24.1,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "der",
+      "start": 24.139,
+      "end": 24.219,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Louis",
+      "start": 24.26,
+      "end": 24.42,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "BW",
+      "start": 24.459,
+      "end": 24.699,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "machen",
+      "start": 24.76,
+      "end": 24.879,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "wir",
+      "start": 24.92,
+      "end": 25.019,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "ausschließlich",
+      "start": 25.079,
+      "end": 25.579,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "private",
+      "start": 25.619,
+      "end": 25.959,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Einkommensteuer.",
+      "start": 26.0,
+      "end": 26.559,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Das",
+      "start": 26.599,
+      "end": 26.68,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "heißt",
+      "start": 26.739,
+      "end": 26.86,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "für",
+      "start": 26.879,
+      "end": 26.959,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "dich",
+      "start": 27.0,
+      "end": 27.139,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "keine",
+      "start": 27.26,
+      "end": 27.42,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Buchhaltung,",
+      "start": 27.459,
+      "end": 27.939,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "keine",
+      "start": 28.219,
+      "end": 28.379,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Lohnabrechnung,",
+      "start": 28.439,
+      "end": 28.979,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "keine",
+      "start": 29.179,
+      "end": 29.319,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Umsatzsteuer.",
+      "start": 29.359,
+      "end": 29.939,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Das",
+      "start": 30.0,
+      "end": 30.119,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "heißt",
+      "start": 30.179,
+      "end": 30.319,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "nicht,",
+      "start": 30.359,
+      "end": 30.479,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "dass",
+      "start": 30.5,
+      "end": 30.639,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Langeweile",
+      "start": 30.699,
+      "end": 31.179,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "herrscht.",
+      "start": 31.219,
+      "end": 31.599,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Du",
+      "start": 31.659,
+      "end": 31.719,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "wirst",
+      "start": 31.739,
+      "end": 31.879,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "fachlich",
+      "start": 31.959,
+      "end": 32.239,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "gefordert",
+      "start": 32.279,
+      "end": 32.939,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "und",
+      "start": 33.0,
+      "end": 33.099,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "der",
+      "start": 33.119,
+      "end": 33.2,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Kalender",
+      "start": 33.259,
+      "end": 33.54,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "ist",
+      "start": 33.579,
+      "end": 33.7,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "voll,",
+      "start": 33.779,
+      "end": 34.02,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "aber",
+      "start": 34.36,
+      "end": 34.54,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "planbar.",
+      "start": 34.599,
+      "end": 35.04,
+      "speaker": "speaker_3"
+    },
+    {
+      "text": "Also",
+      "start": 35.399,
+      "end": 35.639,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "klick",
+      "start": 35.88,
+      "end": 36.04,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "auf",
+      "start": 36.079,
+      "end": 36.159,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "den",
+      "start": 36.2,
+      "end": 36.299,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Button,",
+      "start": 36.34,
+      "end": 36.599,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "trag",
+      "start": 36.799,
+      "end": 36.979,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "dich",
+      "start": 37.0,
+      "end": 37.119,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "ein",
+      "start": 37.18,
+      "end": 37.299,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "und",
+      "start": 37.54,
+      "end": 37.599,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "wir",
+      "start": 37.619,
+      "end": 37.7,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "lernen",
+      "start": 37.739,
+      "end": 37.899,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "uns",
+      "start": 37.939,
+      "end": 38.04,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "persönlich",
+      "start": 38.079,
+      "end": 38.439,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "kennen.",
+      "start": 38.479,
+      "end": 38.739,
+      "speaker": "speaker_0"
+    }
+  ],
+  "language": "de"
+}

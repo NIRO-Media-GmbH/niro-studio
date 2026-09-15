@@ -1,0 +1,710 @@
+{
+  "source_file": "Video 4 - Der Steuerjob, der sich nach deinem Leben richtet.wav",
+  "engine": "scribe",
+  "text": "Teilzeit in der Steuerberatung, die auch in ein paar Monaten noch Teilzeit ist. Geht das? Wenn der Mitarbeiter zu mir kommt und sagt: \"Hey, an dem Tag sollte ich früher gehen.\" Dann sag ich: \"Okay, ist kein Problem.\" Dann wird's halt an dem anderen Tag nachgeholt. Das sind wir schon flexibel aufgestellt. Also Arbeit und Privatleben, äh, bekommt man eigentlich ganz gut unter einen Hut. Dauerhaftes Homeoffice vom Wohnzimmer aus gibt es nicht. Beratung läuft in der Beratungsstelle, aber das echt per Onlineberatung. Und das Einkommen richtet sich nach der Leistung. Also wenn du einen Teilzeitjob oder Wiedereinstieg in den Steuerbereich suchst, dann klick doch einfach auf den Button, trag dich ein. Ich freue mich auf dich.",
+  "words": [
+    {
+      "text": "Teilzeit",
+      "start": 0.179,
+      "end": 0.62,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "in",
+      "start": 0.639,
+      "end": 0.699,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "der",
+      "start": 0.74,
+      "end": 0.819,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Steuerberatung,",
+      "start": 0.859,
+      "end": 1.62,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "die",
+      "start": 1.74,
+      "end": 1.799,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "auch",
+      "start": 1.839,
+      "end": 1.919,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "in",
+      "start": 1.959,
+      "end": 2.019,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "ein",
+      "start": 2.059,
+      "end": 2.159,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "paar",
+      "start": 2.22,
+      "end": 2.339,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Monaten",
+      "start": 2.399,
+      "end": 2.74,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "noch",
+      "start": 2.779,
+      "end": 2.879,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Teilzeit",
+      "start": 2.939,
+      "end": 3.379,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "ist.",
+      "start": 3.399,
+      "end": 3.619,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Geht",
+      "start": 4.059,
+      "end": 4.199,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "das?",
+      "start": 4.239,
+      "end": 4.44,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Wenn",
+      "start": 4.779,
+      "end": 4.859,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "der",
+      "start": 4.88,
+      "end": 4.94,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Mitarbeiter",
+      "start": 4.98,
+      "end": 5.44,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "zu",
+      "start": 5.5,
+      "end": 5.559,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "mir",
+      "start": 5.619,
+      "end": 5.719,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "kommt",
+      "start": 5.779,
+      "end": 5.94,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "und",
+      "start": 5.98,
+      "end": 6.079,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sagt:",
+      "start": 6.119,
+      "end": 6.299,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "\"Hey,",
+      "start": 6.339,
+      "end": 6.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "an",
+      "start": 6.719,
+      "end": 6.799,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dem",
+      "start": 6.839,
+      "end": 6.98,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Tag",
+      "start": 7.039,
+      "end": 7.299,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sollte",
+      "start": 7.44,
+      "end": 7.699,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ich",
+      "start": 7.779,
+      "end": 7.919,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "früher",
+      "start": 8.079,
+      "end": 8.34,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "gehen.\"",
+      "start": 8.42,
+      "end": 8.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Dann",
+      "start": 8.899,
+      "end": 8.98,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sag",
+      "start": 9.0,
+      "end": 9.079,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ich:",
+      "start": 9.099,
+      "end": 9.14,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "\"Okay,",
+      "start": 9.18,
+      "end": 9.3,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "ist",
+      "start": 9.359,
+      "end": 9.479,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "kein",
+      "start": 9.519,
+      "end": 9.659,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Problem.\"",
+      "start": 9.739,
+      "end": 10.099,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Dann",
+      "start": 10.579,
+      "end": 10.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wird's",
+      "start": 10.899,
+      "end": 11.079,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "halt",
+      "start": 11.099,
+      "end": 11.179,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "an",
+      "start": 11.239,
+      "end": 11.3,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "dem",
+      "start": 11.34,
+      "end": 11.439,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "anderen",
+      "start": 11.5,
+      "end": 11.699,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Tag",
+      "start": 11.739,
+      "end": 11.899,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "nachgeholt.",
+      "start": 11.939,
+      "end": 12.619,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Das",
+      "start": 12.659,
+      "end": 12.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sind",
+      "start": 13.139,
+      "end": 13.22,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "wir",
+      "start": 13.259,
+      "end": 13.34,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "schon",
+      "start": 13.38,
+      "end": 13.5,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "flexibel",
+      "start": 13.559,
+      "end": 14.0,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "aufgestellt.",
+      "start": 14.079,
+      "end": 14.779,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Also",
+      "start": 18.639,
+      "end": 18.819,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Arbeit",
+      "start": 18.939,
+      "end": 19.199,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "und",
+      "start": 19.239,
+      "end": 19.34,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Privatleben,",
+      "start": 19.399,
+      "end": 20.239,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "äh,",
+      "start": 20.459,
+      "end": 20.479,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "bekommt",
+      "start": 20.539,
+      "end": 20.84,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "man",
+      "start": 20.86,
+      "end": 20.86,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "eigentlich",
+      "start": 20.92,
+      "end": 21.1,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "ganz",
+      "start": 21.139,
+      "end": 21.359,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "gut",
+      "start": 21.42,
+      "end": 21.52,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "unter",
+      "start": 21.579,
+      "end": 21.819,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "einen",
+      "start": 21.879,
+      "end": 22.1,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Hut.",
+      "start": 22.18,
+      "end": 22.419,
+      "speaker": "speaker_0"
+    },
+    {
+      "text": "Dauerhaftes",
+      "start": 22.659,
+      "end": 23.139,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Homeoffice",
+      "start": 23.159,
+      "end": 23.719,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "vom",
+      "start": 23.879,
+      "end": 24.0,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Wohnzimmer",
+      "start": 24.019,
+      "end": 24.42,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "aus",
+      "start": 24.459,
+      "end": 24.659,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "gibt",
+      "start": 24.84,
+      "end": 24.979,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "es",
+      "start": 25.039,
+      "end": 25.139,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "nicht.",
+      "start": 25.199,
+      "end": 25.439,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Beratung",
+      "start": 25.959,
+      "end": 26.34,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "läuft",
+      "start": 26.42,
+      "end": 26.619,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "in",
+      "start": 26.659,
+      "end": 26.719,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "der",
+      "start": 26.739,
+      "end": 26.84,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Beratungsstelle,",
+      "start": 26.859,
+      "end": 27.599,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "aber",
+      "start": 27.619,
+      "end": 27.76,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 27.76,
+      "end": 27.879,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "echt",
+      "start": 27.939,
+      "end": 28.099,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "per",
+      "start": 28.119,
+      "end": 28.18,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Onlineberatung.",
+      "start": 28.239,
+      "end": 29.479,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Und",
+      "start": 29.5,
+      "end": 29.6,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "das",
+      "start": 29.619,
+      "end": 29.739,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Einkommen",
+      "start": 29.799,
+      "end": 30.179,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "richtet",
+      "start": 30.359,
+      "end": 30.579,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "sich",
+      "start": 30.619,
+      "end": 30.719,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "nach",
+      "start": 30.76,
+      "end": 30.859,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "der",
+      "start": 30.899,
+      "end": 31.0,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Leistung.",
+      "start": 31.019,
+      "end": 31.599,
+      "speaker": "speaker_1"
+    },
+    {
+      "text": "Also",
+      "start": 31.699,
+      "end": 31.999,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "wenn",
+      "start": 32.059,
+      "end": 32.18,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "du",
+      "start": 32.239,
+      "end": 32.299,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "einen",
+      "start": 32.36,
+      "end": 32.52,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Teilzeitjob",
+      "start": 32.559,
+      "end": 33.259,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "oder",
+      "start": 33.299,
+      "end": 33.479,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Wiedereinstieg",
+      "start": 33.5,
+      "end": 34.299,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "in",
+      "start": 34.36,
+      "end": 34.439,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "den",
+      "start": 34.479,
+      "end": 34.579,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Steuerbereich",
+      "start": 34.639,
+      "end": 35.279,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "suchst,",
+      "start": 35.34,
+      "end": 35.739,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "dann",
+      "start": 35.779,
+      "end": 35.9,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "klick",
+      "start": 35.979,
+      "end": 36.159,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "doch",
+      "start": 36.2,
+      "end": 36.34,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "einfach",
+      "start": 36.38,
+      "end": 36.7,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "auf",
+      "start": 36.719,
+      "end": 36.88,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "den",
+      "start": 36.899,
+      "end": 37.04,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Button,",
+      "start": 37.079,
+      "end": 37.479,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "trag",
+      "start": 37.54,
+      "end": 37.759,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "dich",
+      "start": 37.819,
+      "end": 37.959,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "ein.",
+      "start": 38.059,
+      "end": 38.659,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "Ich",
+      "start": 38.739,
+      "end": 38.88,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "freue",
+      "start": 38.899,
+      "end": 39.099,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "mich",
+      "start": 39.139,
+      "end": 39.279,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "auf",
+      "start": 39.34,
+      "end": 39.52,
+      "speaker": "speaker_2"
+    },
+    {
+      "text": "dich.",
+      "start": 39.559,
+      "end": 39.799,
+      "speaker": "speaker_2"
+    }
+  ],
+  "language": "de"
+}

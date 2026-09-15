@@ -1,0 +1,730 @@
+{
+ "fps": 25.0,
+ "total_frames": 5318,
+ "gesamt_s": 212.72,
+ "fenster": [
+  {
+   "beat_nr": "1",
+   "a_f": 0,
+   "b_f": 58,
+   "voll": true
+  },
+  {
+   "beat_nr": "6",
+   "a_f": 833,
+   "b_f": 895,
+   "voll": false
+  },
+  {
+   "beat_nr": "7",
+   "a_f": 1023,
+   "b_f": 1085,
+   "voll": false
+  },
+  {
+   "beat_nr": "8",
+   "a_f": 1217,
+   "b_f": 1279,
+   "voll": false
+  },
+  {
+   "beat_nr": "9",
+   "a_f": 1426,
+   "b_f": 1477,
+   "voll": false
+  },
+  {
+   "beat_nr": "10",
+   "a_f": 1573,
+   "b_f": 1673,
+   "voll": false
+  },
+  {
+   "beat_nr": "12",
+   "a_f": 1980,
+   "b_f": 2030,
+   "voll": false
+  },
+  {
+   "beat_nr": "13",
+   "a_f": 2151,
+   "b_f": 2201,
+   "voll": false
+  },
+  {
+   "beat_nr": "14",
+   "a_f": 2445,
+   "b_f": 2495,
+   "voll": false
+  },
+  {
+   "beat_nr": "15",
+   "a_f": 2698,
+   "b_f": 2736,
+   "voll": false
+  },
+  {
+   "beat_nr": "16",
+   "a_f": 2915,
+   "b_f": 2953,
+   "voll": false
+  },
+  {
+   "beat_nr": "18",
+   "a_f": 3270,
+   "b_f": 3332,
+   "voll": false
+  },
+  {
+   "beat_nr": "18",
+   "a_f": 3408,
+   "b_f": 3496,
+   "voll": false
+  },
+  {
+   "beat_nr": "19",
+   "a_f": 3723,
+   "b_f": 3773,
+   "voll": false
+  },
+  {
+   "beat_nr": "20",
+   "a_f": 4060,
+   "b_f": 4110,
+   "voll": false
+  },
+  {
+   "beat_nr": "21",
+   "a_f": 4452,
+   "b_f": 4502,
+   "voll": false
+  },
+  {
+   "beat_nr": "22",
+   "a_f": 4576,
+   "b_f": 4693,
+   "voll": true
+  }
+ ],
+ "fenster_plan": [
+  {
+   "beat_nr": "1",
+   "offset_s": 0.0,
+   "dauer_s": null,
+   "voll": true,
+   "grund": "Hook, Gehaltenes Gesicht laut Plan"
+  },
+  {
+   "beat_nr": "6",
+   "offset_s": 0.0,
+   "dauer_s": 2.5,
+   "voll": false,
+   "grund": "erster Auftritt Zoran, Akt-2-Auftakt"
+  },
+  {
+   "beat_nr": "7",
+   "offset_s": 0.0,
+   "dauer_s": 2.5,
+   "voll": false,
+   "grund": "erster Auftritt Ramona"
+  },
+  {
+   "beat_nr": "8",
+   "offset_s": 0.0,
+   "dauer_s": 2.5,
+   "voll": false,
+   "grund": "erster Auftritt Jessi"
+  },
+  {
+   "beat_nr": "9",
+   "offset_s": 0.0,
+   "dauer_s": 2.04,
+   "voll": false,
+   "grund": "erster Auftritt Christian; danach Pietà in Zeitlupe (2,04 s: Reststrecke gerade für tempo 2)"
+  },
+  {
+   "beat_nr": "10",
+   "offset_s": 0.0,
+   "dauer_s": 4.0,
+   "voll": false,
+   "grund": "Konter-Satz auf dem Gesicht (Plan: Gehaltenes Gesicht), Beweis-B-Roll ab „moderne Medizin“"
+  },
+  {
+   "beat_nr": "12",
+   "offset_s": 0.0,
+   "dauer_s": 2.0,
+   "voll": false,
+   "grund": "erster Auftritt Marina"
+  },
+  {
+   "beat_nr": "13",
+   "offset_s": 0.0,
+   "dauer_s": 2.0,
+   "voll": false,
+   "grund": "erster Auftritt Alina"
+  },
+  {
+   "beat_nr": "14",
+   "offset_s": 0.0,
+   "dauer_s": 2.0,
+   "voll": false,
+   "grund": "erster Auftritt Johanna"
+  },
+  {
+   "beat_nr": "15",
+   "offset_s": 0.0,
+   "dauer_s": 1.5,
+   "voll": false,
+   "grund": "Christian zum dritten Mal, Wechselschnitt folgt"
+  },
+  {
+   "beat_nr": "16",
+   "offset_s": 0.0,
+   "dauer_s": 1.5,
+   "voll": false,
+   "grund": "Alina zum zweiten Mal"
+  },
+  {
+   "beat_nr": "18",
+   "offset_s": 0.0,
+   "dauer_s": 2.5,
+   "voll": false,
+   "grund": "erster Auftritt Marcel"
+  },
+  {
+   "beat_nr": "18",
+   "offset_s": 5.5,
+   "dauer_s": 3.5,
+   "voll": false,
+   "grund": "Peak-Satz („dass man hier tatsächlich einfach noch Mensch ist“) auf dem Gesicht; Plan: Stille, dann Peak"
+  },
+  {
+   "beat_nr": "19",
+   "offset_s": 0.0,
+   "dauer_s": 2.0,
+   "voll": false,
+   "grund": "erster Auftritt Simona (Zweier mit Katja)"
+  },
+  {
+   "beat_nr": "20",
+   "offset_s": 0.0,
+   "dauer_s": 2.0,
+   "voll": false,
+   "grund": "erster Auftritt Katja (Gegenschuss)"
+  },
+  {
+   "beat_nr": "21",
+   "offset_s": 0.0,
+   "dauer_s": 2.0,
+   "voll": false,
+   "grund": "erster Auftritt Martina"
+  },
+  {
+   "beat_nr": "22",
+   "offset_s": 0.0,
+   "dauer_s": null,
+   "voll": true,
+   "grund": "Bookend Sandra, Gehaltenes Gesicht laut Plan"
+  }
+ ],
+ "fehler": [],
+ "strecken": [
+  {
+   "nr": 1,
+   "von_f": 58,
+   "bis_f": 833,
+   "von_s": 2.32,
+   "bis_s": 33.32,
+   "dauer_s": 31.0,
+   "beats": [
+    {
+     "nr": "2",
+     "typ": "vo",
+     "person": null,
+     "szene": "VO: Vorurteil",
+     "von_s": 3.32,
+     "bis_s": 9.32,
+     "bild": "Gesichter-Montage beider Häuser",
+     "kommentar": "Reibung zum Teaser. Kein Konter — Frage bleibt offen! ~6 s",
+     "text": "Viele denken: In einem Haus dieser Größe kann man nichts lernen."
+    },
+    {
+     "nr": "3",
+     "typ": "vo",
+     "person": null,
+     "szene": "VO: Zwei Häuser",
+     "von_s": 10.32,
+     "bis_s": 16.32,
+     "bild": "Auftakt Welten-Montage: S1 ↔ S2",
+     "kommentar": "Welten-Captions nur Ortsmarken. ~6 s",
+     "text": "Zwei Häuser in Kassel, eine Geschichte. Das Elisabeth Krankenhaus: der akute Moment. Das Marienkrankenhaus: der lange Weg."
+    },
+    {
+     "nr": "4",
+     "typ": "bild",
+     "person": null,
+     "szene": "Welt 1: akut",
+     "von_s": 17.32,
+     "bis_s": 24.32,
+     "bild": "S1: Notaufnahme, Rettungswagen, Mit Rucksack rennen, Herzkatetherlabor (n. n.)",
+     "kommentar": "Nur S1! Schnelle Cuts. ~7 s",
+     "text": ""
+    },
+    {
+     "nr": "5",
+     "typ": "bild",
+     "person": null,
+     "szene": "Welt 2: langer Weg",
+     "von_s": 25.32,
+     "bis_s": 32.32,
+     "bild": "S2: Beatmungszimmer, Schlafmedizin Überwachungsraum, Kolleginnen am Tisch, Terasse",
+     "kommentar": "Nur S2! Halbes Tempo (Antonym). ~7 s",
+     "text": ""
+    }
+   ],
+   "hinweise": [
+    "#2 VO: Vorurteil: Gesichter-Montage beider Häuser — Reibung zum Teaser. Kein Konter — Frage bleibt offen! ~6 s",
+    "#3 VO: Zwei Häuser: Auftakt Welten-Montage: S1 ↔ S2 — Welten-Captions nur Ortsmarken. ~6 s",
+    "#4 Welt 1: akut: S1: Notaufnahme, Rettungswagen, Mit Rucksack rennen, Herzkatetherlabor (n. n.) — Nur S1! Schnelle Cuts. ~7 s",
+    "#5 Welt 2: langer Weg: S2: Beatmungszimmer, Schlafmedizin Überwachungsraum, Kolleginnen am Tisch, Terasse — Nur S2! Halbes Tempo (Antonym). ~7 s"
+   ]
+  },
+  {
+   "nr": 2,
+   "von_f": 895,
+   "bis_f": 1023,
+   "von_s": 35.8,
+   "bis_s": 40.92,
+   "dauer_s": 5.12,
+   "beats": [
+    {
+     "nr": "6",
+     "typ": "oton",
+     "person": "Zoran",
+     "szene": "Mensch 1: Berührung",
+     "von_s": 35.8,
+     "bis_s": 39.92,
+     "bild": "Frontal; Zuwendung am Bett (S1)",
+     "kommentar": "Akt-2-Auftakt: kein Fachwort. Falschstart „das hat man,\" mittig trimmen; **Out HART 05:07**. ~8 s",
+     "text": "wenn sich die Gesichter verändern, ne, von schwerstkranken zu lächelnden Menschen, ne. Und das nimmt man mit nach Hause,"
+    }
+   ],
+   "hinweise": [
+    "#6 Mensch 1: Berührung: Frontal; Zuwendung am Bett (S1) — Akt-2-Auftakt: kein Fachwort. Falschstart „das hat man,\" mittig trimmen; **Out HART 05:07**. ~8 s"
+   ]
+  },
+  {
+   "nr": 3,
+   "von_f": 1085,
+   "bis_f": 1217,
+   "von_s": 43.4,
+   "bis_s": 48.68,
+   "dauer_s": 5.28,
+   "beats": [
+    {
+     "nr": "7",
+     "typ": "oton",
+     "person": "Ramona Tinner",
+     "szene": "Mensch 2: Sinn",
+     "von_s": 43.4,
+     "bis_s": 47.68,
+     "bild": "Frontal; Fortschritts-Detail (S2 Beatmungszimmer)",
+     "kommentar": "In bei „es gibt einem\" (Bestätigungs-Vorlauf weglassen). ~7 s",
+     "text": "es gibt einem schon was, wenn man merkt, die Patienten, ähm, denen geht's besser. Man ist Teil davon, dass es den Menschen besser geht."
+    }
+   ],
+   "hinweise": [
+    "#7 Mensch 2: Sinn: Frontal; Fortschritts-Detail (S2 Beatmungszimmer) — In bei „es gibt einem\" (Bestätigungs-Vorlauf weglassen). ~7 s"
+   ]
+  },
+  {
+   "nr": 4,
+   "von_f": 1279,
+   "bis_f": 1426,
+   "von_s": 51.16,
+   "bis_s": 57.04,
+   "dauer_s": 5.88,
+   "beats": [
+    {
+     "nr": "8",
+     "typ": "oton",
+     "person": "Jessi",
+     "szene": "Mensch 3: Familie",
+     "von_s": 51.16,
+     "bis_s": 56.04,
+     "bild": "Frontal; Team-Momente (S2 Kolleginnen am Tisch)",
+     "kommentar": "Langvariante mit Wendung ab 05:07 („ich gehe arbeiten, um Geld zu verdienen, nicht um Freunde zu finden […]\"). ~7 s",
+     "text": "ich, äh, sag immer, das ist die Familie, die ich nie haben wollte, aber […] der Zusammenhalt ist einfach super."
+    }
+   ],
+   "hinweise": [
+    "#8 Mensch 3: Familie: Frontal; Team-Momente (S2 Kolleginnen am Tisch) — Langvariante mit Wendung ab 05:07 („ich gehe arbeiten, um Geld zu verdienen, nicht um Freunde zu finden […]\"). ~7 s"
+   ]
+  },
+  {
+   "nr": 5,
+   "von_f": 1477,
+   "bis_f": 1573,
+   "von_s": 59.08,
+   "bis_s": 62.92,
+   "dauer_s": 3.84,
+   "beats": [
+    {
+     "nr": "9",
+     "typ": "oton",
+     "person": "Christian Reyer",
+     "szene": "Werte-Brücke",
+     "von_s": 59.08,
+     "bis_s": 61.92,
+     "bild": "Kapelle, Statue (S1) → Zuwendung",
+     "kommentar": "Akt-3-Auftakt: der Chefarzt bestätigt das Ethos — dann erst Fakten. ~6 s",
+     "text": "Das ist uns ganz wichtig, dass man Medizin nicht zum Selbstzweck macht, sondern eben für die Menschen."
+    }
+   ],
+   "hinweise": [
+    "#9 Werte-Brücke: Kapelle, Statue (S1) → Zuwendung — Akt-3-Auftakt: der Chefarzt bestätigt das Ethos — dann erst Fakten. ~6 s"
+   ]
+  },
+  {
+   "nr": 6,
+   "von_f": 1673,
+   "bis_f": 1980,
+   "von_s": 66.92,
+   "bis_s": 79.2,
+   "dauer_s": 12.28,
+   "beats": [
+    {
+     "nr": "10",
+     "typ": "oton",
+     "person": "Christian Reyer",
+     "szene": "WENDE: Konter",
+     "von_s": 66.92,
+     "bis_s": 72.2,
+     "bild": "Gehaltenes Gesicht",
+     "kommentar": "Antwort auf Szene 2. Kurzfassung fest: 00:40–00:45 + 00:52–00:57. 2. Christian-Take in Folge (Scharnier); Bauchbinde über #9/#10. ~10 s",
+     "text": "wobei wir für 'n vergleichsweise kleines Krankenhaus eine große Intensivstation haben, und da auch sehr stolz drauf sind, dass wir das hier moderne Medizin in einem kleinen Krankenhaus machen können."
+    },
+    {
+     "nr": "11",
+     "typ": "bild",
+     "person": null,
+     "szene": "Beweis visuell",
+     "von_s": 73.2,
+     "bis_s": 78.2,
+     "bild": "Geräte-B-Roll: S1 Herzkatetherlabor/Intensivstation → S2 Beatmungszimmer",
+     "kommentar": "Fachbeweis rein visuell (V4-Regel). ~5 s",
+     "text": ""
+    }
+   ],
+   "hinweise": [
+    "#10 WENDE: Konter: Gehaltenes Gesicht — Antwort auf Szene 2. Kurzfassung fest: 00:40–00:45 + 00:52–00:57. 2. Christian-Take in Folge (Scharnier); Bauchbinde über #9/#10. ~10 s",
+    "#11 Beweis visuell: Geräte-B-Roll: S1 Herzkatetherlabor/Intensivstation → S2 Beatmungszimmer — Fachbeweis rein visuell (V4-Regel). ~5 s"
+   ]
+  },
+  {
+   "nr": 7,
+   "von_f": 2030,
+   "bis_f": 2151,
+   "von_s": 81.2,
+   "bis_s": 86.04,
+   "dauer_s": 4.84,
+   "beats": [
+    {
+     "nr": "12",
+     "typ": "oton",
+     "person": "Marina",
+     "szene": "Mut zum Einstieg",
+     "von_s": 81.2,
+     "bis_s": 85.04,
+     "bild": "Frontal; Einarbeitung Schulter-an-Schulter (S1 Kolleginnen am Tablet)",
+     "kommentar": "Ich-Form (Tabu-sicher). In hart bei „ganz viele von uns\" — Satz beginnt im Redefluss („da haben\"), B-Roll stützt. Brücke zur Weiterbildung. ~6 s",
+     "text": "ganz viele von uns, glaube ich, Zweifel, gerade wenn wir von Station kommen. Aber man lernt es super schnell"
+    }
+   ],
+   "hinweise": [
+    "#12 Mut zum Einstieg: Frontal; Einarbeitung Schulter-an-Schulter (S1 Kolleginnen am Tablet) — Ich-Form (Tabu-sicher). In hart bei „ganz viele von uns\" — Satz beginnt im Redefluss („da haben\"), B-Roll stützt. Brücke zur Weiterbildung. ~6 s"
+   ]
+  },
+  {
+   "nr": 8,
+   "von_f": 2201,
+   "bis_f": 2445,
+   "von_s": 88.04,
+   "bis_s": 97.8,
+   "dauer_s": 9.76,
+   "beats": [
+    {
+     "nr": "13",
+     "typ": "oton",
+     "person": "Alina",
+     "szene": "Substanz: Weiterbildung",
+     "von_s": 88.04,
+     "bis_s": 96.8,
+     "bild": "Frontal; S2 Kolleginnen am Tisch",
+     "kommentar": "Zweitbeleg Urlaubstage: Ramona 9994 · 08:53–10:25. ~9 s",
+     "text": "Also unser Haus bezahlt, äh, die ganze Weiterbildung. […] hundert Prozent von dem Haus getragen."
+    }
+   ],
+   "hinweise": [
+    "#13 Substanz: Weiterbildung: Frontal; S2 Kolleginnen am Tisch — Zweitbeleg Urlaubstage: Ramona 9994 · 08:53–10:25. ~9 s"
+   ]
+  },
+  {
+   "nr": 9,
+   "von_f": 2495,
+   "bis_f": 2698,
+   "von_s": 99.8,
+   "bis_s": 107.92,
+   "dauer_s": 8.12,
+   "beats": [
+    {
+     "nr": "14",
+     "typ": "oton",
+     "person": "Johanna",
+     "szene": "Substanz: Planbarkeit",
+     "von_s": 99.8,
+     "bis_s": 106.92,
+     "bild": "Frontal; Übergabe (S2 Notaufnahme)",
+     "kommentar": "Out HART nach „gehen.\". Keine Caption (Dopplung). Namensschild blurren. ~9 s",
+     "text": "Wir haben einen festen Dienstplan mit Dienstzeiten. Zum Beispiel heute für mich acht bis vierzehn Uhr. […] dann kann ich nach Hause gehen."
+    }
+   ],
+   "hinweise": [
+    "#14 Substanz: Planbarkeit: Frontal; Übergabe (S2 Notaufnahme) — Out HART nach „gehen.\". Keine Caption (Dopplung). Namensschild blurren. ~9 s"
+   ]
+  },
+  {
+   "nr": 10,
+   "von_f": 2736,
+   "bis_f": 2915,
+   "von_s": 109.44,
+   "bis_s": 116.6,
+   "dauer_s": 7.16,
+   "beats": [
+    {
+     "nr": "15",
+     "typ": "oton",
+     "person": "Christian Reyer",
+     "szene": "Fusion 1",
+     "von_s": 109.44,
+     "bis_s": 115.6,
+     "bild": "Frontal → Wechselschnitt beider Häuser",
+     "kommentar": "DER Fusions-O-Ton, Kurzfassung (voll bis 03:12 als Option). ~8 s",
+     "text": "es ist interessant, wie so zwei Häuser, die sich ja kennen […] zusammenwachsen und eben zu einem werden."
+    }
+   ],
+   "hinweise": [
+    "#15 Fusion 1: Frontal → Wechselschnitt beider Häuser — DER Fusions-O-Ton, Kurzfassung (voll bis 03:12 als Option). ~8 s"
+   ]
+  },
+  {
+   "nr": 11,
+   "von_f": 2953,
+   "bis_f": 3270,
+   "von_s": 118.12,
+   "bis_s": 130.8,
+   "dauer_s": 12.68,
+   "beats": [
+    {
+     "nr": "16",
+     "typ": "oton",
+     "person": "Alina",
+     "szene": "Fusion 2",
+     "von_s": 118.12,
+     "bis_s": 123.8,
+     "bild": "Frontal",
+     "kommentar": "Out VOR „Sonst muss man halt immer anfragen\". Caption ersetzt durch VO #17. ~7 s",
+     "text": "wir sind ja mit dem Elisabeth Krankenhaus auch zusammen. […] Grade da kommen wir sehr leicht rüber."
+    },
+    {
+     "nr": "17",
+     "typ": "vo",
+     "person": null,
+     "szene": "VO: Verbund",
+     "von_s": 124.8,
+     "bis_s": 129.8,
+     "bild": "Team-/Übergangs-B-Roll beider Häuser",
+     "kommentar": "Ersetzt frühere Caption. ~5 s",
+     "text": "Zwei Häuser, ein Träger: Wer hier arbeitet, entwickelt sich weiter — ohne den Arbeitgeber zu wechseln."
+    }
+   ],
+   "hinweise": [
+    "#16 Fusion 2: Frontal — Out VOR „Sonst muss man halt immer anfragen\". Caption ersetzt durch VO #17. ~7 s",
+    "#17 VO: Verbund: Team-/Übergangs-B-Roll beider Häuser — Ersetzt frühere Caption. ~5 s"
+   ]
+  },
+  {
+   "nr": 12,
+   "von_f": 3332,
+   "bis_f": 3408,
+   "von_s": 133.28,
+   "bis_s": 136.32,
+   "dauer_s": 3.04,
+   "beats": [
+    {
+     "nr": "18",
+     "typ": "oton",
+     "person": "Marcel Faller",
+     "szene": "STILLE → Peak",
+     "von_s": 133.28,
+     "bis_s": 136.32,
+     "bild": "Gehaltenes Gesicht, Push-In",
+     "kommentar": "DIE Antwort auf die Eingangsfrage. Musik UND VO ganz raus. ~18 s",
+     "text": "was ich ganz besonders hervorheben muss […] dass man hier tatsächlich einfach noch Mensch ist […] einfach einen Riesenpluspunkt hier."
+    }
+   ],
+   "hinweise": [
+    "#18 STILLE → Peak: Gehaltenes Gesicht, Push-In — DIE Antwort auf die Eingangsfrage. Musik UND VO ganz raus. ~18 s"
+   ]
+  },
+  {
+   "nr": 13,
+   "von_f": 3496,
+   "bis_f": 3723,
+   "von_s": 139.84,
+   "bis_s": 148.92,
+   "dauer_s": 9.08,
+   "beats": [
+    {
+     "nr": "18",
+     "typ": "oton",
+     "person": "Marcel Faller",
+     "szene": "STILLE → Peak",
+     "von_s": 139.84,
+     "bis_s": 147.92,
+     "bild": "Gehaltenes Gesicht, Push-In",
+     "kommentar": "DIE Antwort auf die Eingangsfrage. Musik UND VO ganz raus. ~18 s",
+     "text": "was ich ganz besonders hervorheben muss […] dass man hier tatsächlich einfach noch Mensch ist […] einfach einen Riesenpluspunkt hier."
+    }
+   ],
+   "hinweise": [
+    "#18 STILLE → Peak: Gehaltenes Gesicht, Push-In — DIE Antwort auf die Eingangsfrage. Musik UND VO ganz raus. ~18 s"
+   ]
+  },
+  {
+   "nr": 14,
+   "von_f": 3773,
+   "bis_f": 4060,
+   "von_s": 150.92,
+   "bis_s": 162.4,
+   "dauer_s": 11.48,
+   "beats": [
+    {
+     "nr": "19",
+     "typ": "oton",
+     "person": "Simona",
+     "szene": "Staffel 1: Team",
+     "von_s": 150.92,
+     "bis_s": 161.4,
+     "bild": "Frontal (2er mit Katja)",
+     "kommentar": "Simona = Vorstellung 00:51–00:58 (Stimme matchen). Startet die Beständigkeits-Staffel. ~8 s",
+     "text": "bei uns ist es so, dass wir ein tolles Team sind. […] meine ich nicht nur die Pflege, meine ich auch die Ärzte. […] das ist nicht überall so."
+    }
+   ],
+   "hinweise": [
+    "#19 Staffel 1: Team: Frontal (2er mit Katja) — Simona = Vorstellung 00:51–00:58 (Stimme matchen). Startet die Beständigkeits-Staffel. ~8 s"
+   ]
+  },
+  {
+   "nr": 15,
+   "von_f": 4110,
+   "bis_f": 4452,
+   "von_s": 164.4,
+   "bis_s": 178.08,
+   "dauer_s": 13.68,
+   "beats": [
+    {
+     "nr": "20",
+     "typ": "oton",
+     "person": "Katja",
+     "szene": "Staffel 2: 24 Jahre",
+     "von_s": 164.4,
+     "bis_s": 177.08,
+     "bild": "Frontal (2er, Gegenschuss)",
+     "kommentar": "ORGANISCHER Anschluss: „der Grund\" bezieht sich wörtlich auf Simonas #19 (selber Take, dazwischen nur Interviewer). In NACH Scherz (08:16–08:21)! ~13 s",
+     "text": "das ist auch genau der Grund, warum ich schon seit vierundzwanzig Jahren hier im Elisabeth-Krankenhaus bin, […] und wir super Kollegen haben."
+    }
+   ],
+   "hinweise": [
+    "#20 Staffel 2: 24 Jahre: Frontal (2er, Gegenschuss) — ORGANISCHER Anschluss: „der Grund\" bezieht sich wörtlich auf Simonas #19 (selber Take, dazwischen nur Interviewer). In NACH Scherz (08:16–08:21)! ~13 s"
+   ]
+  },
+  {
+   "nr": 16,
+   "von_f": 4502,
+   "bis_f": 4576,
+   "von_s": 180.08,
+   "bis_s": 183.04,
+   "dauer_s": 2.96,
+   "beats": [
+    {
+     "nr": "21",
+     "typ": "oton",
+     "person": "Martina",
+     "szene": "Staffel 3: 10 Jahre",
+     "von_s": 180.08,
+     "bis_s": 182.04,
+     "bild": "Frontal",
+     "kommentar": "Kurz und klar — 3. Stufe der Staffel. ~4 s",
+     "text": "Ich arbeite jetzt schon über zehn Jahre hier und ich find's jeden Tag immer noch toll."
+    }
+   ],
+   "hinweise": [
+    "#21 Staffel 3: 10 Jahre: Frontal — Kurz und klar — 3. Stufe der Staffel. ~4 s"
+   ]
+  },
+  {
+   "nr": 17,
+   "von_f": 4693,
+   "bis_f": 5318,
+   "von_s": 187.72,
+   "bis_s": 212.72,
+   "dauer_s": 25.0,
+   "beats": [
+    {
+     "nr": "23",
+     "typ": "vo",
+     "person": null,
+     "szene": "VO: Auflösung",
+     "von_s": 188.72,
+     "bis_s": 197.72,
+     "bild": "Wechselschnitt beider Häuser, Teams",
+     "kommentar": "Caption bewusst ≠ VO-Wortlaut. ~9 s",
+     "text": "Zwei Häuser. Ein Versprechen: dass der Mensch zählt. In jedem Dienst. An jedem Bett."
+    },
+    {
+     "nr": "24",
+     "typ": "bild",
+     "person": null,
+     "szene": "Drohne",
+     "von_s": 198.72,
+     "bis_s": 205.72,
+     "bild": "Mavic: Elisabeth DJI_0402–0416, Marien ab DJI_0417 — Zuordnung NUR über Ordner!",
+     "kommentar": "Freigabe OFFEN; Plan B ebenerdig (S1 Eingang, S2 Außenbereich). ~7 s",
+     "text": ""
+    },
+    {
+     "nr": "25",
+     "typ": "vo",
+     "person": null,
+     "szene": "VO: CTA + Endcard",
+     "von_s": 206.72,
+     "bis_s": 212.72,
+     "bild": "Grafik (NIRO Motion): Verbund-Marke",
+     "kommentar": "Endcard: VO + Text identisch (CTA-Ausnahme). Berufstitel nur mit „(m/w/d)\". ~6 s",
+     "text": "Die Marien-Elisabeth-Kliniken Kassel. Lern uns kennen — bevor du uns googelst."
+    }
+   ],
+   "hinweise": [
+    "#23 VO: Auflösung: Wechselschnitt beider Häuser, Teams — Caption bewusst ≠ VO-Wortlaut. ~9 s",
+    "#24 Drohne: Mavic: Elisabeth DJI_0402–0416, Marien ab DJI_0417 — Zuordnung NUR über Ordner! — Freigabe OFFEN; Plan B ebenerdig (S1 Eingang, S2 Außenbereich). ~7 s",
+    "#25 VO: CTA + Endcard: Grafik (NIRO Motion): Verbund-Marke — Endcard: VO + Text identisch (CTA-Ausnahme). Berufstitel nur mit „(m/w/d)\". ~6 s"
+   ]
+  }
+ ],
+ "gesicht_anteil": 0.1952,
+ "ziel_gesicht": [
+  0.15,
+  0.2
+ ]
+}

@@ -1,0 +1,13 @@
+FARBPROFILE DREHMATERIAL – BREMSEN SCHNEIDER
+=============================================
+
+Kamera-Aufnahmen:               S-Log3
+Drohnen- & Actioncam-Aufnahmen: D-Log
+
+Beide sind flache Log-Profile: Das Rohmaterial wirkt absichtlich
+flau, grau und kontrastarm – das ist kein Fehler.
+
+Vor der Verwendung muss alles nach Rec.709 konvertiert werden
+(LUT: S-Log3 → Rec.709 bzw. D-Log → Rec.709) und anschließend
+farblich bearbeitet/gegradet werden, damit es gut aussieht.
+Kein Material ungegradet in den Schnitt oder Export übernehmen.

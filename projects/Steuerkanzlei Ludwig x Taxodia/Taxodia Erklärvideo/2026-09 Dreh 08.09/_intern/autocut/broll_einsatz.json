@@ -1,0 +1,722 @@
+{
+ "projekt": "Taxodia 09.26",
+ "timeline": "AutoCut video-1-taxodia-weg 2026-09-15 0941 (roh)",
+ "timeline_id": "ae1a4067-845d-4921-8c2c-2e4a223ad86b",
+ "v3_soll": 30,
+ "v3_ist": 30,
+ "identisch": true,
+ "ausserhalb_auswahl": 0,
+ "spuren": {
+  "V1": 30,
+  "V2": 27,
+  "V3": 30,
+  "A1": 30
+ },
+ "marker": {
+  "Blue": 22,
+  "Purple": 2,
+  "Red": 3
+ },
+ "aktive_timeline": "B-Roll Auswahl",
+ "aktiver_bin": "B-Roll",
+ "gespeichert": true,
+ "warnungen": [
+  "Marker 'Red' bei Frame 4337 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline).",
+  "Marker 'Yellow' bei Frame 1862 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline).",
+  "Marker 'Yellow' bei Frame 3222 konnte nicht gesetzt werden (Frame belegt oder außerhalb der Timeline)."
+ ],
+ "plan": [
+  {
+   "shot": 10,
+   "clip": "C0250",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0250.MP4",
+   "beat": "4",
+   "inhalt": "Flammann geht zur Kanzlei-Tür mit Ludwig-Logo",
+   "rec_in_f": 345,
+   "rec_out_f": 399,
+   "left_offset_f": 38,
+   "dauer_f": 54,
+   "src_in_f": 76,
+   "src_out_f": 184,
+   "auswahl_f": [
+    38,
+    92
+   ]
+  },
+  {
+   "shot": 11,
+   "clip": "C0251",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0251.MP4",
+   "beat": "4",
+   "inhalt": "Ludwig begrüßt Flammann an der Tür, Handschlag",
+   "rec_in_f": 399,
+   "rec_out_f": 431,
+   "left_offset_f": 80,
+   "dauer_f": 32,
+   "src_in_f": 160,
+   "src_out_f": 224,
+   "auswahl_f": [
+    80,
+    112
+   ]
+  },
+  {
+   "shot": 12,
+   "clip": "C0252",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0252.MP4",
+   "beat": "4",
+   "inhalt": "beide gehen am Logo „Steuerkanzlei Ludwig“ vorbei ins Haus",
+   "rec_in_f": 431,
+   "rec_out_f": 470,
+   "left_offset_f": 233,
+   "dauer_f": 39,
+   "src_in_f": 466,
+   "src_out_f": 544,
+   "auswahl_f": [
+    199,
+    272
+   ]
+  },
+  {
+   "shot": 13,
+   "clip": "C0253",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0253.MP4",
+   "beat": "5",
+   "inhalt": "Ludwig führt Flammann ins Büro",
+   "rec_in_f": 580,
+   "rec_out_f": 624,
+   "left_offset_f": 78,
+   "dauer_f": 44,
+   "src_in_f": 156,
+   "src_out_f": 244,
+   "auswahl_f": [
+    53,
+    122
+   ]
+  },
+  {
+   "shot": 14,
+   "clip": "C0253",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0253.MP4",
+   "beat": "5",
+   "inhalt": "Ludwig setzt sich an den Schreibtisch, Flammann kommt dazu",
+   "rec_in_f": 624,
+   "rec_out_f": 693,
+   "left_offset_f": 189,
+   "dauer_f": 69,
+   "src_in_f": 378,
+   "src_out_f": 516,
+   "auswahl_f": [
+    189,
+    284
+   ]
+  },
+  {
+   "shot": 4,
+   "clip": "C0239",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0239.MP4",
+   "beat": "7",
+   "inhalt": "Hein am Arbeitsplatz, seitlich weit, tippt und schreibt",
+   "rec_in_f": 1128,
+   "rec_out_f": 1203,
+   "left_offset_f": 133,
+   "dauer_f": 75,
+   "src_in_f": 266,
+   "src_out_f": 416,
+   "auswahl_f": [
+    133,
+    208
+   ]
+  },
+  {
+   "shot": 3,
+   "clip": "C0237",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0237.MP4",
+   "beat": "7",
+   "inhalt": "Detail: Heins Hände tippen am Laptop",
+   "rec_in_f": 1203,
+   "rec_out_f": 1249,
+   "left_offset_f": 67,
+   "dauer_f": 46,
+   "src_in_f": 134,
+   "src_out_f": 226,
+   "auswahl_f": [
+    67,
+    113
+   ]
+  },
+  {
+   "shot": 8,
+   "clip": "C0247",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0247.MP4",
+   "beat": "7",
+   "inhalt": "Hein am Arbeitsplatz von hinten, Fahrt",
+   "rec_in_f": 1249,
+   "rec_out_f": 1331,
+   "left_offset_f": 183,
+   "dauer_f": 82,
+   "src_in_f": 366,
+   "src_out_f": 530,
+   "auswahl_f": [
+    183,
+    270
+   ]
+  },
+  {
+   "shot": 23,
+   "clip": "C0261",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "beat": "9",
+   "inhalt": "Laptop mit Taxodia-Lernplattform, Schärfe auf Flammann",
+   "rec_in_f": 1862,
+   "rec_out_f": 1982,
+   "left_offset_f": 691,
+   "dauer_f": 120,
+   "src_in_f": 1382,
+   "src_out_f": 1622,
+   "auswahl_f": [
+    691,
+    811
+   ]
+  },
+  {
+   "shot": 21,
+   "clip": "C0259",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0259.MP4",
+   "beat": "9",
+   "inhalt": "Hein und Flammann im Gespräch am Tisch",
+   "rec_in_f": 1982,
+   "rec_out_f": 2118,
+   "left_offset_f": 140,
+   "dauer_f": 136,
+   "src_in_f": 280,
+   "src_out_f": 552,
+   "auswahl_f": [
+    140,
+    276
+   ]
+  },
+  {
+   "shot": 5,
+   "clip": "C0240",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0240.MP4",
+   "beat": "10",
+   "inhalt": "Detail: Hände blättern im Gesetzbuch",
+   "rec_in_f": 2352,
+   "rec_out_f": 2386,
+   "left_offset_f": 62,
+   "dauer_f": 34,
+   "src_in_f": 124,
+   "src_out_f": 192,
+   "auswahl_f": [
+    62,
+    96
+   ]
+  },
+  {
+   "shot": 6,
+   "clip": "C0242",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0242.MP4",
+   "beat": "10",
+   "inhalt": "Aufsicht: Hein blättert im Gesetzbuch",
+   "rec_in_f": 2386,
+   "rec_out_f": 2448,
+   "left_offset_f": 48,
+   "dauer_f": 62,
+   "src_in_f": 96,
+   "src_out_f": 220,
+   "auswahl_f": [
+    48,
+    110
+   ]
+  },
+  {
+   "shot": 1,
+   "clip": "C0235",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0235.MP4",
+   "beat": "11",
+   "inhalt": "Hein von hinten vor den Monitoren",
+   "rec_in_f": 2761,
+   "rec_out_f": 2801,
+   "left_offset_f": 87,
+   "dauer_f": 40,
+   "src_in_f": 174,
+   "src_out_f": 254,
+   "auswahl_f": [
+    87,
+    127
+   ]
+  },
+  {
+   "shot": 7,
+   "clip": "C0246",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0246.MP4",
+   "beat": "11",
+   "inhalt": "Hein nah, liest am Bildschirm",
+   "rec_in_f": 2801,
+   "rec_out_f": 2879,
+   "left_offset_f": 296,
+   "dauer_f": 78,
+   "src_in_f": 592,
+   "src_out_f": 748,
+   "auswahl_f": [
+    296,
+    374
+   ]
+  },
+  {
+   "shot": 2,
+   "clip": "C0235",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0235.MP4",
+   "beat": "11",
+   "inhalt": "Hein tippt am Laptop, Fahrt",
+   "rec_in_f": 2879,
+   "rec_out_f": 2935,
+   "left_offset_f": 277,
+   "dauer_f": 56,
+   "src_in_f": 554,
+   "src_out_f": 666,
+   "auswahl_f": [
+    277,
+    333
+   ]
+  },
+  {
+   "shot": 22,
+   "clip": "C0260",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0260.MP4",
+   "beat": "12",
+   "inhalt": "Detail: Laptop mit Taxodia-Lernplattform",
+   "rec_in_f": 3222,
+   "rec_out_f": 3271,
+   "left_offset_f": 842,
+   "dauer_f": 49,
+   "src_in_f": 1684,
+   "src_out_f": 1782,
+   "auswahl_f": [
+    842,
+    891
+   ]
+  },
+  {
+   "shot": 27,
+   "clip": "C0261",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "beat": "12",
+   "inhalt": "Hein und Flammann am Laptop, Hein zeigt",
+   "rec_in_f": 3271,
+   "rec_out_f": 3322,
+   "left_offset_f": 5835,
+   "dauer_f": 51,
+   "src_in_f": 11670,
+   "src_out_f": 11772,
+   "auswahl_f": [
+    5835,
+    5886
+   ]
+  },
+  {
+   "shot": 26,
+   "clip": "C0261",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "beat": "12",
+   "inhalt": "Detail: Hand an der Maus",
+   "rec_in_f": 3322,
+   "rec_out_f": 3410,
+   "left_offset_f": 3796,
+   "dauer_f": 88,
+   "src_in_f": 7592,
+   "src_out_f": 7768,
+   "auswahl_f": [
+    3796,
+    3886
+   ]
+  },
+  {
+   "shot": 15,
+   "clip": "C0254",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0254.MP4",
+   "beat": "13",
+   "inhalt": "Ludwig und Flammann im Gespräch am Schreibtisch",
+   "rec_in_f": 3706,
+   "rec_out_f": 3768,
+   "left_offset_f": 76,
+   "dauer_f": 62,
+   "src_in_f": 152,
+   "src_out_f": 276,
+   "auswahl_f": [
+    76,
+    138
+   ]
+  },
+  {
+   "shot": 9,
+   "clip": "C0249",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0249.MP4",
+   "beat": "15",
+   "inhalt": "Hein telefoniert am Arbeitsplatz",
+   "rec_in_f": 4162,
+   "rec_out_f": 4237,
+   "left_offset_f": 733,
+   "dauer_f": 75,
+   "src_in_f": 1466,
+   "src_out_f": 1616,
+   "auswahl_f": [
+    733,
+    808
+   ]
+  },
+  {
+   "shot": 17,
+   "clip": "C0255",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0255.MP4",
+   "beat": "16",
+   "inhalt": "Ludwig und Flammann am Monitor, Fahrt",
+   "rec_in_f": 4237,
+   "rec_out_f": 4337,
+   "left_offset_f": 903,
+   "dauer_f": 100,
+   "src_in_f": 1806,
+   "src_out_f": 2006,
+   "auswahl_f": [
+    903,
+    1003
+   ]
+  },
+  {
+   "shot": 18,
+   "clip": "C0255",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0255.MP4",
+   "beat": "16",
+   "inhalt": "Monitor nah: Kursplan mit Häkchen und Farben — BLUR",
+   "rec_in_f": 4337,
+   "rec_out_f": 4471,
+   "left_offset_f": 2727,
+   "dauer_f": 134,
+   "src_in_f": 5454,
+   "src_out_f": 5722,
+   "auswahl_f": [
+    2727,
+    2891
+   ]
+  },
+  {
+   "shot": 29,
+   "clip": "C0262",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0262.MP4",
+   "beat": "16",
+   "inhalt": "Flammann telefoniert im Sessel, weit",
+   "rec_in_f": 4471,
+   "rec_out_f": 4555,
+   "left_offset_f": 225,
+   "dauer_f": 84,
+   "src_in_f": 450,
+   "src_out_f": 618,
+   "auswahl_f": [
+    225,
+    309
+   ]
+  },
+  {
+   "shot": 19,
+   "clip": "C0257",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0257.MP4",
+   "beat": "16",
+   "inhalt": "Ludwig am Schreibtisch greift zum Telefon",
+   "rec_in_f": 4700,
+   "rec_out_f": 4777,
+   "left_offset_f": 90,
+   "dauer_f": 77,
+   "src_in_f": 180,
+   "src_out_f": 334,
+   "auswahl_f": [
+    90,
+    167
+   ]
+  },
+  {
+   "shot": 20,
+   "clip": "C0257",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0257.MP4",
+   "beat": "16",
+   "inhalt": "Ludwig telefoniert",
+   "rec_in_f": 4777,
+   "rec_out_f": 4834,
+   "left_offset_f": 770,
+   "dauer_f": 57,
+   "src_in_f": 1540,
+   "src_out_f": 1654,
+   "auswahl_f": [
+    770,
+    841
+   ]
+  },
+  {
+   "shot": 30,
+   "clip": "C0262",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0262.MP4",
+   "beat": "17",
+   "inhalt": "Flammann telefoniert im Sessel, nah",
+   "rec_in_f": 4906,
+   "rec_out_f": 4956,
+   "left_offset_f": 1230,
+   "dauer_f": 50,
+   "src_in_f": 2460,
+   "src_out_f": 2560,
+   "auswahl_f": [
+    1230,
+    1352
+   ]
+  },
+  {
+   "shot": 16,
+   "clip": "C0255",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0255.MP4",
+   "beat": "18",
+   "inhalt": "Flammann zeigt Ludwig etwas am Monitor",
+   "rec_in_f": 4956,
+   "rec_out_f": 5075,
+   "left_offset_f": 232,
+   "dauer_f": 119,
+   "src_in_f": 464,
+   "src_out_f": 702,
+   "auswahl_f": [
+    232,
+    361
+   ]
+  },
+  {
+   "shot": 25,
+   "clip": "C0261",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "beat": "19",
+   "inhalt": "Hein und Flammann nah am Laptop",
+   "rec_in_f": 5208,
+   "rec_out_f": 5275,
+   "left_offset_f": 3371,
+   "dauer_f": 67,
+   "src_in_f": 6742,
+   "src_out_f": 6876,
+   "auswahl_f": [
+    3371,
+    3496
+   ]
+  },
+  {
+   "shot": 28,
+   "clip": "C0261",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "beat": "19",
+   "inhalt": "Hein und Flammann am Laptop, Fahrt",
+   "rec_in_f": 5275,
+   "rec_out_f": 5333,
+   "left_offset_f": 6123,
+   "dauer_f": 58,
+   "src_in_f": 12246,
+   "src_out_f": 12362,
+   "auswahl_f": [
+    6123,
+    6217
+   ]
+  },
+  {
+   "shot": 24,
+   "clip": "C0261",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "beat": "19",
+   "inhalt": "Hein und Flammann am Laptop, weit",
+   "rec_in_f": 5333,
+   "rec_out_f": 5396,
+   "left_offset_f": 2003,
+   "dauer_f": 63,
+   "src_in_f": 4006,
+   "src_out_f": 4132,
+   "auswahl_f": [
+    1918,
+    2066
+   ]
+  }
+ ],
+ "readback": [
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0250.MP4",
+   "rec_in_f": 345,
+   "dauer_f": 54,
+   "left_offset_f": 38
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0251.MP4",
+   "rec_in_f": 399,
+   "dauer_f": 32,
+   "left_offset_f": 80
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0252.MP4",
+   "rec_in_f": 431,
+   "dauer_f": 39,
+   "left_offset_f": 233
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0253.MP4",
+   "rec_in_f": 580,
+   "dauer_f": 44,
+   "left_offset_f": 78
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0253.MP4",
+   "rec_in_f": 624,
+   "dauer_f": 69,
+   "left_offset_f": 189
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0239.MP4",
+   "rec_in_f": 1128,
+   "dauer_f": 75,
+   "left_offset_f": 133
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0237.MP4",
+   "rec_in_f": 1203,
+   "dauer_f": 46,
+   "left_offset_f": 67
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0247.MP4",
+   "rec_in_f": 1249,
+   "dauer_f": 82,
+   "left_offset_f": 183
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "rec_in_f": 1862,
+   "dauer_f": 120,
+   "left_offset_f": 691
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0259.MP4",
+   "rec_in_f": 1982,
+   "dauer_f": 136,
+   "left_offset_f": 140
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0240.MP4",
+   "rec_in_f": 2352,
+   "dauer_f": 34,
+   "left_offset_f": 62
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0242.MP4",
+   "rec_in_f": 2386,
+   "dauer_f": 62,
+   "left_offset_f": 48
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0235.MP4",
+   "rec_in_f": 2761,
+   "dauer_f": 40,
+   "left_offset_f": 87
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0246.MP4",
+   "rec_in_f": 2801,
+   "dauer_f": 78,
+   "left_offset_f": 296
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0235.MP4",
+   "rec_in_f": 2879,
+   "dauer_f": 56,
+   "left_offset_f": 277
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0260.MP4",
+   "rec_in_f": 3222,
+   "dauer_f": 49,
+   "left_offset_f": 842
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "rec_in_f": 3271,
+   "dauer_f": 51,
+   "left_offset_f": 5835
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "rec_in_f": 3322,
+   "dauer_f": 88,
+   "left_offset_f": 3796
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0254.MP4",
+   "rec_in_f": 3706,
+   "dauer_f": 62,
+   "left_offset_f": 76
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0249.MP4",
+   "rec_in_f": 4162,
+   "dauer_f": 75,
+   "left_offset_f": 733
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0255.MP4",
+   "rec_in_f": 4237,
+   "dauer_f": 100,
+   "left_offset_f": 903
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0255.MP4",
+   "rec_in_f": 4337,
+   "dauer_f": 134,
+   "left_offset_f": 2727
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0262.MP4",
+   "rec_in_f": 4471,
+   "dauer_f": 84,
+   "left_offset_f": 225
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0257.MP4",
+   "rec_in_f": 4700,
+   "dauer_f": 77,
+   "left_offset_f": 90
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0257.MP4",
+   "rec_in_f": 4777,
+   "dauer_f": 57,
+   "left_offset_f": 770
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0262.MP4",
+   "rec_in_f": 4906,
+   "dauer_f": 50,
+   "left_offset_f": 1230
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0255.MP4",
+   "rec_in_f": 4956,
+   "dauer_f": 119,
+   "left_offset_f": 232
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "rec_in_f": 5208,
+   "dauer_f": 67,
+   "left_offset_f": 3371
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "rec_in_f": 5275,
+   "dauer_f": 58,
+   "left_offset_f": 6123
+  },
+  {
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/B-Roll/C0261.MP4",
+   "rec_in_f": 5333,
+   "dauer_f": 63,
+   "left_offset_f": 2003
+  }
+ ]
+}

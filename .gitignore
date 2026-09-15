@@ -53,6 +53,10 @@
 /projects/**/*progress*.txt
 /projects/**/Sortierung/transkripte*.md
 
+# MAN-Global-Schriften (je 14–19 MB) liegen byte-gleich in tools/motion/public/fonts/man (versioniert);
+# die Kopie im Materialordner löst nur die 5-MB-Sperre in .githooks/pre-commit aus
+/projects/MAN/Wartezimmervideo/2026-07 Erste Fassung/Material/MAN_Global-*.ttf
+
 .DS_Store
 
 # Arbeitsspuren der Session-Werkzeuge

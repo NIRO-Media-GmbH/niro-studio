@@ -1,0 +1,101 @@
+[
+ {
+  "block": 5,
+  "slot": 3,
+  "trim": {
+   "src_in": 5567,
+   "frames": 76
+  },
+  "grund": "User-Kürzung in v5 (t1-053s03)"
+ },
+ {
+  "block": 3,
+  "slot": 1,
+  "grund": "von dir in v5 gelöscht (t1-036)"
+ },
+ {
+  "block": 6,
+  "slot": 1,
+  "grund": "von dir in v5 gelöscht (t2-090)"
+ },
+ {
+  "block": 4,
+  "slot": 1,
+  "grund": "von dir in v5 gelöscht (t2-164)"
+ },
+ {
+  "block": 1,
+  "slot": 2,
+  "grund": "von dir in v5 gelöscht (t2-093)"
+ },
+ {
+  "block": 2,
+  "slot": 5,
+  "grund": "von dir in v5 gelöscht (t2-035)"
+ },
+ {
+  "block": 4,
+  "slot": 5,
+  "grund": "von dir in v5 gelöscht (t1-082)"
+ },
+ {
+  "block": 5,
+  "slot": 6,
+  "grund": "von dir in v5 gelöscht (t1-053s04)"
+ },
+ {
+  "block": 1,
+  "slot": 10,
+  "grund": "leerer Slot"
+ },
+ {
+  "block": 8,
+  "slot": 11,
+  "grund": "von dir in v5 gelöscht (t2-297)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 6,
+  "slot": 12,
+  "grund": "von dir in v5 gelöscht (t2-303)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 3,
+  "slot": 12,
+  "grund": "von dir in v5 gelöscht (t2-247)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 3,
+  "slot": 13,
+  "grund": "von dir in v5 gelöscht (t1-263)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 6,
+  "slot": 13,
+  "grund": "von dir in v5 gelöscht (t1-297)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ }
+]

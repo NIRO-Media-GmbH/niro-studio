@@ -1,0 +1,68 @@
+# flachdach — 04_Flachdach-Erklaerung_V1.srt
+# 63 Seiten, 254 Woerter; 28 Seiten (ganz oder teils) sichtbar
+# freie Fenster (s): 0.00–0.90, 7.10–10.90, 16.50–18.80, 22.40–25.60, 31.60–32.40, 37.40–39.30, 45.70–46.90, 51.50–53.60, 59.20–60.90, 65.30–67.57, 71.77–76.30
+# Spalte: SICHT = ganz sichtbar, nn% = teilweise, · = liegt komplett unter einer Animation
+
+  1    0.00 –   0.84  SICHT Also man hat nachher kein
+  2    0.76 –   2.03    ·   Dichtigkeitsproblem.
+  3    2.08 –   3.51    ·   Das ist immer die erste Frage,
+  4    3.56 –   4.54    ·   wenn man sagt, man belegt
+  5    4.46 –   5.27    ·   das Flachdach,
+  6    5.32 –   6.64    ·   also da passiert nichts, keine
+  7    6.56 –   7.51   43%  Sorge.
+  8    7.56 –   8.12  SICHT Also wir haben jetzt
+  9    8.04 –  10.08  SICHT hier bei unserem Beispiel einmal
+ 10   10.00 –  12.07   44%  eine Ost-West-PV-Anlage.
+ 11   12.12 –  13.38    ·   Ost-West bedeutet, wir legen
+ 12   13.30 –  14.44    ·   es quasi in zwei Seiten,
+ 13   14.36 –  15.04    ·   wie wir es jetzt hier
+ 14   14.96 –  16.91   21%  haben, wie so ein kleines Zelt.
+ 15   16.96 –  18.24  SICHT Die Module werden quasi immer
+ 16   18.16 –  20.47   28%  10 Grad aufgewinkelt.
+ 17   20.52 –  22.28    ·   Nichts durchdringt das Dach.
+ 18   22.20 –  23.00   75%  Es wird quasi nur,
+ 19   22.92 –  24.19  SICHT wie man hier sieht,
+ 20   24.24 –  25.84   85%  eine Schiene gespannt und da
+ 21   25.76 –  27.35    ·   werden dann Steine reingelegt.
+ 22   27.40 –  28.35    ·   Also es wird nur
+ 23   28.40 –  30.12    ·   und nichts durchstoßen
+ 24   30.04 –  30.84    ·   oder Ähnliches.
+ 25   30.88 –  31.72    ·   Werden quasi auf
+ 26   31.64 –  33.52   40%  diese Unterkonstruktion mit den 10
+ 27   33.44 –  35.56    ·   Grad die Module gelegt und
+ 28   35.48 –  36.59    ·   dann, wenn man es hier sieht,
+ 29   36.64 –  38.24   52%  wird es quasi hier befestigt.
+ 30   38.16 –  38.64  SICHT Das ist quasi
+ 31   38.56 –  41.43   26%  eine Mittelklemme und ganz am Ende,
+ 32   41.48 –  42.24    ·   wenn die Reihen
+ 33   42.16 –  43.32    ·   quasi aufhören, hat man dann
+ 34   43.24 –  44.48    ·   nur noch eine Endklemme und
+ 35   44.40 –  45.39    ·   das war es dann auch schon.
+ 36   45.44 –  46.23   67%  Und dann
+ 37   46.28 –  47.59   48%  die Module noch verkabelt
+ 38   47.64 –  48.68    ·   dann habe ich schon meine fertige
+ 39   48.60 –  50.16    ·   Anlage quasi auf dem Flachdach.
+ 40   50.08 –  51.32    ·   Das war jetzt die Variante
+ 41   51.24 –  52.40   77%  Ost-West und wenn ich
+ 42   52.32 –  54.08   73%  es quasi nur als Südaufständerung
+ 43   54.00 –  54.59    ·   möchte,
+ 44   54.64 –  55.60    ·   dann kann man sich vorstellen,
+ 45   55.52 –  56.48    ·   wie jetzt hier auch,
+ 46   56.52 –  57.88    ·   dann ist quasi nur eine Reihe
+ 47   57.80 –  58.76    ·   und die natürlich in Süd
+ 48   58.68 –  59.67   47%  ausgerichtet.
+ 49   59.72 –  60.72  SICHT Und dann ist der einzige
+ 50   60.64 –  61.76    ·   Unterschied,
+ 51   64.88 –  65.42    ·   Es ist quasi
+ 52   65.34 –  66.28  SICHT dann hier hinten noch
+ 53   66.20 –  68.23   67%  so ein Windfangblech quasi drauf,
+ 54   68.28 –  69.28    ·   dass der Wind nicht hinten
+ 55   69.20 –  69.99    ·   durch kann.
+ 56   70.04 –  70.76    ·   Brauchen wir jetzt
+ 57   70.68 –  71.59    ·   in dem Beispiel nicht,
+ 58   71.64 –  72.52   85%  weil es natürlich keine
+ 59   72.44 –  73.88  SICHT Angriffsfläche hat, weil es
+ 60   73.80 –  75.24  SICHT hier bei der Ost-West-Aufständerung
+ 61   75.16 –  76.00  SICHT komplett zu ist.
+ 62   75.92 –  77.15   30%  Relativ simpel,
+ 63   77.20 –  79.24    ·   wenn es Fragen gibt, gerne melden.

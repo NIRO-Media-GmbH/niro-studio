@@ -1,0 +1,56 @@
+{
+  "videos": [
+    {"nr": 1, "titel": "Der schnellere Weg nach oben", "rows": [
+      {"id": "1_HookA", "typ": "scripted", "text": "In welcher Steuerkanzlei wirst du Führungskraft, ohne vorher das Steuerberaterexamen zu machen?"},
+      {"id": "1_HookB", "typ": "scripted", "text": "Zehn Jahre Berufserfahrung und dann eine der schwersten Prüfungen Deutschlands. Oder du machst es anders."},
+      {"id": "1_HookC", "typ": "visual", "text": "Bildlicher Einstieg ohne gesprochenen Text. Einblendung: Zwei Wege nach oben im Steuerfach. Einer dauert zehn Jahre länger."},
+      {"id": "1_Szene1", "typ": "scripted", "text": "In den meisten Kanzleien bleibst du als Steuerfachangestellte Sachbearbeiterin. Für eine Führungsrolle brauchst du den Fachwirt oder das Steuerberaterexamen."},
+      {"id": "1_Szene2", "typ": "scripted", "text": "Und das Examen heißt: rund zehn Jahre Berufserfahrung und dann eine der schwersten Prüfungen des Landes."},
+      {"id": "1_Szene3", "typ": "interview", "text": "Frage an eine Mitarbeiterin: Wie bist du bei der LohiBW dahin gekommen, wo du heute bist? Sie erzählt, dass sie sich intern auf eine frei gewordene Beratungsstelle bewerben und diese übernehmen konnte."},
+      {"id": "1_Szene4", "typ": "scripted", "text": "Bei der LohiBW werden frei werdende Beratungsstellen intern ausgeschrieben. Jeder Mitarbeiter kann sich darauf bewerben."},
+      {"id": "1_Szene5", "typ": "interview", "text": "Frage an die Mitarbeiterin: Was bedeutet es für dich, eine eigene Beratungsstelle zu leiten? Sie erzählt, dass sie auf dem Papier angestellt ist, sich ihre Zeit aber frei einteilt wie eine Selbstständige."},
+      {"id": "1_Szene6", "typ": "scripted", "text": "Die meisten Beratungsstellen werden übergeben, nicht neu gegründet. Du übernimmst eine Stelle mit bestehenden Mitgliedern und hast vom ersten Tag an ein Einkommen."},
+      {"id": "1_Szene7", "typ": "scripted", "text": "Statt Steuerberaterexamen machst du den Fachkundenachweis über den Zertifizierungsverband, dazu interne Schulungen."},
+      {"id": "1_Szene8", "typ": "interview", "text": "Frage an eine Mitarbeiterin: Was hast du gemacht, bevor du bei der LohiBW angefangen hast? Sie erzählt von ihrem Quereinstieg aus einem anderen Beruf und davon, dass sie heute selbst berät."},
+      {"id": "1_Szene9", "typ": "scripted", "text": "Wenig arbeiten und viel verdienen gibt es hier nicht. Dein Einkommen hängt an deinem Einsatz. Aber der Weg nach oben steht dir wirklich offen."},
+      {"id": "1_Szene10", "typ": "scripted", "text": "Also: Klick auf den Button, trag dich ein, und wir lernen uns persönlich kennen."}
+    ]},
+    {"nr": 2, "titel": "Raus aus dem Fristen-Hamsterrad", "rows": [
+      {"id": "2_HookA", "typ": "scripted", "text": "Wie viele Abende hast du letzte Saison im Büro verbracht?"},
+      {"id": "2_HookB", "typ": "scripted", "text": "Es gibt Steuerjobs ohne Jahresend-Stress und ohne Umsatzsteuer-Fristen. Im Ernst."},
+      {"id": "2_HookC", "typ": "visual", "text": "Bildlicher Einstieg mit zwei Kalendern nebeneinander, einer voll, einer gleichmäßig. Einblendung: Ein Jahr Steuerkanzlei. Ein Jahr LohiBW."},
+      {"id": "2_Szene1", "typ": "scripted", "text": "In der Kanzlei kennst du das wahrscheinlich: Umsatzsteuer-Voranmeldungen, Lohnfristen, Jahresabschlüsse. Immer vorarbeiten, immer der nächste Stichtag."},
+      {"id": "2_Szene2", "typ": "interview", "text": "Frage an eine Mitarbeiterin, die aus einer Kanzlei kommt: Wie sahen deine Frühjahrsmonate dort aus? Sie erzählt von langen Abenden und davon, dass Urlaub nur in den Lücken ging."},
+      {"id": "2_Szene3", "typ": "scripted", "text": "Bei der LohiBW machen wir ausschließlich private Einkommensteuer. Keine Buchhaltung, keine Lohnabrechnung, keine Umsatzsteuer-Fristen."},
+      {"id": "2_Szene4", "typ": "interview", "text": "Frage an die Mitarbeiterin: Gibt es bei euch eine Hochsaison wie im Steuerbüro? Sie erzählt, dass es keine Saison gibt und das ganze Jahr gleichmäßig zu tun ist."},
+      {"id": "2_Szene5", "typ": "interview", "text": "Frage an die Mitarbeiterin: Wie ist das bei euch mit dem Urlaub? Sie erzählt, dass sich Urlaub planen lässt, ohne dass danach ein Berg wartet."},
+      {"id": "2_Szene6", "typ": "scripted", "text": "Das heißt nicht, dass Langeweile herrscht. Der Kalender ist voll und fachlich anspruchsvoll, aber planbar."},
+      {"id": "2_Szene7", "typ": "scripted", "text": "Wenn das für dich interessant klingt, dann klick auf den Button, trag dich ein, und wir lernen uns persönlich kennen."}
+    ]},
+    {"nr": 3, "titel": "Wieder mit Menschen arbeiten", "rows": [
+      {"id": "3_HookA", "typ": "scripted", "text": "Wann hat sich zuletzt jemand bei dir für deine Arbeit bedankt?"},
+      {"id": "3_HookB", "typ": "scripted", "text": "Buchhaltung im Hinterzimmer, oder willst du eigentlich mit Menschen arbeiten?"},
+      {"id": "3_HookC", "typ": "visual", "text": "Bildlicher Einstieg mit Kontrast einer Person allein am Bildschirm und einem Beratungsgespräch. Einblendung: Zahlen schieben. Oder Menschen helfen."},
+      {"id": "3_Szene1", "typ": "scripted", "text": "In vielen Kanzleien sitzt du im Hintergrund: Buchhaltung, Zahlen, Formulare. Kontakt nach außen? Wenig."},
+      {"id": "3_Szene2", "typ": "interview", "text": "Frage an eine Mitarbeiterin: Wie viel Kontakt hast du bei der LohiBW mit den Mitgliedern? Sie erzählt, dass sie die Beratungsgespräche selbst führt."},
+      {"id": "3_Szene3", "typ": "interview", "text": "Frage an die Mitarbeiterin: Wie läuft so ein Beratungstermin bei dir ab? Sie erzählt, dass das Mitglied mit Unterlagen und Fragen kommt und sie alles gemeinsam durchgehen."},
+      {"id": "3_Szene4", "typ": "interview", "text": "Frage an die Mitarbeiterin: Wie kommen die Mitglieder zu dir, und wie gehen sie wieder? Sie erzählt, dass viele mit Respekt vor dem Thema kommen und erleichtert wieder rausgehen."},
+      {"id": "3_Szene5", "typ": "interview", "text": "Frage an die Mitarbeiterin: Was gibt dir dieser Kontakt zurück? Sie erzählt, dass sich die Leute bedanken."},
+      {"id": "3_Szene6", "typ": "scripted", "text": "Manche Mitglieder begleitet man über Jahre, teilweise die ganze Familie."},
+      {"id": "3_Szene7", "typ": "scripted", "text": "Wenn du gern mit Menschen arbeitest und spüren willst, was deine Arbeit für eine Wirkung hat, dann passt du zu uns."},
+      {"id": "3_Szene8", "typ": "scripted", "text": "Also: Klick auf den Button, trag dich ein, und wir lernen uns persönlich kennen."}
+    ]},
+    {"nr": 4, "titel": "Der Steuerjob, der sich nach deinem Leben richtet", "rows": [
+      {"id": "4_HookA", "typ": "scripted", "text": "Teilzeit im Steuerfach, die auch in ein paar Monaten noch Teilzeit ist. Geht das?"},
+      {"id": "4_HookB", "typ": "scripted", "text": "Vormittags arbeiten, nachmittags für die Familie da sein. Im Steuerberuf möglich?"},
+      {"id": "4_HookC", "typ": "visual", "text": "Bildlicher Einstieg, eine Person schließt mittags die Bürotür, Schnitt in die freie Zeit. Einblendung: Bei uns richtet sich der Steuerjob nach deinem Leben, nicht umgekehrt."},
+      {"id": "4_Szene1", "typ": "scripted", "text": "Teilzeit klingt gut, bis die Saison kommt und aus Teilzeit wieder Vollzeit wird?"},
+      {"id": "4_Szene2", "typ": "interview", "text": "Frage an eine Mitarbeiterin in Teilzeit: Wie sind deine Arbeitszeiten bei der LohiBW geregelt? Sie erzählt, dass sie nur vormittags arbeitet und drum herum flexibel ist."},
+      {"id": "4_Szene3", "typ": "interview", "text": "Frage an die Mitarbeiterin: Wie war dein Wiedereinstieg, zum Beispiel nach der Familienzeit? Sie erzählt, dass sie mit ihren Kenntnissen gut wieder einsteigen konnte."},
+      {"id": "4_Szene4", "typ": "scripted", "text": "Und weil es keine geballte Saison gibt, kippt die Teilzeit auch nicht im Frühjahr."},
+      {"id": "4_Szene5", "typ": "interview", "text": "Frage an die Mitarbeiterin: Wie gut lassen sich Job und Familie vereinbaren? Sie erzählt von planbaren Terminen und verlässlichen Zeiten."},
+      {"id": "4_Szene6", "typ": "scripted", "text": "Dauerhaftes Homeoffice vom Wohnzimmer aus gibt es nicht. Beratung läuft in der Beratungsstelle oder als echte Online-Beratung. Und das Einkommen richtet sich nach den Stunden."},
+      {"id": "4_Szene7", "typ": "scripted", "text": "Also, wenn du einen Teilzeitjob oder Wiedereinstieg in den Steuerbereich suchst, dann klick auf den Button, trag dich ein, und wir lernen uns persönlich kennen."}
+    ]}
+  ]
+}

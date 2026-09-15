@@ -1,0 +1,186 @@
+[
+ {
+  "block": 1,
+  "slot": 3,
+  "trim": {
+   "src_in": 2822,
+   "frames": 41
+  },
+  "grund": "User-Kürzung in v4 (t1-029s01)"
+ },
+ {
+  "block": 2,
+  "slot": 1,
+  "grund": "von dir in v4 gelöscht (t2-075)"
+ },
+ {
+  "block": 6,
+  "slot": 1,
+  "grund": "von dir in v4 gelöscht (t2-013)"
+ },
+ {
+  "block": 1,
+  "slot": 2,
+  "grund": "von dir in v4 gelöscht (t2-010)"
+ },
+ {
+  "block": 8,
+  "slot": 5,
+  "grund": "von dir in v4 gelöscht (t1-218)"
+ },
+ {
+  "block": 2,
+  "slot": 8,
+  "grund": "von dir in v4 gelöscht (t2-151)"
+ },
+ {
+  "block": 5,
+  "slot": 9,
+  "grund": "von dir in v4 gelöscht (t2-140)"
+ },
+ {
+  "block": 1,
+  "slot": 10,
+  "grund": "leerer Slot"
+ },
+ {
+  "block": 8,
+  "slot": 11,
+  "grund": "von dir in v4 gelöscht (t1-264)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 2,
+  "slot": 11,
+  "grund": "von dir in v4 gelöscht (t1-277)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 7,
+  "slot": 11,
+  "grund": "Abendteil: Tagesbild → Party (t1-234)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 4,
+  "slot": 11,
+  "grund": "von dir in v4 gelöscht (t1-076)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 5,
+  "slot": 12,
+  "grund": "Abendteil: Tagesbild → Party (t1-042)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 4,
+  "slot": 12,
+  "grund": "Abendteil: Tagesbild → Party (t1-039)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 6,
+  "slot": 12,
+  "grund": "Abendteil: Tagesbild → Party (t1-111)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 3,
+  "slot": 12,
+  "grund": "Abendteil: Tagesbild → Party (t1-131)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 7,
+  "slot": 12,
+  "grund": "von dir in v4 gelöscht (t1-272)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 2,
+  "slot": 12,
+  "grund": "Abendteil: Tagesbild → Party (t1-108)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 8,
+  "slot": 12,
+  "grund": "Abendteil: Tagesbild → Party (t1-200)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 3,
+  "slot": 13,
+  "grund": "Abendteil: Tagesbild → Party (t1-205)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 6,
+  "slot": 13,
+  "grund": "Abendteil: Tagesbild → Party (t1-118)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ },
+ {
+  "block": 4,
+  "slot": 13,
+  "grund": "Abendteil: Tagesbild → Party (t1-232)",
+  "kategorien": [
+   "party",
+   "abend_lichter"
+  ],
+  "nur_abend": true
+ }
+]
