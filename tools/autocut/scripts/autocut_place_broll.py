@@ -49,6 +49,7 @@ from niro_autocut.broll_plan import load_profile  # noqa: E402
 from niro_autocut.charge import DEFAULTS_FILE, AutoCutError, Charge, append_protokoll  # noqa: E402
 from niro_autocut.cutlist import Cutlist, cutlist_hash  # noqa: E402
 from niro_autocut.media import proxy_for  # noqa: E402
+from niro_autocut import readback as RB  # noqa: E402
 from niro_autocut.report import write_report  # noqa: E402
 
 PLAN_FILE = "broll_plan.json"
@@ -342,6 +343,11 @@ def main(argv: list[str] | None = None) -> int:
             md_path = write_report(ch, f"{vk}-broll.md", render_layout_md(plan, placed, r_bericht, index, cl,
                                                                            warnings=res.warnings, build=out))
             out.update({"items": [i.to_dict() for i in items], "markers": [m.to_dict() for m in markers], "placed": placed})
+            try:
+                out["bau_readback"] = str(RB.schreiben(ch, session, session.find_timeline(name)))
+            except Exception as e:      # Zusatz für die Replay-Runde — der Bau bleibt gültig
+                out["bau_readback"] = None
+                out.setdefault("warnings", []).append(f"Bau-Readback nicht geschrieben: {e}")
             ch.write_json(BUILD_FILE, out)
             for w in out["warnings"]:
                 print("HINWEIS:", w)

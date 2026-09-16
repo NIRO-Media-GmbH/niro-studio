@@ -174,6 +174,7 @@ def test_build_end_to_end_with_fake(mek, monkeypatch, capsys):
     assert b["saved"] is True and b["cutlist_hash"] == cutlist_hash(ch.autocut / "cutlist.json")
     assert b["laenge"] == "00:05" and b["laenge_frames"] == 114 and b["bin"] == "AutoCut/video-1-test"
     assert b["bericht"] is None or Path(b["bericht"]).is_file()
+    assert b["bau_readback"] and Path(b["bau_readback"]).is_file()
     # Items: V1/A1 (Handles 6/8 Frames um 1,0–2,0 s), V2 mit +50; recordFrame absolut; kein A2 mehr
     assert [(i["trackIndex"], i["mediaType"], i["startFrame"], i["recordFrame"]) for i in t.items] == [
         (1, 1, 19, 90000), (1, 2, 19, 90000), (2, 1, 69, 90000)]
@@ -445,6 +446,7 @@ def test_place_v2_raster_verify_build(charge_dir, tmp_path, monkeypatch, capsys)
     bb = ch.read_json("broll_build.json")
     assert bb["status"] == "ok" and len(bb["items"]) == 3 and bb["markers"][0]["color"] == "Cyan"
     assert len(bb["placed"]) == 3 and bb["items"][0]["tempo"] == 1
+    assert bb["bau_readback"] and Path(bb["bau_readback"]).is_file()
     assert t.tracks["video"] == 3 and len(t.items) == 3
     assert (ch.ergebnisse / "video-1-test-broll.md").exists()
     assert "B-Roll-Layout v2 auf V3" in ch.protokoll.read_text(encoding="utf-8")

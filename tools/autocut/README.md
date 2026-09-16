@@ -73,6 +73,7 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE"             # Kantenprüfung am Export (Resolve nur lesend)
     "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE" --ohne-export   # nur Wortkanten am Quellton, z. B. nach Handänderungen
     "$PY" "$TOOL/scripts/autocut_schnittbild.py" "$CHARGE" --clip <Datei> --von 12.3 --bis 15.8   # Schnittbild Rohclip
+    "$PY" "$TOOL/scripts/autocut_readback.py" "$CHARGE" --timeline "<Name>"             # Bau-Readback nach Vorlagen-Bauten
 
 ## Aufbau
 

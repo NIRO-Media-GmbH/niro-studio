@@ -25,6 +25,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from niro_autocut import readback as RB  # noqa: E402
 from niro_autocut import resolve_api as RA  # noqa: E402
 from niro_autocut.charge import AutoCutError, Charge, append_protokoll  # noqa: E402
 from niro_autocut.cutlist import Cutlist, cutlist_hash  # noqa: E402
@@ -200,6 +201,11 @@ def main(argv: list[str] | None = None) -> int:
             build["bericht"] = str(report_path) if report_path else None
             if report_path is None:
                 build["bericht_hinweis"] = report_note
+            try:
+                build["bau_readback"] = str(RB.schreiben(ch, session, session.find_timeline(name)))
+            except Exception as e:      # Zusatz für die Replay-Runde — der Bau bleibt gültig
+                build["bau_readback"] = None
+                res["warnings"].append(f"Bau-Readback nicht geschrieben: {e}")
             build_json = ch.write_json("build.json", build)
 
             dateien = [str(tl_json), str(build_json)] + ([str(report_path)] if report_path else [])

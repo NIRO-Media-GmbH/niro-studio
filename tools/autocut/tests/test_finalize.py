@@ -141,3 +141,22 @@ def test_finalize_wraps_raw_exception_and_restores_user_timeline(charge_dir):
     fj = json.loads((ch.autocut / "finalize.json").read_text())
     assert fj["status"] == "fehler"
     assert fr.p.current is s.user_timeline
+
+
+def test_finalize_schreibt_bau_readback(charge_dir):
+    ch, fr, s = _prepare(charge_dir)
+    out = F.finalize(ch, s, CFG, measure=lambda p, i, d: -15.0)
+    rb = ch.autocut / "readback" / f"{out['timeline']}.json"
+    assert out["bau_readback"] == str(rb) and rb.is_file()
+
+
+def test_finalize_behaelt_hochgeladene_roh_timeline(charge_dir):
+    ch, fr, s = _prepare(charge_dir)
+    roh = ch.read_json("build.json")["timeline"]
+    replay = charge_dir / "_intern" / "replay"
+    replay.mkdir(parents=True)
+    (replay / "uploads.json").write_text(json.dumps([{"titel": roh, "timeline": roh}]), encoding="utf-8")
+    out = F.finalize(ch, s, CFG, measure=lambda p, i, d: -15.0)
+    assert out["status"] == "ok" and out["roh_geloescht"] is False
+    assert roh in [t.name for t in fr.p.timelines]
+    assert any("Replay" in w for w in out["warnings"])

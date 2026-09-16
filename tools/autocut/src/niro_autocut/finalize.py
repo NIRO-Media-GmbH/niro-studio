@@ -15,6 +15,8 @@ from pathlib import Path
 from .charge import AutoCutError
 from .timeline_model import Item, MarkerSpec
 from .ton import build_ton, measure_true_peak
+from . import readback as RB
+from .replay import ist_hochgeladen
 from . import xml_patch as X
 
 _UNSAFE = re.compile(r'[/\\:*?"<>|]+')
@@ -117,6 +119,9 @@ def finalize(charge, session, cfg: dict, keep_roh: bool = False, measure=None) -
                            f"scripts/autocut_build.py ausführen.")
     roh_name = str(build["timeline"])
     name = final_name(roh_name, suffix)
+    hochgeladen = ist_hochgeladen(charge.root, roh_name)
+    if hochgeladen:
+        keep_roh = True         # Replay-Kommentare hängen an der hochgeladenen Timeline (Spec 2026-09-16, 2.6)
     probe = charge.read_json("probe_xml.json") or {}
     if not probe.get("level_import_ok"):
         raise AutoCutError(f"{charge.autocut / 'probe_xml.json'} fehlt oder meldet level_import_ok=false — erst "
@@ -147,6 +152,8 @@ def finalize(charge, session, cfg: dict, keep_roh: bool = False, measure=None) -
         warnings: list[str] = list(ton.get("warnungen") or [])
         result["items_geprueft"] = len(expected)
         result["warnings"] = warnings
+        if hochgeladen:
+            warnings.append(f"roh-Timeline „{roh_name}“ ist nach Replay hochgeladen — bleibt stehen.")
         safe = _UNSAFE.sub("-", name).strip()
         xml_dir = _xml_dir(charge)
         xml_roh = session.export_timeline(roh, xml_dir / f"{safe}.roh.xml")
@@ -181,6 +188,10 @@ def finalize(charge, session, cfg: dict, keep_roh: bool = False, measure=None) -
             n = session.color_items(final, 3, starts, "Teal")
             if n != len(starts):
                 warnings.append(f"Clip-Farbe Teal nur bei {n} von {len(starts)} Zeitlupen-Items gesetzt.")
+        try:
+            result["bau_readback"] = str(RB.schreiben(charge, session, final))
+        except Exception as e:      # Zusatz für die Replay-Runde — das Finalisieren bleibt gültig
+            warnings.append(f"Bau-Readback nicht geschrieben: {e}")
         if not keep_roh:
             result["roh_geloescht"] = session.delete_own_timeline(roh, suffix, roh_name)
         result["status"] = "ok"
