@@ -14,7 +14,8 @@ RESOLVE_WORKFLOW = STUDIO_ROOT / "tools" / "resolve" / "WORKFLOW-Resolve.md"
 SPEC_SCRIPTS = ["autocut_prepare.py", "autocut_sync.py", "autocut_find_quote.py", "autocut_verify.py",
                 "autocut_build.py", "autocut_export_xml.py", "autocut_index_broll.py",
                 "autocut_place_broll.py", "autocut_read_timelines.py", "autocut_index_sections.py",
-                "autocut_finalize.py", "resolve_probe_xml.py", "resolve_probe_api.py"]
+                "autocut_finalize.py", "resolve_probe_xml.py", "resolve_probe_api.py",
+                "autocut_replay.py", "autocut_readback.py"]
 
 
 def _text(p) -> str:
@@ -90,3 +91,17 @@ def test_setup_and_workflow_are_on_21_1():
     workflow = _text(WORKFLOW)
     for needle in ("probe_api.json", "--project", "Resolve Studio 21.1"):
         assert needle in workflow, f"WORKFLOW-AutoCut.md: „{needle}“ fehlt"
+
+
+def test_replay_ist_dokumentiert():
+    wf = _text(WORKFLOW)
+    for needle in ("## Review in Replay", "autocut_replay.py", "--hochladen", "einsortiert", "kommentare --timeline",
+                   "finden --titel", "FrameIO", "Material/Feedback", "autocut_readback.py", "nach OK",
+                   "In Projekt verschieben"):
+        assert needle in wf, f"WORKFLOW-AutoCut.md: „{needle}“ fehlt"
+    readme = _text(README)
+    for needle in ("autocut_replay.py", "autocut_readback.py", "replay.py", "wiedergabe.py", "werkzeuge/"):
+        assert needle in readme, f"README.md: „{needle}“ fehlt"
+    claude = _text(CLAUDE_MD)
+    assert "Review in Dropbox Replay" in claude and "Replay-Marker" in claude
+    assert "10. **Dropbox Replay:**" in _text(RESOLVE_WORKFLOW)

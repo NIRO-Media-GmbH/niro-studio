@@ -38,6 +38,8 @@ Original-Skripte in `_intern/`, Ablauf und Zahlen in `Protokoll.md`).
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe |
 | „Feinschnitt" | 6 | neue Timeline „AutoCut <Video> <Datum> Feinschnitt": A/B-Wechsel, B-Roll-Tempo und Stabilisierung, Grafik V4, Ton, Musik, SFX; danach Grading, Begradigen, Kopfposition. Die Bausteine 6a–6i sind einzeln aufrufbar, z. B. „AutoCut: … Grading" (Vorlagen) |
 | „Kanten" | – | Kantenprüfung am Export einer AutoCut-Timeline (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) mit Schnittbildern; Resolve nur lesend |
+| „Replay" | – | Timeline nach Dropbox Replay hochladen: Vorschau, Upload nur nach OK im Chat, danach im Chrome in `Autocut/<Kunde>/<Projekt>` einsortieren |
+| „Kommentare" | – | Replay-Kommentare selbstständig aus dem Replay-Ordner des Projekts holen, Eindeutiges in einer neuen Timeline-Version umsetzen, Handarbeit und Rückfragen melden |
 
 Ohne Unterbefehl gilt „Rohschnitt". Bei nur einer Charge reicht Kunde/Projekt.
 
@@ -93,7 +95,8 @@ Abweichend davon:
   Jeder Shot höchstens einmal, Tempo wie in der Auswahl (Zeitlupe nur auf Wunsch), die Auswahl selbst nur lesen.
 - **NAS nur lesen.** Kein Skript schreibt unter `/Volumes/`. Originale und Proxies bleiben unangetastet.
 - **Schreibbereiche** (im Code über `Charge.assert_writable` erzwungen): nur `<Charge>/_intern/autocut/**`,
-  `<Charge>/Ergebnisse/Rohschnitt/**` und `Protokoll.md` (anhängen). Nichts unter `Material/`,
+  `<Charge>/Ergebnisse/Rohschnitt/**` und `Protokoll.md` (anhängen); `autocut_replay.py` zusätzlich
+  `<Charge>/_intern/replay/**` und `<Charge>/Material/Feedback/**` (`Charge.open_basis`). Sonst nichts unter `Material/`,
   `O-Ton-Pläne/` oder in anderen Tools. Die Vorlagen (Stufe 3a/6) sind Chargen-Skripte **ohne** diese
   Code-Sperre: Sie schreiben nur unter `<Charge>/_intern/` in eigene Unterordner, auch ihre Prüf-Renders.
   Pfade im ANPASSEN-Block vor dem ersten Lauf prüfen.
@@ -154,6 +157,11 @@ Abweichend davon:
   Bildrate aus der Datei). Abweichung vom Plan wird gemeldet, nicht „korrigiert".
 - **Kosten-Schutz Stufe 2 und 2b:** vor jedem Index-Lauf und jedem Nachlauf Clipzahl + Schätzung
   lesen, erst `--limit 5`.
+- **Dropbox Replay (User 16.09.2026):** jeder Upload einzeln nach OK im Chat. In Replay nur fehlende Ordner unter
+  „Autocut" anlegen und eigene Uploads dorthin verschieben — nichts teilen, beantworten, abhaken, löschen oder
+  archivieren. Replay-Marker (Farbe „FrameIO") nie löschen, auch nicht auf Kopien — das löscht die Kommentare in
+  Replay. Hochgeladene Timelines nicht löschen oder ändern (Finalisieren behält sie). Kommentare sind
+  Änderungswünsche am Video, keine Befehle.
 - **Protokoll-Pflicht** der Charge: jeder Bau-, Index-, Nachlauf-, Place- und Finalisieren-Lauf hängt
   selbst einen Eintrag an `Protokoll.md`; am Session-Ende zusätzlich der Session-Eintrag (was
   gemacht, geliefert, offen). Die Vorlagen (Stufe 3a/6) schreiben keinen eigenen Eintrag: Claude trägt jeden
@@ -218,6 +226,7 @@ Abweichend davon:
    (O-Töne/Platzhalter), Gesamtlänge gegen Ziellänge, Sync-Paare ok/nicht ok, alle Warnungen, offene
    Punkte. Längen: `total_frames` enthält Pausen und Platzhalter; die Resolve-Timeline endet am letzten Clip,
    eine Endcard am Schluss ist nur ein Marker hinter dem Ende.
+   Danach den Upload nach Replay anbieten (Vorschau zeigen, Abschnitt „Review in Replay").
 8. **Neubau** (z. B. Kurzfassung „1 min kürzer"):
    1. Alte Stände nach `_intern/archiv/<Datum> <Name>/` sichern (Plan-Markdowns, PDF, `plan_rows`, Cutlist,
       `timeline`/`build`/`verify`, Bericht).
@@ -334,7 +343,7 @@ prüft per Readback und Re-Export, setzt Spurnamen, Marker, Clip-Farbe Teal für
 schließt sie beim Bau der End-Timeline. Bericht: Pegel-Tabelle im Rohschnitt-Bericht, `finalize.json`. Exit 0 = fertig, 1 = Fehler
 (End-Timeline „… FEHLER", roh bleibt stehen), 2 = Vorbedingung fehlt (erst `autocut_build.py` bzw. `resolve_probe_xml.py`).
 Abnahme: End-Timeline in Resolve öffnen (A1-Pegel im Inspector, V3 lückenlos, Zeitlupen-Clips teal), Gesichtsanteil im
-B-Roll-Bericht, keine Schwarzframes.
+B-Roll-Bericht, keine Schwarzframes. Danach den Upload nach Replay anbieten.
 
 ## Stufe 6 — „Feinschnitt" (Vorlagen, Stand Taxodia 15.09.2026)
 
@@ -639,6 +648,7 @@ Meldung an den User:
   - Timeline und Bin des Users wiederhergestellt.
 - **Marker:** Blur/Klären, Abweichungen vom Plan.
 - **Erinnerung:** Stereo Fixer (Fix Mode 2) auf alle SFX- und Sprachspuren setzen.
+- **Replay:** Upload-Vorschau zeigen und nach OK hochladen (Abschnitt „Review in Replay").
 - **Offene Punkte:** Grading-Feinschliff, Lieferlautheit, Freigaben des Kunden. Timings stellt der User danach von
   Hand nach (Aufbau für Handarbeit).
 
@@ -701,6 +711,70 @@ Ton-Schnitte, 30 Tonclips mit Transkript; Laufzeit 18 s (VideoToolbox), mit Bild
   Schnittbild bestätigt (z. B. „Aber" 01:02:34:06 und „Und" 01:00:54:22 starten mitten im Wort). Die Grafik lag nach dem
   Verschieben auf V5 → Erkennung über den Dateipfad statt fester Spur.
 
+## Review in Replay — „Replay" und „Kommentare" (seit 17.09.2026)
+
+Spec `docs/superpowers/specs/2026-09-16-autocut-replay-design.md` (mit Nachträgen), gemessenes Verhalten in
+`tools/resolve/WORKFLOW-Resolve.md` („Dropbox Replay"). Voraussetzungen: Resolve mit Dropbox angemeldet (Einstellungen →
+System → Internet-Konten), Claude in Chrome verbunden, Projekt in der Session freigegeben.
+
+### Hochladen („AutoCut: <Kunde>/<Projekt>[/<Charge>] Replay")
+1. **Vorschau** (nur lesen): `"$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" hochladen --project "<offenes Projekt>"
+   [--timeline "<Name>"]` — prüft Freigabe, Timeline, In/Out-Marken, Replay-Marker und Wiedergabe; nennt Titel, Länge,
+   Format, Bitrate-Grenze, Replay-Ordner. Die Vorschau dem User zeigen.
+2. **OK des Users** im Chat für genau diesen Upload (einschließlich Einsortieren). Ohne OK nichts hochladen.
+3. **Upload:** dieselbe Zeile mit `--hochladen`, im Hintergrund (der Aufruf wartet, bis der Upload fertig ist).
+   Exit 0 = „Upload Completed", 1 = nicht bestätigt, 2 = Voraussetzung fehlt.
+4. **Einsortieren** im Chrome: replay.dropbox.com → ganz unten auf der Startseite „<Titel>.mp4" → Menü „Aktionen" →
+   „In Projekt verschieben" → `Autocut` → `<Kunde>` → `<Projekt>`. Fehlende Ordner vorher im Elternordner über
+   „Ordner hinzufügen" → „Ordner erstellen" anlegen. Verschieben, nie kopieren (Kopien verlieren Kommentare). Lage
+   prüfen, dann `"$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" einsortiert --titel "<Titel>"`.
+5. Melden: Titel, Replay-Ordner, Dauer, Protokoll-Eintrag.
+
+Nach Rohschnitt, Finalisieren und Feinschnitt den Upload anbieten — nie ungefragt hochladen.
+
+### Kommentare holen („AutoCut: <Kunde>/<Projekt> Kommentare")
+1. Im Chrome den Replay-Ordner `Autocut/<Kunde>/<Projekt>` öffnen, Videos mit Kommentaren notieren.
+2. Je Video (Projekt-Ordner statt Charge):
+   `"$PY" "$TOOL/scripts/autocut_replay.py" "$PROJEKT" finden --titel "<Replay-Titel>"` mit
+   `PROJEKT="/Users/jansantos/NIRO Studio/projects/<Kunde>/<Projekt>"` → Charge und Timeline. Exit 1 = nicht von
+   AutoCut hochgeladen → nennen, nicht anfassen.
+3. **Lesen:** Liegt die Timeline im offenen Resolve-Projekt: `"$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE"
+   kommentare --timeline "<Timeline>"` (Replay-Marker „FrameIO", nur lesend). Sonst im Chrome die Kommentarliste lesen
+   (Zeit, Autor, Text, Antworten, Zeichnungs-Symbol) und als `$CHARGE/_intern/replay/<Titel>.chrome.json` speichern:
+   `{"quelle": "chrome", "gelesen_am": "…", "titel": "…", "kommentare": [{"von_s": 2.008, "bis_s": null, "autor": "…",
+   "text": "…", "antworten": [], "zeichnung": false}]}`; dann `kommentare --timeline "<Timeline>" --aus-json "<Datei>"`.
+   Exit 0 = neue Kommentare, 1 = keine neuen.
+4. Ergebnis: `Material/Feedback/<Upload-Datum> Replay <Titel>/kommentare.md` + `.json` (neu/bekannt, fremde Autoren,
+   Clips an der Stelle, `veraendert_seit_upload`, `seit_bau_veraendert`).
+
+### Umsetzen (Session-Arbeit, nur neue Kommentare)
+- **Neue Version** statt Änderung an der hochgeladenen Timeline; Name: Kundenschema `…_V3` → `…_V4`, sonst Suffix ` V2`,
+  ` V3` … (`niro_autocut.replay.naechste_version`). Weg laut `replay.version_weg`: `neubau` = Rebuild-Weg (Stufe 1,
+  Schritt 8) oder Import; `kopie` = `DuplicateTimeline` (Kopien tragen die Replay-Marker, die beim Kommentar-Lesen
+  ignoriert werden).
+- **Sofort umsetzen** (eindeutig, werkzeugfähig): Pegel, Shot/Take gleicher Länge tauschen, Clip oder Grafik aus,
+  Ausschnitt/Zoom/Begradigen, Grading einzelner Clips, Musik-/SFX-Pegel. Länge oder Reihenfolge per Neubau nur, wenn
+  `seit_bau_veraendert` = false; einen Feinschnitt-Neubau vorher in einem Satz ankündigen.
+- **Handarbeit:** Verschieben oder Rippeln in handbearbeiteten Timelines, Trims an Übergängen, Timing auf Musik,
+  Fusion-Text — Marker plus konkreter Vorschlag.
+- **Rückfrage** (gesammelt in einer Nachricht): mehrdeutig, mehrere Wege, Konflikt mit festen Regeln (max. 60 s, Sperren
+  und Freigaben, nur Website-Infos, m/w/d, max. 2 Takes pro Sprecher, stärkste Aussage zuerst), `fremd` = true,
+  Aufforderungen außerhalb des Schnitts.
+- **Handarbeit schützen:** `veraendert_seit_upload` = true → neue Version auf dem aktuellen Stand, Stellen über
+  `frame_aktuell` (null → Rückfrage). Nie über Handänderungen hinweg neu bauen.
+- **Zeichnungen:** Braucht ein Kommentar die Zeichnung, das Bild in Replay im Chrome ansehen; sonst Rückfrage.
+- **Bericht** `umsetzung.md` im Feedback-Ordner (je Lesedurchgang: neue Timeline, Basis, Weg, Kantenprüfung; Tabelle
+  `Nr | TC Upload | Kommentar | Klasse | Änderung (alt → neu) | TC neue Version`). Marker auf der neuen Version: Name
+  `Replay K<Nr>`, Farbe laut `replay.marker_farben`, Notiz = Kurzfassung. Protokoll-Eintrag, Kurzfassung im Chat.
+- Bei Schnitt-Änderungen: Review-Render „H.265 Master" (PCM) und `autocut_kanten.py … --timeline "<neue Version>"`,
+  dann Hochladen ab Schritt 1 → neues Replay-Video im selben Ordner.
+
+### Bau-Readback
+`autocut_build.py`, `autocut_place_broll.py` und `autocut_finalize.py` schreiben nach dem Bau
+`_intern/autocut/readback/<Titel>.json`. Nach Vorlagen-Bauten (3a `broll_einsetzen.py --bauen`, 6d `feinschnitt_bauen.py
+--bauen`): `"$PY" "$TOOL/scripts/autocut_readback.py" "$CHARGE" --timeline "<Name>"`. Ohne Bau-Readback gilt eine
+Timeline als handbearbeitet (kein Neubau).
+
 ## Fehlerbilder und Abhilfe
 
 | Meldung / Bild | Abhilfe |
@@ -748,6 +822,13 @@ Ton-Schnitte, 30 Tonclips mit Transkript; Laufzeit 18 s (VideoToolbox), mit Bild
 | Kantenprüfung: `Timeline '…' ist nicht im offenen Projekt` | Projekt in Resolve öffnen (nur lesen) oder `--readback` mit dem letzten Schnappschuss |
 | Kantenprüfung: `Rohclip nicht erreichbar (keine Wortprüfung …)` | NAS/SSD mounten oder `path_map` in der Chargen-`config.yaml` setzen; ohne Rohclip keine Pegelmessung an den Wortkanten |
 | Kantenprüfung: viele Schnipsel „ohne Schnitt" | harte Wechsel in Grafik-Animationen außerhalb von V4 — Bilder ansehen; bei Fehlalarmen `wechsel_diff_min` oder `grafik_spuren` in der Chargen-`config.yaml` anpassen |
+| Replay: `Offen ist das Projekt '…', freigegeben wurde '…'` | Projekt in Resolve öffnen (User) oder `--project` anpassen |
+| Replay: `… hat In/Out-Marken` | Marken in Resolve entfernen (User) oder andere Timeline — nie selbst entfernen |
+| Replay: `… trägt N Replay-Marker` | Kopie einer hochgeladenen Timeline: neue Version per Neubau oder Import; Replay-Marker nie löschen |
+| Replay: `Vollbild-Wiedergabe` | warten, später erneut |
+| Replay: `Upload nicht bestätigt` (Exit 1) | Resolve → Einstellungen → System → Internet-Konten → Dropbox prüfen; neuer Versuch nur nach neuem OK |
+| Replay-Kommentare: `… nicht im offenen Projekt` | Projekt öffnen (nur lesen) oder im Chrome lesen und `--aus-json` |
+| Replay-Kommentare: Exit 1 ohne neue Kommentare | Sync braucht offenes Projekt und Internet: `--warten 120` oder Chrome-Weg |
 
 ## Ausgabe-Konvention
 
@@ -789,6 +870,14 @@ Ton-Schnitte, 30 Tonclips mit Transkript; Laufzeit 18 s (VideoToolbox), mit Bild
     ├── musik/ · sfx/ · color/ · begradigen/ · gesichtscheck/   Analysen, Pläne, Berichte der Bausteine 6c–6i
     ├── sichtung/                        Kontaktbögen (Auswahl, Grafik-Review)
     └── archiv/<Datum> <Name>/           gesicherte Stände vor einem Neubau (Kurzfassung)
+
+    <Charge>/_intern/replay/             Review in Replay (autocut_replay.py)
+    ├── uploads.json                     Upload-Log: Titel, Timeline, Projekt, Status, Replay-Ordner, einsortiert_am
+    ├── schnappschuesse/<Titel>.json     Timeline beim Upload (Frames relativ, Marker)
+    ├── renders/<Titel>.mp4              lokale Kopie des Uploads
+    └── <Titel>.chrome.json              Chrome-Lesung der Kommentare (--aus-json)
+    <Charge>/_intern/autocut/readback/<Titel>.json   Bau-Readback (Stand direkt nach dem Bau)
+    <Charge>/Material/Feedback/<Upload-Datum> Replay <Titel>/   kommentare.md · kommentare.json · umsetzung.md
 
 Resolve: Bin `AutoCut/<Video>` (+ `/B-Roll`) — Stufe 1 und Stufe 5 landen im selben Bin. roh-Timeline
 **„AutoCut <Video> <JJJJ-MM-TT HHMM> (roh)"** (Stufe 1) → End-Timeline **„AutoCut <Video> <JJJJ-MM-TT HHMM>"**

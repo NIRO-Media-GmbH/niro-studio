@@ -2,6 +2,7 @@
 
 Aufruf: tools/autocut/venv/bin/python _intern/feinschnitt_bauen.py            → Probelauf (Plan, Prüfungen, Schwarzframe-Rechnung)
         tools/autocut/venv/bin/python _intern/feinschnitt_bauen.py --bauen    → Timeline im freigegebenen Projekt PROJEKT bauen + Readback
+        danach:  tools/autocut/venv/bin/python tools/autocut/scripts/autocut_readback.py "<Charge>" --timeline "<Name>"  → Bau-Readback (Replay-Runde)
 
 User-Wünsche (15.09.): keine Schwarzframes (alles mit Grafik oder B-Roll gedeckt), Grafiken inkl. Vollbild,
 A/B-Perspektiven wechseln, hier und da L-/J-Cuts, Musik (mehrere Tracks, Wechsel pro Thema, nahtlose Übergänge),

@@ -32,6 +32,8 @@ Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" 
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe aus der roh-Timeline |
 | „Feinschnitt" | 6 | neue Feinschnitt-Timeline: A/B-Wechsel, B-Roll-Tempo/Stabilisierung, Grafik V4, Ton, Musik, SFX, danach Grading, Begradigen, Kopfposition (Vorlagen) |
 | „Kanten" | – | Kantenprüfung am Export (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) + Schnittbilder; Resolve nur lesend |
+| „Replay" | – | Timeline nach Dropbox Replay hochladen (Vorschau, Upload nach OK), einsortieren in `Autocut/<Kunde>/<Projekt>` |
+| „Kommentare" | – | Replay-Kommentare holen (`kommentare.md` im Feedback-Ordner), Umsetzung in neuer Timeline-Version |
 
 Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 
@@ -74,6 +76,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE" --ohne-export   # nur Wortkanten am Quellton, z. B. nach Handänderungen
     "$PY" "$TOOL/scripts/autocut_schnittbild.py" "$CHARGE" --clip <Datei> --von 12.3 --bis 15.8   # Schnittbild Rohclip
     "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" hochladen --project "<Projekt>"   # Vorschau; --hochladen nur nach OK
+    "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" einsortiert --titel "<Titel>"     # nach dem Verschieben im Chrome
+    "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" kommentare                         # Replay-Kommentare holen
     "$PY" "$TOOL/scripts/autocut_readback.py" "$CHARGE" --timeline "<Name>"             # Bau-Readback nach Vorlagen-Bauten
 
 ## Aufbau
@@ -105,6 +109,10 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
       kanten_medien.py       Export lesen: ffprobe, Graustufen-Metriken je Frame (Cache), Ton als PCM
       kanten_bericht.py      Bericht <video>-kanten.md
       schnittbild.py         PNG: Filmstreifen + Pegel + Wörter + Schnitte (nach video-use, MIT)
+      replay.py              Replay: Titel, Versionsname, Replay-Ordner, Bitrate-Grenze, Upload-Log, finde_upload
+      replay_kommentare.py   Replay-Kommentare aus FrameIO-Markern/Chrome-JSON, Clips, Stand-Vergleich, kommentare.md
+      readback.py            Bau-Readback (_intern/autocut/readback/) für „seit dem Bau von Hand geändert?"
+      wiedergabe.py          Vollbild-Wiedergabe über werkzeuge/fenster.swift erkennen
     scripts/                 CLI je Schritt (siehe Schnellstart; autocut_read_timelines.py für Stufe 4,
                              resolve_probe_xml.py für die Finalisieren-Vorprobe,
                              resolve_probe_api.py für die 21.1-API-Probe (--project = Freigabe), setup_env.py für die .env)
@@ -113,6 +121,7 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     vorlagen/feinschnitt/    Chargen-Skripte für Stufe 3a/6 (Stand Taxodia 15.09.2026) mit ANPASSEN-Block; spiegeln
                              <Charge>/_intern/ (musik/, sfx/, color/, gesichtscheck/, begradigen/, werkzeuge/) —
                              Ordner in die Charge kopieren, Übersicht in vorlagen/README.md
+    werkzeuge/               fenster.swift (Fensterliste von Resolve, von wiedergabe.py aufgerufen)
     tests/                   pytest (Einheiten + Fake-Resolve, Fixtures aus MEK-Auszügen)
     docs/referenz/           Recherche-Material außerhalb des Produktivpfads (GCC-PHAT-Sync-Rezept)
 
@@ -124,6 +133,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 `probe_api.json`, `ton.json`, `finalize.json`, `kanten_readback.json`, `kanten.json`, `work/` (Audio, Frames,
 Kontaktbögen/Abschnittsbögen, `kanten/` Bild-Metriken, `schnittbild/` PNGs,
 `ton_cache.json`, `xml/`, `probe_api/` (synthetische Medien, Render)).
+`_intern/autocut/readback/<Titel>.json` (Bau-Readback). `_intern/replay/`: `uploads.json`, `schnappschuesse/`, `renders/`,
+`<Titel>.chrome.json`. `Material/Feedback/<Upload-Datum> Replay <Titel>/`: `kommentare.md`, `kommentare.json`, `umsetzung.md`.
 `Ergebnisse/Rohschnitt/`: `<video>-rohschnitt.md` (mit Pegel-Abschnitt nach Stufe 5), `broll-index.md`,
 `<video>-raster.md`, `<video>-broll.md`, `<video>-kanten.md`, `<Timeline>.xml`.
 Stufe 3a/6 (Vorlagen): `_intern/autocut/broll_auswahl.json`, `broll_einsatz.json`, `audio.json`,

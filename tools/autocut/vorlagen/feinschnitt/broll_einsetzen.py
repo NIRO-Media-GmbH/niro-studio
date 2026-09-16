@@ -2,6 +2,7 @@
 
 Aufruf:  tools/autocut/venv/bin/python _intern/broll_einsetzen.py            → Probelauf (nur rechnen und prüfen)
          tools/autocut/venv/bin/python _intern/broll_einsetzen.py --bauen    → V3 in Resolve füllen + Readback
+         danach: tools/autocut/venv/bin/python tools/autocut/scripts/autocut_readback.py "<Charge>" --timeline "<Name>"  → Bau-Readback (Replay-Runde)
 
 Quelle:  _intern/autocut/broll_auswahl.json (Auswahl-Timeline des Users, per _intern/broll_auswahl.py gelesen),
          _intern/autocut/timeline.json (Beats, Timeline-Ende), _intern/autocut/probe.json (endFrame-Semantik).

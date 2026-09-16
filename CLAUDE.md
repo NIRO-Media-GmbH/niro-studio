@@ -39,7 +39,7 @@ Datei bei der ersten Session anlegen.
 | „Schnittplan: <Kunde>/<Projekt>[/<Charge>]" | Roh-Footage → Cutter-Schnittanweisungen (PDF, Lesbarkeit vor Seitenbudget, max. 20 Seiten) | `tools/transcribe/WORKFLOW-Schnittplan.md` |
 | „Animation: <Kunde>/<Projekt>[/<Charge>]" | Remotion Motion Graphics | `tools/motion/WORKFLOW-Motion.md` |
 | „Foto: <Kunde>/<Projekt>[/<Charge>]" | ARW-RAWs → Culling, Look, fertige Bilder | `tools/photo/WORKFLOW-Foto.md` |
-| „AutoCut: <Kunde>/<Projekt>[/<Charge>]" | Schnittplan → Rohschnitt-Timeline in Resolve (roh) → B-Roll aus der Auswahl-Timeline des Users → Feinschnitt (A/B-Wechsel, Grafik, Ton, Musik, SFX, Grading, Begradigen; Vorlagen) · Finalisieren (Pegel, Zeitlupe) · Kantenprüfung am Export | `tools/autocut/WORKFLOW-AutoCut.md` |
+| „AutoCut: <Kunde>/<Projekt>[/<Charge>]" | Schnittplan → Rohschnitt-Timeline in Resolve (roh) → B-Roll aus der Auswahl-Timeline des Users → Feinschnitt (A/B-Wechsel, Grafik, Ton, Musik, SFX, Grading, Begradigen; Vorlagen) · Finalisieren (Pegel, Zeitlupe) · Kantenprüfung am Export · Review in Dropbox Replay (Upload nach OK, Kommentare holen) | `tools/autocut/WORKFLOW-AutoCut.md` |
 | „Resolve: <Aufgabe>" | Ad-hoc-Arbeit im offenen Resolve-Projekt über den nativen MCP (lesen, prüfen, rendern, importieren) | `tools/resolve/WORKFLOW-Resolve.md` |
 
 Beim Trigger die jeweilige Workflow-Datei lesen und ihr folgen.
@@ -63,6 +63,10 @@ die Charge wird dann automatisch gefunden.
   nach einem Abbruch später trotzdem. Arbeitet der User parallel in Resolve, Timeline-Wechsel
   vorher abstimmen; von Hand Geändertes nie überschreiben. Gemessenes API-Verhalten:
   `tools/resolve/WORKFLOW-Resolve.md`.
+- **Dropbox Replay:** Upload nur nach OK je Upload; in Replay nur fehlende Ordner unter „Autocut" anlegen und
+  eigene Uploads dorthin verschieben — nichts teilen, beantworten, abhaken, löschen oder archivieren; Replay-Marker
+  (Farbe „FrameIO") nie löschen (löscht die Kommentare in Replay); hochgeladene Timelines nicht löschen oder ändern.
+  Ablauf: `tools/autocut/WORKFLOW-AutoCut.md` („Review in Replay").
 
 ## Umgebung
 
