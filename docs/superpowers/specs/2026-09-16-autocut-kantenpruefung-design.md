@@ -59,7 +59,7 @@ Abgeleitet:
 - **Ton-aktiv-Maske:** je Frame, ob ein aktives A-Item liegt; erstes und letztes Frame jedes Items zählen nicht
   (Blenden).
 
-### 2. Messen am Export (`kanten.py`)
+### 2. Messen am Export (`kanten_medien.py`)
 
 - **Bild:** ein ffmpeg-Durchlauf (`-hwaccel videotoolbox`, Rückfall Software) → Graustufen 96×54 je Frame
   (`scale=96:54:flags=area,format=gray`, rawvideo-Pipe). Daraus je Frame `mittel`, `streuung` und
@@ -124,7 +124,7 @@ Wörter im Export-Modus: aus den A-Items des Schnappschusses auf die Export-Zeit
 `autocut_schnittbild.py` schreibt nur das PNG (Standard unter `_intern/autocut/work/schnittbild/`) und druckt den Pfad.
 Alle Schreibziele liegen in den AutoCut-Schreibbereichen (`Charge.assert_writable`); Resolve wird nur gelesen.
 
-### 6. Bericht `<video>-kanten.md`
+### 6. Bericht `<video>-kanten.md` (`kanten_bericht.py`)
 
 Kopf (Timeline, Schnappschuss-Quelle und Zeit, Export mit Frames/fps/Codec), Prüfumfang (Bild-/Ton-Schnitte, Items mit
 Transkript, Items ohne Transkript), Befunde je Art, Tabelle `Nr | Art | Timecode | Frames | Wert | Kontext | Bild`,
