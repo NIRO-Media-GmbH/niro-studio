@@ -1,49 +1,51 @@
 {
  "timeline": "AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt",
  "fps": 25.0,
- "laenge": 6845,
+ "laenge": 6625,
  "umfang": {
-  "bild_schnitte": 122,
-  "ton_schnitte": 136,
-  "mit_transkript": 30,
-  "ohne_transkript": 8,
-  "ohne_liste": [
-   "2050 - Interpretation of a Dream.wav",
-   "Campagna - Wherever You Want to Go.wav",
-   "Ikoliks - New Day - No Backing Vocals.wav"
-  ]
+  "bild_schnitte": 143,
+  "ton_schnitte": 147,
+  "mit_transkript": 38,
+  "ohne_transkript": 0,
+  "ohne_liste": [],
+  "ohne_quelle": 0,
+  "ohne_quelle_liste": []
  },
  "zaehlung": {
   "Schwarzbild": 0,
   "Schnipsel": 0,
-  "Knackser": 4,
+  "Knackser": 0,
   "Tonloch": 0,
-  "Wort angeschnitten": 0
+  "Wort angeschnitten": 8
  },
  "befunde": [
   {
-   "art": "Knackser",
-   "frame": 107,
+   "art": "Wort angeschnitten",
+   "frame": 1371,
    "frames": 1,
-   "wert": 12.3,
-   "spitze": 0.0094,
-   "versatz_ms": -0.9,
-   "kanal": 1,
+   "wert": -7.6,
+   "kante_dbfs": -38.5,
+   "wort": "nicht.",
+   "seite": "out",
+   "spur": "A1",
+   "clip": "FX3_0222.MP4",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0222.MP4",
+   "quell_s": 269.84,
    "nr": 1,
-   "timecode": "01:00:04:07",
+   "timecode": "01:00:54:21",
    "kontext": {
     "bild_schnitt": {
-     "frame": 88,
-     "abstand": -19
+     "frame": 1372,
+     "abstand": 1
     },
     "ton_schnitt": {
-     "frame": 107,
-     "abstand": 0
+     "frame": 1372,
+     "abstand": 1
     },
     "items": [
      {
       "spur": "A1",
-      "name": "FX3_0223.MP4"
+      "name": "FX3_0222.MP4"
      },
      {
       "spur": "A2",
@@ -51,29 +53,89 @@
      },
      {
       "spur": "V1",
-      "name": "FX3_0223.MP4"
+      "name": "FX3_0222.MP4"
+     },
+     {
+      "spur": "V3",
+      "name": "C0253.MP4"
+     },
+     {
+      "spur": "V4",
+      "name": "Adjustment Clip"
      }
     ]
    },
-   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_001_knackser_01-00-04-07.png"
+   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_001_wort_01-00-54-21.png"
   },
   {
-   "art": "Knackser",
-   "frame": 1689,
+   "art": "Wort angeschnitten",
+   "frame": 1372,
    "frames": 1,
-   "wert": 25.1,
-   "spitze": 0.0134,
-   "versatz_ms": 0.6,
-   "kanal": 1,
+   "wert": -2.1,
+   "kante_dbfs": -32.1,
+   "wort": "Und",
+   "seite": "in",
+   "spur": "A1",
+   "clip": "FX3_0222.MP4",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0222.MP4",
+   "quell_s": 280.12,
    "nr": 2,
-   "timecode": "01:01:07:14",
+   "timecode": "01:00:54:22",
    "kontext": {
     "bild_schnitt": {
-     "frame": 1689,
+     "frame": 1372,
      "abstand": 0
     },
     "ton_schnitt": {
-     "frame": 1689,
+     "frame": 1372,
+     "abstand": 0
+    },
+    "items": [
+     {
+      "spur": "A1",
+      "name": "FX3_0222.MP4"
+     },
+     {
+      "spur": "A2",
+      "name": "Campagna - Wherever You Want to Go.wav"
+     },
+     {
+      "spur": "V1",
+      "name": "FX3_0222.MP4"
+     },
+     {
+      "spur": "V3",
+      "name": "C0253.MP4"
+     },
+     {
+      "spur": "V4",
+      "name": "Adjustment Clip"
+     }
+    ]
+   },
+   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_002_wort_01-00-54-22.png"
+  },
+  {
+   "art": "Wort angeschnitten",
+   "frame": 3217,
+   "frames": 1,
+   "wert": -4.5,
+   "kante_dbfs": -38.2,
+   "wort": "äh,",
+   "seite": "in",
+   "spur": "A1",
+   "clip": "FX3_0223.MP4",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4",
+   "quell_s": 645.08,
+   "nr": 3,
+   "timecode": "01:02:08:17",
+   "kontext": {
+    "bild_schnitt": {
+     "frame": 3217,
+     "abstand": 0
+    },
+    "ton_schnitt": {
+     "frame": 3217,
      "abstand": 0
     },
     "items": [
@@ -82,12 +144,12 @@
       "name": "FX3_0223.MP4"
      },
      {
-      "spur": "A2",
-      "name": "Campagna - Wherever You Want to Go.wav"
-     },
-     {
       "spur": "A3",
       "name": "2050 - Interpretation of a Dream.wav"
+     },
+     {
+      "spur": "A4",
+      "name": "Menu Select.wav"
      },
      {
       "spur": "V1",
@@ -95,69 +157,193 @@
      },
      {
       "spur": "V4",
+      "name": "Adjustment Clip"
+     },
+     {
+      "spur": "V5",
       "name": "taxodia-grafikebene-v2.mov"
      }
     ]
    },
-   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_002_knackser_01-01-07-14.png"
+   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_003_wort_01-02-08-17.png"
   },
   {
-   "art": "Knackser",
-   "frame": 4237,
+   "art": "Wort angeschnitten",
+   "frame": 3661,
    "frames": 1,
-   "wert": 18.6,
-   "spitze": 0.0068,
-   "versatz_ms": -0.5,
-   "kanal": 2,
-   "nr": 3,
-   "timecode": "01:02:49:12",
-   "kontext": {
-    "bild_schnitt": {
-     "frame": 4237,
-     "abstand": 0
-    },
-    "ton_schnitt": {
-     "frame": 4237,
-     "abstand": 0
-    },
-    "items": [
-     {
-      "spur": "A1",
-      "name": "FX3_0223.MP4"
-     },
-     {
-      "spur": "A2",
-      "name": "Ikoliks - New Day - No Backing Vocals.wav"
-     },
-     {
-      "spur": "V1",
-      "name": "FX3_0223.MP4"
-     },
-     {
-      "spur": "V3",
-      "name": "C0255.MP4"
-     }
-    ]
-   },
-   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_003_knackser_01-02-49-12.png"
-  },
-  {
-   "art": "Knackser",
-   "frame": 4254,
-   "frames": 1,
-   "wert": 12.6,
-   "spitze": 0.0141,
-   "versatz_ms": 1.6,
-   "kanal": 1,
+   "wert": -1.8,
+   "kante_dbfs": -38.9,
+   "wort": "Und",
+   "seite": "out",
+   "spur": "A1",
+   "clip": "FX3_0222.MP4",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0222.MP4",
+   "quell_s": 1482.32,
    "nr": 4,
-   "timecode": "01:02:50:04",
+   "timecode": "01:02:26:11",
    "kontext": {
     "bild_schnitt": {
-     "frame": 4254,
+     "frame": 3662,
+     "abstand": 1
+    },
+    "ton_schnitt": {
+     "frame": 3661,
+     "abstand": 0
+    },
+    "items": [
+     {
+      "spur": "A1",
+      "name": "FX3_0222.MP4"
+     },
+     {
+      "spur": "A2",
+      "name": "Ikoliks - New Day - No Backing Vocals.wav"
+     },
+     {
+      "spur": "A3",
+      "name": "2050 - Interpretation of a Dream.wav"
+     },
+     {
+      "spur": "A4",
+      "name": "Whoosh 2-4.wav"
+     },
+     {
+      "spur": "V1",
+      "name": "FX3_0222.MP4"
+     },
+     {
+      "spur": "V3",
+      "name": "C0254.MP4"
+     },
+     {
+      "spur": "V4",
+      "name": "Adjustment Clip"
+     },
+     {
+      "spur": "V5",
+      "name": "taxodia-grafikebene-v2.mov"
+     }
+    ]
+   },
+   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_004_wort_01-02-26-11.png"
+  },
+  {
+   "art": "Wort angeschnitten",
+   "frame": 3856,
+   "frames": 1,
+   "wert": -2.4,
+   "kante_dbfs": -25.7,
+   "wort": "Aber",
+   "seite": "in",
+   "spur": "A1",
+   "clip": "FX3_0228.MP4",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0228.MP4",
+   "quell_s": 543.44,
+   "nr": 5,
+   "timecode": "01:02:34:06",
+   "kontext": {
+    "bild_schnitt": {
+     "frame": 3856,
      "abstand": 0
     },
     "ton_schnitt": {
-     "frame": 4254,
+     "frame": 3856,
+     "abstand": 0
+    },
+    "items": [
+     {
+      "spur": "A1",
+      "name": "FX3_0228.MP4"
+     },
+     {
+      "spur": "A2",
+      "name": "Ikoliks - New Day - No Backing Vocals.wav"
+     },
+     {
+      "spur": "V1",
+      "name": "FX3_0228.MP4"
+     },
+     {
+      "spur": "V3",
+      "name": "C0260.MP4"
+     },
+     {
+      "spur": "V4",
+      "name": "Adjustment Clip"
+     }
+    ]
+   },
+   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_005_wort_01-02-34-06.png"
+  },
+  {
+   "art": "Wort angeschnitten",
+   "frame": 4905,
+   "frames": 1,
+   "wert": -9.8,
+   "kante_dbfs": -41.7,
+   "wort": "äh,",
+   "seite": "in",
+   "spur": "A1",
+   "clip": "FX3_0228.MP4",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0228.MP4",
+   "quell_s": 302.96,
+   "nr": 6,
+   "timecode": "01:03:16:05",
+   "kontext": {
+    "bild_schnitt": {
+     "frame": 4905,
+     "abstand": 0
+    },
+    "ton_schnitt": {
+     "frame": 4905,
+     "abstand": 0
+    },
+    "items": [
+     {
+      "spur": "A1",
+      "name": "FX3_0228.MP4"
+     },
+     {
+      "spur": "A2",
+      "name": "Ikoliks - New Day - No Backing Vocals.wav"
+     },
+     {
+      "spur": "V1",
+      "name": "FX3_0228.MP4"
+     },
+     {
+      "spur": "V3",
+      "name": "C0255.MP4"
+     },
+     {
+      "spur": "V4",
+      "name": "Adjustment Clip"
+     }
+    ]
+   },
+   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_006_wort_01-03-16-05.png"
+  },
+  {
+   "art": "Wort angeschnitten",
+   "frame": 5812,
+   "frames": 1,
+   "wert": -11.7,
+   "kante_dbfs": -40.5,
+   "wort": "ich",
+   "seite": "in",
+   "spur": "A1",
+   "clip": "FX3_0223.MP4",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4",
+   "quell_s": 2219.52,
+   "nr": 7,
+   "timecode": "01:03:52:12",
+   "kontext": {
+    "bild_schnitt": {
+     "frame": 5812,
+     "abstand": 0
+    },
+    "ton_schnitt": {
+     "frame": 5812,
      "abstand": 0
     },
     "items": [
@@ -174,168 +360,83 @@
       "name": "FX3_0223.MP4"
      },
      {
-      "spur": "V3",
-      "name": "C0255.MP4"
+      "spur": "V4",
+      "name": "Adjustment Clip"
+     },
+     {
+      "spur": "V5",
+      "name": "taxodia-grafikebene-v2.mov"
      }
     ]
    },
-   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_004_knackser_01-02-50-04.png"
-  }
- ],
- "hinweise": [
-  {
-   "art": "Grafik-Übergang",
-   "frame": 61,
-   "frames": 2,
-   "wert": 28.3,
-   "timecode": "01:00:02:11"
+   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_007_wort_01-03-52-12.png"
   },
   {
-   "art": "Grafik-Übergang",
-   "frame": 85,
-   "frames": 3,
-   "wert": 24.7,
-   "timecode": "01:00:03:10"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 234,
-   "frames": 2,
-   "wert": 33.1,
-   "timecode": "01:00:09:09"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 553,
+   "art": "Wort angeschnitten",
+   "frame": 5836,
    "frames": 1,
-   "wert": 28.2,
-   "timecode": "01:00:22:03"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 690,
-   "frames": 2,
-   "wert": 22.9,
-   "timecode": "01:00:27:15"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 1665,
-   "frames": 1,
-   "wert": 28.6,
-   "timecode": "01:01:06:15"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 1863,
-   "frames": 1,
-   "wert": 23.0,
-   "timecode": "01:01:14:13"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 1980,
-   "frames": 2,
-   "wert": 20.0,
-   "timecode": "01:01:19:05"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 3222,
-   "frames": 2,
-   "wert": 24.6,
-   "timecode": "01:02:08:22"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 3587,
-   "frames": 2,
-   "wert": 19.6,
-   "timecode": "01:02:23:12"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 3832,
-   "frames": 1,
-   "wert": 28.7,
-   "timecode": "01:02:33:07"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 3887,
-   "frames": 3,
-   "wert": 18.7,
-   "timecode": "01:02:35:12"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 5498,
-   "frames": 2,
-   "wert": 18.8,
-   "timecode": "01:03:39:23"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 6350,
-   "frames": 1,
-   "wert": 20.6,
-   "timecode": "01:04:14:00"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 6382,
-   "frames": 1,
-   "wert": 20.9,
-   "timecode": "01:04:15:07"
-  },
-  {
-   "art": "Grafik-Übergang",
-   "frame": 6638,
-   "frames": 1,
-   "wert": 37.0,
-   "timecode": "01:04:25:13"
-  }
- ],
- "verteilung": {
-  "diff": {
-   "an_schnitten": {
-    "n": 122,
-    "median": 28.03,
-    "p95": 108.87,
-    "max": 137.19
+   "wert": -6.6,
+   "kante_dbfs": -37.5,
+   "wort": "im",
+   "seite": "out",
+   "spur": "A1",
+   "clip": "FX3_0223.MP4",
+   "datei": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Steuerkanzlei Ludwig x Taxodia/02_Projekte/01_Taxodia Erklärvideo/03_Medien/01_Footage/Kamera-B/FX3_0223.MP4",
+   "quell_s": 2220.52,
+   "nr": 8,
+   "timecode": "01:03:53:11",
+   "kontext": {
+    "bild_schnitt": {
+     "frame": 5837,
+     "abstand": 1
+    },
+    "ton_schnitt": {
+     "frame": 5837,
+     "abstand": 1
+    },
+    "items": [
+     {
+      "spur": "A1",
+      "name": "FX3_0223.MP4"
+     },
+     {
+      "spur": "A2",
+      "name": "Ikoliks - New Day - No Backing Vocals.wav"
+     },
+     {
+      "spur": "A4",
+      "name": "Riser Woosh_AI005.mp3"
+     },
+     {
+      "spur": "V1",
+      "name": "FX3_0223.MP4"
+     },
+     {
+      "spur": "V4",
+      "name": "Adjustment Clip"
+     },
+     {
+      "spur": "V5",
+      "name": "taxodia-grafikebene-v2.mov"
+     }
+    ]
    },
-   "uebrige": {
-    "n": 6485,
-    "median": 0.6,
-    "p95": 4.16,
-    "max": 31.83
-   }
-  },
-  "knack_verhaeltnis": {
-   "n": 136,
-   "median": 3.2,
-   "p95": 11.27,
-   "max": 105.3
+   "bild": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/_intern/autocut/work/schnittbild/kante_008_wort_01-03-53-11.png"
   }
- },
+ ],
+ "hinweise": [],
+ "verteilung": {},
  "warnungen": [],
- "export": {
-  "datei": "/Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/Ergebnisse/Export/AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt.mov",
-  "fps": 25.0,
-  "frames": 6845,
-  "breite": 3840,
-  "hoehe": 2160,
-  "ton": true,
-  "dauer_s": 273.8
- },
+ "export": null,
  "parameter": {
   "schwarz_mittel_max": 24.0,
   "schwarz_streuung_max": 4.0,
   "wechsel_diff_min": 18.0,
   "schnipsel_max_frames": 2,
-  "grafik_spuren": [
-   "V4"
+  "grafik_pfade": [
+   "/Ergebnisse/Renders/"
   ],
+  "grafik_spuren": [],
   "grafik_abstand_frames": 2,
   "knack_ar_ordnung": 32,
   "knack_kante_ms": 2,
@@ -344,11 +445,13 @@
   "knack_faktor": 12.0,
   "tonloch_dbfs": -90.0,
   "tonloch_min_frames": 2,
-  "wort_min_ms": 80
+  "wort_toleranz_ms": 60,
+  "wort_tal_db": 12,
+  "wort_pegel_min_dbfs": -50
  },
  "schnappschuss": {
-  "quelle": "plan",
-  "gelesen_am": "2026-09-16T11:01:42",
+  "quelle": "resolve",
+  "gelesen_am": "2026-09-16T11:19:18",
   "projekt": "Taxodia 09.26"
  }
 }

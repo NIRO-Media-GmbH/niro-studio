@@ -438,3 +438,29 @@
 - **Offen — zum Gegenhören (Knackser-Verdacht):** 01:00:04:07 (Musikstart Campagna), 01:01:07:14 (O-Ton-Einsatz
   FX3_0223 über der Kapitelkarte), 01:02:49:12 (O-Ton-Einsatz FX3_0223), 01:02:50:04 (Innenschnitt FX3_0223). Falls
   hörbar: Kante in die Pause legen oder 1-Frame-Blende auf A1 — nur nach Rücksprache.
+
+## 2026-09-16 11:27 — AutoCut: Kantenprüfung
+
+- Kantenprüfung „AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt“ ohne Export (nur Wortkanten): 8 Befunde (Schwarzbild 0, Schnipsel 0, Knackser 0, Tonloch 0, Wort angeschnitten 8), 0 Grafik-Übergänge als Hinweis
+- Umfang: 143 Bild-Schnitte, 147 Ton-Schnitte, 38 Tonclips mit Transkript, 0 ohne erreichbaren Rohclip; Schnappschuss resolve (2026-09-16T11:19:18)
+- Bericht: /Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/Ergebnisse/Rohschnitt/video-1-taxodia-weg-kanten.md
+
+## 2026-09-16 11:28 — Session: Kantenprüfung am Hand-Schnitt (nach Änderungen des Users)
+
+- **Gelesen (nur lesend):** Feinschnitt-Timeline in „Taxodia 09.26" nach den Handänderungen — 6625 statt 6845 Frames
+  (−8,8 s), A1 38 statt 30 Stücke (neue Innenschnitte), Grafik von V4 auf V5, V4 = Adjustment Clip über die ganze Länge.
+  Resolve danach sofort wieder freigegeben (User schneidet weiter).
+- **Export vom 15.09. ist veraltet:** Die Knackser-Stellen aus dem Eintrag oben (01:00:04:07, 01:01:07:14, 01:02:49:12,
+  01:02:50:04) beziehen sich auf den alten Stand und sind damit hinfällig. Für Schwarzbild/Schnipsel/Knackser/Tonloch
+  am neuen Stand braucht es einen neuen Export (Quick Export „H.265 Master" nach `Ergebnisse/Export/`).
+- **Wortkanten ohne Export (`--ohne-export`) — 8 Verdachtsfälle zum Gegenhören**, alle am Rohclip-Schnittbild
+  bestätigt (`_intern/autocut/work/schnittbild/kante_001…008_wort_*.png`):
+  - 01:00:54:21 Ende „nicht." und 01:00:54:22 Anfang „Und" (Innenschnitt, beide Kanten im Klang)
+  - 01:02:08:17 Anfang „äh," · 01:02:26:11 Ende vor „Und" (durchgehende Sprache „geben. Und")
+  - 01:02:34:06 Anfang „Aber" (erste ~70 ms fehlen) · 01:03:16:05 Anfang „äh,"
+  - 01:03:52:12 Anfang „ich" („Ja, i|ch") · 01:03:53:11 Ende „im"
+- **Werkzeug nachgeschärft:** Wortregel misst jetzt den Quellton (die reine Scribe-Zeitregel hatte 4 Fehlalarme in
+  Pegeltälern), Grafik-Erkennung über den Dateipfad statt fester Spur V4.
+- **Offen:** Stellen gegenhören und ggf. Kanten in die Pause legen; nach dem Weiterschneiden neuer Export → volle
+  Kantenprüfung.
+
