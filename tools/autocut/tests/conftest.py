@@ -32,3 +32,11 @@ def charge_dir(tmp_path: Path) -> Path:
                   {"text": "ist", "start": 1.3, "end": 1.5, "speaker": "speaker_0"},
                   {"text": "meins.", "start": 1.6, "end": 2.0, "speaker": "speaker_0"}]}), encoding="utf-8")
     return root
+
+
+@pytest.fixture
+def basis_charge(tmp_path: Path) -> Path:
+    """Charge unter projects/<Kunde>/<Projekt>/ ohne Schnittplan-Daten (Replay, Bau-Readback)."""
+    root = tmp_path / "projects" / "Kunde A" / "Projekt B" / "2026-09 Dreh"
+    root.mkdir(parents=True)
+    return root

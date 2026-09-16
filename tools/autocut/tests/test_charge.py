@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import json
+import os
 from pathlib import Path
 
 import pytest
 
-from niro_autocut.charge import AutoCutError, Charge, append_protokoll, load_config
+from niro_autocut.charge import AutoCutError, Charge, append_protokoll, letzte_timeline, load_config
 
 
 def test_open_creates_autocut_dirs(charge_dir):
@@ -117,3 +119,49 @@ def test_charge_map_path_rejects_invalid_path_map(charge_dir):
 
     ch.config["path_map"] = {"/a": "/b"}
     assert ch.map_path("/a/y.mp4") == "/b/y.mp4"                    # gültiges path_map bleibt unangetastet
+
+
+def test_open_basis_ohne_schnittplan_mit_replay_bereichen(basis_charge):
+    ch = Charge.open_basis(basis_charge)
+    assert (ch.kunde, ch.projekt) == ("Kunde A", "Projekt B")
+    assert ch.autocut == basis_charge.resolve() / "_intern" / "autocut"
+    for p in (basis_charge / "_intern" / "replay" / "uploads.json",
+              basis_charge / "Material" / "Feedback" / "2026-09-17 Replay X" / "kommentare.md",
+              basis_charge / "_intern" / "autocut" / "readback" / "X.json", ch.protokoll):
+        ch.assert_writable(p)
+    for p in (basis_charge / "Material" / "Audio" / "a.wav", basis_charge / "Ergebnisse" / "Export" / "x.mp4"):
+        with pytest.raises(AutoCutError, match="Schreiben verweigert"):
+            ch.assert_writable(p)
+
+
+def test_open_basis_verlangt_projects_kunde_projekt(tmp_path):
+    root = tmp_path / "irgendwo" / "2026-09 Dreh"
+    root.mkdir(parents=True)
+    with pytest.raises(AutoCutError, match="projects/<Kunde>/<Projekt>/<Charge>"):
+        Charge.open_basis(root)
+    with pytest.raises(AutoCutError, match="nicht gefunden"):
+        Charge.open_basis(tmp_path / "projects" / "K" / "P" / "fehlt")
+
+
+def test_open_hat_keine_replay_bereiche(charge_dir):
+    ch = Charge.open(charge_dir)
+    with pytest.raises(AutoCutError):
+        ch.assert_writable(charge_dir / "_intern" / "replay" / "uploads.json")
+
+
+def test_write_json_legt_unterordner_an(basis_charge):
+    ch = Charge.open_basis(basis_charge)
+    p = ch.write_json("readback/T.json", {"a": 1})
+    assert json.loads(p.read_text(encoding="utf-8")) == {"a": 1}
+
+
+def test_letzte_timeline_juengste_datei_und_finalize_nur_ok(basis_charge):
+    ch = Charge.open_basis(basis_charge)
+    with pytest.raises(AutoCutError, match="--timeline"):
+        letzte_timeline(ch)
+    b = ch.write_json("build.json", {"timeline": "Roh (roh)", "status": "ok"})
+    os.utime(b, (1_000, 1_000))
+    ch.write_json("finalize.json", {"timeline": "End", "status": "fehler"})
+    assert letzte_timeline(ch) == "Roh (roh)"
+    ch.write_json("finalize.json", {"timeline": "End", "status": "ok"})
+    assert letzte_timeline(ch) == "End"

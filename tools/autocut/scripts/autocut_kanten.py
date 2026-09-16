@@ -26,7 +26,7 @@ from niro_autocut import kanten as K  # noqa: E402
 from niro_autocut import kanten_bericht as KB  # noqa: E402
 from niro_autocut import kanten_medien as KM  # noqa: E402
 from niro_autocut import resolve_api as RA  # noqa: E402
-from niro_autocut.charge import AutoCutError, Charge, append_protokoll  # noqa: E402
+from niro_autocut.charge import AutoCutError, Charge, append_protokoll, letzte_timeline  # noqa: E402
 from niro_autocut.media import proxy_for  # noqa: E402
 from niro_autocut.schnittbild import pegel_db, zeichne  # noqa: E402
 
@@ -38,20 +38,7 @@ def _nfc(s) -> str:
     return unicodedata.normalize("NFC", str(s))
 
 
-def timeline_name(ch: Charge) -> str:
-    """Schlüssel ``timeline`` der zuletzt geschriebenen Datei aus feinschnitt.json, finalize.json (ok), build.json."""
-    kandidaten = []
-    for datei in ("feinschnitt.json", "finalize.json", "build.json"):
-        d = ch.read_json(datei)
-        if not isinstance(d, dict) or not d.get("timeline"):
-            continue
-        if datei == "finalize.json" and d.get("status") != "ok":
-            continue
-        kandidaten.append(((ch.autocut / datei).stat().st_mtime, str(d["timeline"])))
-    if not kandidaten:
-        raise AutoCutError(f"Keine gebaute AutoCut-Timeline in {ch.autocut} (feinschnitt.json, finalize.json, "
-                           f"build.json) — --timeline angeben.")
-    return max(kandidaten)[1]
+timeline_name = letzte_timeline      # gemeinsame Regel (charge.py); Name bleibt für Aufrufer und Tests
 
 
 def export_datei(ch: Charge, name: str) -> Path:

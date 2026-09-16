@@ -65,6 +65,7 @@ class Charge:
     plaene: Path
     protokoll: Path
     config: dict = field(default_factory=dict)
+    zusatz_schreibbereiche: tuple[Path, ...] = ()
 
     @classmethod
     def open(cls, root: str | Path) -> "Charge":
@@ -85,15 +86,40 @@ class Charge:
             d.mkdir(parents=True, exist_ok=True)
         return ch
 
+    @classmethod
+    def open_basis(cls, root: str | Path) -> "Charge":
+        """Leichte Charge für Replay und Bau-Readback: keine Schnittplan-Daten nötig (auch Hand-Chargen).
+
+        Der Ordner muss unter projects/<Kunde>/<Projekt>/ liegen. Schreibbereiche: _intern/autocut/**,
+        Ergebnisse/Rohschnitt/**, _intern/replay/**, Material/Feedback/** und das Protokoll. Legt nichts an."""
+        root = Path(root).expanduser().resolve()
+        if not root.is_dir():
+            raise AutoCutError(f"Chargen-Ordner nicht gefunden: {root}")
+        if len(root.parents) < 3 or root.parents[2].name != "projects":
+            raise AutoCutError(f"{root} liegt nicht unter projects/<Kunde>/<Projekt>/<Charge> — Chargen-Ordner angeben.")
+        intern = root / "_intern"
+        return cls(root=root, intern=intern, autocut=intern / "autocut", work=intern / "autocut" / "work",
+                   ergebnisse=root / "Ergebnisse" / "Rohschnitt", plaene=root / "Ergebnisse" / "O-Ton-Pläne",
+                   protokoll=root / "Protokoll.md", config=load_config(root),
+                   zusatz_schreibbereiche=(intern / "replay", root / "Material" / "Feedback"))
+
+    @property
+    def kunde(self) -> str:
+        return self.root.parents[1].name
+
+    @property
+    def projekt(self) -> str:
+        return self.root.parent.name
+
     # --- Schreibschutz -------------------------------------------------
     def assert_writable(self, path: str | Path) -> None:
         p = Path(path).resolve()
-        allowed = (self.autocut.resolve(), self.ergebnisse.resolve())
+        allowed = (self.autocut.resolve(), self.ergebnisse.resolve(), *(z.resolve() for z in self.zusatz_schreibbereiche))
         if p == self.protokoll.resolve():
             return
         if not any(str(p).startswith(str(a) + "/") or p == a for a in allowed):
             raise AutoCutError(f"Schreiben verweigert: {p}\nAutoCut schreibt nur unter "
-                               f"{self.autocut} und {self.ergebnisse} sowie ans Protokoll.")
+                               + ", ".join(str(a) for a in allowed) + " sowie ans Protokoll.")
 
     def map_path(self, path: str | Path) -> str:
         """Zugriffspfad laut ``path_map`` der Config (Arbeitsdateien behalten die Originalpfade)."""
@@ -144,8 +170,25 @@ class Charge:
     def write_json(self, name: str, data: Any) -> Path:
         p = self.autocut / name
         self.assert_writable(p)
+        p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
         return p
+
+
+def letzte_timeline(ch: Charge) -> str:
+    """Schlüssel ``timeline`` der zuletzt geschriebenen Datei aus feinschnitt.json, finalize.json (ok), build.json."""
+    kandidaten = []
+    for datei in ("feinschnitt.json", "finalize.json", "build.json"):
+        d = ch.read_json(datei)
+        if not isinstance(d, dict) or not d.get("timeline"):
+            continue
+        if datei == "finalize.json" and d.get("status") != "ok":
+            continue
+        kandidaten.append(((ch.autocut / datei).stat().st_mtime, str(d["timeline"])))
+    if not kandidaten:
+        raise AutoCutError(f"Keine gebaute AutoCut-Timeline in {ch.autocut} (feinschnitt.json, finalize.json, "
+                           f"build.json) — --timeline angeben.")
+    return max(kandidaten)[1]
 
 
 def append_protokoll(charge: Charge, titel: str, zeilen: list[str]) -> None:
