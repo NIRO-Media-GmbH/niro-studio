@@ -84,3 +84,15 @@ kanten:                     # Kantenprüfung am Export (Spec 2026-09-16); Startw
   wort_toleranz_ms: 60          # Wörter bis so weit neben der Kante zählen (Scribe-Zeiten driften)
   wort_tal_db: 12               # Befund, wenn der Quellton an der Kante (beidseitig 20 ms) höchstens so weit unter der Wortspitze liegt
   wort_pegel_min_dbfs: -50      # … und darüber; Taxodia 16.09.: Schnitte im Tal lagen bei −55 dBFS, Raumton FX3 −55 … −76
+replay:                     # Review in Dropbox Replay (Spec 2026-09-16; Live-Test 16.09.: Quick Export verknüpft, Marker „FrameIO")
+  geprueft_am: "2026-09-16"     # Live-Test (Spec-Nachtrag); leer → autocut_replay.py lädt nicht hoch
+  quickexport_preset: Replay
+  video_quality_ueber_1080p: 12000   # kbit/s für Timelines über 1920 px (Quick Export lädt in Timeline-Auflösung hoch); 0 = automatisch
+  dropbox_marker: {color: FrameIO}   # Merkmal der Replay-Kommentare in GetMarkers()
+  frameio_marker_beim_upload: sperren   # sperren | erlauben — Timeline mit Replay-Markern (Kopie) hochladen? (Kopie-Test, Plan Task 1)
+  version_weg: neubau           # neubau | kopie — Session-Arbeit: wie neue Versionen entstehen (Kopie-Test)
+  ordner: ["Autocut", "{kunde}", "{projekt}"]   # Replay-Ordner; Namen wie unter projects/
+  eigene_autoren: ["NIRO Productions GmbH"]     # Präfixe der Anzeigenamen (nur im Chrome sichtbar); andere → Rückfrage
+  sync_warten_s: 60             # kommentare: bei 0 Kommentaren alle 30 s nachlesen, bis zu so lange
+  vollbild_min: [1900, 1000]    # unbenanntes Resolve-Fenster ab dieser Größe = Vollbild-Wiedergabe (fenster.swift)
+  marker_farben: {umgesetzt: Green, handarbeit: Lemon, rueckfrage: Rose}   # Session-Arbeit: Marker auf der neuen Version
