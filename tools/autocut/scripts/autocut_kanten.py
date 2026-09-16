@@ -167,7 +167,7 @@ def main(argv: list[str] | None = None) -> int:
         bericht.write_text(KB.bericht(erg), encoding="utf-8")
         n, z, um = len(erg["befunde"]), erg["zaehlung"], erg["umfang"]
         zeilen = [f"Kantenprüfung „{name}“ am Export {render.name}: {n} Befunde ("
-                  + ", ".join(f"{a} {z[a]}" for a in K.ARTEN) + ")",
+                  + ", ".join(f"{a} {z[a]}" for a in K.ARTEN) + f"), {len(erg['hinweise'])} Grafik-Übergänge als Hinweis",
                   f"Umfang: {um['bild_schnitte']} Bild-Schnitte, {um['ton_schnitte']} Ton-Schnitte, "
                   f"{um['mit_transkript']} Tonclips mit Transkript; Schnappschuss {snap['quelle']} "
                   f"({snap['gelesen_am']})",

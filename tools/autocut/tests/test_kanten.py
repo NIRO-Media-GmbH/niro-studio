@@ -262,4 +262,38 @@ def test_pruefe_combines_rules_numbers_and_context(cfg):
     assert erg["befunde"][0]["kontext"]["bild_schnitt"] == {"frame": 20, "abstand": -15}
     assert erg["umfang"] == {"bild_schnitte": 1, "ton_schnitte": 0, "mit_transkript": 0, "ohne_transkript": 1,
                              "ohne_liste": ["a"]}
-    assert erg["verteilung"]["diff"]["an_schnitten"]["n"] == 1 and erg["warnungen"] == []
+    assert erg["verteilung"]["diff"]["an_schnitten"]["n"] == 1 and erg["warnungen"] == [] and erg["hinweise"] == []
+
+
+def test_knackser_small_step_in_dense_signal(cfg):
+    """Kalibrierung Taxodia 16.09.: kleiner Sprung (−30 dBFS) unter dichtem Klang (10 Töne bis 6 kHz) wird erkannt,
+    ohne Sprung nicht — der frühere Vergleich der zweiten Differenz mit dem 99. Perzentil kam hier nur auf ≈ 3."""
+    sr, fps, spf = 48000, 25.0, 1920
+    rng = np.random.default_rng(5)
+    t = np.arange(2 * sr) / sr
+    x = sum(0.05 * np.sin(2 * np.pi * f * t + ph) for f, ph in zip(rng.uniform(200, 6000, 10), rng.uniform(0, 6.3, 10)))
+    x = np.stack([x, x], axis=1) + rng.normal(0, 0.0005, (t.size, 2))
+    assert K.knack_befunde(x.astype(np.float32), sr, fps, [12], cfg)[0] == []
+    x[12 * spf:] += 0.03
+    befunde, _ = K.knack_befunde(x.astype(np.float32), sr, fps, [12], cfg)
+    assert [b["frame"] for b in befunde] == [12]
+
+
+def test_pruefe_schnipsel_an_grafikkante_wird_hinweis(cfg):
+    n = 60
+    snap = {"quelle": "plan", "gelesen_am": "x", "projekt": "P", "timeline": "T", "fps": 25.0, "start_frame": 0,
+            "start_timecode": "01:00:00:00", "laenge": n, "spuren": {
+                "V1": [{"name": "v", "datei": "v", "start": 0, "dauer": n, "quell_in": 0, "aktiv": True, "tempo": 100.0}],
+                "V4": [{"name": "g", "datei": "g.mov", "start": 20, "dauer": 10, "quell_in": 0, "aktiv": True,
+                        "tempo": 100.0}]}}
+    mittel, streuung, diff = np.full(n, 90.0), np.full(n, 30.0), np.zeros(n)
+    hoch = cfg["wechsel_diff_min"] + 20
+    diff[20] = diff[21] = hoch                     # Flash am Grafik-Start → Hinweis
+    diff[45] = diff[46] = hoch                     # fern jeder Grafik-Kante → Befund
+    erg = K.pruefe(snap, {"mittel": mittel, "streuung": streuung, "diff": diff}, None, 48000, _Stub(None), cfg)
+    assert [(b["art"], b["frame"]) for b in erg["befunde"]] == [("Schnipsel", 45)]
+    assert erg["hinweise"] == [{"art": "Grafik-Übergang", "frame": 20, "frames": 1, "wert": round(hoch, 1),
+                                "timecode": "01:00:00:20"}]
+    ohne = K.pruefe(snap, {"mittel": mittel, "streuung": streuung, "diff": diff}, None, 48000, _Stub(None),
+                    {**cfg, "grafik_spuren": []})
+    assert ohne["zaehlung"]["Schnipsel"] == 2 and ohne["hinweise"] == []

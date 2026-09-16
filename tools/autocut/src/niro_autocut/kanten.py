@@ -171,31 +171,43 @@ def schnipsel_befunde(diff, mittel, streuung, cfg: dict) -> list[dict]:
 # --- Befund-Regeln: Ton ------------------------------------------------------------
 
 def knack_messung(audio, sr: int, sample: int, cfg: dict) -> dict:
-    """Spitze der zweiten Differenz ±``knack_kante_ms`` um das Schnitt-Sample gegen das 99. Perzentil der Umgebung
-    (±``knack_fenster_ms`` ohne die Kante), je Kanal; zurück kommt der auffälligste Kanal (0-basiert)."""
+    """Knackser-Maß am Schnitt-Sample: Rest einer AR-Vorhersage der Ordnung ``knack_ar_ordnung``.
+
+    Die Koeffizienten werden in ±``knack_fenster_ms`` ohne die Kante gefittet; gemessen wird die Spitze des Rests in
+    ±``knack_kante_ms`` gegen seine robuste Streuung (MAD) außerhalb der Kante. Sprache und Musik sind gut vorhersagbar,
+    ein Sprung im Signal nicht (Kalibrierung Taxodia 16.09.: 99.-Perzentil-Vergleich der zweiten Differenz erkannte
+    einen −26-dBFS-Sprung nur an 16 von 51 O-Ton-Kanten, das AR-Maß einen −40-dBFS-Sprung an 51 von 51).
+    Je Kanal; zurück kommt der auffälligste Kanal (0-basiert).
+    """
     x = np.asarray(audio)
     if x.ndim == 1:
         x = x[:, None]
+    p = int(cfg["knack_ar_ordnung"])
     kante = max(1, int(round(cfg["knack_kante_ms"] * sr / 1000)))
     fenster = int(round(cfg["knack_fenster_ms"] * sr / 1000))
-    a, b = max(0, sample - fenster), min(len(x), sample + fenster)
+    a, b = max(p, sample - fenster), min(len(x), sample + fenster)
     leer = {"spitze": 0.0, "umgebung": 0.0, "verhaeltnis": 0.0, "versatz_ms": 0.0, "kanal": 0}
-    if b - a < 3:
+    if b - a < 4 * p:
         return leer
-    seg = x[a:b].astype(np.float64)
-    d2 = np.abs(seg[2:] - 2.0 * seg[1:-1] + seg[:-2])
-    idx = np.arange(len(d2)) + a + 1
+    idx = np.arange(a, b)
     nah = np.abs(idx - sample) <= kante
-    if not nah.any() or nah.all():
+    fit = np.abs(idx - sample) > kante + p
+    if not nah.any() or int(fit.sum()) < 2 * p:
         return leer
-    spitze = d2[nah].max(axis=0)
-    umgebung = np.percentile(d2[~nah], 99, axis=0)
-    verh = spitze / np.maximum(umgebung, 1e-6)
-    treffer = (spitze >= cfg["knack_min"]) & (verh >= cfg["knack_faktor"])
-    k = int(np.argmax(np.where(treffer, verh, -1.0))) if treffer.any() else int(np.argmax(verh))
-    pos = int(idx[nah][int(np.argmax(d2[nah][:, k]))])
-    return {"spitze": float(spitze[k]), "umgebung": float(umgebung[k]), "verhaeltnis": float(verh[k]),
-            "versatz_ms": round((pos - sample) * 1000 / sr, 1), "kanal": k}
+    kandidaten = []
+    for k in range(x.shape[1]):
+        v = x[a - p:b, k].astype(np.float64)
+        X = np.stack([v[p - j:len(v) - j] for j in range(1, p + 1)], axis=1)
+        t = v[p:]
+        koeff = np.linalg.lstsq(X[fit], t[fit], rcond=None)[0]
+        rest = np.abs(t - X @ koeff)
+        i = int(np.argmax(rest[nah]))
+        spitze = float(rest[nah][i])
+        sigma = float(np.median(rest[fit])) / 0.6745
+        kandidaten.append({"spitze": spitze, "umgebung": sigma, "verhaeltnis": spitze / max(sigma, 1e-7),
+                           "versatz_ms": round((int(idx[nah][i]) - sample) * 1000 / sr, 1), "kanal": k})
+    treffer = [c for c in kandidaten if c["spitze"] >= cfg["knack_min"] and c["verhaeltnis"] >= cfg["knack_faktor"]]
+    return max(treffer or kandidaten, key=lambda c: c["verhaeltnis"])
 
 
 def knack_befunde(audio, sr: int, fps: float, ton_schnitte: list[int], cfg: dict) -> tuple[list[dict], list[float]]:
@@ -358,6 +370,26 @@ def diff_verteilung(diff, bild_schnitte: list[int]) -> dict:
     return {"an_schnitten": kennzahlen(d[an]), "uebrige": kennzahlen(d[~nahe])}
 
 
+def grafik_hinweise(snap: dict, befunde: list[dict], cfg: dict) -> tuple[list[dict], list[dict]]:
+    """Schnipsel höchstens ``grafik_abstand_frames`` neben einer Kante eines aktiven Items auf ``grafik_spuren``
+    sind gewollte Grafik-Übergänge (Flash, Wipe, Iris) und werden zum Hinweis (Kalibrierung Taxodia 16.09.: 16 von
+    16 Schnipseln lagen an V4-Kanten). Rückgabe: verbleibende Befunde, Hinweise."""
+    spuren = set(cfg.get("grafik_spuren") or [])
+    kanten = sorted({f for key, rows in snap["spuren"].items() if key in spuren for r in rows if r["aktiv"]
+                     for f in (r["start"], r["start"] + r["dauer"])})
+    if not kanten:
+        return befunde, []
+    abstand = int(cfg.get("grafik_abstand_frames", 2))
+    bleiben, hinweise = [], []
+    for x in befunde:
+        if x["art"] == "Schnipsel" and any(min(abs(g - x["frame"]), abs(g - (x["frame"] + x["frames"]))) <= abstand
+                                           for g in kanten):
+            hinweise.append({"art": "Grafik-Übergang", "frame": x["frame"], "frames": x["frames"], "wert": x["wert"]})
+        else:
+            bleiben.append(x)
+    return bleiben, hinweise
+
+
 def pruefe(snap: dict, bild: dict | None, audio, sr: int, transkripte, cfg: dict) -> dict:
     """Alle Befund-Regeln auf Schnappschuss und Messwerte anwenden (ohne Bilder).
 
@@ -378,6 +410,7 @@ def pruefe(snap: dict, bild: dict | None, audio, sr: int, transkripte, cfg: dict
         verteilung["knack_verhaeltnis"] = kennzahlen(verh)
     wb, zaehler = wort_befunde(snap, transkripte, cfg)
     befunde += wb
+    befunde, hinweise = grafik_hinweise(snap, befunde, cfg)
     befunde.sort(key=lambda x: (x["frame"], ARTEN.index(x["art"])))
     for nr, x in enumerate(befunde, 1):
         x["nr"] = nr
@@ -386,7 +419,9 @@ def pruefe(snap: dict, bild: dict | None, audio, sr: int, transkripte, cfg: dict
         if x["art"] == "Schnipsel":
             x["an_schnitt"] = any(abs(s - x["frame"]) <= 1 or abs(s - (x["frame"] + x["frames"])) <= 1
                                   for s in b_schnitte)
+    for h in hinweise:
+        h["timecode"] = timecode(h["frame"], fps, snap["start_timecode"])
     return {"timeline": snap["timeline"], "fps": fps, "laenge": n,
             "umfang": {"bild_schnitte": len(b_schnitte), "ton_schnitte": len(t_schnitte), **zaehler},
             "zaehlung": {a: sum(1 for x in befunde if x["art"] == a) for a in ARTEN},
-            "befunde": befunde, "verteilung": verteilung, "warnungen": []}
+            "befunde": befunde, "hinweise": hinweise, "verteilung": verteilung, "warnungen": []}

@@ -47,6 +47,9 @@ def bericht(erg: dict) -> str:
         zeilen.append(f"**{n} {'Befund' if n == 1 else 'Befunde'}** — "
                       + ", ".join(f"{a}: {z[a]}" for a in ARTEN if z.get(a)))
     zeilen.append("")
+    if erg.get("hinweise"):
+        zeilen += [f"Grafik-Übergänge (nicht als Befund gezählt): {len(erg['hinweise'])} — "
+                   + ", ".join(h["timecode"] for h in erg["hinweise"][:40]), ""]
     if um.get("ohne_liste"):
         zeilen += ["Tonclips ohne Transkript (keine Wortprüfung): " + ", ".join(um["ohne_liste"][:12]), ""]
     if n:

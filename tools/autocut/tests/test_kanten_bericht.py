@@ -17,7 +17,7 @@ def _erg(befunde: list[dict]) -> dict:
             "verteilung": {"diff": {"an_schnitten": {"n": 3, "median": 40.0, "p95": 50.0, "max": 55.0},
                                     "uebrige": {"n": 0}},
                            "knack_verhaeltnis": {"n": 2, "median": 1.2, "p95": 1.9, "max": 2.0}},
-            "parameter": {"knack_faktor": 6.0}, "warnungen": ["Bild zu Befund 2: x"]}
+            "parameter": {"knack_faktor": 6.0}, "warnungen": ["Bild zu Befund 2: x"], "hinweise": []}
 
 
 def test_bericht_ohne_befunde():
@@ -37,3 +37,11 @@ def test_bericht_tabelle_mit_kontext():
     zeile = next(z for z in text.splitlines() if z.startswith("| 1 |"))
     assert "01:00:00:12" in zeile and "9.5 ×" in zeile and "a/b.MP4" in zeile and "`/p/k.png`" in zeile
     assert "Bild-Schnitt +0 F" in zeile and "Spitze 0.3" in zeile
+
+
+def test_bericht_grafik_hinweise():
+    erg = _erg([])
+    erg["hinweise"] = [{"art": "Grafik-Übergang", "frame": 20, "frames": 1, "wert": 38.0, "timecode": "01:00:00:20"},
+                       {"art": "Grafik-Übergang", "frame": 88, "frames": 3, "wert": 24.7, "timecode": "01:00:03:13"}]
+    text = bericht(erg)
+    assert "Grafik-Übergänge (nicht als Befund gezählt): 2 — 01:00:00:20, 01:00:03:13" in text
