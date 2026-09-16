@@ -145,3 +145,67 @@ def test_wiederherstellung_trotz_openpage_fehler(welt, monkeypatch):
     with pytest.raises(RuntimeError, match="Resolve weg"):
         _hochladen(welt, "--hochladen")
     assert fr.p.current is welt["user"] and fr.p.mp.GetCurrentFolder() is welt["user_bin"]
+
+
+def _hochgeladen(w, capsys):
+    assert _hochladen(w, "--hochladen") == 0
+    capsys.readouterr()
+
+
+def test_einsortiert_und_finden(welt, capsys):
+    _hochgeladen(welt, capsys)
+    assert replay.main([str(welt["charge"]), "einsortiert", "--titel", NAME]) == 0
+    e = R.upload_eintrag(Charge.open_basis(welt["charge"]))
+    assert e["einsortiert_am"] and e["replay_ordner"] == "Autocut/Kunde A/Projekt B"
+    capsys.readouterr()
+    assert replay.main([str(welt["charge"].parent), "finden", "--titel", f"{NAME}.mp4"]) == 0
+    gefunden = json.loads(capsys.readouterr().out)
+    assert gefunden["timeline"] == NAME and gefunden["charge"].endswith("2026-09 Dreh")
+    assert replay.main([str(welt["charge"].parent), "finden", "--titel", "Fremdes Video.mp4"]) == 1
+    assert replay.main([str(welt["charge"]), "einsortiert", "--titel", "gibt es nicht"]) == 2
+
+
+def test_kommentare_api_neu_dann_bekannt(welt, capsys):
+    _hochgeladen(welt, capsys)
+    assert replay.main([str(welt["charge"]), "kommentare", "--warten", "0"]) == 1          # noch keine
+    capsys.readouterr()
+    welt["tl"].AddMarker(48, "FrameIO", "Marker 1", "Test 1: Schnitt früher", 1)
+    assert replay.main([str(welt["charge"]), "kommentare", "--warten", "0"]) == 0
+    ordner = next((welt["charge"] / "Material" / "Feedback").iterdir())
+    assert ordner.name.endswith(f"Replay {NAME}")
+    doc = json.loads((ordner / "kommentare.json").read_text(encoding="utf-8"))
+    k = doc["kommentare"][0]
+    assert (doc["anzahl"], doc["neu"], doc["lese_weg"], doc["veraendert_seit_upload"]) == (1, 1, "api", False)
+    assert (k["frame"], k["tc"], k["text"], k["clips"][0]["quell_frame"]) == (48, "01:00:01:23", "Test 1: Schnitt früher", 48)
+    assert doc["seit_bau_veraendert"] is None                                              # kein Bau-Readback
+    assert "| 1 | ja | 01:00:01:23 |" in (ordner / "kommentare.md").read_text(encoding="utf-8")
+    assert replay.main([str(welt["charge"]), "kommentare", "--warten", "0"]) == 1          # nichts Neues
+    assert "Replay-Kommentare" in Charge.open_basis(welt["charge"]).protokoll.read_text(encoding="utf-8")
+
+
+def test_kommentare_nach_handaenderung(welt, capsys):
+    _hochgeladen(welt, capsys)
+    welt["tl"].tl_items[0].start += 10
+    welt["tl"].AddMarker(48, "FrameIO", "Marker 1", "Test", 1)
+    assert replay.main([str(welt["charge"]), "kommentare", "--warten", "0"]) == 0
+    ordner = next((welt["charge"] / "Material" / "Feedback").iterdir())
+    doc = json.loads((ordner / "kommentare.json").read_text(encoding="utf-8"))
+    assert doc["veraendert_seit_upload"] is True and doc["kommentare"][0]["frame_aktuell"] == 58
+
+
+def test_kommentare_aus_chrome_json_ohne_resolve(welt, monkeypatch, capsys, tmp_path):
+    _hochgeladen(welt, capsys)
+
+    def kein_resolve():
+        raise AssertionError("Resolve darf beim Chrome-Weg nicht verbunden werden")
+
+    monkeypatch.setattr(RA, "connect", kein_resolve)
+    datei = tmp_path / "chrome.json"
+    datei.write_text(json.dumps({"quelle": "chrome", "kommentare": [
+        {"von_s": 2.008, "text": "Kunde will anderen Take", "autor": "Kunde X", "zeichnung": True}]}), encoding="utf-8")
+    assert replay.main([str(welt["charge"]), "kommentare", "--aus-json", str(datei)]) == 0
+    ordner = next((welt["charge"] / "Material" / "Feedback").iterdir())
+    doc = json.loads((ordner / "kommentare.json").read_text(encoding="utf-8"))
+    k = doc["kommentare"][0]
+    assert (doc["lese_weg"], doc["fremd"], k["frame"], k["fremd"], k["zeichnung"]) == ("chrome", 1, 50, True, True)
+    assert doc["veraendert_seit_upload"] is None

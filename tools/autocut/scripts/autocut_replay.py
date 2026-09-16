@@ -3,11 +3,19 @@
 
 Aufruf:
     venv/bin/python scripts/autocut_replay.py "<Charge>" hochladen --project "<offenes Projekt>" [--timeline "<Name>"] [--hochladen]
+    venv/bin/python scripts/autocut_replay.py "<Charge>" einsortiert --titel "<Titel>" [--ordner "<Replay-Pfad>"]
+    venv/bin/python scripts/autocut_replay.py "<Charge>" kommentare [--timeline "<Name>"] [--aus-json "<Datei>"] [--warten <s>]
+    venv/bin/python scripts/autocut_replay.py "<Projekt-Ordner>" finden --titel "<Replay-Titel>"
 
 hochladen ohne --hochladen = Vorschau (Resolve nur lesend). Mit --hochladen (nur nach OK des Users im Chat): Quick Export
 „Replay" mit Upload für die ganze Timeline, danach Timeline, Seite und Media-Pool-Bin des Users zurück; schreibt
 _intern/replay/uploads.json, _intern/replay/schnappschuesse/<Titel>.json, _intern/replay/renders/ und das Protokoll.
 Exit 0 = Vorschau ok bzw. „Upload Completed", 1 = Upload nicht bestätigt, 2 = Voraussetzung fehlt.
+einsortiert vermerkt das Einsortieren in Replay (macht Claude im Chrome). kommentare liest die Replay-Kommentare
+(Marker mit replay.dropbox_marker) der hochgeladenen Timeline nur lesend oder übernimmt die Chrome-Lesung (--aus-json)
+und schreibt Material/Feedback/<Upload-Datum> Replay <Titel>/kommentare.json + .md; Exit 0 = neue Kommentare,
+1 = keine neuen, 2 = Voraussetzung. finden ordnet einen Replay-Titel über die Upload-Logs der Chargen zu;
+Exit 0 = gefunden (JSON), 1 = nicht von AutoCut hochgeladen.
 """
 from __future__ import annotations
 
@@ -20,6 +28,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from niro_autocut import kanten as K  # noqa: E402
+from niro_autocut import readback as RB  # noqa: E402
 from niro_autocut import replay as R  # noqa: E402
 from niro_autocut import replay_kommentare as KO  # noqa: E402
 from niro_autocut import resolve_api as RA  # noqa: E402
@@ -27,6 +36,7 @@ from niro_autocut import wiedergabe as W  # noqa: E402
 from niro_autocut.charge import AutoCutError, Charge, append_protokoll, letzte_timeline  # noqa: E402
 
 UPLOAD_OK = "Upload Completed"
+WARTE_TAKT_S = 30
 
 
 def _cfg(ch: Charge) -> dict:
@@ -156,18 +166,125 @@ def schritt_hochladen(ch: Charge, args) -> int:
     return _hochladen(ch, session, tl, tl_dict, snap, name, cfg)
 
 
+def schritt_einsortiert(ch: Charge, args) -> int:
+    ordner = args.ordner or R.replay_ordner(ch)
+    e = R.setze_einsortiert(ch, args.titel, ordner)
+    append_protokoll(ch, "Replay einsortiert", [f"„{e['titel']}.mp4“ liegt in Replay unter {ordner}"])
+    print(f"Vermerkt: {e['titel']} → {ordner} ({e['einsortiert_am']})")
+    return 0
+
+
+def schritt_finden(args) -> int:
+    projekt = Path(args.pfad).expanduser().resolve()
+    if not projekt.is_dir():
+        raise AutoCutError(f"Projekt-Ordner nicht gefunden: {projekt}")
+    treffer = R.finde_upload(projekt, args.titel)
+    if treffer is None:
+        print(f"Kein Upload mit Titel '{args.titel}' in den Chargen von {projekt} — nicht von AutoCut hochgeladen, "
+              f"nicht anfassen.")
+        return 1
+    charge, e = treffer
+    print(json.dumps({"charge": str(charge), "timeline": e.get("timeline"), "projekt": e.get("projekt"),
+                      "hochgeladen_am": e.get("hochgeladen_am")}, ensure_ascii=False))
+    return 0
+
+
+def schritt_kommentare(ch: Charge, args) -> int:
+    cfg = _cfg(ch)
+    eintrag = R.upload_eintrag(ch, timeline=args.timeline)
+    sp = Path(str(eintrag.get("schnappschuss") or ""))
+    if not sp.is_file():
+        raise AutoCutError(f"Upload-Schnappschuss fehlt: {sp}")
+    snap_upload = json.loads(sp.read_text(encoding="utf-8"))
+    fps, start_tc = float(snap_upload["fps"]), str(snap_upload["start_timecode"])
+    snap_jetzt = None
+    if args.aus_json:
+        p = Path(args.aus_json).expanduser()
+        if not p.is_file():
+            raise AutoCutError(f"--aus-json nicht gefunden: {p}")
+        kommentare, weg = KO.aus_json(json.loads(p.read_text(encoding="utf-8")), fps), "chrome"
+    else:
+        session = RA.ResolveSession(RA.connect(), path_map=ch.config.get("path_map"))
+        tl = session.find_timeline(eintrag["timeline"])
+        if tl is None:
+            raise AutoCutError(f"Timeline '{eintrag['timeline']}' ist nicht im offenen Projekt '{session.project_name}' — "
+                               f"Projekt '{eintrag.get('projekt')}' öffnen (nur lesen) oder Kommentare im Chrome lesen "
+                               f"(--aus-json).")
+        warten = int(cfg.get("sync_warten_s") or 0) if args.warten is None else int(args.warten)
+        merkmal = cfg.get("dropbox_marker") or {}
+        ende = time.monotonic() + max(0, warten)
+        while True:
+            tl_dict = session.read_timeline(tl)
+            kommentare = KO.aus_markern(tl_dict["markers"], merkmal, snap_upload.get("marker"))
+            if kommentare or time.monotonic() >= ende:
+                break
+            time.sleep(WARTE_TAKT_S)
+        snap_jetzt = K.snapshot_from_readback(tl_dict, session.project_name)
+        weg = "api"
+    for k in kommentare:
+        k["tc"] = K.timecode(k["frame"], fps, start_tc)
+        k["clips"] = KO.clips_an(snap_upload, k["frame"])
+    aenderungen = KO.vergleiche(snap_upload, snap_jetzt) if snap_jetzt is not None else None
+    if aenderungen:
+        for k in kommentare:
+            k["frame_aktuell"] = KO.frame_im_stand(k["clips"], snap_jetzt)
+    bau = RB.laden(ch, eintrag["timeline"])
+    ordner = R.feedback_ordner(ch, eintrag)
+    vorher_pfad = ordner / "kommentare.json"
+    vorher = json.loads(vorher_pfad.read_text(encoding="utf-8")) if vorher_pfad.exists() else None
+    zeit = R.jetzt()
+    n_neu = KO.markiere_neu(kommentare, vorher, zeit)
+    n_fremd = KO.markiere_fremde(kommentare, list(cfg.get("eigene_autoren") or []))
+    doc = {"titel": eintrag["titel"], "timeline": eintrag["timeline"], "projekt": eintrag.get("projekt"),
+           "hochgeladen_am": eintrag.get("hochgeladen_am"), "replay_ordner": eintrag.get("replay_ordner"),
+           "lese_weg": weg, "gelesen_am": zeit, "anzahl": len(kommentare), "neu": n_neu, "fremd": n_fremd,
+           "veraendert_seit_upload": None if aenderungen is None else bool(aenderungen),
+           "aenderungen": aenderungen or [],
+           "seit_bau_veraendert": None if bau is None else bool(KO.vergleiche(bau, snap_upload)),
+           "kommentare": kommentare}
+    for dateiname, inhalt in (("kommentare.json", json.dumps(doc, ensure_ascii=False, indent=1)),
+                              ("kommentare.md", KO.kommentare_md(doc))):
+        ziel = ordner / dateiname
+        ch.assert_writable(ziel)
+        ziel.parent.mkdir(parents=True, exist_ok=True)
+        ziel.write_text(inhalt, encoding="utf-8")
+    stand = ("nicht geprüft (Chrome)" if aenderungen is None else "verändert — Stellen über Clips" if aenderungen
+             else "unverändert")
+    seit_bau = ("unbekannt (kein Bau-Readback)" if bau is None else "von Hand geändert" if doc["seit_bau_veraendert"]
+                else "unverändert")
+    zeilen = [f"Replay-Kommentare „{eintrag['titel']}“ ({weg}): {len(kommentare)} gesamt, {n_neu} neu, "
+              f"{n_fremd} von fremden Autoren",
+              f"Stand seit Upload: {stand}; seit Bau: {seit_bau}",
+              f"Datei: {ordner / 'kommentare.md'}"]
+    append_protokoll(ch, "Replay-Kommentare", zeilen)
+    print("\n".join(zeilen))
+    return 0 if n_neu else 1
+
+
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="AutoCut: Review in Dropbox Replay.")
-    ap.add_argument("pfad", help="Chargen-Ordner (projects/<Kunde>/<Projekt>/<Charge>)")
+    ap = argparse.ArgumentParser(description="AutoCut: Review in Dropbox Replay (hochladen, einsortiert, kommentare, finden).")
+    ap.add_argument("pfad", help="Chargen-Ordner (bei „finden“: Projekt-Ordner projects/<Kunde>/<Projekt>)")
     sub = ap.add_subparsers(dest="schritt", required=True)
     h = sub.add_parser("hochladen", help="Vorschau; mit --hochladen Upload nach OK des Users")
     h.add_argument("--project", required=True, help="Name des offenen, freigegebenen Resolve-Projekts")
     h.add_argument("--timeline", help="exakter Timeline-Name (Standard: zuletzt gebaute AutoCut-Timeline)")
     h.add_argument("--hochladen", action="store_true", help="wirklich hochladen (nur nach OK im Chat)")
+    e = sub.add_parser("einsortiert", help="Einsortieren in Replay vermerken")
+    e.add_argument("--titel", required=True, help="Replay-Titel ohne .mp4")
+    e.add_argument("--ordner", help="Replay-Pfad (Standard aus replay.ordner)")
+    k = sub.add_parser("kommentare", help="Replay-Kommentare holen")
+    k.add_argument("--timeline", help="hochgeladene Timeline (Standard: jüngster Upload)")
+    k.add_argument("--aus-json", help="Chrome-Lesung statt Resolve")
+    k.add_argument("--warten", type=int, help="Sekunden, die bei 0 Kommentaren nachgelesen wird (Standard replay.sync_warten_s)")
+    f = sub.add_parser("finden", help="Replay-Titel → Charge und Timeline")
+    f.add_argument("--titel", required=True, help="Replay-Titel, mit oder ohne .mp4")
     args = ap.parse_args(argv)
     try:
+        if args.schritt == "finden":
+            return schritt_finden(args)
         ch = Charge.open_basis(args.pfad)
-        return schritt_hochladen(ch, args)
+        schritte = {"hochladen": schritt_hochladen, "einsortiert": schritt_einsortiert, "kommentare": schritt_kommentare}
+        return schritte[args.schritt](ch, args)
     except AutoCutError as e:
         print(f"FEHLER: {e}", file=sys.stderr)
         return 2
