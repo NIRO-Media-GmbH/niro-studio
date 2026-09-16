@@ -71,6 +71,7 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     "$PY" "$TOOL/scripts/resolve_probe_api.py" "$CHARGE" --project "<Projekt>"   # einmalig je Resolve-Umgebung: probe_api.json (21.1-API)
     "$PY" "$TOOL/scripts/autocut_finalize.py" "$CHARGE"           # Stufe 5: End-Timeline (Pegel, Zeitlupe) + Bericht
     "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE"             # Kantenprüfung am Export (Resolve nur lesend)
+    "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE" --ohne-export   # nur Wortkanten am Quellton, z. B. nach Handänderungen
     "$PY" "$TOOL/scripts/autocut_schnittbild.py" "$CHARGE" --clip <Datei> --von 12.3 --bis 15.8   # Schnittbild Rohclip
 
 ## Aufbau

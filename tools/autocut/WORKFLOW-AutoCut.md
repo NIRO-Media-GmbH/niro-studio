@@ -655,10 +655,12 @@ gelesen; den Export erzeugt der Review-Render oder der User.
    Export (sonst `--timeline`, `--render`). Ist das Projekt nicht offen: `--readback
    "$CHARGE/_intern/autocut/kanten_readback.json"` (Schnappschuss des letzten Laufs). Exit 0 = keine Befunde,
    1 = Befunde, 2 = Voraussetzung fehlt (kein oder veralteter Export, Timeline nicht im offenen Projekt).
+   **Direkt nach Handänderungen** ohne neuen Export: `--ohne-export` prüft nur die Wortkanten am Quellton der Rohclips
+   (Proxy über den Transkript-Index); der Export-Längencheck meldet sonst zu Recht „Export ist nicht aktuell".
 3. **Befunde ansehen** — Bericht `Ergebnisse/Rohschnitt/<video>-kanten.md`; je Befund das Schnittbild
    `_intern/autocut/work/schnittbild/kante_<nr>_<art>_<timecode>.png` mit Read ansehen. Befunde sind Verdachtsfälle:
-   erst das Bild, dann urteilen. Knackser sind im Bild nicht zu sehen (10-ms-Pegel) — die Stellen dem User zum
-   Gegenhören nennen.
+   erst das Bild, dann urteilen. Wortkanten zeigt das Bild am Rohclip (auch den weggeschnittenen Teil), alles andere
+   am Export. Knackser sind im Bild nicht zu sehen (10-ms-Pegel) — die Stellen dem User zum Gegenhören nennen.
 
 | Befund | Messung | typische Abhilfe |
 |---|---|---|
@@ -666,10 +668,12 @@ gelesen; den Export erzeugt der Review-Render oder der User.
 | Schnipsel | 1–2 Frames zwischen zwei harten Bildwechseln | Frame-Versatz an der Kante (Left-Offset), Lücke auf V2/V3 schließen |
 | Knackser | Rest einer AR-Vorhersage springt genau am Ton-Schnitt (±2 ms) | Kante in eine Pause legen; 1-Frame-Blende auf A1 nur nach Rücksprache |
 | Tonloch | digitale Stille, obwohl ein Tonclip liegt | stumme Spur (Stereo Fixer, nachträglich angelegte Spur), Clip offline |
-| Wort angeschnitten | O-Ton-Kante schneidet mindestens 80 ms eines Worts ab | In/Out auf die Wortgrenze aus dem Scribe-Cache legen |
+| Wort angeschnitten | O-Ton-Kante an einem Scribe-Wort (±60 ms) **und** Quellton beidseitig der Kante höchstens 12 dB unter der Wortspitze (über −50 dBFS) — der Schnitt geht durch Klang | In/Out in die Pause davor bzw. danach legen, sonst Blende |
 
-   Schnipsel höchstens 2 Frames neben einer Kante der Grafikspur V4 (`grafik_spuren`) zählen als **Grafik-Übergang**
-   (Flash, Wipe, Iris): Sie stehen als Hinweis im Bericht, nicht als Befund.
+   Schnipsel höchstens 2 Frames neben der Kante eines Grafik-Items zählen als **Grafik-Übergang** (Flash, Wipe, Iris):
+   Sie stehen als Hinweis im Bericht, nicht als Befund. Grafik-Items erkennt die Prüfung am Dateipfad
+   (`grafik_pfade`, Standard `/Ergebnisse/Renders/`) — egal auf welcher Spur; `grafik_spuren` wertet zusätzlich ganze
+   Spuren.
 4. **Beheben und wiederholen** — nach Freigabe beheben, neu exportieren, erneut prüfen: **höchstens 3 Runden**, danach
    den Rest mit Timecodes offen melden (Regel aus video-use). Von Hand Geändertes nie überschreiben.
 5. **Einzelne Stelle ansehen** — `autocut_schnittbild.py "$CHARGE" --render "<Export>" --tc HH:MM:SS:FF [--fenster 1.5]`.
@@ -689,6 +693,13 @@ Ton-Schnitte, 30 Tonclips mit Transkript; Laufzeit 18 s (VideoToolbox), mit Bild
   Fenster ±2 ms.
 - Ergebnis: 4 Knackser zum Gegenhören (01:00:04:07 Musikstart, 01:01:07:14 und 01:02:49:12 O-Ton-Einsatz, 01:02:50:04
   Innenschnitt), 0 Schwarzbild, 0 Tonloch, 0 angeschnittene Wörter.
+- **Nachkalibrierung am Hand-Schnitt des Users (16.09., echter Readback, 6625 Frames, Grafik auf V5, Adjustment Clip V4):**
+  Die erste Wortregel (reine Scribe-Zeiten, ≥ 80 ms im Wort) meldete 4 Schnitte, die alle in Pegeltälern lagen
+  (−55 dBFS, 20–25 dB unter dem Wort) — Scribe verlängert Wortenden vor Komma und bei „ähm" um bis zu 300 ms. Pegel an
+  allen 76 O-Ton-Kanten gemessen: Schnitte in Pausen liegen 17–46 dB unter der Wortspitze, Schnitte durch Klang 2–12 dB
+  → Pegelregel (`wort_tal_db` 12, `wort_pegel_min_dbfs` −50). Ergebnis 8 angeschnittene Wortanfänge/-enden, per
+  Schnittbild bestätigt (z. B. „Aber" 01:02:34:06 und „Und" 01:00:54:22 starten mitten im Wort). Die Grafik lag nach dem
+  Verschieben auf V5 → Erkennung über den Dateipfad statt fester Spur.
 
 ## Fehlerbilder und Abhilfe
 
@@ -735,6 +746,7 @@ Ton-Schnitte, 30 Tonclips mit Transkript; Laufzeit 18 s (VideoToolbox), mit Bild
 | `ModuleNotFoundError: rapidfuzz` im transcribe-venv | Skript lädt `feinschnitt_bauen.py` — mit `tools/autocut/venv/bin/python` starten; nur die vier OpenCV-Skripte gehören ins transcribe-venv |
 | Kantenprüfung: `Export ist nicht aktuell` | Export nach der letzten Änderung neu erstellen (Review-Render), dann erneut prüfen |
 | Kantenprüfung: `Timeline '…' ist nicht im offenen Projekt` | Projekt in Resolve öffnen (nur lesen) oder `--readback` mit dem letzten Schnappschuss |
+| Kantenprüfung: `Rohclip nicht erreichbar (keine Wortprüfung …)` | NAS/SSD mounten oder `path_map` in der Chargen-`config.yaml` setzen; ohne Rohclip keine Pegelmessung an den Wortkanten |
 | Kantenprüfung: viele Schnipsel „ohne Schnitt" | harte Wechsel in Grafik-Animationen außerhalb von V4 — Bilder ansehen; bei Fehlalarmen `wechsel_diff_min` oder `grafik_spuren` in der Chargen-`config.yaml` anpassen |
 
 ## Ausgabe-Konvention

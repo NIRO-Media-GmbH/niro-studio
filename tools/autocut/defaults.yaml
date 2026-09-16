@@ -71,8 +71,9 @@ kanten:                     # Kantenprüfung am Export (Spec 2026-09-16); Startw
   schwarz_streuung_max: 4.0     # Standardabweichung je Frame (96×54) — Schwarzbild hat keine Struktur
   wechsel_diff_min: 18.0        # mittlere Absolutdifferenz zum Vorframe (96×54) ab der ein Bildwechsel „hart" ist
   schnipsel_max_frames: 2       # zwei harte Wechsel höchstens so weit auseinander → Schnipsel
-  grafik_spuren: ["V4"]         # Grafikebene im Feinschnitt: Schnipsel an deren Kanten = Grafik-Übergang (Hinweis)
-  grafik_abstand_frames: 2      # Taxodia 16.09.: alle 16 Schnipsel lagen 0–2 Frames an V4-Kanten (Flash/Wipe/Iris)
+  grafik_pfade: ["/Ergebnisse/Renders/"]   # Grafik-Items erkannt am Dateipfad (Motion-Renders), egal auf welcher Spur
+  grafik_spuren: []             # zusätzlich ganze Spuren als Grafik werten (z. B. ["V5"]); Taxodia: User legte Grafik auf V5
+  grafik_abstand_frames: 2      # Taxodia 16.09.: alle 16 Schnipsel lagen 0–2 Frames an Grafik-Kanten (Flash/Wipe/Iris)
   knack_ar_ordnung: 32          # AR-Vorhersage; Knackser = Spitze des Vorhersage-Rests
   knack_kante_ms: 2             # Suchfenster um das Schnitt-Sample (PCM-Export schneidet sample-genau; 10 ms fing Sprachtransienten)
   knack_fenster_ms: 100         # Fit-Fenster der AR-Koeffizienten und Umgebung für die Streuung (MAD)
@@ -80,4 +81,6 @@ kanten:                     # Kantenprüfung am Export (Spec 2026-09-16); Startw
   knack_faktor: 12.0            # Spitze / Streuung; Taxodia: −40-dBFS-Sprung 51/51 erkannt, saubere Kanten p95 11
   tonloch_dbfs: -90.0           # RMS je Frame darunter = digitale Stille
   tonloch_min_frames: 2
-  wort_min_ms: 80               # so viel muss von einem Wort an der O-Ton-Kante wegfallen
+  wort_toleranz_ms: 60          # Wörter bis so weit neben der Kante zählen (Scribe-Zeiten driften)
+  wort_tal_db: 12               # Befund, wenn der Quellton an der Kante (beidseitig 20 ms) höchstens so weit unter der Wortspitze liegt
+  wort_pegel_min_dbfs: -50      # … und darüber; Taxodia 16.09.: Schnitte im Tal lagen bei −55 dBFS, Raumton FX3 −55 … −76

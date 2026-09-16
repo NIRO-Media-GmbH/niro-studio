@@ -194,35 +194,63 @@ def _ton_snap(datei: str, items: list[tuple[int, int, int]]) -> dict:
                                "aktiv": True, "tempo": None} for s, d, q in items]}}
 
 
-def test_wort_befunde_in_and_out_edges(charge, cfg):
-    assert cfg["wort_min_ms"] <= 100
-    snap = _ton_snap(_fx3(charge), [(0, 10, 35), (20, 1, 31)])      # Item 1: In 1,40 s in „ist", Out 1,80 s in „meins."
-    snap["spuren"]["A1"].append({"name": "x.MP4", "datei": "/x/x.MP4", "start": 40, "dauer": 5, "quell_in": 0,
-                                 "aktiv": True, "tempo": None})       # Clip ohne Transkript
-    befunde, z = K.wort_befunde(snap, K.Transkripte(charge), cfg)
-    assert [(b["seite"], b["wort"], b["frame"], b["wert"], b["spur"]) for b in befunde] == [
-        ("in", "ist", 0, 100, "A1"), ("out", "meins.", 9, 200, "A1")]
-    assert (z["mit_transkript"], z["ohne_transkript"], z["ohne_liste"]) == (2, 1, ["x.MP4"])
+def _pegel_stub(laut: list[tuple[float, float]], grund: float = -70.0, spitze: float = -25.0):
+    """Pegel-Funktion wie im Skript: 10-ms-RMS in dBFS für [von_s, bis_s); laut = Bereiche mit Sprache (Quellsekunden)."""
+    def pegel(datei, von_s, bis_s):
+        n = int(round((bis_s - von_s) / 0.01))
+        t = von_s + (np.arange(n) + 0.5) * 0.01
+        db = np.full(n, grund)
+        for a, b in laut:
+            db[(t >= a) & (t < b)] = spitze
+        return db
+    return pegel
 
 
-def test_wort_befunde_threshold_zero_length_and_tempo(cfg):
-    assert 40 < cfg["wort_min_ms"] <= 120
-    woerter = [{"text": "kurz", "start": 1.0, "end": 1.0}, {"text": "lang", "start": 2.0, "end": 3.0}]
+def _ton_item(name, start, dauer, quell_in, tempo=None, datei=None):
+    return {"name": name, "datei": datei or name, "start": start, "dauer": dauer, "quell_in": quell_in, "aktiv": True,
+            "tempo": tempo}
 
-    def item(name, start, dauer, quell_in, tempo=None):
-        return {"name": name, "datei": name, "start": start, "dauer": dauer, "quell_in": quell_in, "aktiv": True,
-                "tempo": tempo}
 
+def test_wort_befunde_level_rule(cfg):
+    """Kalibrierung Taxodia 16.09.: Scribe-Wortenden hängen vor Komma/„ähm" nach — gemeldet wird nur, wenn der Pegel
+    auf beiden Seiten der Kante nahe der Wortspitze liegt (nicht im Tal)."""
+    assert cfg["wort_tal_db"] >= 6 and cfg["wort_pegel_min_dbfs"] <= -40
+    woerter = [{"text": "Hallo", "start": 1.0, "end": 1.6}, {"text": "Welt.", "start": 2.0, "end": 2.8},
+               {"text": "kurz", "start": 3.0, "end": 3.0}]
+    laut = [(1.0, 1.5), (2.0, 2.7)]                  # hörbare Sprache endet vor dem Scribe-Wortende
     snap = {"fps": 25.0, "laenge": 500, "start_timecode": "01:00:00:00", "timeline": "T", "spuren": {"A1": [
-        item("a", 0, 10, 25),              # In genau auf einem Wort der Länge 0
-        item("b", 100, 25, 50, 100.0),     # In = Wortanfang, Out = Wortende → nichts weg
-        item("c", 200, 10, 51, 50.0),      # Tempo 50 % → nicht geprüft, nicht gezählt
-        item("d", 300, 24, 51),            # In 40 ms im Wort → unter der Grenze
-        item("e", 400, 22, 53),            # In 120 ms im Wort → Befund
+        _ton_item("a", 0, 20, 30),                   # In 1,20 s mitten in „Hallo" (laut) → Befund
+        _ton_item("b", 100, 14, 25),                 # Out 1,56 s: Scribe-Wort, aber Pegeltal → kein Befund
+        _ton_item("c", 200, 10, 50, 50.0),           # Tempo 50 % → nicht geprüft
+        _ton_item("d", 300, 15, 60),                 # In 2,40 s mitten in „Welt." → Befund; Out 3,00 s: Wort mit Länge 0
     ]}}
+    befunde, z = K.wort_befunde(snap, _Stub(woerter), cfg, pegel=_pegel_stub(laut))
+    assert [(b["clip"], b["seite"], b["wort"], b["frame"]) for b in befunde] == [("a", "in", "Hallo", 0),
+                                                                                ("d", "in", "Welt.", 300)]
+    assert befunde[0]["wert"] == 0.0 and befunde[0]["kante_dbfs"] == -25.0
+    assert (z["mit_transkript"], z["ohne_transkript"], z["ohne_quelle"]) == (3, 0, 0)
+
+
+def test_wort_befunde_quiet_word_and_missing_source(cfg):
+    woerter = [{"text": "leise", "start": 1.0, "end": 1.6}]
+    snap = {"fps": 25.0, "laenge": 100, "start_timecode": "01:00:00:00", "timeline": "T",
+            "spuren": {"A1": [_ton_item("a", 0, 20, 30)]}}
+    fluestern = _pegel_stub([(1.0, 1.6)], grund=-80.0, spitze=cfg["wort_pegel_min_dbfs"] - 5)
+    assert K.wort_befunde(snap, _Stub(woerter), cfg, pegel=fluestern)[0] == []
+    befunde, z = K.wort_befunde(snap, _Stub(woerter), cfg, pegel=lambda datei, von, bis: None)
+    assert befunde == [] and (z["mit_transkript"], z["ohne_quelle"], z["ohne_quelle_liste"]) == (0, 1, ["a"])
     befunde, z = K.wort_befunde(snap, _Stub(woerter), cfg)
-    assert [(b["clip"], b["seite"], b["wert"]) for b in befunde] == [("e", "in", 120)]
-    assert z["mit_transkript"] == 4
+    assert befunde == [] and z["ohne_quelle"] == 1
+
+
+def test_wort_befunde_real_transcript(charge, cfg):
+    snap = {"fps": 25.0, "laenge": 200, "start_timecode": "01:00:00:00", "timeline": "T", "spuren": {"A1": [
+        _ton_item("FX3_0001.MP4", 0, 20, 35, datei=_fx3(charge)),            # In 1,40 s in „ist" (1,3–1,5), Out 2,20 s frei
+        _ton_item("x.MP4", 40, 5, 0, datei="/x/x.MP4")],                     # ohne Transkript, O-Ton-Spur
+        "A2": [_ton_item("Musik.wav", 0, 100, 0, datei="/m/Musik.wav")]}}   # Musikspur: nicht aufgelistet
+    befunde, z = K.wort_befunde(snap, K.Transkripte(charge), cfg, pegel=_pegel_stub([(1.0, 2.0)]))
+    assert [(b["seite"], b["wort"]) for b in befunde] == [("in", "ist")]
+    assert (z["mit_transkript"], z["ohne_transkript"], z["ohne_liste"]) == (1, 1, ["x.MP4"])
 
 
 def test_export_woerter_shift_and_window(charge):
@@ -260,9 +288,11 @@ def test_pruefe_combines_rules_numbers_and_context(cfg):
     assert [(b["nr"], b["art"], b["frame"], b["timecode"]) for b in erg["befunde"]] == [
         (1, "Schwarzbild", 35, "01:00:01:10"), (2, "Tonloch", 40, "01:00:01:15")]
     assert erg["befunde"][0]["kontext"]["bild_schnitt"] == {"frame": 20, "abstand": -15}
-    assert erg["umfang"] == {"bild_schnitte": 1, "ton_schnitte": 0, "mit_transkript": 0, "ohne_transkript": 1,
-                             "ohne_liste": ["a"]}
-    assert erg["verteilung"]["diff"]["an_schnitten"]["n"] == 1 and erg["warnungen"] == [] and erg["hinweise"] == []
+    assert erg["umfang"] == {"bild_schnitte": 1, "ton_schnitte": 0, "mit_transkript": 0, "ohne_transkript": 0,
+                             "ohne_liste": [], "ohne_quelle": 0, "ohne_quelle_liste": []}
+    assert erg["verteilung"]["diff"]["an_schnitten"]["n"] == 1 and erg["hinweise"] == []
+    assert erg["warnungen"] == ["Kein Tonclip mit Transkript gefunden — Wortkanten nicht geprüft (transcripts_index.json "
+                                "der Charge, Dateinamen der O-Ton-Clips prüfen)."]
 
 
 def test_knackser_small_step_in_dense_signal(cfg):
@@ -284,8 +314,10 @@ def test_pruefe_schnipsel_an_grafikkante_wird_hinweis(cfg):
     snap = {"quelle": "plan", "gelesen_am": "x", "projekt": "P", "timeline": "T", "fps": 25.0, "start_frame": 0,
             "start_timecode": "01:00:00:00", "laenge": n, "spuren": {
                 "V1": [{"name": "v", "datei": "v", "start": 0, "dauer": n, "quell_in": 0, "aktiv": True, "tempo": 100.0}],
-                "V4": [{"name": "g", "datei": "g.mov", "start": 20, "dauer": 10, "quell_in": 0, "aktiv": True,
-                        "tempo": 100.0}]}}
+                "V4": [{"name": "Adjustment Clip", "datei": None, "start": 0, "dauer": n, "quell_in": 90000,
+                        "aktiv": True, "tempo": 100.0}],
+                "V5": [{"name": "g", "datei": "/p/Charge/Ergebnisse/Renders/g.mov", "start": 20, "dauer": 10,
+                        "quell_in": 0, "aktiv": True, "tempo": 100.0}]}}
     mittel, streuung, diff = np.full(n, 90.0), np.full(n, 30.0), np.zeros(n)
     hoch = cfg["wechsel_diff_min"] + 20
     diff[20] = diff[21] = hoch                     # Flash am Grafik-Start → Hinweis
@@ -295,5 +327,8 @@ def test_pruefe_schnipsel_an_grafikkante_wird_hinweis(cfg):
     assert erg["hinweise"] == [{"art": "Grafik-Übergang", "frame": 20, "frames": 1, "wert": round(hoch, 1),
                                 "timecode": "01:00:00:20"}]
     ohne = K.pruefe(snap, {"mittel": mittel, "streuung": streuung, "diff": diff}, None, 48000, _Stub(None),
-                    {**cfg, "grafik_spuren": []})
+                    {**cfg, "grafik_spuren": [], "grafik_pfade": []})
     assert ohne["zaehlung"]["Schnipsel"] == 2 and ohne["hinweise"] == []
+    spur = K.pruefe(snap, {"mittel": mittel, "streuung": streuung, "diff": diff}, None, 48000, _Stub(None),
+                    {**cfg, "grafik_spuren": ["V5"], "grafik_pfade": []})
+    assert [b["frame"] for b in spur["befunde"]] == [45] and len(spur["hinweise"]) == 1

@@ -66,9 +66,20 @@ def _snap(fx3: str, laenge: int = N) -> dict:
                 "A1": [it("FX3_0001.MP4", fx3, 0, 50, 0), it("FX3_0001.MP4", fx3, 50, 25, 35)]}}
 
 
+def _quelle(pfad: str) -> None:
+    """Rohclip FX3_0001: 3 s, Ton nur 1,0–1,6 s („Das ist meins." laut Scribe-Cache 1,0–2,0 s), sonst digital still."""
+    Path(pfad).parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+                    "-f", "lavfi", "-i", "testsrc2=size=160x90:rate=25:duration=3",
+                    "-f", "lavfi", "-i", "sine=frequency=300:sample_rate=48000:duration=3",
+                    "-af", "volume='if(between(t,1.0,1.6),1,0)':eval=frame",
+                    "-c:v", "mpeg4", "-q:v", "3", "-c:a", "pcm_s16le", "-f", "mov", pfad], check=True)
+
+
 @pytest.fixture
 def aufbau(charge_dir: Path, tmp_path: Path) -> dict:
     fx3 = Charge.open(charge_dir).load_index()[0]["path"]
+    _quelle(fx3)
     export = _export(charge_dir / "Ergebnisse" / "Export" / "T.mov", tmp_path)
     rb = tmp_path / "snap.json"
     rb.write_text(json.dumps(_snap(fx3)), encoding="utf-8")
@@ -82,6 +93,7 @@ def test_befunde_bericht_bilder_protokoll(aufbau):
     assert [(b["art"], b["frame"]) for b in erg["befunde"]] == [
         ("Schwarzbild", 40), ("Knackser", 50), ("Wort angeschnitten", 50), ("Tonloch", 60)]
     assert erg["befunde"][3]["frames"] == LANG and erg["befunde"][2]["wort"] == "ist"
+    assert erg["befunde"][2]["wert"] == 0.0 and Path(erg["befunde"][2]["bild"]).name == "kante_003_wort_01-00-02-00.png"
     assert all(b["bild"] and Path(b["bild"]).is_file() for b in erg["befunde"])
     assert Path(erg["befunde"][0]["bild"]).name == "kante_001_schwarzbild_01-00-01-15.png"
     bericht = (ch / "Ergebnisse" / "Rohschnitt" / "video-1-test-kanten.md").read_text(encoding="utf-8")
@@ -122,3 +134,14 @@ def test_timeline_name_nimmt_neueste_datei(aufbau):
     assert kanten.timeline_name(ch) == "Fein"
     os.utime(ch.autocut / "feinschnitt.json", (alt - 50, alt - 50))
     assert kanten.timeline_name(ch) == "Roh"          # finalize.json ohne status ok zählt nicht
+
+
+def test_ohne_export_nur_wortkanten(aufbau):
+    ch = aufbau["charge"]
+    aufbau["export"].unlink()
+    assert kanten.main([str(ch), "--readback", str(aufbau["readback"]), "--ohne-export"]) == 1
+    erg = json.loads((ch / "_intern" / "autocut" / "kanten.json").read_text(encoding="utf-8"))
+    assert [(b["art"], b["frame"]) for b in erg["befunde"]] == [("Wort angeschnitten", 50)]
+    assert erg["export"] is None and Path(erg["befunde"][0]["bild"]).is_file()
+    bericht = (ch / "Ergebnisse" / "Rohschnitt" / "video-1-test-kanten.md").read_text(encoding="utf-8")
+    assert "nur Wortkanten" in bericht

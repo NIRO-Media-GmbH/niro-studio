@@ -182,3 +182,14 @@ Zwei Regeln haben sich am echten Material geändert (Details und Zahlen: `tools/
 - **Grafik-Übergang (neu):** Schnipsel höchstens `grafik_abstand_frames` 2 neben einer Kante eines aktiven Items auf
   `grafik_spuren` (Standard `["V4"]`) sind Hinweise, keine Befunde (`kanten.json` → `hinweise`, Bericht-Zeile
   „Grafik-Übergänge"). Grund: Alle 16 Schnipsel des ersten Taxodia-Laufs waren Flash, Wipe oder Iris der Grafikebene.
+- **Wort angeschnitten (ersetzt die Regel aus Abschnitt 3, Nachkalibrierung am Hand-Schnitt des Users):** Kante an einem
+  Scribe-Wort (±`wort_toleranz_ms` 60, Wörter mit Länge > 0) **und** Quellton des Rohclips auf beiden Seiten der Kante
+  (je 20 ms, leisere Seite zählt) höchstens `wort_tal_db` 12 unter der Wortspitze und über `wort_pegel_min_dbfs` −50.
+  Pegel über `pegel(datei, von_s, bis_s)` (10-ms-RMS des Proxys, sonst Original); ohne erreichbaren Rohclip keine
+  Wortprüfung (Zähler `ohne_quelle`). Bilder zu Wortkanten zeigen den Rohclip. Grund: Die Zeitregel meldete 4 Schnitte
+  in Pegeltälern (Scribe-Wortenden hängen vor Komma/„ähm" nach); gemessen an 76 Kanten liegen Pausen-Schnitte 17–46 dB,
+  Schnitte durch Klang 2–12 dB unter der Wortspitze.
+- **`--ohne-export` (neu):** nur Wortkanten, kein Export nötig — für Prüfungen direkt nach Handänderungen.
+- **Grafik-Erkennung (ersetzt `grafik_spuren: ["V4"]`):** über `grafik_pfade` (Standard `["/Ergebnisse/Renders/"]`, Teilstring
+  des Dateipfads) plus optional `grafik_spuren`; der User hatte die Grafik auf V5 verschoben und V4 mit einem
+  Adjustment Clip belegt.

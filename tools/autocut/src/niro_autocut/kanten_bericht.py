@@ -4,7 +4,7 @@ from __future__ import annotations
 from .kanten import ARTEN
 
 EINHEIT = {"Schwarzbild": "Mittel", "Schnipsel": "Diff", "Knackser": "×", "Tonloch": "dBFS",
-           "Wort angeschnitten": "ms"}
+           "Wort angeschnitten": "dB zur Wortspitze"}
 
 
 def _kz(k: dict | None) -> str:
@@ -18,7 +18,8 @@ def _kontext_text(x: dict) -> str:
     if x["art"] == "Knackser":
         teile.append(f"Spitze {x.get('spitze')} bei {x.get('versatz_ms')} ms, Kanal {x.get('kanal')}")
     elif x["art"] == "Wort angeschnitten":
-        teile.append(f"„{x.get('wort')}“ an der {x.get('seite')}-Kante, {x.get('spur')} {x.get('clip')}")
+        teile.append(f"„{x.get('wort')}“ an der {x.get('seite')}-Kante ({x.get('kante_dbfs')} dBFS), "
+                     f"{x.get('spur')} {x.get('clip')}")
     elif x["art"] == "Schnipsel":
         teile.append("an Schnitt" if x.get("an_schnitt") else "ohne Schnitt")
     k = x.get("kontext") or {}
@@ -34,12 +35,14 @@ def _kontext_text(x: dict) -> str:
 def bericht(erg: dict) -> str:
     ex, sn, um, z = erg["export"], erg["schnappschuss"], erg["umfang"], erg["zaehlung"]
     n = len(erg["befunde"])
-    zeilen = [f"# Kantenprüfung — {erg['timeline']}", "",
-              f"- Export: `{ex['datei']}` ({ex['frames']} Frames @ {ex['fps']} fps, {ex['breite']}×{ex['hoehe']}, "
-              f"Ton {'ja' if ex['ton'] else 'nein'})",
+    export_zeile = ("- Export: — (`--ohne-export`: nur Wortkanten am Quellton geprüft)" if ex is None else
+                    f"- Export: `{ex['datei']}` ({ex['frames']} Frames @ {ex['fps']} fps, {ex['breite']}×{ex['hoehe']}, "
+                    f"Ton {'ja' if ex['ton'] else 'nein'})")
+    zeilen = [f"# Kantenprüfung — {erg['timeline']}", "", export_zeile,
               f"- Schnappschuss: {sn['quelle']} ({sn['gelesen_am']}, Projekt „{sn['projekt']}“)",
               f"- Umfang: {um['bild_schnitte']} Bild-Schnitte, {um['ton_schnitte']} Ton-Schnitte, "
-              f"{um['mit_transkript']} Tonclips mit Transkript, {um['ohne_transkript']} ohne",
+              f"{um['mit_transkript']} Tonclips mit Transkript, {um['ohne_transkript']} ohne, "
+              f"{um.get('ohne_quelle', 0)} ohne erreichbaren Rohclip",
               "", "## Ergebnis", ""]
     if n == 0:
         zeilen.append("**Keine Befunde.**")
@@ -52,6 +55,9 @@ def bericht(erg: dict) -> str:
                    + ", ".join(h["timecode"] for h in erg["hinweise"][:40]), ""]
     if um.get("ohne_liste"):
         zeilen += ["Tonclips ohne Transkript (keine Wortprüfung): " + ", ".join(um["ohne_liste"][:12]), ""]
+    if um.get("ohne_quelle_liste"):
+        zeilen += ["Rohclip nicht erreichbar (keine Wortprüfung, NAS/path_map prüfen): "
+                   + ", ".join(um["ohne_quelle_liste"][:12]), ""]
     if n:
         zeilen += ["Befunde sind Verdachtsfälle — erst das Schnittbild ansehen, dann handeln.", "",
                    "| Nr | Art | Timecode | Frames | Wert | Kontext | Bild |", "|---|---|---|---|---|---|---|"]

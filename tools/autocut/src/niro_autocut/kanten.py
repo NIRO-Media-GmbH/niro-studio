@@ -301,30 +301,76 @@ def _ton_items(snap: dict):
                 yield key, r
 
 
-def wort_befunde(snap: dict, transkripte, cfg: dict) -> tuple[list[dict], dict]:
-    """Wort angeschnitten: O-Ton-Kante liegt in einem Wort, von dem mindestens ``wort_min_ms`` wegfallen (Spec 3)."""
+def _db_mittel(werte) -> float:
+    """Mittlere Leistung mehrerer dBFS-Werte, wieder in dBFS (leer → −200)."""
+    w = np.asarray(werte, dtype=float)
+    if w.size == 0:
+        return -200.0
+    return float(10.0 * np.log10(max(float(np.mean(np.power(10.0, w / 10.0))), 1e-20)))
+
+
+def _kanten_pegel(pegel, datei, t: float, ws: float, we: float) -> tuple[float, float] | None:
+    """(Pegel an der Kante = leiserer der beiden 20-ms-Streifen, Wortspitze) in dBFS aus 10-ms-RMS; None ohne Quelle."""
+    von = max(0.0, min(t, ws) - 0.1)
+    db = pegel(datei, von, max(t, we) + 0.1)
+    if db is None or len(db) == 0:
+        return None
+    db = np.asarray(db, dtype=float)
+    i = int(round((t - von) / 0.01))
+    vor, nach = db[max(0, i - 2):max(0, i)], db[max(0, i):i + 2]
+    kante = min(_db_mittel(vor), _db_mittel(nach)) if vor.size and nach.size else -200.0
+    a, b = int(np.floor((ws - von) / 0.01)), int(np.ceil((we - von) / 0.01))
+    wort = db[max(0, a):max(a + 1, min(len(db), b))]
+    return kante, (float(wort.max()) if wort.size else -200.0)
+
+
+def wort_befunde(snap: dict, transkripte, cfg: dict, pegel=None) -> tuple[list[dict], dict]:
+    """Wort angeschnitten (Spec 3, Nachtrag 16.09.): eine O-Ton-Kante liegt an einem Wort (Scribe, ±``wort_toleranz_ms``)
+    und der Quellton ist auf beiden Seiten der Kante (je 20 ms) höchstens ``wort_tal_db`` unter der Wortspitze und über
+    ``wort_pegel_min_dbfs`` — der Schnitt geht durch hörbaren Klang, nicht durch ein Tal.
+
+    ``pegel(datei, von_s, bis_s)`` liefert 10-ms-RMS in dBFS der Quelldatei oder None (Quelle nicht erreichbar).
+    Kalibrierung Taxodia 16.09.: Scribe-Wortenden hängen vor Komma und bei „ähm" bis 300 ms nach; die reine Zeitregel
+    meldete vier Schnitte in Pegeltälern (−55 dBFS, 20–25 dB unter dem Wort).
+    """
     fps = float(snap["fps"])
-    grenze = cfg["wort_min_ms"] / 1000.0
+    tol = cfg["wort_toleranz_ms"] / 1000.0
     befunde: list[dict] = []
-    mit, ohne = 0, []
-    for key, r in _ton_items(snap):
-        woerter = transkripte.woerter(r["datei"])
+    mit, ohne, ohne_quelle = 0, [], []
+    items = [(key, r, transkripte.woerter(r["datei"])) for key, r in _ton_items(snap)]
+    oton_spuren = {key for key, _r, w in items if w is not None}      # Musik-/SFX-Spuren ohne Transkript nicht auflisten
+    for key, r, woerter in items:
+        name = r["name"] or str(r["datei"])
         if woerter is None:
-            ohne.append(r["name"] or str(r["datei"]))
+            if key in oton_spuren:
+                ohne.append(name)
             continue
-        mit += 1
+        kandidaten = []
         for seite, t, frame in (("in", r["quell_in"] / fps, r["start"]),
                                 ("out", (r["quell_in"] + r["dauer"]) / fps, r["start"] + r["dauer"] - 1)):
-            for w in woerter:
-                ws, we = float(w["start"]), float(w["end"])
-                if not ws < t < we:
-                    continue
-                weg = (we - t) if seite == "out" else (t - ws)
-                if weg >= grenze:
-                    befunde.append({"art": "Wort angeschnitten", "frame": int(frame), "frames": 1,
-                                    "wert": int(round(weg * 1000)), "wort": w.get("text"), "seite": seite,
-                                    "spur": key, "clip": r["name"]})
-    return befunde, {"mit_transkript": mit, "ohne_transkript": len(ohne), "ohne_liste": sorted(set(ohne))}
+            nah = [w for w in woerter if float(w["end"]) > float(w["start"])
+                   and float(w["start"]) - tol < t < float(w["end"]) + tol]
+            if nah:
+                w = min(nah, key=lambda w: abs((float(w["start"]) + float(w["end"])) / 2 - t))
+                kandidaten.append((seite, t, frame, w))
+        messungen = []
+        for seite, t, frame, w in kandidaten:
+            m = None if pegel is None else _kanten_pegel(pegel, r["datei"], t, float(w["start"]), float(w["end"]))
+            if m is None:
+                break
+            messungen.append((seite, t, frame, w, m))
+        if len(messungen) < len(kandidaten):
+            ohne_quelle.append(name)
+            continue
+        mit += 1
+        for seite, t, frame, w, (kante, spitze) in messungen:
+            if kante >= cfg["wort_pegel_min_dbfs"] and kante >= spitze - cfg["wort_tal_db"]:
+                befunde.append({"art": "Wort angeschnitten", "frame": int(frame), "frames": 1,
+                                "wert": round(kante - spitze, 1), "kante_dbfs": round(kante, 1), "wort": w.get("text"),
+                                "seite": seite, "spur": key, "clip": r["name"], "datei": r["datei"],
+                                "quell_s": round(t, 3)})
+    return befunde, {"mit_transkript": mit, "ohne_transkript": len(ohne), "ohne_liste": sorted(set(ohne)),
+                     "ohne_quelle": len(ohne_quelle), "ohne_quelle_liste": sorted(set(ohne_quelle))}
 
 
 def export_woerter(snap: dict, transkripte, von_s: float, bis_s: float) -> list[dict]:
@@ -371,11 +417,15 @@ def diff_verteilung(diff, bild_schnitte: list[int]) -> dict:
 
 
 def grafik_hinweise(snap: dict, befunde: list[dict], cfg: dict) -> tuple[list[dict], list[dict]]:
-    """Schnipsel höchstens ``grafik_abstand_frames`` neben einer Kante eines aktiven Items auf ``grafik_spuren``
-    sind gewollte Grafik-Übergänge (Flash, Wipe, Iris) und werden zum Hinweis (Kalibrierung Taxodia 16.09.: 16 von
-    16 Schnipseln lagen an V4-Kanten). Rückgabe: verbleibende Befunde, Hinweise."""
+    """Schnipsel höchstens ``grafik_abstand_frames`` neben der Kante eines aktiven Grafik-Items sind gewollte
+    Grafik-Übergänge (Flash, Wipe, Iris) und werden zum Hinweis. Grafik-Items: Dateipfad enthält eines der
+    ``grafik_pfade`` (Motion-Renders) oder das Item liegt auf einer der ``grafik_spuren``. Kalibrierung Taxodia 16.09.:
+    16 von 16 Schnipseln lagen an Kanten der Grafikebene; der User verschob sie später von V4 auf V5.
+    Rückgabe: verbleibende Befunde, Hinweise."""
+    pfade = [_nfc(x) for x in (cfg.get("grafik_pfade") or [])]
     spuren = set(cfg.get("grafik_spuren") or [])
-    kanten = sorted({f for key, rows in snap["spuren"].items() if key in spuren for r in rows if r["aktiv"]
+    kanten = sorted({f for key, rows in snap["spuren"].items() if key.startswith("V") for r in rows if r["aktiv"]
+                     and (key in spuren or (r.get("datei") and any(x in _nfc(r["datei"]) for x in pfade)))
                      for f in (r["start"], r["start"] + r["dauer"])})
     if not kanten:
         return befunde, []
@@ -390,10 +440,11 @@ def grafik_hinweise(snap: dict, befunde: list[dict], cfg: dict) -> tuple[list[di
     return bleiben, hinweise
 
 
-def pruefe(snap: dict, bild: dict | None, audio, sr: int, transkripte, cfg: dict) -> dict:
+def pruefe(snap: dict, bild: dict | None, audio, sr: int, transkripte, cfg: dict, pegel=None) -> dict:
     """Alle Befund-Regeln auf Schnappschuss und Messwerte anwenden (ohne Bilder).
 
-    ``bild``: Arrays ``mittel``, ``streuung``, ``diff`` je Frame oder None; ``audio``: Samples × Kanäle oder None.
+    ``bild``: Arrays ``mittel``, ``streuung``, ``diff`` je Frame oder None; ``audio``: Samples × Kanäle oder None;
+    ``pegel``: Quellton-Pegel für die Wortkanten (siehe ``wort_befunde``), ohne → Wortkanten nicht geprüft.
     """
     fps, n = float(snap["fps"]), int(snap["laenge"])
     b_schnitte, t_schnitte = schnitte(snap, "bild"), schnitte(snap, "ton")
@@ -408,8 +459,12 @@ def pruefe(snap: dict, bild: dict | None, audio, sr: int, transkripte, cfg: dict
         befunde += kb
         befunde += tonloch_befunde(rms_dbfs_je_frame(audio, sr, fps, n), ton_maske(snap), cfg)
         verteilung["knack_verhaeltnis"] = kennzahlen(verh)
-    wb, zaehler = wort_befunde(snap, transkripte, cfg)
+    wb, zaehler = wort_befunde(snap, transkripte, cfg, pegel)
     befunde += wb
+    warnungen = []
+    if zaehler["mit_transkript"] == 0 and zaehler["ohne_quelle"] == 0 and any(True for _ in _ton_items(snap)):
+        warnungen.append("Kein Tonclip mit Transkript gefunden — Wortkanten nicht geprüft (transcripts_index.json der "
+                         "Charge, Dateinamen der O-Ton-Clips prüfen).")
     befunde, hinweise = grafik_hinweise(snap, befunde, cfg)
     befunde.sort(key=lambda x: (x["frame"], ARTEN.index(x["art"])))
     for nr, x in enumerate(befunde, 1):
@@ -424,4 +479,4 @@ def pruefe(snap: dict, bild: dict | None, audio, sr: int, transkripte, cfg: dict
     return {"timeline": snap["timeline"], "fps": fps, "laenge": n,
             "umfang": {"bild_schnitte": len(b_schnitte), "ton_schnitte": len(t_schnitte), **zaehler},
             "zaehlung": {a: sum(1 for x in befunde if x["art"] == a) for a in ARTEN},
-            "befunde": befunde, "hinweise": hinweise, "verteilung": verteilung, "warnungen": []}
+            "befunde": befunde, "hinweise": hinweise, "verteilung": verteilung, "warnungen": warnungen}
