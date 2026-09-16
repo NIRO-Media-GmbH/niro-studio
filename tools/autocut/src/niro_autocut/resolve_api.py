@@ -96,6 +96,13 @@ def _safe(fn, default=None, *args):
         return default
 
 
+def _speed_pct(v) -> float | None:
+    """``TimelineItem.GetSpeed()`` liefert in 21.1 ``{"Percentage": …}``; eine Zahl wird direkt übernommen."""
+    if isinstance(v, dict):
+        v = v.get("Percentage")
+    return None if v is None else float(v)
+
+
 def _fps_str(fps: float) -> str:
     s = f"{float(fps):.3f}".rstrip("0").rstrip(".")
     return s or "0"
@@ -442,11 +449,12 @@ class ResolveSession:
         return path
 
     def read_timeline(self, timeline) -> dict:
-        """Alle Items je Spur (name, file, start, end, duration, src_in, src_out, enabled), Marker, Settings.
+        """Alle Items je Spur (name, file, start, end, duration, src_in, src_out, enabled, left_offset, speed), Marker, Settings.
 
         Beobachtet am MEK-Projekt (Readback 04.09., 92 Timelines): ``end - start == duration`` (GetEnd exklusiv);
         ``src_out - src_in`` weicht bis zu ±1 Frame von ``duration`` ab (GetSourceEndFrame ist nicht frame-exakt) —
-        für Berechnungen ``src_in`` + ``duration`` verwenden, nicht ``src_out``.
+        für Berechnungen ``src_in`` + ``duration`` verwenden, nicht ``src_out``. ``left_offset`` (GetLeftOffset) ist exakt
+        in Timeline-Frames — für Quellzeiten ``left_offset / fps`` verwenden.
         """
         markers = {}
         for k, v in (_safe(timeline.GetMarkers, None) or {}).items():
@@ -472,7 +480,9 @@ class ResolveSession:
                                  "duration": _safe(lambda: int(it.GetDuration()), None),
                                  "src_in": _safe(it.GetSourceStartFrame, None),
                                  "src_out": _safe(it.GetSourceEndFrame, None),
-                                 "enabled": _safe(it.GetClipEnabled, None)})
+                                 "enabled": _safe(it.GetClipEnabled, None),
+                                 "left_offset": _safe(lambda: int(it.GetLeftOffset()), None),
+                                 "speed": _safe(lambda: _speed_pct(it.GetSpeed()), None)})
                 out["tracks"][f"{kind[0].upper()}{i}"] = {"name": _safe(timeline.GetTrackName, None, kind, i), "items": rows}
                 out["n_items"] += len(rows)
         return out

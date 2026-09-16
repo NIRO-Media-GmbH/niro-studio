@@ -152,6 +152,11 @@ class FakeTLItem:
     def GetSourceEndFrame(self):
         return int(self.info["endFrame"])
 
+    def GetLeftOffset(self, *a):
+        """Quell-In in Timeline-Frames (Resolve 21.1: 50p-Quelle in 25p-Timeline liefert die halben Quellframes)."""
+        fps = float(getattr(self.info["mediaPoolItem"], "props", {}).get("FPS", 25))
+        return int(round(int(self.info["startFrame"]) * 25 / fps))
+
     def GetUniqueId(self):
         return f"tli-{self.kind}{self.index}-{self.start}"
 

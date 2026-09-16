@@ -260,7 +260,7 @@ def test_read_timeline_lists_tracks_items_and_markers():
     assert list(d["tracks"]) == ["V1", "V2", "V3", "A1"] and d["tracks"]["V1"]["name"] == "FX3"
     v1 = d["tracks"]["V1"]["items"]
     assert v1[0] == {"name": "FX3_1.MP4", "file": FX, "start": 90000, "end": 90072, "duration": 72,
-                     "src_in": 244, "src_out": 315, "enabled": True}
+                     "src_in": 244, "src_out": 315, "enabled": True, "left_offset": 244, "speed": 100.0}
     assert d["tracks"]["V2"]["items"][0]["enabled"] is True and d["tracks"]["V3"]["items"] == []
     assert d["markers"]["97"]["name"] == "#2 VO" and d["n_items"] == 5
 
