@@ -267,6 +267,7 @@ class FakeTimeline:
         self.transitions: list = []
         self.align_calls: list[tuple] = []
         self.normalize_calls: list[tuple] = []
+        self.mark_in_out: dict = {}           # Resolve: {} ohne Marken, sonst {"video": {"in": …, "out": …}, …}
 
     def GetName(self):
         return self.name
@@ -341,6 +342,9 @@ class FakeTimeline:
 
     def GetMarkers(self):
         return {float(k): dict(v) for k, v in self.marker_data.items()}
+
+    def GetMarkInOut(self):
+        return dict(self.mark_in_out)
 
     def GetItemListInTrack(self, kind, idx):
         return [it for it in self.tl_items if it.kind == kind and it.index == idx]
@@ -570,7 +574,9 @@ class FakeProject:
         self.timelines: list[FakeTimeline] = []
         self.current: FakeTimeline | None = None
         self.saved = 0
-        self.quick_presets = ["H.264 Master", "H.265 Master", "ProRes 422 HQ", "YouTube"]
+        self.quick_presets = ["H.264 Master", "H.265 Master", "ProRes 422 HQ", "YouTube", "Replay"]
+        self.quick_settings: list[dict] = []     # Einstellungen je RenderWithQuickExport-Aufruf
+        self.upload_status = "Upload Completed"  # Live 16.09.2026: Quick Export „Replay" + EnableUpload
         self.renders: list[tuple] = []
 
     def GetMediaPool(self):
@@ -615,14 +621,18 @@ class FakeProject:
 
     def RenderWithQuickExport(self, preset, settings=None):
         settings = dict(settings or {})
+        self.quick_settings.append(dict(settings))
         if preset not in self.quick_presets or self.current is None:
             return {"JobStatus": "Render Failed", "CompletionPercentage": 0,
                     "Error": f"Preset '{preset}' unbekannt oder keine aktuelle Timeline"}
         target = Path(settings.get("TargetDir", "."))
         target.mkdir(parents=True, exist_ok=True)
-        out = target / f"{settings.get('CustomName') or self.current.name}.mov"
+        endung = ".mp4" if preset in ("Replay", "Dropbox") else ".mov"
+        out = target / f"{settings.get('CustomName') or self.current.name}{endung}"
         out.write_bytes(b"fake render")
         self.renders.append((preset, str(out)))
+        if settings.get("EnableUpload") and preset in ("Replay", "Dropbox"):
+            return {"JobStatus": self.upload_status, "CompletionPercentage": 100, "TimeTakenToRenderInMs": 1052}
         return {"JobStatus": "Render Complete", "CompletionPercentage": 100, "TimeTakenToRenderInMs": 1234}
 
 
@@ -640,6 +650,14 @@ class FakeResolve:
 
     def __init__(self, project: FakeProject | None = None):
         self.p = project or FakeProject()
+        self.page = "edit"
+
+    def GetCurrentPage(self):
+        return self.page
+
+    def OpenPage(self, page):
+        self.page = page
+        return True
 
     def GetProjectManager(self):
         return self
