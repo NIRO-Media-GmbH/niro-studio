@@ -234,3 +234,159 @@ def tonloch_befunde(rms_db, maske, cfg: dict) -> list[dict]:
     still = (rms_db[:n] < cfg["tonloch_dbfs"]) & m[:n]
     return [{"art": "Tonloch", "frame": a, "frames": b - a, "wert": round(float(rms_db[a:b].max()), 1)}
             for a, b in laeufe(still) if b - a >= cfg["tonloch_min_frames"]]
+
+
+# --- Wortkanten --------------------------------------------------------------------
+
+def _nfc(p) -> str:
+    return unicodedata.normalize("NFC", str(p))
+
+
+class Transkripte:
+    """Scribe-Wörter je Clip aus dem Transkript-Index der Charge: Treffer über den Pfad (auch über ``path_map``),
+    sonst über einen eindeutigen Dateinamen."""
+
+    def __init__(self, charge):
+        self.charge = charge
+        try:
+            index = charge.load_index()
+        except AutoCutError:
+            index = []
+        self.nach_pfad: dict[str, dict] = {}
+        namen: dict[str, list[dict]] = {}
+        for e in index:
+            if not e.get("fingerprint") or not e.get("path"):
+                continue
+            for p in (e["path"], charge.map_path(e["path"])):
+                self.nach_pfad[_nfc(p)] = e
+            namen.setdefault(_nfc(Path(e["path"]).name), []).append(e)
+        self.nach_name = {k: v[0] for k, v in namen.items() if len(v) == 1}
+        self._woerter: dict[str, list[dict]] = {}
+
+    def eintrag(self, datei) -> dict | None:
+        if not datei:
+            return None
+        return self.nach_pfad.get(_nfc(datei)) or self.nach_name.get(_nfc(Path(str(datei)).name))
+
+    def woerter(self, datei) -> list[dict] | None:
+        """Wörter (``text``, ``start``, ``end`` in Quellsekunden) oder None, wenn der Clip kein Transkript hat."""
+        e = self.eintrag(datei)
+        if e is None:
+            return None
+        fp = e["fingerprint"]
+        if fp not in self._woerter:
+            daten = self.charge.cache_transcript(fp) or {}
+            self._woerter[fp] = [w for w in daten.get("words") or []
+                                 if w.get("start") is not None and w.get("end") is not None]
+        return self._woerter[fp]
+
+
+def _ton_items(snap: dict):
+    """Aktive A-Items mit Quell-In und Tempo 100 % (oder unbekannt), Spuren in Namensreihenfolge."""
+    for key in sorted(k for k in snap["spuren"] if k.startswith("A")):
+        for r in snap["spuren"][key]:
+            if r["aktiv"] and r["quell_in"] is not None and (r["tempo"] is None or abs(r["tempo"] - 100.0) < 0.01):
+                yield key, r
+
+
+def wort_befunde(snap: dict, transkripte, cfg: dict) -> tuple[list[dict], dict]:
+    """Wort angeschnitten: O-Ton-Kante liegt in einem Wort, von dem mindestens ``wort_min_ms`` wegfallen (Spec 3)."""
+    fps = float(snap["fps"])
+    grenze = cfg["wort_min_ms"] / 1000.0
+    befunde: list[dict] = []
+    mit, ohne = 0, []
+    for key, r in _ton_items(snap):
+        woerter = transkripte.woerter(r["datei"])
+        if woerter is None:
+            ohne.append(r["name"] or str(r["datei"]))
+            continue
+        mit += 1
+        for seite, t, frame in (("in", r["quell_in"] / fps, r["start"]),
+                                ("out", (r["quell_in"] + r["dauer"]) / fps, r["start"] + r["dauer"] - 1)):
+            for w in woerter:
+                ws, we = float(w["start"]), float(w["end"])
+                if not ws < t < we:
+                    continue
+                weg = (we - t) if seite == "out" else (t - ws)
+                if weg >= grenze:
+                    befunde.append({"art": "Wort angeschnitten", "frame": int(frame), "frames": 1,
+                                    "wert": int(round(weg * 1000)), "wort": w.get("text"), "seite": seite,
+                                    "spur": key, "clip": r["name"]})
+    return befunde, {"mit_transkript": mit, "ohne_transkript": len(ohne), "ohne_liste": sorted(set(ohne))}
+
+
+def export_woerter(snap: dict, transkripte, von_s: float, bis_s: float) -> list[dict]:
+    """Wörter der aktiven Tonclips in Export-Sekunden, nur innerhalb ihres Items und des Bereichs [von_s, bis_s]."""
+    fps = float(snap["fps"])
+    out = []
+    for _key, r in _ton_items(snap):
+        woerter = transkripte.woerter(r["datei"])
+        if not woerter:
+            continue
+        a, b = r["start"] / fps, (r["start"] + r["dauer"]) / fps
+        versatz = a - r["quell_in"] / fps
+        for w in woerter:
+            s, e = float(w["start"]) + versatz, float(w["end"]) + versatz
+            if e > max(a, von_s) and s < min(b, bis_s):
+                out.append({"text": w.get("text"), "start": round(s, 3), "end": round(e, 3)})
+    return sorted(out, key=lambda w: w["start"])
+
+
+# --- Gesamtprüfung -----------------------------------------------------------------
+
+def kennzahlen(werte) -> dict:
+    """Anzahl, Median, 95. Perzentil und Maximum (für die Kalibrierung im Bericht)."""
+    w = np.asarray(list(werte), dtype=float)
+    if w.size == 0:
+        return {"n": 0}
+    return {"n": int(w.size), "median": round(float(np.median(w)), 2),
+            "p95": round(float(np.percentile(w, 95)), 2), "max": round(float(w.max()), 2)}
+
+
+def diff_verteilung(diff, bild_schnitte: list[int]) -> dict:
+    """``diff`` an Bild-Schnitten gegen die übrigen Frames (ohne ±1 Frame um Schnitte, ohne Frame 0)."""
+    d = np.asarray(diff, dtype=float)
+    an = np.zeros(d.size, dtype=bool)
+    for f in bild_schnitte:
+        if 0 <= f < d.size:
+            an[f] = True
+    nahe = an.copy()
+    nahe[1:] |= an[:-1]
+    nahe[:-1] |= an[1:]
+    if d.size:
+        nahe[0] = True
+    return {"an_schnitten": kennzahlen(d[an]), "uebrige": kennzahlen(d[~nahe])}
+
+
+def pruefe(snap: dict, bild: dict | None, audio, sr: int, transkripte, cfg: dict) -> dict:
+    """Alle Befund-Regeln auf Schnappschuss und Messwerte anwenden (ohne Bilder).
+
+    ``bild``: Arrays ``mittel``, ``streuung``, ``diff`` je Frame oder None; ``audio``: Samples × Kanäle oder None.
+    """
+    fps, n = float(snap["fps"]), int(snap["laenge"])
+    b_schnitte, t_schnitte = schnitte(snap, "bild"), schnitte(snap, "ton")
+    befunde: list[dict] = []
+    verteilung: dict = {}
+    if bild is not None:
+        befunde += schwarz_befunde(bild["mittel"], bild["streuung"], cfg)
+        befunde += schnipsel_befunde(bild["diff"], bild["mittel"], bild["streuung"], cfg)
+        verteilung["diff"] = diff_verteilung(bild["diff"], b_schnitte)
+    if audio is not None:
+        kb, verh = knack_befunde(audio, sr, fps, t_schnitte, cfg)
+        befunde += kb
+        befunde += tonloch_befunde(rms_dbfs_je_frame(audio, sr, fps, n), ton_maske(snap), cfg)
+        verteilung["knack_verhaeltnis"] = kennzahlen(verh)
+    wb, zaehler = wort_befunde(snap, transkripte, cfg)
+    befunde += wb
+    befunde.sort(key=lambda x: (x["frame"], ARTEN.index(x["art"])))
+    for nr, x in enumerate(befunde, 1):
+        x["nr"] = nr
+        x["timecode"] = timecode(x["frame"], fps, snap["start_timecode"])
+        x["kontext"] = kontext(snap, x["frame"], b_schnitte, t_schnitte)
+        if x["art"] == "Schnipsel":
+            x["an_schnitt"] = any(abs(s - x["frame"]) <= 1 or abs(s - (x["frame"] + x["frames"])) <= 1
+                                  for s in b_schnitte)
+    return {"timeline": snap["timeline"], "fps": fps, "laenge": n,
+            "umfang": {"bild_schnitte": len(b_schnitte), "ton_schnitte": len(t_schnitte), **zaehler},
+            "zaehlung": {a: sum(1 for x in befunde if x["art"] == a) for a in ARTEN},
+            "befunde": befunde, "verteilung": verteilung, "warnungen": []}

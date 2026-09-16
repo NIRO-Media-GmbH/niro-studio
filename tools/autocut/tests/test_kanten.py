@@ -153,3 +153,113 @@ def test_tonloch_in_mask_only(cfg):
     assert [(b["frame"], b["frames"]) for b in got] == [(10, lang)]
     assert got[0]["wert"] == -200.0
     assert K.tonloch_befunde(rms, np.zeros(n, dtype=bool), cfg) == []
+
+
+@pytest.fixture
+def charge(charge_dir: Path) -> Charge:
+    return Charge.open(charge_dir)
+
+
+def _fx3(charge: Charge) -> str:
+    return charge.load_index()[0]["path"]
+
+
+class _Stub:
+    """Ersatz für Transkripte: liefert für jeden Clip dieselbe Wortliste (oder None)."""
+
+    def __init__(self, woerter):
+        self._w = woerter
+
+    def woerter(self, datei):
+        return self._w
+
+
+def test_transkripte_match_path_nfd_and_unique_name(charge):
+    import json
+    index = charge.load_index()
+    index[0]["path"] = str(Path(index[0]["path"]).parent.parent / "Jörn" / "FX3_0001.MP4")
+    (charge.intern / "transcripts_index.json").write_text(json.dumps(index), encoding="utf-8")
+    t = K.Transkripte(charge)
+    pfad = index[0]["path"]
+    assert [w["text"] for w in t.woerter(pfad)] == ["Das", "ist", "meins."]
+    assert t.woerter(unicodedata.normalize("NFD", pfad)) is not None
+    assert t.woerter("/Volumes/SSD/woanders/FX3_0001.MP4") is not None      # eindeutiger Dateiname
+    assert t.woerter("/x/unbekannt.MP4") is None and t.woerter(None) is None
+
+
+def _ton_snap(datei: str, items: list[tuple[int, int, int]]) -> dict:
+    """Schnappschuss mit A1-Items (start, dauer, quell_in) eines Clips."""
+    return {"fps": 25.0, "laenge": 200, "start_timecode": "01:00:00:00", "timeline": "T",
+            "spuren": {"A1": [{"name": Path(datei).name, "datei": datei, "start": s, "dauer": d, "quell_in": q,
+                               "aktiv": True, "tempo": None} for s, d, q in items]}}
+
+
+def test_wort_befunde_in_and_out_edges(charge, cfg):
+    assert cfg["wort_min_ms"] <= 100
+    snap = _ton_snap(_fx3(charge), [(0, 10, 35), (20, 1, 31)])      # Item 1: In 1,40 s in „ist", Out 1,80 s in „meins."
+    snap["spuren"]["A1"].append({"name": "x.MP4", "datei": "/x/x.MP4", "start": 40, "dauer": 5, "quell_in": 0,
+                                 "aktiv": True, "tempo": None})       # Clip ohne Transkript
+    befunde, z = K.wort_befunde(snap, K.Transkripte(charge), cfg)
+    assert [(b["seite"], b["wort"], b["frame"], b["wert"], b["spur"]) for b in befunde] == [
+        ("in", "ist", 0, 100, "A1"), ("out", "meins.", 9, 200, "A1")]
+    assert (z["mit_transkript"], z["ohne_transkript"], z["ohne_liste"]) == (2, 1, ["x.MP4"])
+
+
+def test_wort_befunde_threshold_zero_length_and_tempo(cfg):
+    assert 40 < cfg["wort_min_ms"] <= 120
+    woerter = [{"text": "kurz", "start": 1.0, "end": 1.0}, {"text": "lang", "start": 2.0, "end": 3.0}]
+
+    def item(name, start, dauer, quell_in, tempo=None):
+        return {"name": name, "datei": name, "start": start, "dauer": dauer, "quell_in": quell_in, "aktiv": True,
+                "tempo": tempo}
+
+    snap = {"fps": 25.0, "laenge": 500, "start_timecode": "01:00:00:00", "timeline": "T", "spuren": {"A1": [
+        item("a", 0, 10, 25),              # In genau auf einem Wort der Länge 0
+        item("b", 100, 25, 50, 100.0),     # In = Wortanfang, Out = Wortende → nichts weg
+        item("c", 200, 10, 51, 50.0),      # Tempo 50 % → nicht geprüft, nicht gezählt
+        item("d", 300, 24, 51),            # In 40 ms im Wort → unter der Grenze
+        item("e", 400, 22, 53),            # In 120 ms im Wort → Befund
+    ]}}
+    befunde, z = K.wort_befunde(snap, _Stub(woerter), cfg)
+    assert [(b["clip"], b["seite"], b["wert"]) for b in befunde] == [("e", "in", 120)]
+    assert z["mit_transkript"] == 4
+
+
+def test_export_woerter_shift_and_window(charge):
+    snap = _ton_snap(_fx3(charge), [(100, 25, 25)])                 # Export 4,0–5,0 s zeigt Quelle 1,0–2,0 s
+    t = K.Transkripte(charge)
+    assert K.export_woerter(snap, t, 4.25, 4.55) == [{"text": "ist", "start": 4.3, "end": 4.5}]
+    assert [w["text"] for w in K.export_woerter(snap, t, 0.0, 10.0)] == ["Das", "ist", "meins."]
+
+
+def test_kennzahlen_and_diff_verteilung():
+    assert K.kennzahlen([]) == {"n": 0}
+    assert K.kennzahlen([1, 2, 3, 4]) == {"n": 4, "median": 2.5, "p95": 3.85, "max": 4.0}
+    d = np.array([0.0, 1.0, 2.0, 50.0, 2.0, 1.0, 3.0])
+    v = K.diff_verteilung(d, [3])
+    assert v["an_schnitten"]["n"] == 1 and v["an_schnitten"]["max"] == 50.0
+    assert v["uebrige"] == {"n": 3, "median": 1.0, "p95": 2.8, "max": 3.0}
+
+
+def test_pruefe_combines_rules_numbers_and_context(cfg):
+    n, fps, sr, spf = 50, 25.0, 48000, 1920
+    snap = {"quelle": "plan", "gelesen_am": "x", "projekt": "P", "timeline": "T", "fps": fps, "start_frame": 0,
+            "start_timecode": "01:00:00:00", "laenge": n, "spuren": {
+                "V1": [{"name": "v", "datei": "v", "start": 0, "dauer": 20, "quell_in": 0, "aktiv": True, "tempo": 100.0},
+                       {"name": "w", "datei": "w", "start": 20, "dauer": 30, "quell_in": 0, "aktiv": True, "tempo": 100.0}],
+                "A1": [{"name": "a", "datei": "/x/a", "start": 0, "dauer": 50, "quell_in": 0, "aktiv": True, "tempo": None}]}}
+    mittel, streuung = np.full(n, 90.0, dtype=np.float32), np.full(n, 30.0, dtype=np.float32)
+    diff = np.zeros(n, dtype=np.float32)
+    diff[20] = cfg["wechsel_diff_min"] + 20
+    mittel[35], streuung[35] = cfg["schwarz_mittel_max"] - 8, 0.5
+    audio = np.random.default_rng(3).normal(0, 0.01, (n * spf, 2)).astype(np.float32)
+    lang = int(cfg["tonloch_min_frames"]) + 1
+    audio[40 * spf:(40 + lang) * spf] = 0.0
+    erg = K.pruefe(snap, {"mittel": mittel, "streuung": streuung, "diff": diff}, audio, sr, _Stub(None), cfg)
+    assert erg["zaehlung"] == {"Schwarzbild": 1, "Schnipsel": 0, "Knackser": 0, "Tonloch": 1, "Wort angeschnitten": 0}
+    assert [(b["nr"], b["art"], b["frame"], b["timecode"]) for b in erg["befunde"]] == [
+        (1, "Schwarzbild", 35, "01:00:01:10"), (2, "Tonloch", 40, "01:00:01:15")]
+    assert erg["befunde"][0]["kontext"]["bild_schnitt"] == {"frame": 20, "abstand": -15}
+    assert erg["umfang"] == {"bild_schnitte": 1, "ton_schnitte": 0, "mit_transkript": 0, "ohne_transkript": 1,
+                             "ohne_liste": ["a"]}
+    assert erg["verteilung"]["diff"]["an_schnitten"]["n"] == 1 and erg["warnungen"] == []
