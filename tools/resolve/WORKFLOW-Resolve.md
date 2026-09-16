@@ -180,6 +180,19 @@ Skripte mit diesen Aufrufen liegen als Vorlagen unter `tools/autocut/vorlagen/fe
   eigenen Aufruf aktivieren.
 - **`Timeline.DetectSceneCuts()`** blockiert (76 s für 21 min 4K vom NAS) und schneidet alle Video-Items der
   Timeline in place — nur auf eigenen Timelines.
+- **Dropbox Replay** (Live-Test 16.09.2026 im Untitled Project; Spec `docs/superpowers/specs/2026-09-16-autocut-replay-design.md`):
+  - **Upload nur nach OK des Users, jeder einzeln.** Resolve ist in Einstellungen → System → Internet-Konten mit Dropbox angemeldet.
+  - `RenderWithQuickExport("Replay", {"TargetDir", "CustomName", "EnableUpload": True})` → `JobStatus` „Upload Completed";
+    blockiert bis zum Ende des Uploads, legt keinen Render-Job an, ändert Deliver nicht. MP4 H.264 + AAC in Timeline-fps,
+    **in Timeline-Auflösung** (4K bleibt 4K, 9:16 bleibt hochkant; nur `VideoQuality` begrenzt die Größe).
+  - In Replay: Titel = `CustomName` + „.mp4", Ablage lose auf der Startseite (ganz unten, nach allen Projekten).
+    Verschieben in einen Ordner (Menü „In Projekt verschieben") behält Video-ID, Kommentare und die Verknüpfung.
+  - **Der Quick Export verknüpft die Timeline:** Replay-Kommentare stehen nach Sekunden als Marker auf der Timeline —
+    `GetMarkers()` → `{frame: {"color": "FrameIO", "duration": 1, "note": "<Text>", "name": "Marker N", "customData": ""}}`,
+    frame-genau, ohne Autor und ohne Hinweis auf eine Zeichnung.
+  - `DuplicateTimeline` übernimmt die FrameIO-Marker. Ein normaler API-Marker erzeugt keinen Replay-Kommentar. Löschen der
+    Kopie oder der hochgeladenen Timeline lässt die Kommentare in Replay stehen. **FrameIO-Marker nie löschen** — laut
+    Handbuch löscht das die Kommentare in Replay (auch auf Kopien, ob verknüpft ist offen).
 
 ## Fehlerbilder
 
