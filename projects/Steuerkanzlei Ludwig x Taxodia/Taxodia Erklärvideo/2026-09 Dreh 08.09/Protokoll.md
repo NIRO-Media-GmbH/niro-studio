@@ -398,6 +398,16 @@
 - **Lösung vom User:** Track-Effekt **Stereo Fixer, Fix Mode 2** auf der SFX-Spur. Als feste Regel aufgenommen: auf alle SFX- und Sprachspuren (per API nicht setzbar, daher Hinweis nach jedem Bau).
   - Stand letzter Fensteraufnahme: „fx" nur auf A4. A5 „SFX 2" und A1 „FX3 Ton" brauchen den Effekt ebenfalls.
 
+**Beleg-Prüfung Grafik „Der Taxodia-Weg"** (User-Frage „wie kommst du auf diese Zahlen? Sind die belegt?"), geprüft gegen taxodia.de/kurse, Sicherung `_intern/website/www.taxodia.de/kurse.txt` vom 14.09. und live am 15.09.:
+- **Belegt:**
+  - Einstiegskurs „4 Wochen · 32 UStd / 8 UStd pro Woche" (Karte „Teil I Einstieg": „4 Wochen Unterricht mit insgesamt 32 UStd", „8 UStd pro Woche")
+  - „Einstieg jederzeit möglich" („Der Kurs kann jederzeit gestartet werden")
+  - Teil I „ca. 350 UStd" (Karte Teil I)
+  - „startet jeden Monat" (Gesamtkurs, Teil I, Teil II); „Hauptkurs" ist unsere Formulierung
+  - Prüfung „Bachelor Professional" (Kursname)
+- **Widersprüchlich auf der Website:** Teil II. Die Gesamtkurs-Karte nennt „∅ 16 UStd im 2. Teil (ca. 350 UStd)", die Karte „Teil II" dagegen „Zweiter Teil (ca. 370 UStd)", und der Gesamtumfang „ca. 720 UStd" passt nur zu 350 + 370.
+  - Die Grafik zeigt „ca. 350 UStd" (aus der Gesamtkurs-Karte übernommen) → Empfehlung „ca. 370 UStd" oder bei Taxodia klären.
+
 **Offen:**
 - Grading gegenprüfen:
   - a7-Abschnitte und dunkle B-Roll im Viewer ansehen.
@@ -409,3 +419,22 @@
 - Lieferlautheit (Mischung derzeit −19 LUFS).
 - Aktiver Bin nach dem Build „video-1-taxodia-weg" (Start-Bin nicht protokolliert; das Skript loggt ihn seitdem).
 
+## 2026-09-16 11:07 — AutoCut: Kantenprüfung
+
+- Kantenprüfung „AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt“ am Export AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt.mov: 4 Befunde (Schwarzbild 0, Schnipsel 0, Knackser 4, Tonloch 0, Wort angeschnitten 0), 16 Grafik-Übergänge als Hinweis
+- Umfang: 122 Bild-Schnitte, 136 Ton-Schnitte, 30 Tonclips mit Transkript; Schnappschuss plan (2026-09-16T11:01:42)
+- Bericht: /Users/jansantos/NIRO Studio/projects/Steuerkanzlei Ludwig x Taxodia/Taxodia Erklärvideo/2026-09 Dreh 08.09/Ergebnisse/Rohschnitt/video-1-taxodia-weg-kanten.md
+
+## 2026-09-16 11:09 — Session: AutoCut-Kantenprüfung (Kalibrierung an dieser Charge)
+
+- **Gemacht:** neue AutoCut-Funktion „Kanten" (Kantenprüfung + Schnittbild, Idee aus browser-use/video-use) am
+  Feinschnitt-Export vom 15.09. kalibriert. Schnappschuss aus dem Bauplan (`feinschnitt_bauen.py`), weil „Taxodia 09.26"
+  nicht in Resolve geöffnet war — Resolve wurde nicht angefasst.
+- **Erster Lauf (Startwerte, 11:02):** 17 Befunde — 16 Schnipsel, alle Flash/Wipe/Iris der Grafikebene V4, und 1 Knackser
+  (Sprachtransient 3,6 ms neben einem SFX-Ende). Daraufhin Regeln angepasst: AR-Knackser-Maß (±2 ms), Schnipsel an
+  V4-Kanten = Hinweis „Grafik-Übergang".
+- **Geliefert:** `Ergebnisse/Rohschnitt/video-1-taxodia-weg-kanten.md`, `_intern/autocut/kanten.json`,
+  `_intern/autocut/kanten_readback.json` (Quelle „plan"), Schnittbilder `_intern/autocut/work/schnittbild/kante_001…004_*.png`.
+- **Offen — zum Gegenhören (Knackser-Verdacht):** 01:00:04:07 (Musikstart Campagna), 01:01:07:14 (O-Ton-Einsatz
+  FX3_0223 über der Kapitelkarte), 01:02:49:12 (O-Ton-Einsatz FX3_0223), 01:02:50:04 (Innenschnitt FX3_0223). Falls
+  hörbar: Kante in die Pause legen oder 1-Frame-Blende auf A1 — nur nach Rücksprache.
