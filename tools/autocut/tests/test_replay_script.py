@@ -125,3 +125,23 @@ def test_wiederherstellung_nach_ausnahme(welt, monkeypatch):
     with pytest.raises(RuntimeError):
         _hochladen(welt, "--hochladen")
     assert fr.p.current is welt["user"] and fr.p.mp.GetCurrentFolder() is welt["user_bin"] and fr.page == "edit"
+
+
+def test_wiederherstellung_trotz_openpage_fehler(welt, monkeypatch):
+    """Wirft OpenPage beim Wiederherstellen selbst (reales Resolve kann das), darf das weder den ursprünglichen
+    Fehler aus RenderWithQuickExport verdecken noch die Wiederherstellung von Timeline und Bin verhindern."""
+    fr = welt["fake"]
+
+    def kaputt(preset, settings=None):
+        fr.page = "deliver"
+        fr.p.mp.SetCurrentFolder(fr.p.mp.root)
+        raise RuntimeError("Resolve weg")
+
+    def openpage_kaputt(page):
+        raise RuntimeError("OpenPage kaputt")
+
+    monkeypatch.setattr(fr.p, "RenderWithQuickExport", kaputt)
+    monkeypatch.setattr(fr, "OpenPage", openpage_kaputt)
+    with pytest.raises(RuntimeError, match="Resolve weg"):
+        _hochladen(welt, "--hochladen")
+    assert fr.p.current is welt["user"] and fr.p.mp.GetCurrentFolder() is welt["user_bin"]

@@ -109,13 +109,17 @@ def _hochladen(ch: Charge, session, tl, tl_dict: dict, snap: dict, name: str, cf
         time.sleep(2)      # wie im Liefer-Render-Rezept: direkt nach dem Wechsel liefert Resolve sonst leer
         erg = projekt.RenderWithQuickExport(preset, einstellungen) or {}
     finally:
+        # Jeder Wiederherstellungsschritt einzeln über RA._safe (nie werfend): ein API-Fehler (echtes Resolve) darf
+        # weder einen ursprünglichen Fehler aus dem try-Block verdecken noch die übrigen Schritte verhindern.
         session.restore_user_timeline()
-        if seite and resolve.GetCurrentPage() != seite:
-            resolve.OpenPage(seite)
-        if ordner_id and mp.GetCurrentFolder().GetUniqueId() != ordner_id:
-            for f in session.all_folders():
-                if f.GetUniqueId() == ordner_id:
-                    mp.SetCurrentFolder(f)
+        aktuelle_seite = RA._safe(resolve.GetCurrentPage, seite)
+        if seite and aktuelle_seite != seite:
+            RA._safe(resolve.OpenPage, None, seite)
+        aktueller_ordner_id = RA._safe(lambda: mp.GetCurrentFolder().GetUniqueId(), ordner_id)
+        if ordner_id and aktueller_ordner_id != ordner_id:
+            for f in RA._safe(session.all_folders, []) or []:
+                if RA._safe(f.GetUniqueId, None) == ordner_id:
+                    RA._safe(mp.SetCurrentFolder, None, f)
                     break
     dauer = round(time.monotonic() - start, 1)
     status = str(erg.get("JobStatus") or "")
