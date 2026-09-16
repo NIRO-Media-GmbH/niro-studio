@@ -173,11 +173,36 @@ K per `run_script` aktivieren, dann Step-4-Skript mit Timeline-Name „Claude Ko
 
 (`kopie` ist auch dann sicher, weil `replay_kommentare.aus_markern` Marker ignoriert, die schon beim Upload auf der Timeline lagen — Task 4.)
 
-- [ ] **Step 9: Aufräumen (`run_script`)**
+- [ ] **Step 9: Zusatzmessungen (`run_script`, ffprobe, Chrome)**
+
+Offene Messfragen aus dem Schluss-Review (M5) mitnehmen, damit dieser Live-Test sie in einem Rutsch klärt:
+- **`GetMarkInOut()` ohne Marken:** auf T (keine In/Out gesetzt) aufrufen und das Rückgabe-Dict notieren — Grundlage
+  für den `_pruefen`-Check in `autocut_replay.py` (`marken = tl.GetMarkInOut() or {}`; `any(marken.values())` muss
+  bei „keine Marken" falsch bleiben).
+- **Einheit von `VideoQuality`:** lokaler 4K-Quick-Export (Preset „Replay", `EnableUpload: False`, `VideoQuality:
+  12000`, eigenes `TargetDir`) und die Ausgabedatei per `ffprobe -show_entries format=bit_rate` messen — bestätigt
+  (oder widerlegt) die kbit/s-Annahme aus `replay.video_quality`/`defaults.yaml` (`video_quality_ueber_1080p`).
+- **Replay-Kommentar auf einem Frame mit AutoCut-Marker:** auf T einen eigenen Marker setzen (`AddMarker`, andere
+  Farbe als „FrameIO"), dann in Replay einen Kommentar auf genau diesem Frame posten — bleibt der AutoCut-Marker
+  erhalten, oder überschreibt ihn `GetMarkers()`?
+- **Zwei Kommentare auf demselben Frame:** in Replay zwei Kommentare auf denselben Timecode posten — `GetMarkers()`
+  liefert nur einen Eintrag je Frame (Dict-Key); prüfen, was mit dem zweiten passiert (Text verloren, angehängt,
+  zweiter Marker auf dem Nachbarframe?).
+- **FrameIO-Marker nach dem XML-Roundtrip des Finalisierens:** eine Timeline mit FrameIO-Marker durch den
+  `autocut_finalize.py`-Weg (Export → Patch → Import) schicken (oder das Muster nachstellen) und prüfen, ob die
+  End-Timeline die Marker noch trägt — `finalize.expected_items`/`verify_final` kennen bisher nur die eigenen
+  Marker-Typen.
+- **Sync-Verzug für `--warten`:** Zeit zwischen „Kommentar in Replay abgeschickt" und „Marker per `GetMarkers()` auf
+  der Timeline sichtbar" stoppen (mehrere Stichproben) — kalibriert `replay.sync_warten_s`/`WARTE_TAKT_S` in
+  `autocut_replay.py`.
+
+Ergebnisse in Nachtrag 2 (Step 11) mit aufnehmen.
+
+- [ ] **Step 10: Aufräumen (`run_script`)**
 
 Eigene Objekte löschen: K, T (`mp.DeleteTimelines([...])`), den Clip (`mp.DeleteClips(b.GetClipList())`), den Bin (`mp.DeleteFolders([b])`); Media Pool auf den Bin des Users zurück, Readback der Timeline-/Bin-Liste. Den User bitten, die Test-Videos in Replay zu löschen.
 
-- [ ] **Step 10: Ergebnisse festhalten**
+- [ ] **Step 11: Ergebnisse festhalten**
 
 An die Spec anhängen:
 
@@ -196,7 +221,7 @@ An die Spec anhängen:
 
 In `tools/resolve/WORKFLOW-Resolve.md` im Punkt „Dropbox Replay" den Satz „ob verknüpft ist offen" durch den Befund ersetzen. Memory `dropbox-replay-upload` ergänzen.
 
-- [ ] **Step 11: Commit (nur nach Auftrag des Users)**
+- [ ] **Step 12: Commit (nur nach Auftrag des Users)**
 
 ```bash
 git -C "/Users/jansantos/NIRO Studio" add "docs/superpowers/specs/2026-09-16-autocut-replay-design.md" "tools/resolve/WORKFLOW-Resolve.md"

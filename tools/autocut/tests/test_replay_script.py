@@ -65,6 +65,7 @@ def test_vorschau_laedt_nichts_hoch(welt, capsys):
     (lambda w: None, "freigegeben wurde 'Falsch'"),
     (lambda w: setattr(w["tl"], "mark_in_out", {"video": {"in": 0, "out": 50}}), "In/Out-Marken"),
     (lambda w: w["tl"].AddMarker(20, "FrameIO", "Marker 1", "alt", 1), "Replay-Marker"),
+    (lambda w: setattr(w["fake"].p, "IsRenderingInProgress", lambda: True), "rendert gerade"),
 ])
 def test_vorbedingungen_exit_2(welt, capsys, aufbau, meldung):
     aufbau(welt)
@@ -110,7 +111,9 @@ def test_upload_fehlgeschlagen_exit_1(welt, capsys):
     welt["fake"].p.upload_status = "Upload Failed"
     assert _hochladen(welt, "--hochladen") == 1
     assert "Internet-Konten" in capsys.readouterr().err
-    assert R.upload_eintrag(Charge.open_basis(welt["charge"]))["upload_status"] == "Upload Failed"
+    # F1: upload_eintrag ignoriert gescheiterte Uploads jetzt (nimmt nur „Upload Completed") — der gescheiterte
+    # Eintrag selbst steht trotzdem im Log und ist der jüngste (per hochgeladen_am).
+    assert R.lade_uploads(Charge.open_basis(welt["charge"]))[-1]["upload_status"] == "Upload Failed"
 
 
 def test_wiederherstellung_nach_ausnahme(welt, monkeypatch):
@@ -209,3 +212,32 @@ def test_kommentare_aus_chrome_json_ohne_resolve(welt, monkeypatch, capsys, tmp_
     k = doc["kommentare"][0]
     assert (doc["lese_weg"], doc["fremd"], k["frame"], k["fremd"], k["zeichnung"]) == ("chrome", 1, 50, True, True)
     assert doc["veraendert_seit_upload"] is None
+
+
+def test_kommentare_aus_json_mit_falschem_titel(welt, monkeypatch, capsys, tmp_path):
+    """M2: --aus-json für einen anderen Titel als den Upload-Eintrag → AutoCutError statt stillschweigend falscher
+    Kommentare (z. B. die falsche Chrome-Datei erwischt)."""
+    _hochgeladen(welt, capsys)
+
+    def kein_resolve():
+        raise AssertionError("Resolve darf beim Chrome-Weg nicht verbunden werden")
+
+    monkeypatch.setattr(RA, "connect", kein_resolve)
+    datei = tmp_path / "chrome.json"
+    datei.write_text(json.dumps({"quelle": "chrome", "titel": "Anderes Video", "kommentare": [
+        {"von_s": 2.008, "text": "X"}]}), encoding="utf-8")
+    rc = replay.main([str(welt["charge"]), "kommentare", "--aus-json", str(datei)])
+    assert rc == 2
+    err = capsys.readouterr().err
+    assert "Anderes Video" in err and NAME in err
+
+
+def test_kommentare_api_falsches_projekt(welt, capsys):
+    """M2: Die Timeline aus dem Upload-Eintrag gehört zu einem anderen Projekt als dem gerade offenen — ein
+    gleichnamiger Timeline-Treffer im falschen Projekt darf nicht stillschweigend gelesen werden."""
+    _hochgeladen(welt, capsys)
+    welt["fake"].p.name = "Anderes Projekt"
+    rc = replay.main([str(welt["charge"]), "kommentare", "--warten", "0"])
+    assert rc == 2
+    err = capsys.readouterr().err
+    assert PROJEKT in err and "Anderes Projekt" in err

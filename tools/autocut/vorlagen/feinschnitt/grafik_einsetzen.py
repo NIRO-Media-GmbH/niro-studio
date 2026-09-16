@@ -14,6 +14,8 @@ Gemessen (Resolve 21.1): ProRes 4444 aus Remotion (yuva444p) bekommt beim Import
 deckt ohne weitere Einstellung; SetTrackName ist nur auf der aktiven Timeline zuverlässig.
 Für den Aufbau zur Handarbeit (je Grafik-Element ein Clip, transparente Bereiche raus) baut feinschnitt_bauen.py V4 neu.
 
+Nicht auf hochgeladene Timelines anwenden (`_intern/replay/uploads.json`) — dort neue Version bauen.
+
 Herkunft: Taxodia-Charge, _intern/grafik_einsetzen.py
 """
 from __future__ import annotations

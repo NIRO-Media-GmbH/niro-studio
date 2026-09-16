@@ -22,6 +22,8 @@ Timeline und Bin des Users werden wiederhergestellt; Readback gegen den Plan + I
 Gemessen (Resolve 21.1): startFrame/endFrame in Quellframes (50p: 2 × n) setzen n Timeline-Frames, Offsets im Readback
 exakt; 30 Clips auf V3 in einem AppendToTimeline über das externe venv ok; AddMarker geht auch auf nicht aktiver Timeline.
 
+Nicht auf hochgeladene Timelines anwenden (`_intern/replay/uploads.json`) — dort neue Version bauen.
+
 Herkunft: Taxodia-Charge, _intern/broll_einsetzen.py
 """
 from __future__ import annotations

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 
 import pytest
 import yaml
@@ -26,6 +27,13 @@ def test_naechste_version(alt, neu):
     assert R.naechste_version(alt) == neu
 
 
+def test_naechste_version_verweigert_roh_timelines():
+    """F3: Roh-Timelines nie umbenennen — sonst findet readback.laden/autocut_finalize.py sie nach SetName nicht
+    mehr (namensbasierte Buchführung bricht)."""
+    with pytest.raises(AutoCutError, match="Roh-Timeline"):
+        R.naechste_version("AutoCut video-1 2026-09-17 1000 (roh)")
+
+
 def test_replay_ordner_aus_config(basis_charge):
     ch = Charge.open_basis(basis_charge)
     assert R.replay_ordner(ch) == "Autocut/Kunde A/Projekt B"
@@ -44,7 +52,7 @@ def test_video_quality_nur_ueber_1080p():
 def test_upload_log_speichern_lesen_einsortieren(basis_charge):
     ch = Charge.open_basis(basis_charge)
     assert R.lade_uploads(ch) == [] and R.nicht_einsortiert(ch) == []
-    with pytest.raises(AutoCutError, match="Kein Upload"):
+    with pytest.raises(AutoCutError, match="Kein erfolgreicher Upload"):
         R.upload_eintrag(ch)
     R.speichere_upload(ch, {"titel": "A", "timeline": "A", "hochgeladen_am": "2026-09-17T10:00:00",
                             "upload_status": "Upload Completed"})
@@ -56,8 +64,33 @@ def test_upload_log_speichern_lesen_einsortieren(basis_charge):
     e = R.setze_einsortiert(ch, "A", "Autocut/Kunde A/Projekt B", zeit="2026-09-17T12:00:00")
     assert e["einsortiert_am"] == "2026-09-17T12:00:00" and e["replay_ordner"] == "Autocut/Kunde A/Projekt B"
     assert [x["titel"] for x in R.nicht_einsortiert(ch)] == ["B"]
-    with pytest.raises(AutoCutError, match="steht nicht"):
+    with pytest.raises(AutoCutError, match="Kein erfolgreicher Upload"):
         R.setze_einsortiert(ch, "C", "x")
+
+
+def test_gescheiterte_uploads_werden_ignoriert(basis_charge):
+    """F1-Regression: upload_eintrag/setze_einsortiert/finde_upload wählen nur erfolgreiche Uploads — ein späterer
+    gescheiterter Versuch darf den erfolgreichen älteren nicht verdecken. ist_hochgeladen schützt weiterhin bei
+    falsch geformtem JSON (keine Liste); lade_uploads meldet kaputtes JSON als AutoCutError mit Pfad."""
+    ch = Charge.open_basis(basis_charge)
+    R.speichere_upload(ch, {"titel": "A", "timeline": "A", "hochgeladen_am": "2026-09-17T10:00:00",
+                            "upload_status": "Upload Completed"})
+    R.speichere_upload(ch, {"titel": "A", "timeline": "A", "hochgeladen_am": "2026-09-17T11:00:00",
+                            "upload_status": "Upload Failed"})
+    assert R.upload_eintrag(ch)["hochgeladen_am"] == "2026-09-17T10:00:00"
+    e = R.setze_einsortiert(ch, "A", "Autocut/Kunde A/Projekt B")
+    assert e["hochgeladen_am"] == "2026-09-17T10:00:00"
+    (basis_charge.parent / "2026-10 Zweiter Dreh").mkdir()
+    charge, gefunden = R.finde_upload(basis_charge.parent, "A.mp4")
+    assert charge == basis_charge and gefunden["hochgeladen_am"] == "2026-09-17T10:00:00"
+
+    uploads_json = basis_charge / "_intern" / "replay" / "uploads.json"
+    uploads_json.write_text("{}", encoding="utf-8")
+    assert R.ist_hochgeladen(basis_charge, "irgendwas") is True      # gültiges JSON, aber keine Liste
+
+    uploads_json.write_text("{kaputt", encoding="utf-8")
+    with pytest.raises(AutoCutError, match=r"uploads\.json ist kaputt"):
+        R.lade_uploads(Charge.open_basis(basis_charge))
 
 
 def test_ist_hochgeladen(basis_charge):
@@ -72,11 +105,45 @@ def test_ist_hochgeladen(basis_charge):
 def test_finde_upload_ueber_chargen(basis_charge):
     zweite = basis_charge.parent / "2026-10 Zweiter Dreh"
     zweite.mkdir()
-    R.speichere_upload(Charge.open_basis(basis_charge), {"titel": "X", "timeline": "X", "hochgeladen_am": "2026-09-17T10:00:00"})
-    R.speichere_upload(Charge.open_basis(zweite), {"titel": "X", "timeline": "X neu", "hochgeladen_am": "2026-10-01T10:00:00"})
+    R.speichere_upload(Charge.open_basis(basis_charge), {"titel": "X", "timeline": "X", "hochgeladen_am": "2026-09-17T10:00:00",
+                                                          "upload_status": "Upload Completed"})
+    R.speichere_upload(Charge.open_basis(zweite), {"titel": "X", "timeline": "X neu", "hochgeladen_am": "2026-10-01T10:00:00",
+                                                    "upload_status": "Upload Completed"})
     charge, e = R.finde_upload(basis_charge.parent, "X.mp4")
     assert charge.name == "2026-10 Zweiter Dreh" and e["timeline"] == "X neu"
     assert R.finde_upload(basis_charge.parent, "Y.mp4") is None
+
+
+def test_finde_upload_verlangt_projekt_ordner(basis_charge):
+    """M1: Wird der Chargen-Ordner statt des Projekt-Ordners übergeben (enthält selbst _intern/replay/uploads.json),
+    gibt es eine klare Meldung statt eines stillen „nicht gefunden"."""
+    ch = Charge.open_basis(basis_charge)
+    R.speichere_upload(ch, {"titel": "X", "timeline": "X", "hochgeladen_am": "2026-09-17T10:00:00",
+                            "upload_status": "Upload Completed"})
+    with pytest.raises(AutoCutError, match="Projekt-Ordner angeben"):
+        R.finde_upload(basis_charge, "X.mp4")
+
+
+def test_finde_upload_nfc_normalisiert(basis_charge):
+    """M1: Der Titelvergleich ist NFC-normalisiert (Chrome kann eine andere Unicode-Normalform liefern)."""
+    ch = Charge.open_basis(basis_charge)
+    komponiert = "Café Video"
+    zerlegt = unicodedata.normalize("NFD", komponiert)
+    assert zerlegt != komponiert
+    R.speichere_upload(ch, {"titel": zerlegt, "timeline": "X", "hochgeladen_am": "2026-09-17T10:00:00",
+                            "upload_status": "Upload Completed"})
+    charge, e = R.finde_upload(basis_charge.parent, komponiert + ".mp4")
+    assert charge == basis_charge and e["timeline"] == "X"
+
+
+def test_finde_upload_kaputtes_json_einer_charge(basis_charge):
+    """M1: Ein kaputtes uploads.json einer Charge → AutoCutError mit Pfad statt rohem JSONDecodeError."""
+    zweite = basis_charge.parent / "2026-10 Zweiter Dreh"
+    (zweite / "_intern" / "replay").mkdir(parents=True)
+    kaputt = zweite / "_intern" / "replay" / "uploads.json"
+    kaputt.write_text("{kaputt", encoding="utf-8")
+    with pytest.raises(AutoCutError, match=re.escape(str(kaputt))):
+        R.finde_upload(basis_charge.parent, "X.mp4")
 
 
 def test_feedback_ordner(basis_charge):

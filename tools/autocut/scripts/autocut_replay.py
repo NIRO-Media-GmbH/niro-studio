@@ -23,6 +23,7 @@ import argparse
 import json
 import sys
 import time
+import unicodedata
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -35,7 +36,7 @@ from niro_autocut import resolve_api as RA  # noqa: E402
 from niro_autocut import wiedergabe as W  # noqa: E402
 from niro_autocut.charge import AutoCutError, Charge, append_protokoll, letzte_timeline  # noqa: E402
 
-UPLOAD_OK = "Upload Completed"
+UPLOAD_OK = R.UPLOAD_OK
 WARTE_TAKT_S = 30
 
 
@@ -65,6 +66,8 @@ def _pruefen(ch: Charge, session, name: str, project: str, cfg: dict):
     status = W.status(W.fenster_ausgabe(), tuple(cfg.get("vollbild_min") or (1900, 1000)))
     if status == "spielt_ab":
         raise AutoCutError("In Resolve läuft die Vollbild-Wiedergabe — nichts hochgeladen, später erneut.")
+    if session.project.IsRenderingInProgress():
+        raise AutoCutError("Resolve rendert gerade — nichts hochgeladen, später erneut.")
     return tl, tl_dict, status
 
 
@@ -78,7 +81,8 @@ def _vorschau(ch: Charge, session, tl_dict: dict, snap: dict, name: str, cfg: di
               f"Replay-Titel: {R.titel(name)}.mp4 (landet zuerst lose in „Your Work“)",
               f"Replay-Ordner: {R.replay_ordner(ch)} (Einsortieren danach im Chrome)",
               f"Render-Datei: {R.replay_dir(ch) / 'renders'}",
-              "Hinweis: Der Upload wechselt kurz die aktive Timeline; danach sind Timeline, Seite und Bin des Users zurück."]
+              "Hinweis: Der Upload wechselt für die Dauer des Uploads die aktive Timeline (bei langen 4K-Videos "
+              "mehrere Minuten); danach sind Timeline, Seite und Bin des Users zurück."]
     if status == "unklar":
         zeilen.append("Wiedergabe nicht prüfbar (Bildschirmaufnahme-Recht?) — während des Uploads bitte nicht abspielen.")
     frueher = [e for e in R.lade_uploads(ch) if e.get("timeline") == name]
@@ -180,8 +184,8 @@ def schritt_finden(args) -> int:
         raise AutoCutError(f"Projekt-Ordner nicht gefunden: {projekt}")
     treffer = R.finde_upload(projekt, args.titel)
     if treffer is None:
-        print(f"Kein Upload mit Titel '{args.titel}' in den Chargen von {projekt} — nicht von AutoCut hochgeladen, "
-              f"nicht anfassen.")
+        print(f"Kein erfolgreicher Upload mit Titel '{args.titel}' in den Chargen von {projekt} — nicht von AutoCut "
+              f"hochgeladen, nicht anfassen.")
         return 1
     charge, e = treffer
     print(json.dumps({"charge": str(charge), "timeline": e.get("timeline"), "projekt": e.get("projekt"),
@@ -202,9 +206,22 @@ def schritt_kommentare(ch: Charge, args) -> int:
         p = Path(args.aus_json).expanduser()
         if not p.is_file():
             raise AutoCutError(f"--aus-json nicht gefunden: {p}")
-        kommentare, weg = KO.aus_json(json.loads(p.read_text(encoding="utf-8")), fps), "chrome"
+        daten = json.loads(p.read_text(encoding="utf-8"))
+        json_titel = daten.get("titel")
+        if json_titel:
+            jt = str(json_titel)
+            jt_norm = unicodedata.normalize("NFC", jt[:-4] if jt.lower().endswith(".mp4") else jt)
+            et_norm = unicodedata.normalize("NFC", str(eintrag["titel"]))
+            if jt_norm != et_norm:
+                raise AutoCutError(f"--aus-json ist für Titel '{json_titel}', der Upload-Eintrag ist "
+                                   f"'{eintrag['titel']}' — falsche Datei? Nichts übernommen.")
+        kommentare, weg = KO.aus_json(daten, fps), "chrome"
     else:
         session = RA.ResolveSession(RA.connect(), path_map=ch.config.get("path_map"))
+        if eintrag.get("projekt") and session.project_name != eintrag["projekt"]:
+            raise AutoCutError(f"Timeline gehört zu Projekt '{eintrag['projekt']}', offen ist "
+                               f"'{session.project_name}' — richtiges Projekt öffnen (nur lesen) oder Kommentare "
+                               f"im Chrome lesen (--aus-json).")
         tl = session.find_timeline(eintrag["timeline"])
         if tl is None:
             raise AutoCutError(f"Timeline '{eintrag['timeline']}' ist nicht im offenen Projekt '{session.project_name}' — "

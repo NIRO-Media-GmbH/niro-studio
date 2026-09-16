@@ -64,9 +64,10 @@ die Charge wird dann automatisch gefunden.
   vorher abstimmen; von Hand Geändertes nie überschreiben. Gemessenes API-Verhalten:
   `tools/resolve/WORKFLOW-Resolve.md`.
 - **Dropbox Replay:** Upload nur nach OK je Upload; in Replay nur fehlende Ordner unter „Autocut" anlegen und
-  eigene Uploads dorthin verschieben — nichts teilen, beantworten, abhaken, löschen oder archivieren; Replay-Marker
-  (Farbe „FrameIO") nie löschen (löscht die Kommentare in Replay); hochgeladene Timelines nicht löschen oder ändern.
-  Ablauf: `tools/autocut/WORKFLOW-AutoCut.md` („Review in Replay").
+  eigene Uploads dorthin verschieben — nichts teilen, beantworten, abhaken, löschen, archivieren, umbenennen oder
+  kommentieren (ein Kommentar von Claude käme als FrameIO-Marker zurück und würde als User-Kommentar gelesen);
+  Replay-Marker (Farbe „FrameIO") nie löschen (löscht die Kommentare in Replay); hochgeladene Timelines nicht
+  löschen oder ändern. Ablauf: `tools/autocut/WORKFLOW-AutoCut.md` („Review in Replay").
 
 ## Umgebung
 

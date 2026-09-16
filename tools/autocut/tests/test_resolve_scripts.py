@@ -472,6 +472,33 @@ def test_place_v2_build_names_v3_when_user_has_another_timeline_open(charge_dir,
     assert len(t.items) == 3 and fake.p.current is user_tl        # gebaut, User-Timeline wiederhergestellt
 
 
+def test_place_v2_build_refuses_uploaded_timeline(charge_dir, tmp_path, monkeypatch, capsys):
+    """F2 (Schluss-Review): Ist die Ziel-Timeline schon nach Replay hochgeladen (uploads.json), darf Stufe 3 nicht
+    mehr in sie schreiben — sonst kollidiert der V3-Bau mit der hochgeladenen roh-Timeline. Für weitere Stufen
+    braucht es eine neue Version per Neubau; der Lauf darf Resolve dafür gar nicht erst verbinden."""
+    ch, name = _place_setup(charge_dir, tmp_path)
+    uploads_dir = charge_dir / "_intern" / "replay"
+    uploads_dir.mkdir(parents=True)
+    (uploads_dir / "uploads.json").write_text(json.dumps([
+        {"titel": "T", "timeline": name, "projekt": "MEK", "hochgeladen_am": "2026-09-17T10:00:00",
+         "upload_status": "Upload Completed"}]), encoding="utf-8")
+
+    def kein_resolve():
+        raise AssertionError("Resolve darf nach einem Upload der Ziel-Timeline nicht mehr verbunden werden")
+
+    monkeypatch.setattr(RA, "connect", kein_resolve)
+
+    rc = place.main([str(charge_dir), "--verify-only"])
+    out = capsys.readouterr().out
+    assert rc == 0, out                                            # Prüfen bleibt erlaubt, es ist Resolve-frei
+
+    rc = place.main([str(charge_dir)])
+    err = capsys.readouterr().err
+    assert rc == 1
+    assert "hochgeladen" in err and "nicht mehr ändern" in err
+    assert ch.read_json("broll_build.json") is None                # keine V3-Items gebaut
+
+
 def test_place_v2_compact_and_v1_plan_rejected(charge_dir, capsys):
     """--compact nutzt compact_index_v2; ein Plan im alten (v1) Format wird mit Hinweis auf --raster abgelehnt."""
     ch = Charge.open(charge_dir)

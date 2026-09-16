@@ -15,6 +15,8 @@ Prüfung: AudioVolume je Clip gegen −3 − True Peak (ffmpeg ebur128, Original
         Abweichungen über 0,5 dB werden gezählt.
 Schreibt _intern/autocut/audio.json.
 
+Nicht auf hochgeladene Timelines anwenden (`_intern/replay/uploads.json`) — dort neue Version bauen.
+
 Herkunft: Taxodia-Charge, _intern/audio_normalisieren.py
 """
 from __future__ import annotations

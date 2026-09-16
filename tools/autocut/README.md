@@ -42,7 +42,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 - Claude entscheidet in der Session (Cutlist, B-Roll-Layout), Code prüft hart und baut per
   Resolve-Scripting-API. Bestehende Tools werden nur importiert (`niro_transcribe` per `.pth`), nie geändert.
 - NAS nur lesen. Schreiben nur nach `<Charge>/_intern/autocut/`, `<Charge>/Ergebnisse/Rohschnitt/`
-  und ans `Protokoll.md` (anhängen). In Resolve nur neue Bins/Timelines/Media-Pool-Einträge — Ausnahme:
+  und ans `Protokoll.md` (anhängen); `autocut_replay.py` zusätzlich nach `<Charge>/_intern/replay/` und
+  `<Charge>/Material/Feedback/`. In Resolve nur neue Bins/Timelines/Media-Pool-Einträge — Ausnahme:
   Finalisieren löscht die eigene roh-Timeline desselben Laufs, Probe-Skripte löschen ihre eigenen Probe-Objekte.
 - Prüfen vor Bauen: `autocut_build.py` läuft nur mit passender `verify.json` (Hash der Cutlist).
 - Format und Bildrate kommen aus dem Material (`media.json`), nie aus dem Plan.

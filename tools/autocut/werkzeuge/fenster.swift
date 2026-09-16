@@ -1,4 +1,4 @@
-// Werkzeug (seit 17.09.2026, aus der Vorlage übernommen): Fenster von DaVinci Resolve auflisten — erkennt die Vollbild-Wiedergabe (Cinema Viewer),
+// Werkzeug (seit 16.09.2026, aus der Vorlage übernommen): Fenster von DaVinci Resolve auflisten — erkennt die Vollbild-Wiedergabe (Cinema Viewer),
 // ohne Resolve den Fokus zu geben und ohne Verbindung zur Scripting-API.
 //
 // Aufruf:  swift "tools/autocut/werkzeuge/fenster.swift"   (niro_autocut/wiedergabe.py ruft es so auf)
