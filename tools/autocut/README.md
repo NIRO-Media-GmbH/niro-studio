@@ -16,7 +16,7 @@ Seit 15.09.2026 (Taxodia) kommen zwei Stufen dazu:
 Beide gibt es vorerst nur als Vorlagen (`vorlagen/feinschnitt/`), noch nicht als getestete Stufen.
 
 Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" | „B-Roll-Index" |
-„Nachlauf" | „B-Roll" | „B-Roll aus Auswahl" | „Profil" | „Finalisieren" | „Feinschnitt". Anleitung:
+„Nachlauf" | „B-Roll" | „B-Roll aus Auswahl" | „Profil" | „Finalisieren" | „Feinschnitt" | „Kanten". Anleitung:
 `WORKFLOW-AutoCut.md`. Einrichtung: `SETUP.md`. Spec: `docs/superpowers/specs/2026-09-03-autocut-design.md`.
 
 ## Stufen
@@ -31,6 +31,7 @@ Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" 
 | „Profil" | 4 | Schnitt-Profil aus den Cloud-Timelines des Users (noch nicht gebaut, siehe `WORKFLOW-AutoCut.md`) |
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe aus der roh-Timeline |
 | „Feinschnitt" | 6 | neue Feinschnitt-Timeline: A/B-Wechsel, B-Roll-Tempo/Stabilisierung, Grafik V4, Ton, Musik, SFX, danach Grading, Begradigen, Kopfposition (Vorlagen) |
+| „Kanten" | – | Kantenprüfung am Export (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) + Schnittbilder; Resolve nur lesend |
 
 Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 
@@ -69,6 +70,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     "$PY" "$TOOL/scripts/resolve_probe_xml.py" "$CHARGE"          # einmalig je Resolve-Umgebung: probe_xml.json
     "$PY" "$TOOL/scripts/resolve_probe_api.py" "$CHARGE" --project "<Projekt>"   # einmalig je Resolve-Umgebung: probe_api.json (21.1-API)
     "$PY" "$TOOL/scripts/autocut_finalize.py" "$CHARGE"           # Stufe 5: End-Timeline (Pegel, Zeitlupe) + Bericht
+    "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE"             # Kantenprüfung am Export (Resolve nur lesend)
+    "$PY" "$TOOL/scripts/autocut_schnittbild.py" "$CHARGE" --clip <Datei> --von 12.3 --bis 15.8   # Schnittbild Rohclip
 
 ## Aufbau
 
@@ -95,6 +98,10 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
       ton.py                 True-Peak-Messung je A1-Clip (ffmpeg ebur128), Gain auf Ziel-dBTP, Cache (Stufe 5)
       xml_patch.py           FCP7-XML lesen/patchen (Pegel, Zeitlupe) für den Finalisieren-Roundtrip
       finalize.py            Stufe 5: roh-Timeline → XML → Pegel/Zeitlupe → End-Timeline → prüfen → roh löschen
+      kanten.py              Kantenprüfung: Schnappschuss, Schnitte, Befund-Regeln (AR-Knackser), Wortkanten, Grafik-Hinweise
+      kanten_medien.py       Export lesen: ffprobe, Graustufen-Metriken je Frame (Cache), Ton als PCM
+      kanten_bericht.py      Bericht <video>-kanten.md
+      schnittbild.py         PNG: Filmstreifen + Pegel + Wörter + Schnitte (nach video-use, MIT)
     scripts/                 CLI je Schritt (siehe Schnellstart; autocut_read_timelines.py für Stufe 4,
                              resolve_probe_xml.py für die Finalisieren-Vorprobe,
                              resolve_probe_api.py für die 21.1-API-Probe (--project = Freigabe), setup_env.py für die .env)
@@ -111,10 +118,11 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 `_intern/autocut/`: `media.json`, `sync.json`, `cutlist.json`, `verify.json`, `probe.json`,
 `timeline.json`, `build.json`, `broll_index.json` (+ Cache `broll_index/<fingerprint>.json`),
 `broll_index_kompakt.json`, `raster.json`, `broll_plan.json`, `broll_build.json`, `probe_xml.json`,
-`probe_api.json`, `ton.json`, `finalize.json`, `work/` (Audio, Frames, Kontaktbögen/Abschnittsbögen,
+`probe_api.json`, `ton.json`, `finalize.json`, `kanten_readback.json`, `kanten.json`, `work/` (Audio, Frames,
+Kontaktbögen/Abschnittsbögen, `kanten/` Bild-Metriken, `schnittbild/` PNGs,
 `ton_cache.json`, `xml/`, `probe_api/` (synthetische Medien, Render)).
 `Ergebnisse/Rohschnitt/`: `<video>-rohschnitt.md` (mit Pegel-Abschnitt nach Stufe 5), `broll-index.md`,
-`<video>-raster.md`, `<video>-broll.md`, `<Timeline>.xml`.
+`<video>-raster.md`, `<video>-broll.md`, `<video>-kanten.md`, `<Timeline>.xml`.
 Stufe 3a/6 (Vorlagen): `_intern/autocut/broll_auswahl.json`, `broll_einsatz.json`, `audio.json`,
 `grafik_einsatz.json`, `feinschnitt.json`, `feinschnitt_umbau.json` sowie `_intern/grafik/`, `musik/`, `sfx/`,
 `color/`, `begradigen/`, `gesichtscheck/`, `sichtung/` (Liste in `WORKFLOW-AutoCut.md`, Ausgabe-Konvention).

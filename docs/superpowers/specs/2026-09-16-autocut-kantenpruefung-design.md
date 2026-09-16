@@ -169,3 +169,16 @@ Ton-Schnitten: Median, 95. Perzentil, Maximum).
 
 Code + Tests → Kalibrierung am Taxodia-Export (Schnappschuss aus Resolve, falls „Taxodia 09.26" geöffnet ist, sonst
 Soll-Stand aus `feinschnitt_bauen.py`) → Schwellen in `defaults.yaml` → Doku → Commit nur eigener Pfade → Push `main`.
+
+## Nachtrag: Kalibrierung am Taxodia-Export (16.09.2026, nach der Umsetzung)
+
+Zwei Regeln haben sich am echten Material geändert (Details und Zahlen: `tools/autocut/WORKFLOW-AutoCut.md`, Abschnitt
+„Kantenprüfung"):
+
+- **Knackser (ersetzt die Regel aus Abschnitt 3):** Rest einer AR-Vorhersage (Ordnung `knack_ar_ordnung` 32, Fit in
+  ±`knack_fenster_ms` 100 ohne die Kante) — Spitze in ±`knack_kante_ms` 2 gegen die robuste Streuung (MAD) des Rests;
+  Befund ab `knack_min` 0,005 und `knack_faktor` 12. Grund: Die zweite Differenz gegen ihr 99. Perzentil erkannte einen
+  künstlichen −26-dBFS-Sprung nur an 16 von 51 O-Ton-Kanten, das AR-Maß −40 dBFS an 51 von 51.
+- **Grafik-Übergang (neu):** Schnipsel höchstens `grafik_abstand_frames` 2 neben einer Kante eines aktiven Items auf
+  `grafik_spuren` (Standard `["V4"]`) sind Hinweise, keine Befunde (`kanten.json` → `hinweise`, Bericht-Zeile
+  „Grafik-Übergänge"). Grund: Alle 16 Schnipsel des ersten Taxodia-Laufs waren Flash, Wipe oder Iris der Grafikebene.

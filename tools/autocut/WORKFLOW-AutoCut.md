@@ -37,6 +37,7 @@ Original-Skripte in `_intern/`, Ablauf und Zahlen in `Protokoll.md`).
 | „Profil" | 4 | Schnitt-Profil aus den Cloud-Timelines des Users (eigener Plan, Abschnitt unten) |
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe |
 | „Feinschnitt" | 6 | neue Timeline „AutoCut <Video> <Datum> Feinschnitt": A/B-Wechsel, B-Roll-Tempo und Stabilisierung, Grafik V4, Ton, Musik, SFX; danach Grading, Begradigen, Kopfposition. Die Bausteine 6a–6i sind einzeln aufrufbar, z. B. „AutoCut: … Grading" (Vorlagen) |
+| „Kanten" | – | Kantenprüfung am Export einer AutoCut-Timeline (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) mit Schnittbildern; Resolve nur lesend |
 
 Ohne Unterbefehl gilt „Rohschnitt". Bei nur einer Charge reicht Kunde/Projekt.
 
@@ -192,6 +193,9 @@ Abweichend davon:
      Sprechern),
    - Sperren mit exakten Bereichen.
    Die Plan-Zeilen dafür liefert `plan_rows.py` (mit `find_tc.py`).
+   **Unklare In/Outs** (Atmer, Blinzeln, Wackler an der Kante): `autocut_schnittbild.py "$CHARGE" --clip <Datei> --von <s>
+   --bis <s>` legt Filmstreifen, Pegel und Wörter als PNG unter `_intern/autocut/work/schnittbild/` ab — mit Read ansehen,
+   dann entscheiden.
 4. **Prüfen** — `autocut_verify.py "$CHARGE"` → `_intern/autocut/verify.json` (Hash, ok, errors,
    warnings, Gesamtlänge). Exit 0 nötig; Warnungen (Plan-Schätzung, Ziellänge, fehlende a7-Abdeckung)
    lesen und dem User nennen. Fehler nach der Tabelle in `prompts/cutlist.md` beheben, erneut prüfen.
@@ -628,6 +632,7 @@ B-Perspektive „relativ einheitlich über alle Personen hinweg" liegen.
 Meldung an den User:
 - **Timeline:** Name, Spuren mit Item-Zahlen, B-Roll-Anteil und Tempo.
 - **Prüfungen:**
+  - Kantenprüfung am Export (`autocut_kanten.py`): Befunde je Art, jeder Befund am Schnittbild beurteilt,
   - Schwarzframes (Ziel 0) und Gesichts-Check (Ziel 0 kritisch),
   - Mischung: Sprache LUFS, Musik-Abstand LU, True Peak,
   - Readback-Ergebnis,
@@ -636,6 +641,54 @@ Meldung an den User:
 - **Erinnerung:** Stereo Fixer (Fix Mode 2) auf alle SFX- und Sprachspuren setzen.
 - **Offene Punkte:** Grading-Feinschliff, Lieferlautheit, Freigaben des Kunden. Timings stellt der User danach von
   Hand nach (Aufbau für Handarbeit).
+
+## Kantenprüfung — „Kanten" (seit 16.09.2026)
+
+Misst die Schnitte einer AutoCut-Timeline am **fertigen Export** (Spec
+`docs/superpowers/specs/2026-09-16-autocut-kantenpruefung-design.md`, Idee aus `browser-use/video-use`). Resolve wird nur
+gelesen; den Export erzeugt der Review-Render oder der User.
+
+1. **Export** — Review-Render nach `tools/resolve/WORKFLOW-Resolve.md` (schreibend, nach Freigabe; Quick Export
+   „H.265 Master" mit PCM-Ton) nach `Ergebnisse/Export/`, oder der User exportiert selbst. Der Dateiname beginnt mit
+   dem Timeline-Namen. Kein AAC-Export: dessen Versatz verschiebt Knackser aus dem ±2-ms-Fenster.
+2. **Prüfen** — `autocut_kanten.py "$CHARGE"`: nimmt die zuletzt gebaute AutoCut-Timeline und den neuesten passenden
+   Export (sonst `--timeline`, `--render`). Ist das Projekt nicht offen: `--readback
+   "$CHARGE/_intern/autocut/kanten_readback.json"` (Schnappschuss des letzten Laufs). Exit 0 = keine Befunde,
+   1 = Befunde, 2 = Voraussetzung fehlt (kein oder veralteter Export, Timeline nicht im offenen Projekt).
+3. **Befunde ansehen** — Bericht `Ergebnisse/Rohschnitt/<video>-kanten.md`; je Befund das Schnittbild
+   `_intern/autocut/work/schnittbild/kante_<nr>_<art>_<timecode>.png` mit Read ansehen. Befunde sind Verdachtsfälle:
+   erst das Bild, dann urteilen. Knackser sind im Bild nicht zu sehen (10-ms-Pegel) — die Stellen dem User zum
+   Gegenhören nennen.
+
+| Befund | Messung | typische Abhilfe |
+|---|---|---|
+| Schwarzbild | dunkle Frames ohne Struktur | Bild darunter länger halten, Deckkraft der Grafik prüfen (6d) |
+| Schnipsel | 1–2 Frames zwischen zwei harten Bildwechseln | Frame-Versatz an der Kante (Left-Offset), Lücke auf V2/V3 schließen |
+| Knackser | Rest einer AR-Vorhersage springt genau am Ton-Schnitt (±2 ms) | Kante in eine Pause legen; 1-Frame-Blende auf A1 nur nach Rücksprache |
+| Tonloch | digitale Stille, obwohl ein Tonclip liegt | stumme Spur (Stereo Fixer, nachträglich angelegte Spur), Clip offline |
+| Wort angeschnitten | O-Ton-Kante schneidet mindestens 80 ms eines Worts ab | In/Out auf die Wortgrenze aus dem Scribe-Cache legen |
+
+   Schnipsel höchstens 2 Frames neben einer Kante der Grafikspur V4 (`grafik_spuren`) zählen als **Grafik-Übergang**
+   (Flash, Wipe, Iris): Sie stehen als Hinweis im Bericht, nicht als Befund.
+4. **Beheben und wiederholen** — nach Freigabe beheben, neu exportieren, erneut prüfen: **höchstens 3 Runden**, danach
+   den Rest mit Timecodes offen melden (Regel aus video-use). Von Hand Geändertes nie überschreiben.
+5. **Einzelne Stelle ansehen** — `autocut_schnittbild.py "$CHARGE" --render "<Export>" --tc HH:MM:SS:FF [--fenster 1.5]`.
+
+Schwellen: Block `kanten:` in `defaults.yaml`, je Charge in `config.yaml` überschreibbar. Ein Stereo-Mix kann eine stumme
+Einzelspur unter Musik nicht zeigen — nur den Totalausfall als Tonloch.
+
+**Kalibrierung Taxodia (16.09.2026):** Export „AutoCut video-1-taxodia-weg 2026-09-15 1149 Feinschnitt" (6845 Frames, 4K,
+PCM); Schnappschuss aus dem Bauplan (`feinschnitt_bauen.py`), weil das Projekt nicht offen war. 122 Bild- und 136
+Ton-Schnitte, 30 Tonclips mit Transkript; Laufzeit 18 s (VideoToolbox), mit Bildern 26 s.
+- Bild-Diff an Schnitten Median 28 (p95 109), übrige Frames Median 0,6 (p95 4,2, Maximum 32) → `wechsel_diff_min` 18 bleibt.
+- Alle 16 Schnipsel des ersten Laufs waren Flash, Wipe oder Iris der Grafikebene (0–2 Frames an V4-Kanten) → Regel
+  „Grafik-Übergang = Hinweis".
+- Knackser: Der Vergleich der zweiten Differenz mit ihrem 99. Perzentil erkannte einen künstlich eingesetzten
+  −26-dBFS-Sprung nur an 16 von 51 O-Ton-Kanten und meldete einen Sprachtransienten 3,6 ms neben einem SFX-Ende. Das
+  AR(32)-Maß erkennt −40 dBFS an 51 von 51 Kanten; saubere Kanten p95 11 → `knack_faktor` 12, `knack_min` 0,005,
+  Fenster ±2 ms.
+- Ergebnis: 4 Knackser zum Gegenhören (01:00:04:07 Musikstart, 01:01:07:14 und 01:02:49:12 O-Ton-Einsatz, 01:02:50:04
+  Innenschnitt), 0 Schwarzbild, 0 Tonloch, 0 angeschnittene Wörter.
 
 ## Fehlerbilder und Abhilfe
 
@@ -680,6 +733,9 @@ Meldung an den User:
 | Stufe 6: Standbild zeigt die Transformation nicht | `ExportCurrentFrameAsStill` ignoriert den Inspector — Quick Export aus einer eigenen Prüf-Timeline |
 | `ModuleNotFoundError: cv2` (Begradigen) | `raster_erzeugen.py`, `linien_messen.py`, `kalibrierung_auswerten.py`, `pruefung_auswerten.py` mit `tools/transcribe/venv/bin/python` starten (OpenCV 5 mit ArUco/LSD, `SETUP.md` Abschnitt 8) |
 | `ModuleNotFoundError: rapidfuzz` im transcribe-venv | Skript lädt `feinschnitt_bauen.py` — mit `tools/autocut/venv/bin/python` starten; nur die vier OpenCV-Skripte gehören ins transcribe-venv |
+| Kantenprüfung: `Export ist nicht aktuell` | Export nach der letzten Änderung neu erstellen (Review-Render), dann erneut prüfen |
+| Kantenprüfung: `Timeline '…' ist nicht im offenen Projekt` | Projekt in Resolve öffnen (nur lesen) oder `--readback` mit dem letzten Schnappschuss |
+| Kantenprüfung: viele Schnipsel „ohne Schnitt" | harte Wechsel in Grafik-Animationen außerhalb von V4 — Bilder ansehen; bei Fehlalarmen `wechsel_diff_min` oder `grafik_spuren` in der Chargen-`config.yaml` anpassen |
 
 ## Ausgabe-Konvention
 
@@ -698,12 +754,15 @@ Meldung an den User:
     ├── probe_api.json                   Resolve-Probe der 21.1-API (AudioVolume, Normalize, SetSpeed-Semantik, Fades,
     │                                    Transition, AutoAlign, QuickExport, Alpha-Import); Medien in work/probe_api/
     ├── ton.json · finalize.json         Stufe 5: True-Peak/Gain je A1-Clip, Finalisieren-Ergebnis (End-Timeline)
-    └── work/audio · work/frames · work/sheets · work/ton_cache.json · work/xml/
-                                         Caches (WAVs, Einzelbilder, Kontaktbögen, Pegel-Messungen) und der
+    ├── kanten_readback.json · kanten.json   Kantenprüfung: Schnappschuss der Timeline (nur gelesen), Befunde + Messwerte
+    └── work/audio · work/frames · work/sheets · work/ton_cache.json · work/xml/ · work/kanten/ · work/schnittbild/
+                                         Caches (WAVs, Einzelbilder, Kontaktbögen, Pegel-Messungen, Bild-Metriken je
+                                         Export), Schnittbilder (PNG) und der
                                          XML-Roundtrip beim Finalisieren (`<Timeline>.roh/.final/.reexport.xml`)
     <Charge>/Ergebnisse/Rohschnitt/      Berichte + Export (für David lesbar)
     ├── <video>-rohschnitt.md            Beat-Tabelle (Nr, Szene, Quelle dreiteilig Person · Datei · mm:ss–mm:ss,
     │                                    Dauer, V2 ja/nein), Sync-Tabelle, Warnungen, Gesamtlänge, Pegel-Abschnitt (Stufe 5)
+    ├── <video>-kanten.md                Kantenprüfung: Befunde mit Timecode und Schnittbild, Grafik-Hinweise, Messwerte
     ├── broll-index.md                   je Ordner eine Zeile pro Clip
     ├── <video>-raster.md                Sprecher-Fenster und Strecken für die Plan-Session (Stufe 3, `--raster`)
     ├── <video>-broll.md                 gewählte Szenen/Shots je Strecke, Grund, Abweichung
