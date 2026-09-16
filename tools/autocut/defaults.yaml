@@ -66,3 +66,15 @@ resolve:
     V3: "B-Roll"
     A1: "FX3 Ton"
   roh_suffix: " (roh)"        # Stufe-1-Timeline; die End-Timeline ohne Suffix entsteht beim Finalisieren
+kanten:                     # Kantenprüfung am Export (Spec 2026-09-16); Startwerte, Kalibrierung am Taxodia-Export steht im WORKFLOW
+  schwarz_mittel_max: 24.0      # Graustufen 0–255 aus dem Export (Limited Range: Schwarz ≈ 16)
+  schwarz_streuung_max: 4.0     # Standardabweichung je Frame (96×54) — Schwarzbild hat keine Struktur
+  wechsel_diff_min: 18.0        # mittlere Absolutdifferenz zum Vorframe (96×54) ab der ein Bildwechsel „hart" ist
+  schnipsel_max_frames: 2       # zwei harte Wechsel höchstens so weit auseinander → Schnipsel
+  knack_kante_ms: 10            # Suchfenster um das Schnitt-Sample
+  knack_fenster_ms: 250         # Umgebung für das 99. Perzentil der zweiten Differenz
+  knack_min: 0.02               # Mindest-Spitze der zweiten Differenz (Vollaussteuerung = 1.0)
+  knack_faktor: 6.0             # Spitze / Umgebung ab der ein Knackser gemeldet wird
+  tonloch_dbfs: -90.0           # RMS je Frame darunter = digitale Stille
+  tonloch_min_frames: 2
+  wort_min_ms: 80               # so viel muss von einem Wort an der O-Ton-Kante wegfallen

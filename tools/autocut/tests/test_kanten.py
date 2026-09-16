@@ -82,3 +82,74 @@ def test_kontext_nearest_cuts_and_items():
     assert k["items"] == []
     assert K.kontext(s, 10, [], [])["items"] == [{"spur": "A1", "name": "a.MP4"}, {"spur": "V1", "name": "a.MP4"}]
     assert K.kontext(s, 10, [], [])["bild_schnitt"] is None
+
+
+def test_laeufe():
+    assert K.laeufe([False, True, True, False, True]) == [(1, 3), (4, 5)]
+    assert K.laeufe([]) == []
+
+
+def test_schwarzbild_runs(cfg):
+    mittel, streuung = np.full(10, 80.0), np.full(10, 30.0)
+    mittel[4:7], streuung[4:7] = cfg["schwarz_mittel_max"] - 8, 0.5
+    got = K.schwarz_befunde(mittel, streuung, cfg)
+    assert [(b["art"], b["frame"], b["frames"]) for b in got] == [("Schwarzbild", 4, 3)]
+    assert got[0]["wert"] == round(cfg["schwarz_mittel_max"] - 8, 1)
+
+
+def test_schnipsel_one_frame_merge_and_black(cfg):
+    n, hoch = 60, cfg["wechsel_diff_min"] + 20
+    d, mittel, streuung = np.zeros(n), np.full(n, 80.0), np.full(n, 30.0)
+    d[10] = d[11] = hoch                                           # 1 Frame Schnipsel
+    d[20] = d[20 + cfg["schnipsel_max_frames"] + 3] = hoch         # weit genug auseinander → normale Schnitte
+    d[35] = d[36] = hoch
+    mittel[35], streuung[35] = cfg["schwarz_mittel_max"] - 8, 0.5  # schwarzer Einzelframe → nur Schwarzbild
+    d[45] = d[46] = d[47] = hoch                                   # Flackern → ein Befund über 2 Frames
+    got = K.schnipsel_befunde(d, mittel, streuung, cfg)
+    assert [(b["frame"], b["frames"]) for b in got] == [(10, 1), (45, 2)]
+    assert got[0]["wert"] == round(hoch, 1)
+
+
+def _ton(sekunden: float = 2.0, seed: int = 1) -> np.ndarray:
+    sr = 48000
+    rng = np.random.default_rng(seed)
+    t = np.arange(int(sr * sekunden)) / sr
+    x = 0.2 * np.sin(2 * np.pi * 220 * t) + 0.1 * np.sin(2 * np.pi * 1330 * t) + rng.normal(0, 0.001, t.size)
+    return np.stack([x, x], axis=1).astype(np.float32)
+
+
+def test_knackser_only_at_cut_sample(cfg):
+    sr, fps, spf = 48000, 25.0, 1920
+    sauber = _ton()
+    assert K.knack_befunde(sauber, sr, fps, [12], cfg)[0] == []
+    sprung = sauber.copy()
+    sprung[12 * spf:, 0] += 0.3                                   # Sprung genau am Schnitt-Sample, nur links
+    befunde, verh = K.knack_befunde(sprung, sr, fps, [12], cfg)
+    assert [(b["art"], b["frame"], b["kanal"]) for b in befunde] == [("Knackser", 12, 1)]
+    assert abs(befunde[0]["versatz_ms"]) <= cfg["knack_kante_ms"] and verh[0] >= cfg["knack_faktor"]
+    daneben = sauber.copy()
+    daneben[12 * spf + int(0.2 * sr):, 0] += 0.3                  # 200 ms neben dem Schnitt
+    assert K.knack_befunde(daneben, sr, fps, [12], cfg)[0] == []
+
+
+def test_knack_messung_handles_file_edges(cfg):
+    x = _ton(0.05)
+    assert K.knack_messung(x, 48000, 0, cfg)["verhaeltnis"] >= 0.0
+    assert K.knack_messung(x[:2], 48000, 1, cfg)["spitze"] == 0.0
+
+
+def test_tonloch_in_mask_only(cfg):
+    sr, fps, spf, n = 48000, 25.0, 1920, 40
+    lang, kurz = int(cfg["tonloch_min_frames"]) + 1, int(cfg["tonloch_min_frames"]) - 1
+    x = np.random.default_rng(2).normal(0, 0.01, (n * spf, 2)).astype(np.float32)
+    x[10 * spf:(10 + lang) * spf] = 0.0
+    if kurz > 0:
+        x[30 * spf:(30 + kurz) * spf] = 0.0
+    rms = K.rms_dbfs_je_frame(x, sr, fps, n)
+    assert rms[10] == -200.0 and rms[5] > -50
+    maske = np.zeros(n, dtype=bool)
+    maske[5:36] = True
+    got = K.tonloch_befunde(rms, maske, cfg)
+    assert [(b["frame"], b["frames"]) for b in got] == [(10, lang)]
+    assert got[0]["wert"] == -200.0
+    assert K.tonloch_befunde(rms, np.zeros(n, dtype=bool), cfg) == []

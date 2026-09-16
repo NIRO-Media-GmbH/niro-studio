@@ -124,3 +124,113 @@ def kontext(snap: dict, frame: int, bild: list[int], ton: list[int]) -> dict:
         f = min(liste, key=lambda x: (abs(x - frame), x))
         return {"frame": int(f), "abstand": int(f - frame)}
     return {"bild_schnitt": naechster(bild), "ton_schnitt": naechster(ton), "items": items_bei(snap, frame)}
+
+
+# --- Befund-Regeln: Bild -----------------------------------------------------------
+
+def laeufe(maske) -> list[tuple[int, int]]:
+    """Zusammenhängende True-Bereiche als (erstes Frame, letztes Frame + 1)."""
+    m = np.asarray(maske, dtype=bool).astype(np.int8)
+    if m.size == 0:
+        return []
+    d = np.diff(np.concatenate(([0], m, [0])))
+    return [(int(a), int(b)) for a, b in zip(np.flatnonzero(d == 1), np.flatnonzero(d == -1))]
+
+
+def _schwarz(mittel, streuung, cfg: dict) -> np.ndarray:
+    return (np.asarray(mittel) < cfg["schwarz_mittel_max"]) & (np.asarray(streuung) < cfg["schwarz_streuung_max"])
+
+
+def schwarz_befunde(mittel, streuung, cfg: dict) -> list[dict]:
+    """Schwarzbild: dunkle Frames ohne Struktur als zusammenhängende Läufe (Spec 3)."""
+    mittel = np.asarray(mittel, dtype=float)
+    return [{"art": "Schwarzbild", "frame": a, "frames": b - a, "wert": round(float(mittel[a:b].mean()), 1)}
+            for a, b in laeufe(_schwarz(mittel, streuung, cfg))]
+
+
+def schnipsel_befunde(diff, mittel, streuung, cfg: dict) -> list[dict]:
+    """Schnipsel: zwei harte Bildwechsel höchstens ``schnipsel_max_frames`` auseinander. Direkt aufeinanderfolgende
+    Schnipsel verschmelzen; komplett schwarze Schnipsel zählen nur als Schwarzbild."""
+    d = np.asarray(diff, dtype=float)
+    harte = np.flatnonzero(d >= cfg["wechsel_diff_min"])
+    schwarz = _schwarz(mittel, streuung, cfg)
+    out: list[dict] = []
+    for f1, f2 in zip(harte[:-1], harte[1:]):
+        f1, f2 = int(f1), int(f2)
+        if f2 - f1 > cfg["schnipsel_max_frames"] or bool(schwarz[f1:f2].all()):
+            continue
+        wert = round(float(min(d[f1], d[f2])), 1)
+        if out and out[-1]["frame"] + out[-1]["frames"] == f1:
+            out[-1]["frames"] = f2 - out[-1]["frame"]
+            out[-1]["wert"] = min(out[-1]["wert"], wert)
+        else:
+            out.append({"art": "Schnipsel", "frame": f1, "frames": f2 - f1, "wert": wert})
+    return out
+
+
+# --- Befund-Regeln: Ton ------------------------------------------------------------
+
+def knack_messung(audio, sr: int, sample: int, cfg: dict) -> dict:
+    """Spitze der zweiten Differenz ±``knack_kante_ms`` um das Schnitt-Sample gegen das 99. Perzentil der Umgebung
+    (±``knack_fenster_ms`` ohne die Kante), je Kanal; zurück kommt der auffälligste Kanal (0-basiert)."""
+    x = np.asarray(audio)
+    if x.ndim == 1:
+        x = x[:, None]
+    kante = max(1, int(round(cfg["knack_kante_ms"] * sr / 1000)))
+    fenster = int(round(cfg["knack_fenster_ms"] * sr / 1000))
+    a, b = max(0, sample - fenster), min(len(x), sample + fenster)
+    leer = {"spitze": 0.0, "umgebung": 0.0, "verhaeltnis": 0.0, "versatz_ms": 0.0, "kanal": 0}
+    if b - a < 3:
+        return leer
+    seg = x[a:b].astype(np.float64)
+    d2 = np.abs(seg[2:] - 2.0 * seg[1:-1] + seg[:-2])
+    idx = np.arange(len(d2)) + a + 1
+    nah = np.abs(idx - sample) <= kante
+    if not nah.any() or nah.all():
+        return leer
+    spitze = d2[nah].max(axis=0)
+    umgebung = np.percentile(d2[~nah], 99, axis=0)
+    verh = spitze / np.maximum(umgebung, 1e-6)
+    treffer = (spitze >= cfg["knack_min"]) & (verh >= cfg["knack_faktor"])
+    k = int(np.argmax(np.where(treffer, verh, -1.0))) if treffer.any() else int(np.argmax(verh))
+    pos = int(idx[nah][int(np.argmax(d2[nah][:, k]))])
+    return {"spitze": float(spitze[k]), "umgebung": float(umgebung[k]), "verhaeltnis": float(verh[k]),
+            "versatz_ms": round((pos - sample) * 1000 / sr, 1), "kanal": k}
+
+
+def knack_befunde(audio, sr: int, fps: float, ton_schnitte: list[int], cfg: dict) -> tuple[list[dict], list[float]]:
+    """Knackser je Ton-Schnitt (Spec 3). Rückgabe: Befunde und alle Verhältnisse (für die Kalibrierung)."""
+    befunde, verhaeltnisse = [], []
+    for f in ton_schnitte:
+        m = knack_messung(audio, sr, int(round(f * sr / fps)), cfg)
+        verhaeltnisse.append(round(m["verhaeltnis"], 2))
+        if m["spitze"] >= cfg["knack_min"] and m["verhaeltnis"] >= cfg["knack_faktor"]:
+            befunde.append({"art": "Knackser", "frame": int(f), "frames": 1, "wert": round(m["verhaeltnis"], 1),
+                            "spitze": round(m["spitze"], 4), "versatz_ms": m["versatz_ms"], "kanal": m["kanal"] + 1})
+    return befunde, verhaeltnisse
+
+
+def rms_dbfs_je_frame(audio, sr: int, fps: float, n_frames: int) -> np.ndarray:
+    """RMS in dBFS je Frame-Fenster (``sr/fps`` Samples) über alle Kanäle; digitale Stille = −200."""
+    x = np.asarray(audio)
+    if x.ndim == 1:
+        x = x[:, None]
+    out = np.full(int(n_frames), -200.0)
+    spf = sr / fps
+    for i in range(int(n_frames)):
+        seg = x[int(round(i * spf)):int(round((i + 1) * spf))]
+        if seg.size:
+            r = float(np.sqrt(np.mean(np.square(seg, dtype=np.float64))))
+            if r > 0:
+                out[i] = max(-200.0, 20.0 * np.log10(r))
+    return out
+
+
+def tonloch_befunde(rms_db, maske, cfg: dict) -> list[dict]:
+    """Tonloch: digitale Stille (RMS < ``tonloch_dbfs``) ab ``tonloch_min_frames``, wo ein aktiver Tonclip liegt."""
+    rms_db = np.asarray(rms_db, dtype=float)
+    m = np.asarray(maske, dtype=bool)
+    n = min(rms_db.size, m.size)
+    still = (rms_db[:n] < cfg["tonloch_dbfs"]) & m[:n]
+    return [{"art": "Tonloch", "frame": a, "frames": b - a, "wert": round(float(rms_db[a:b].max()), 1)}
+            for a, b in laeufe(still) if b - a >= cfg["tonloch_min_frames"]]
