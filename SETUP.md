@@ -39,6 +39,17 @@ git fetch && git show origin/main:tools/studio_abgleich.sh | sh -s -- --umstieg
 Meldet der LUT-Abgleich fehlendes Schreibrecht, einmalig
 `sudo chmod a+w "/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT"`.
 
+**Mac-Name für die Tagesberichte** (einmal je Mac; Studio-Rechner „Studio-Mac", Zweit-MacBook „MacBook"):
+
+```bash
+git config niro.mac "MacBook"
+```
+
+Beim Start jeder Claude-Session schreibt der Hook aus `.claude/settings.json` den Tagesstand dieses Macs nach
+`berichte/<Datum>/<Mac>.md` (`tools/tagesbericht/sammler.py`) und spiegelt `berichte/` aufs NAS; die Funktion
+„Tagesbericht" fasst beide Macs zusammen (`tools/tagesbericht/README.md`). Ohne `niro.mac` heißt die Datei nach dem
+Computernamen.
+
 ## 3. Systemwerkzeuge
 
 ```bash
