@@ -94,6 +94,7 @@ Abweichend davon:
   „du darfst nur die Bereiche, die darin sind, nutzen, also die Clips nicht verlängern, kürzen geht natürlich."
   Jeder Shot höchstens einmal, Tempo wie in der Auswahl (Zeitlupe nur auf Wunsch), die Auswahl selbst nur lesen.
 - **NAS nur lesen.** Kein Skript schreibt unter `/Volumes/`. Originale und Proxies bleiben unangetastet.
+  Einzige Ausnahme (User 17.09.2026): Grading-LUTs in `…/03_Vorlagen und Tools/02_Davinci Resolve/LUTs/NIRO Grading/` über `tools/resolve/luts_sync.sh`.
 - **Schreibbereiche** (im Code über `Charge.assert_writable` erzwungen): nur `<Charge>/_intern/autocut/**`,
   `<Charge>/Ergebnisse/Rohschnitt/**` und `Protokoll.md` (anhängen); `autocut_replay.py` zusätzlich
   `<Charge>/_intern/replay/**` und `<Charge>/Material/Feedback/**` (`Charge.open_basis`). Sonst nichts unter `Material/`,

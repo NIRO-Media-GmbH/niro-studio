@@ -5,4 +5,5 @@
   `SetCDL` (NodeIndex 1–3) und `SetLUT(4, "Sony/SLog3SGamut3.CineToLC-709.cube")`. Von Hand: Color-Seite → Gallery →
   Import → Still auf den Clip anwenden. Am 17.09.2026 in Resolve 21.1 geprüft (Taxodia-Test-Kopie).
 - Aufbau des DRX-Formats und Befunde: `docs/superpowers/specs/2026-09-17-autocut-grading-design.md` (Design 2 und Nachtrag).
-- Belichtungs-LUTs der B-Roll liegen projektweise in `tools/resolve/luts/` (Abgleich auf beide Macs, siehe dortige README).
+- Belichtungs-LUTs der B-Roll liegen auf dem NAS (`03_Vorlagen und Tools/02_Davinci Resolve/LUTs/NIRO Grading/<Resolve-Projekt>/`) und lokal im Resolve-LUT-Ordner;
+  Abgleich per `sh tools/resolve/luts_sync.sh` (siehe `tools/resolve/luts/README.md`).

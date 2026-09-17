@@ -59,6 +59,9 @@ die Charge wird dann automatisch gefunden.
   des Users wieder aktivieren.
 - **Cloud-Projekte speichern sofort (Live Save):** erst lesen, dann klein schreiben,
   Readback, Bericht mit Projekt- und Timeline-Namen und Zahlen.
+- **NIRO-Grading-LUTs:** Grades verweisen auf eigene LUTs unter `NIRO Grading/<Projekt>/` im lokalen Resolve-LUT-Ordner;
+  gemeinsame Ablage ist das NAS (`01_Projekte/03_Vorlagen und Tools/02_Davinci Resolve/LUTs/NIRO Grading`). Vor jeder Arbeit in Resolve und nach jedem Grading
+  `sh tools/resolve/luts_sync.sh` (NAS ↔ lokal, löscht nie). Einzige Schreibstelle auf dem NAS dafür: dieser Ordner.
 - **Nie schreiben, während der User abspielt:** Schreibaufrufe hängen dann oder laufen
   nach einem Abbruch später trotzdem. Arbeitet der User parallel in Resolve, Timeline-Wechsel
   vorher abstimmen; von Hand Geändertes nie überschreiben. Gemessenes API-Verhalten:

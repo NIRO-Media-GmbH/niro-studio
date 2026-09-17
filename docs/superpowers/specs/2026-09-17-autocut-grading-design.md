@@ -456,9 +456,9 @@ im Sensor nicht ausgebrannte Pixel (5.3); Standbild-Ausrichtung per SIFT/Homogra
   anderem Licht, und machten Einsätze desselben Takes 1,5 Blenden dunkler. `einsatz_eigen` entfällt; Wechsel des Lichts im Take
   bleibt Handarbeit.
 - **Lichterschutz-Toleranz 5 %** (nur nicht ausgebrannte Pixel), am Taxodia-Material aus 2/4/5/8 % gewählt; kein Schatten-Toe.
-- **LUT-Verteilung auf beide Macs** (User 17.09.: „damit auf dem 2. Mac auch die LUTs drin sind … auch vom anderen Mac"):
-  Quelle ist `tools/resolve/luts/NIRO Grading/<Resolve-Projekt>/`; `tools/resolve/luts_sync.sh` installiert in Resolves
-  LUT-Ordner und holt nur in Resolve liegende NIRO-LUTs ins Repo (löscht nie). Git-Hooks `post-merge`/`post-rewrite`/
-  `post-checkout` installieren nach jedem Pull. Die Stufe `autocut_grading.py` schreibt neue LUTs ins Repo-Verzeichnis,
-  ruft den Abgleich auf und meldet „committen + pushen".
-
+- **LUT-Verteilung auf beide Macs** (User 17.09.: „damit auf dem 2. Mac auch die LUTs drin sind" → „über einen gemeinsamen
+  Ordner im NAS", Abgleich „nur beim Arbeiten"): gemeinsame Ablage `01_Projekte/03_Vorlagen und Tools/02_Davinci Resolve/LUTs/NIRO Grading/<Resolve-Projekt>/` neben den
+  Team-LUTs, lokale Kopie im Resolve-LUT-Ordner (Renders ohne NAS). `tools/resolve/luts_sync.sh` gleicht NAS ↔ lokal ab
+  (löscht nie). Kein Hintergrunddienst, keine Git-Hooks: Die Stufe `autocut_grading.py` und Claude rufen den Abgleich vor
+  Resolve-Arbeit und nach jedem Grading auf. Ausnahme von „NAS nur lesen" nur für diesen Ordner. Ein erster Weg über
+  GitHub + Pull-Hooks (Commit 3fecd1e) ist damit ersetzt.

@@ -26,10 +26,8 @@ Blockt Commits mit Dateien über 5 MB. Hier gehört das Werkzeug hinein, nicht
 das Kundenmaterial — der Hook fängt Versehen ab, bevor sie in der Historie
 landen. Details in [.githooks/pre-commit](.githooks/pre-commit).
 
-Dieselbe Einstellung aktiviert den **LUT-Abgleich für DaVinci Resolve**: Nach
-jedem `git pull` installieren die Hooks die NIRO-Grading-LUTs aus
-`tools/resolve/luts/` in Resolves LUT-Ordner, damit Grades von beiden Macs
-dieselben LUTs finden. Beim ersten Mal (oder ohne Hooks) von Hand:
+**DaVinci Resolve (Grading-LUTs):** Eigene LUTs der Grades liegen auf dem NAS
+(`01_Projekte/03_Vorlagen und Tools/02_Davinci Resolve/LUTs/NIRO Grading`) und lokal im Resolve-LUT-Ordner. Abgleich beim Arbeiten:
 
 ```bash
 sh tools/resolve/luts_sync.sh
