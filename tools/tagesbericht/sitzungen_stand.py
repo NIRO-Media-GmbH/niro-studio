@@ -161,7 +161,7 @@ def sitzung_lesen(datei: Path, tag: date, repo: Path) -> Sitzung | None:
                     if b.get("type") == "text" and isinstance(b.get("text"), str) and b["text"].strip():
                         s.schluss = kuerzen(b["text"], SCHLUSS_MAX)
                     elif b.get("type") == "tool_use":
-                        name = b.get("name") or "?"
+                        name = b.get("name") if isinstance(b.get("name"), str) and b.get("name") else "?"
                         werkzeuge[name] += 1
                         eingabe = b.get("input") if isinstance(b.get("input"), dict) else {}
                         pfad = eingabe.get("file_path") if name in EDIT_WERKZEUGE else None
@@ -200,8 +200,8 @@ def sitzungen_stand(ordner: list[Path], tag: date, repo: Path) -> SitzungenStand
                 if datei.stat().st_mtime < anfang.timestamp():
                     continue
                 s = sitzung_lesen(datei, tag, repo)
-            except OSError as e:
-                stand.fehler.append(f"{datei.name}: {e}")
+            except Exception as e:  # noqa: BLE001 — eine kaputte Datei darf die anderen nicht mitreißen
+                stand.fehler.append(f"{datei.name}: {type(e).__name__}: {e}")
                 continue
             if s is not None:
                 stand.sitzungen.append(s)

@@ -1,8 +1,11 @@
+import json
+import os
 import shutil
 import tempfile
 import unittest
 from datetime import date, timedelta
 from pathlib import Path
+from unittest import mock
 
 from sitzungen_stand import charge_aus_pfad, relativ, sitzungen_stand
 from testhilfe import sitzungen_anlegen
@@ -95,6 +98,43 @@ class Pfade(unittest.TestCase):
         self.assertEqual(charge_aus_pfad("projects/K/2026-08 C/Protokoll.md"), "projects/K/2026-08 C")
         self.assertIsNone(charge_aus_pfad("projects/K/P/Protokoll.md"))
         self.assertIsNone(charge_aus_pfad("tools/a.py"))
+
+
+class SitzungenStandWirftNie(unittest.TestCase):
+    def setUp(self):
+        self.basis = Path(tempfile.mkdtemp(prefix="sitzungen_test_"))
+        self.repo = self.basis / "repo"
+        self.repo.mkdir()
+        self.ordner = self.basis / "sitzungen"
+        self.ordner.mkdir()
+        from testhilfe import _rec, lokal
+        kaputt = _rec("assistant", lokal(HEUTE, 9, 0), [{"type": "tool_use", "name": ["Edit"], "input": {}}], self.repo, "main")
+        (self.ordner / "kaputt.jsonl").write_text(json.dumps(kaputt) + "\n")
+        gut = _rec("user", lokal(HEUTE, 10, 0), "Guter Auftrag", self.repo, "main")
+        (self.ordner / "gut.jsonl").write_text(json.dumps(gut) + "\n")
+
+    def tearDown(self):
+        shutil.rmtree(self.basis, ignore_errors=True)
+
+    def test_unhashbarer_werkzeugname_wird_toleriert(self):
+        stand = sitzungen_stand([self.ordner], HEUTE, self.repo)
+        self.assertEqual(stand.fehler, [])
+        kaputt = next(s for s in stand.sitzungen if s.kennung == "kaputt")
+        self.assertEqual(kaputt.werkzeuge, [("?", 1)])
+
+    def test_ausnahme_in_einer_datei_bricht_die_anderen_nicht_ab(self):
+        import sitzungen_stand as modul
+        echt = modul.sitzung_lesen
+
+        def explodiert(datei, tag, repo):
+            if datei.name == "kaputt.jsonl":
+                raise RuntimeError("Testexplosion")
+            return echt(datei, tag, repo)
+
+        with mock.patch.object(modul, "sitzung_lesen", explodiert):
+            stand = sitzungen_stand([self.ordner], HEUTE, self.repo)
+        self.assertEqual([s.kennung for s in stand.sitzungen], ["gut"])
+        self.assertTrue(any("Testexplosion" in f for f in stand.fehler), stand.fehler)
 
 
 if __name__ == "__main__":
