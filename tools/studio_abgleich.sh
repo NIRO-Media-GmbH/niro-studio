@@ -10,6 +10,8 @@
 #   git fetch && git show origin/main:tools/studio_abgleich.sh | sh -s -- --umstieg    einmalig je Mac
 #
 # Regeln: beide Richtungen, neuere Datei gewinnt, nichts wird gelöscht; ohne Medien, Caches und Dateien > 20 MB.
+# projects/ liegt nur im Hauptordner des Repos: Aufrufe aus einem Worktree gleichen dessen projects/ ab, die Hooks
+# eines Worktrees gleichen nichts ab.
 # Außer --umstieg endet das Skript immer mit 0 und blockiert git nie. Tests: sh tools/studio_abgleich_test.sh
 
 MODUS=alles
@@ -22,7 +24,7 @@ case "${1:-}" in
 	*) echo "Studio-Abgleich: unbekannte Option „$1“ (--charge <Pfad> | --nach-pull | --umstieg)"; exit 0 ;;
 esac
 
-REPO=${NIRO_STUDIO_REPO:-$(git rev-parse --show-toplevel 2>/dev/null)}
+REPO=${NIRO_STUDIO_REPO:-$(git worktree list --porcelain 2>/dev/null | sed -n '1s/^worktree //p')}
 [ -n "$REPO" ] || REPO=$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)
 NAS=${NIRO_STUDIO_NAS:-"/Volumes/NIRO NAS/NIRO Productions/01_Projekte/02_NIRO Productions/08_Claude Tools/NIRO Studio"}
 SCHLUESSEL=$(printf '%s' "$REPO" | sed 's/[^A-Za-z0-9]/-/g')
@@ -31,6 +33,11 @@ TEILE=""
 
 teil() { if [ -z "$TEILE" ]; then TEILE=$1; else TEILE="$TEILE · $1"; fi; }
 nas_da() { [ -d "$(dirname "$NAS")" ]; }
+im_worktree() {
+	[ -z "${NIRO_STUDIO_REPO:-}" ] || return 1
+	eigen=$(git rev-parse --git-dir 2>/dev/null) && gemeinsam=$(git rev-parse --git-common-dir 2>/dev/null) || return 1
+	[ "$(cd "$eigen" && pwd -P)" != "$(cd "$gemeinsam" && pwd -P)" ]
+}
 
 spiegeln() {
 	rsync -rt --update --modify-window=2 --itemize-changes --max-size=20M \
@@ -73,6 +80,24 @@ chargen_abgleichen() {
 	teil "NAS-Abgleich: $geholt geholt, $hochgeladen hochgeladen"
 }
 
+# Index MEMORY.md ($1 lokal) in den NAS-Index ($2) einfügen: dessen Zeilen bleiben, lokale Zeilen zu einer dort noch
+# nicht verzeichneten Notiz kommen ans Ende (unabhängig davon, welcher Index neuer ist).
+index_vereinen() {
+	[ -f "$1" ] || return 0
+	[ -f "$2" ] || { cp -p "$1" "$2"; return; }
+	[ -z "$(tail -c 1 "$2")" ] || echo >> "$2" || return 1
+	while IFS= read -r zeile || [ -n "$zeile" ]; do
+		[ -n "$zeile" ] || continue
+		rest=${zeile#*"]("}
+		if [ "$rest" != "$zeile" ]; then
+			grep -Fq "](${rest%%")"*})" "$2" && continue
+		else
+			grep -Fxq -- "$zeile" "$2" && continue
+		fi
+		printf '%s\n' "$zeile" >> "$2" || return 1
+	done < "$1"
+}
+
 gedaechtnis_verknuepfen() {
 	ziel="$NAS/claude-gedaechtnis"
 	mkdir -p "$ziel" || { teil "Gedächtnis: NAS-Ordner nicht anlegbar"; return 1; }
@@ -83,13 +108,22 @@ gedaechtnis_verknuepfen() {
 		return 0
 	fi
 	if [ -d "$GEDAECHTNIS" ]; then
-		if ! rsync -rt --update --modify-window=2 --exclude='.DS_Store' "$GEDAECHTNIS/" "$ziel/"; then
+		konflikte=0
+		for datei in "$GEDAECHTNIS"/*; do
+			name=${datei##*/}
+			[ -f "$datei" ] && [ "$name" != MEMORY.md ] && [ -f "$ziel/$name" ] && ! cmp -s "$datei" "$ziel/$name" \
+				&& konflikte=$((konflikte + 1))
+		done
+		if ! rsync -rt --update --modify-window=2 --exclude='.DS_Store' --exclude='/MEMORY.md' "$GEDAECHTNIS/" "$ziel/"; then
 			teil "Gedächtnis: Hochladen fehlgeschlagen — nicht verknüpft"; return 1
 		fi
+		index_vereinen "$GEDAECHTNIS/MEMORY.md" "$ziel/MEMORY.md" || { teil "Gedächtnis: Index nicht zusammengeführt — nicht verknüpft"; return 1; }
 		sicherung="$GEDAECHTNIS.vor-nas-$(date +%Y%m%d-%H%M%S)"
 		mv "$GEDAECHTNIS" "$sicherung" || { teil "Gedächtnis: Sicherung fehlgeschlagen — nicht verknüpft"; return 1; }
 		ln -s "$ziel" "$GEDAECHTNIS" || { mv "$sicherung" "$GEDAECHTNIS"; teil "Gedächtnis: Verknüpfung fehlgeschlagen"; return 1; }
-		teil "Gedächtnis zusammengeführt und verknüpft (Sicherung $(basename "$sicherung"))"
+		hinweis=""
+		[ "$konflikte" -gt 0 ] && hinweis="; $konflikte gleichnamige Notiz(en) mit anderem Inhalt — neuere behalten, lokale Fassung in der Sicherung"
+		teil "Gedächtnis zusammengeführt und verknüpft (Sicherung $(basename "$sicherung")$hinweis)"
 		return 0
 	fi
 	mkdir -p "$(dirname "$GEDAECHTNIS")" && ln -s "$ziel" "$GEDAECHTNIS" && teil "Gedächtnis verknüpft (neu)"
@@ -128,6 +162,13 @@ umstieg() {
 		echo "Umstieg abgebrochen: NAS nicht verbunden ($(dirname "$NAS")) — nichts geändert."; exit 1
 	fi
 	mkdir -p "$NAS/projects" || { echo "Umstieg abgebrochen: NAS-Ordner nicht anlegbar."; exit 1; }
+	# Unveränderte versionierte Projektdateien tragen das Datum ihres Checkouts, nicht ihrer Bearbeitung: Sie bekommen
+	# das Jahr 2000, damit sie neuere Stände des anderen Macs auf dem NAS nicht überschreiben (Inhalt liegt in git).
+	geaendert=$(mktemp -t studio_umstieg) || { echo "Umstieg abgebrochen: keine Temp-Datei."; exit 1; }
+	git -C "$REPO" diff -z --name-only HEAD -- projects 2>/dev/null | tr '\0' '\n' > "$geaendert"
+	git -C "$REPO" ls-files -z projects 2>/dev/null | tr '\0' '\n' | grep -Fxv -f "$geaendert" | tr '\n' '\0' \
+		| (cd "$REPO" && xargs -0 touch -c -t 200001010000)
+	rm -f "$geaendert"
 	if [ -d "$REPO/projects" ]; then
 		abgleich "$REPO/projects" "$NAS/projects" "lokal → NAS"
 		if [ "$RC" -ne 0 ]; then echo "Umstieg abgebrochen: Hochladen fehlgeschlagen (rsync $RC) — nichts verworfen."; exit 1; fi
@@ -148,6 +189,10 @@ umstieg() {
 }
 
 [ "$MODUS" = "umstieg" ] && umstieg
+if im_worktree; then
+	[ "$MODUS" = "nach-pull" ] && { echo "Studio-Abgleich: Worktree — kein Abgleich (projects/ liegt im Hauptordner $REPO)"; exit 0; }
+	teil "Worktree: abgeglichen wird der Hauptordner $REPO/projects"
+fi
 if ! nas_da; then
 	echo "Studio-Abgleich: NAS nicht verbunden ($(dirname "$NAS")) — lokal bleibt alles, Abgleich später: sh tools/studio_abgleich.sh"
 	[ "$MODUS" = "nach-pull" ] && abhaengigkeiten && [ -n "$TEILE" ] && echo "$TEILE"

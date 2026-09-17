@@ -54,8 +54,10 @@ Caches (Filter unten) = 6.916 Dateien, 3,2 GB (MEK Imagefilm 0,9 GB, Schmitt 0,7
 
 ### 3. Skript `tools/studio_abgleich.sh`
 
-POSIX-`sh`, läuft auch über eine Pipe (`git show … | sh -s -- …`): Repo = `git rev-parse --show-toplevel` im aktuellen
-Ordner, sonst der Ordner über dem Skript.
+POSIX-`sh`, läuft auch über eine Pipe (`git show … | sh -s -- …`): Repo = Hauptordner des Repos (erste Zeile von
+`git worktree list`, auch aus einem Worktree heraus), sonst der Ordner über dem Skript. `projects/` liegt nur im
+Hauptordner: `--nach-pull` in einem Worktree gleicht nichts ab (Hinweis, Ende 0 — ein `git merge main` im Worktree
+kopiert sonst 3,2 GB), andere Aufrufe aus einem Worktree gleichen den Hauptordner ab und sagen das.
 
 | Aufruf | Wirkung |
 |---|---|
@@ -71,7 +73,9 @@ Schritte:
    A–Z/a–z/0–9 als `-` (`/Users/jansantos/NIRO Studio` → `-Users-jansantos-NIRO-Studio`).
    - Ist das Ziel schon eine Verknüpfung auf `claude-gedaechtnis/` → nichts tun.
    - Ist es ein echter Ordner → Inhalt nach `claude-gedaechtnis/` abgleichen (neuere gewinnt), Ordner in
-     `memory.vor-nas-<JJJJMMTT-HHMM>` umbenennen, Verknüpfung anlegen.
+     `memory.vor-nas-<JJJJMMTT-HHMM>` umbenennen, Verknüpfung anlegen. Ausnahme `MEMORY.md`: Der NAS-Index bleibt, lokale
+     Zeilen zu dort noch nicht verzeichneten Notizen (Link-Ziel) kommen ans Ende — sonst verlöre ein Mac seinen Index.
+     Gleichnamige Notizen mit anderem Inhalt: neuere gewinnt, Hinweis mit Anzahl (lokale Fassung bleibt in der Sicherung).
    - Fehlt es → Elternordner anlegen, Verknüpfung anlegen.
    - Zeigt eine Verknüpfung woandershin → nichts ändern, Hinweis.
 3. **Chargen:** `projects/` ↔ `NIRO Studio/projects/` nach Abschnitt 2; gezählt werden geholte und hochgeladene Dateien.
@@ -105,7 +109,10 @@ Testbarkeit: `NIRO_STUDIO_REPO` (Repo-Pfad), `NIRO_STUDIO_NAS` (Ordner „NIRO S
 
 1. `git config core.hooksPath .githooks`.
 2. NAS prüfen (sonst Abbruch mit 1, nichts geändert).
-3. Lokales `projects/` → NAS hochladen (nur diese Richtung); rsync-Fehler → Abbruch mit 1, nichts verworfen.
+3. Lokales `projects/` → NAS hochladen (nur diese Richtung); rsync-Fehler → Abbruch mit 1, nichts verworfen. Vorher
+   bekommen versionierte, gegenüber `HEAD` unveränderte Projektdateien das Datum 01.01.2000: Git setzt beim Checkout das
+   aktuelle Datum, eine unveränderte Kopie sähe sonst neuer aus als ungepushte Änderungen des anderen Macs auf dem NAS
+   und überschriebe sie (ihr Inhalt liegt ohnehin in git).
 4. Gedächtnis-Verknüpfung (Schritt 2).
 5. `git reset -q -- projects` und `git checkout -q -- projects`: verwirft nur git-Änderungen an versionierten Dateien unter
    `projects/` — deren Inhalt liegt seit Punkt 3 auf dem NAS. Unversionierte Dateien bleiben unberührt.
@@ -126,6 +133,8 @@ Testbarkeit: `NIRO_STUDIO_REPO` (Repo-Pfad), `NIRO_STUDIO_NAS` (Ordner „NIRO S
 | NAS nicht verbunden | Hinweis, lokal bleibt alles, Ende 0 (`--umstieg`: 1, nichts geändert) |
 | rsync-Fehler (z. B. SMB-Sperre) | Meldung mit rsync-Code und betroffener Richtung, Ende 0; `--umstieg`: Abbruch 1 vor dem Verwerfen |
 | Gedächtnis-Verknüpfung zeigt woandershin | nichts ändern, Hinweis |
+| Gleichnamige Notizen mit anderem Inhalt beim Zusammenführen | neuere gewinnt, Hinweis mit Anzahl; lokale Fassung in der Sicherung |
+| Hook in einem Worktree | kein Abgleich, Hinweis, Ende 0 |
 | venv fehlt bei geänderter pyproject | Hinweis auf SETUP.md |
 | `npm install` scheitert | Meldung, Ende 0 |
 | `--charge` außerhalb von `projects/` | Meldung, nichts abgeglichen |
@@ -137,11 +146,15 @@ Testbarkeit: `NIRO_STUDIO_REPO` (Repo-Pfad), `NIRO_STUDIO_NAS` (Ordner „NIRO S
 - Ausschlüsse: Medien (auch Großbuchstaben), `work/`, `frames/`, `Fotos/`, Datei > 20 MB bleiben lokal.
 - `--charge` gleicht nur die Charge ab; Pfad außerhalb `projects/` wird abgewiesen.
 - Gedächtnis: echter Ordner → zusammengeführt, gesichert, verknüpft; zweiter Lauf ändert nichts; fremde Verknüpfung bleibt.
+- Gedächtnis-Index: NAS-Zeilen bleiben vorn, fehlende lokale Zeilen angehängt, keine doppelten — auch wenn der lokale
+  Index neuer ist; gleichnamige Notiz → neuere behalten, Hinweis.
 - NAS fehlt → Hinweis, Ende 0.
 - `--nach-pull` in einem Test-Repo: geänderte `tools/motion/package.json` → npm-Schritt ausgelöst (Befehl per
   Umgebungsvariable durch ein Echo ersetzt); unveränderte Dateien → kein Schritt.
 - `--umstieg` in einem Test-Klon mit versionierten `projects/`-Dateien und einer ungesicherten Änderung: Änderung landet
-  auf dem Test-NAS, Pull läuft durch, nach dem Hook sind alle Dateien mit neuestem Inhalt da.
+  auf dem Test-NAS, Pull läuft durch, nach dem Hook sind alle Dateien mit neuestem Inhalt da; eine unveränderte Git-Kopie
+  mit jüngerem Checkout-Datum überschreibt den neueren NAS-Stand nicht.
+- Worktree: `--nach-pull` gleicht nichts ab; ein normaler Aufruf gleicht `projects/` des Hauptordners ab.
 
 ## Doku
 

@@ -29,7 +29,8 @@ Ergebnisdateien. Unterordner nur anlegen, wenn die Funktion genutzt wird.
 auf `NIRO NAS/NIRO Productions/01_Projekte/02_NIRO Productions/08_Claude Tools/NIRO Studio/projects` (ohne Medien und
 Caches); `sh tools/studio_abgleich.sh` gleicht ab (beide Richtungen, neuere Datei gewinnt, nie löschen), nach jedem
 `git pull` automatisch. Nie gleichzeitig auf beiden Macs an derselben Charge arbeiten. Das Claude-Gedächtnis ist auf
-beiden Macs eine Verknüpfung auf `NIRO Studio/claude-gedaechtnis/`.
+beiden Macs eine Verknüpfung auf `NIRO Studio/claude-gedaechtnis/`. Worktrees haben kein eigenes `projects/`:
+Chargen-Daten nur im Hauptordner des Repos lesen und schreiben (erste Zeile von `git worktree list`).
 
 **Protokoll-Pflicht:** Bei jeder Arbeit an einer Charge (egal welche Funktion)
 `Protokoll.md` im Chargen-Ordner fortschreiben — pro Session ein kurzer

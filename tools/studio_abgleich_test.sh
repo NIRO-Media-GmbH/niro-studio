@@ -84,6 +84,23 @@ rm "$G"
 lauf >/dev/null
 pruefe "fehlendes Gedächtnis wird neu verknüpft" '[ -L "$G" ]'
 
+echo "Test 4b: Gedächtnis-Index beider Macs zusammenführen"
+neues_setup t4b
+GN="$N/claude-gedaechtnis"
+mkdir -p "$G" "$GN"
+printf '%s\n%s' '- [A-Notiz](a.md) — von A' '- [Gemeinsam](gemeinsam.md) — Fassung A' > "$GN/MEMORY.md"
+touch -t 202609100000 "$GN/MEMORY.md"
+printf '%s\n%s\n' '- [Gemeinsam](gemeinsam.md) — Fassung B' '- [B-Notiz](b.md) — von B' > "$G/MEMORY.md"
+touch -t 202609171500 "$G/MEMORY.md"
+echo "A" > "$GN/gemeinsam.md"; touch -t 202609171500 "$GN/gemeinsam.md"
+echo "B" > "$G/gemeinsam.md"; touch -t 202609100000 "$G/gemeinsam.md"
+echo "B" > "$G/b.md"
+AUS=$(lauf)
+pruefe "Index: Zeilen vom NAS bleiben vorn (auch wenn der lokale Index neuer ist)" '[ "$(sed -n 1p "$GN/MEMORY.md")" = "- [A-Notiz](a.md) — von A" ] && [ "$(sed -n 2p "$GN/MEMORY.md")" = "- [Gemeinsam](gemeinsam.md) — Fassung A" ]'
+pruefe "Index: fehlende lokale Zeile angehängt, keine doppelte" '[ "$(sed -n 3p "$GN/MEMORY.md")" = "- [B-Notiz](b.md) — von B" ] && [ "$(grep -c . "$GN/MEMORY.md")" = "3" ]'
+pruefe "Notiz von B liegt auf dem NAS" '[ -f "$GN/b.md" ]'
+pruefe "gleichnamige Notiz: neuere behalten, Hinweis" '[ "$(cat "$GN/gemeinsam.md")" = "A" ] && printf "%s" "$AUS" | grep -q "1 gleichnamige Notiz"'
+
 echo "Test 6: Abhängigkeiten nach dem Pull"
 neues_setup t6
 LOG="$T/t6/aufrufe.log"; : > "$LOG"
@@ -119,9 +136,13 @@ git clone -q "$B/origin.git" "$B/a" 2>/dev/null
 	&& cp "$SKRIPT" tools/studio_abgleich.sh && cp "$HIER/resolve/luts_sync.sh" tools/resolve/luts_sync.sh \
 	&& cp "$HIER/../.githooks/post-merge" .githooks/post-merge \
 	&& echo "v1" > projects/K/P/C/Protokoll.md && echo "plan v1" > projects/K/P/C/Plan.md \
+	&& echo "notiz v1" > projects/K/P/C/Notiz.md \
 	&& git add -A && git commit -qm start && git push -q origin main)
 git clone -q "$B/origin.git" "$B/b"
 (cd "$B/b" && git config user.email b@test && git config user.name b)
+# B: Notiz.md unverändert wie in git, aber mit jüngerem Checkout-Datum als A's ungepushte Änderung
+touch -t 202609171400 "$B/b/projects/K/P/C/Notiz.md"
+echo "A notiz neu" > "$B/a/projects/K/P/C/Notiz.md"; touch -t 202609150900 "$B/a/projects/K/P/C/Notiz.md"
 echo "B alt" > "$B/b/projects/K/P/C/Protokoll.md"; touch -t 202609161200 "$B/b/projects/K/P/C/Protokoll.md"
 echo "B plan neu" > "$B/b/projects/K/P/C/Plan.md"; touch -t 202609171300 "$B/b/projects/K/P/C/Plan.md"
 mkdir -p "$B/b/projects/K/P/C/_intern/cache"; echo "{}" > "$B/b/projects/K/P/C/_intern/cache/b.scribe.json"
@@ -136,8 +157,17 @@ pruefe "Protokoll: neuerer Stand von A" '[ "$(cat "$B/b/projects/K/P/C/Protokoll
 pruefe "Plan: neuerer ungesicherter Stand von B erhalten" '[ "$(cat "$B/b/projects/K/P/C/Plan.md")" = "B plan neu" ] && [ "$(cat "$NIRO_STUDIO_NAS/projects/K/P/C/Plan.md")" = "B plan neu" ]'
 pruefe "unversionierter Cache von B liegt auf dem NAS" '[ -f "$NIRO_STUDIO_NAS/projects/K/P/C/_intern/cache/b.scribe.json" ]'
 pruefe "projects/ in B nicht mehr versioniert" '[ -z "$(git -C "$B/b" ls-files projects)" ]'
+pruefe "unveränderte Git-Kopie von B überschreibt neueren NAS-Stand nicht" '[ "$(cat "$NIRO_STUDIO_NAS/projects/K/P/C/Notiz.md")" = "A notiz neu" ] && [ "$(cat "$B/b/projects/K/P/C/Notiz.md")" = "A notiz neu" ]'
 AUS=$(cd "$B/b" && NIRO_STUDIO_NAS="$B/weg/NIRO Studio" sh tools/studio_abgleich.sh --umstieg 2>&1); RC=$?
 pruefe "Umstieg ohne NAS bricht mit 1 ab" '[ "$RC" -eq 1 ] && printf "%s" "$AUS" | grep -q "NAS nicht verbunden"'
+
+echo "Test 8: Worktree gleicht nur den Hauptordner ab"
+git -C "$B/b" worktree add -q "$B/wt" 2>/dev/null
+echo "neu im Hauptordner" > "$B/b/projects/K/P/C/haupt.md"
+AUS=$(cd "$B/wt" && sh tools/studio_abgleich.sh --nach-pull 2>&1)
+pruefe "Hook im Worktree: kein Abgleich, Hinweis" 'printf "%s" "$AUS" | grep -q "Worktree" && [ ! -e "$B/wt/projects" ] && [ ! -e "$NIRO_STUDIO_NAS/projects/K/P/C/haupt.md" ]'
+AUS=$(cd "$B/wt" && sh tools/studio_abgleich.sh 2>&1)
+pruefe "Aufruf im Worktree gleicht projects/ des Hauptordners ab" '[ -f "$NIRO_STUDIO_NAS/projects/K/P/C/haupt.md" ] && [ ! -e "$B/wt/projects" ] && printf "%s" "$AUS" | grep -q "Hauptordner"'
 
 echo "Test 5: NAS fehlt"
 neues_setup t5
