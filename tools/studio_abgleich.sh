@@ -7,9 +7,11 @@
 #   sh tools/studio_abgleich.sh                     alles abgleichen
 #   sh tools/studio_abgleich.sh --charge "<Pfad>"   nur eine Charge (unter projects/, relativ zum Repo oder absolut)
 #   sh tools/studio_abgleich.sh --nach-pull         alles + Abhängigkeiten (so rufen es die Git-Hooks)
+#   sh tools/studio_abgleich.sh --berichte          nur berichte/ (Tagesstände) spiegeln — so ruft es der Sammler
 #   git fetch && git show origin/main:tools/studio_abgleich.sh | sh -s -- --umstieg    einmalig je Mac
 #
 # Regeln: beide Richtungen, neuere Datei gewinnt, nichts wird gelöscht; ohne Medien, Caches und Dateien > 20 MB.
+# berichte/ (Tagesstände beider Macs, Spec docs/superpowers/specs/2026-09-17-tagesbericht-design.md) wird wie projects/ gespiegelt; vorher läuft tools/tagesbericht/sammler.py.
 # projects/ liegt nur im Hauptordner des Repos: Aufrufe aus einem Worktree gleichen dessen projects/ ab, die Hooks
 # eines Worktrees gleichen nichts ab.
 # Außer --umstieg endet das Skript immer mit 0 und blockiert git nie. Tests: sh tools/studio_abgleich_test.sh
@@ -19,9 +21,10 @@ CHARGE=""
 case "${1:-}" in
 	--charge) MODUS=charge; CHARGE=${2:-} ;;
 	--nach-pull) MODUS=nach-pull ;;
+	--berichte) MODUS=berichte ;;
 	--umstieg) MODUS=umstieg ;;
 	"") ;;
-	*) echo "Studio-Abgleich: unbekannte Option „$1“ (--charge <Pfad> | --nach-pull | --umstieg)"; exit 0 ;;
+	*) echo "Studio-Abgleich: unbekannte Option „$1“ (--charge <Pfad> | --nach-pull | --berichte | --umstieg)"; exit 0 ;;
 esac
 
 REPO=${NIRO_STUDIO_REPO:-$(git worktree list --porcelain 2>/dev/null | sed -n '1s/^worktree //p')}
@@ -78,6 +81,24 @@ chargen_abgleichen() {
 	abgleich "$fern" "$lokal" "NAS → lokal"; geholt=$ANZAHL
 	abgleich "$lokal" "$fern" "lokal → NAS"; hochgeladen=$ANZAHL
 	teil "NAS-Abgleich: $geholt geholt, $hochgeladen hochgeladen"
+}
+
+berichte_abgleichen() {
+	lokal="$REPO/berichte"; fern="$NAS/berichte"
+	mkdir -p "$lokal" "$fern" || { teil "Berichte: Ordner nicht anlegbar"; return; }
+	abgleich "$fern" "$lokal" "NAS → lokal (Berichte)"; geholt=$ANZAHL
+	abgleich "$lokal" "$fern" "lokal → NAS (Berichte)"; hochgeladen=$ANZAHL
+	teil "Berichte: $geholt geholt, $hochgeladen hochgeladen"
+}
+
+# Tagesstand dieses Macs schreiben (tools/tagesbericht/sammler.py), ohne eigenen Abgleich — der folgt gleich hier.
+sammler() {
+	skript="$REPO/tools/tagesbericht/sammler.py"
+	if [ -n "${NIRO_SAMMLER_CMD:-}" ]; then
+		"$NIRO_SAMMLER_CMD" >/dev/null 2>&1 || teil "Sammler: fehlgeschlagen"
+	elif [ -f "$skript" ] && command -v python3 >/dev/null 2>&1; then
+		python3 "$skript" --still --ohne-abgleich >/dev/null 2>&1 || teil "Sammler: fehlgeschlagen"
+	fi
 }
 
 # Index MEMORY.md ($1 lokal) in den NAS-Index ($2) einfügen: dessen Zeilen bleiben, lokale Zeilen zu einer dort noch
@@ -198,9 +219,16 @@ if ! nas_da; then
 	[ "$MODUS" = "nach-pull" ] && abhaengigkeiten && [ -n "$TEILE" ] && echo "$TEILE"
 	exit 0
 fi
+if [ "$MODUS" = "berichte" ]; then
+	berichte_abgleichen
+	echo "$TEILE"
+	exit 0
+fi
 gedaechtnis_verknuepfen
 chargen_abgleichen
 [ -f "$REPO/tools/resolve/luts_sync.sh" ] && sh "$REPO/tools/resolve/luts_sync.sh"
+sammler
+berichte_abgleichen
 [ "$MODUS" = "nach-pull" ] && abhaengigkeiten
 echo "$TEILE"
 exit 0

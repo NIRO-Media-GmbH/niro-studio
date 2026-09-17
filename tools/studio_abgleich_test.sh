@@ -174,6 +174,33 @@ git init -q "$T/t9"
 AUS=$(cd "$T/t9" && sh "$HIER/../.githooks/post-merge" 2>&1 && sh "$HIER/../.githooks/post-rewrite" rebase 2>&1); RC=$?
 pruefe "still und Exit 0" '[ -z "$AUS" ] && [ "$RC" -eq 0 ]'
 
+echo "Test 10: --berichte spiegelt nur berichte/ und ruft den Sammler nicht"
+neues_setup t10
+printf '#!/bin/sh\ntouch "%s/t10/sammler_lief"\n' "$T" > "$T/t10/sammler.sh"; chmod +x "$T/t10/sammler.sh"
+NIRO_SAMMLER_CMD="$T/t10/sammler.sh"; export NIRO_SAMMLER_CMD
+mkdir -p "$NIRO_STUDIO_REPO/berichte/2026-09-17" "$NIRO_STUDIO_NAS/berichte/2026-09-16" "$NIRO_STUDIO_REPO/projects/K"
+echo "lokal" > "$NIRO_STUDIO_REPO/berichte/2026-09-17/A.md"
+echo "nas" > "$NIRO_STUDIO_NAS/berichte/2026-09-16/B.md"
+echo "charge" > "$NIRO_STUDIO_REPO/projects/K/x.md"
+AUS=$(lauf --berichte); RC=$?
+pruefe "lokaler Bericht liegt auf dem NAS" '[ "$(cat "$NIRO_STUDIO_NAS/berichte/2026-09-17/A.md")" = "lokal" ]'
+pruefe "NAS-Bericht liegt lokal" '[ "$(cat "$NIRO_STUDIO_REPO/berichte/2026-09-16/B.md")" = "nas" ]'
+pruefe "projects/ nicht angefasst" '[ ! -e "$NIRO_STUDIO_NAS/projects/K/x.md" ]'
+pruefe "Sammler nicht aufgerufen" '[ ! -e "$T/t10/sammler_lief" ]'
+pruefe "Zusammenfassung und Exit 0" 'printf "%s" "$AUS" | grep -q "Berichte: 1 geholt, 1 hochgeladen" && [ "$RC" -eq 0 ]'
+
+echo "Test 11: normaler Lauf ruft den Sammler und spiegelt danach berichte/"
+neues_setup t11
+printf '#!/bin/sh\nmkdir -p "%s/berichte/2026-09-17"\necho "vom Sammler" > "%s/berichte/2026-09-17/S.md"\n' "$NIRO_STUDIO_REPO" "$NIRO_STUDIO_REPO" > "$T/t11/sammler.sh"; chmod +x "$T/t11/sammler.sh"
+NIRO_SAMMLER_CMD="$T/t11/sammler.sh"; export NIRO_SAMMLER_CMD
+AUS=$(lauf)
+pruefe "Bericht des Sammlers liegt auf dem NAS" '[ "$(cat "$NIRO_STUDIO_NAS/berichte/2026-09-17/S.md")" = "vom Sammler" ]'
+pruefe "Zusammenfassung nennt Berichte" 'printf "%s" "$AUS" | grep -q "Berichte: 0 geholt, 1 hochgeladen"'
+printf '#!/bin/sh\nexit 3\n' > "$T/t11/sammler.sh"
+AUS=$(lauf); RC=$?
+pruefe "Sammler-Fehler blockiert nicht" '[ "$RC" -eq 0 ] && printf "%s" "$AUS" | grep -q "Sammler: fehlgeschlagen"'
+unset NIRO_SAMMLER_CMD
+
 echo "Test 5: NAS fehlt"
 neues_setup t5
 NIRO_STUDIO_NAS="$T/t5/nicht_verbunden/NIRO Studio"; export NIRO_STUDIO_NAS
