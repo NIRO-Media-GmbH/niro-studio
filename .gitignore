@@ -3,6 +3,10 @@
 # Spec: docs/superpowers/specs/2026-09-17-studio-nas-abgleich-design.md — die frühere Historie bleibt im Repo.
 /projects/
 
+# berichte/ (Spec docs/superpowers/specs/2026-09-17-tagesbericht-design.md): Tagesstände beider Macs und Tagesberichte
+# laufen über denselben NAS-Spiegel (tools/studio_abgleich.sh --berichte), nicht über GitHub.
+/berichte/
+
 .DS_Store
 
 # Arbeitsspuren der Session-Werkzeuge
