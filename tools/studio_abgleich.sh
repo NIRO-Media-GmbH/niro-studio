@@ -73,10 +73,33 @@ chargen_abgleichen() {
 	teil "NAS-Abgleich: $geholt geholt, $hochgeladen hochgeladen"
 }
 
+gedaechtnis_verknuepfen() {
+	ziel="$NAS/claude-gedaechtnis"
+	mkdir -p "$ziel" || { teil "Gedächtnis: NAS-Ordner nicht anlegbar"; return 1; }
+	if [ -L "$GEDAECHTNIS" ]; then
+		jetzt=$(readlink "$GEDAECHTNIS")
+		if [ "$jetzt" = "$ziel" ]; then teil "Gedächtnis verknüpft"
+		else teil "Gedächtnis: Verknüpfung zeigt auf „$jetzt“ — nicht geändert"; fi
+		return 0
+	fi
+	if [ -d "$GEDAECHTNIS" ]; then
+		if ! rsync -rt --update --modify-window=2 --exclude='.DS_Store' "$GEDAECHTNIS/" "$ziel/"; then
+			teil "Gedächtnis: Hochladen fehlgeschlagen — nicht verknüpft"; return 1
+		fi
+		sicherung="$GEDAECHTNIS.vor-nas-$(date +%Y%m%d-%H%M%S)"
+		mv "$GEDAECHTNIS" "$sicherung" || { teil "Gedächtnis: Sicherung fehlgeschlagen — nicht verknüpft"; return 1; }
+		ln -s "$ziel" "$GEDAECHTNIS" || { mv "$sicherung" "$GEDAECHTNIS"; teil "Gedächtnis: Verknüpfung fehlgeschlagen"; return 1; }
+		teil "Gedächtnis zusammengeführt und verknüpft (Sicherung $(basename "$sicherung"))"
+		return 0
+	fi
+	mkdir -p "$(dirname "$GEDAECHTNIS")" && ln -s "$ziel" "$GEDAECHTNIS" && teil "Gedächtnis verknüpft (neu)"
+}
+
 if ! nas_da; then
 	echo "Studio-Abgleich: NAS nicht verbunden ($(dirname "$NAS")) — lokal bleibt alles, Abgleich später: sh tools/studio_abgleich.sh"
 	exit 0
 fi
+gedaechtnis_verknuepfen
 chargen_abgleichen
 echo "$TEILE"
 exit 0

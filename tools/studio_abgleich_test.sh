@@ -65,6 +65,25 @@ AUS=$(lauf --charge "tools")
 pruefe "Pfad außerhalb projects/ abgewiesen" 'printf "%s" "$AUS" | grep -q "liegt nicht unter projects/"'
 pruefe "dabei nichts abgeglichen" '[ ! -e "$N/projects/K/P/C2/b.md" ]'
 
+echo "Test 4: Gedächtnis"
+neues_setup t4
+mkdir -p "$G" "$N/claude-gedaechtnis"
+echo "lokal" > "$G/MEMORY.md"; echo "vom anderen Mac" > "$N/claude-gedaechtnis/andere.md"
+AUS=$(lauf)
+pruefe "Gedächtnis ist Verknüpfung aufs NAS" '[ -L "$G" ] && [ "$(readlink "$G")" = "$N/claude-gedaechtnis" ]'
+pruefe "lokale Notiz liegt auf dem NAS" '[ "$(cat "$N/claude-gedaechtnis/MEMORY.md")" = "lokal" ]'
+pruefe "Notiz vom anderen Mac über die Verknüpfung lesbar" '[ -f "$G/andere.md" ]'
+pruefe "Sicherung angelegt" 'ls -d "$G".vor-nas-* >/dev/null 2>&1'
+lauf >/dev/null
+pruefe "zweiter Lauf: keine zweite Sicherung" '[ "$(ls -d "$G".vor-nas-* | wc -l | tr -d " ")" = "1" ]'
+rm "$G"; mkdir -p "$T/t4/fremd"; ln -s "$T/t4/fremd" "$G"
+AUS=$(lauf)
+pruefe "fremde Verknüpfung bleibt unverändert" '[ "$(readlink "$G")" = "$T/t4/fremd" ]'
+pruefe "Hinweis zur fremden Verknüpfung" 'printf "%s" "$AUS" | grep -q "nicht geändert"'
+rm "$G"
+lauf >/dev/null
+pruefe "fehlendes Gedächtnis wird neu verknüpft" '[ -L "$G" ]'
+
 echo "Test 5: NAS fehlt"
 neues_setup t5
 NIRO_STUDIO_NAS="$T/t5/nicht_verbunden/NIRO Studio"; export NIRO_STUDIO_NAS
