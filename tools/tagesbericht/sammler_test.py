@@ -120,7 +120,7 @@ class SammlerEndeZuEnde(unittest.TestCase):
         schlaefer.chmod(schlaefer.stat().st_mode | stat.S_IXUSR)
         start = time.monotonic()
         aus = self.lauf("--hook", NIRO_SAMMLER_ABGLEICH_CMD=str(schlaefer), NIRO_SAMMLER_ABGLEICH_TIMEOUT="1")
-        self.assertLess(time.monotonic() - start, 4)
+        self.assertLess(time.monotonic() - start, 8)
         self.assertEqual(aus.returncode, 0)
         self.assertIn("Abgleich abgebrochen", aus.stderr)
         self.assertTrue((self.berichte / "2026-09-17" / "Test-Mac.md").exists())

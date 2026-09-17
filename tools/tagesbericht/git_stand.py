@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
+import time
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
@@ -14,6 +16,9 @@ TRENNER = "\x1f"
 BEISPIELE_MAX = 8
 PATCH_DATEI_MAX = 1024 * 1024
 PATCH_GESAMT_MAX = 5 * 1024 * 1024
+PATCH_DATEIEN_MAX = 300      # höchstens so viele git-diff-Aufrufe je Lauf (Sitzungsstart darf nicht hängen)
+PATCH_ZEIT_MAX = 5.0         # Sekunden für die Patch-Schleife insgesamt
+GEHEIM_MUSTER = re.compile(r"^(\.env(\..*)?|.*\.(pem|key|p12)|credentials.*|.*secret.*|.*token.*)$", re.IGNORECASE)
 
 
 class GitFehler(Exception):
@@ -73,7 +78,7 @@ class GitStand:
 
 def git(ordner: Path, *args: str, ok_rc: tuple[int, ...] = (0,)) -> str:
     try:
-        aus = subprocess.run(["git", "-C", str(ordner), *args], capture_output=True, text=True,
+        aus = subprocess.run(["git", "--no-optional-locks", "-C", str(ordner), *args], capture_output=True, text=True,
                              errors="replace", timeout=30)
     except (OSError, subprocess.SubprocessError) as e:
         raise GitFehler(f"git {' '.join(args[:2])}: {e}") from e
@@ -129,7 +134,7 @@ def gruppen_lesen(ordner: Path) -> list[Gruppe]:
         if len(eintrag) < 4:
             continue
         xy, pfad = eintrag[:2], eintrag[3:]
-        if xy[0] in "RC":
+        if "R" in xy or "C" in xy:
             i += 1  # bei Umbenennen/Kopie folgt der alte Pfad als eigener Eintrag
         teile = pfad.split("/")
         schluessel = "/".join(teile[:2]) + ("/" if len(teile) > 2 else "")
@@ -221,6 +226,8 @@ def sicherung(repo: Path, mac: str, jetzt: datetime) -> str:
     worktrees.sort(key=lambda pb: not _gleich(pb[0], str(repo)))
     groesse = 0
     abgebrochen = False
+    start = time.monotonic()
+    gezaehlt = 0
     aenderungen = False
     for pfad, branch in worktrees:
         ordner = Path(pfad)
@@ -247,6 +254,12 @@ def sicherung(repo: Path, mac: str, jetzt: datetime) -> str:
             if gross or binaer:
                 teile.append(f"# nicht gesichert (groß oder binär): {name}\n")
                 continue
+            if GEHEIM_MUSTER.match(Path(name).name):
+                teile.append(f"# nicht gesichert (Geheimnis?): {name}\n")
+                continue
+            if gezaehlt >= PATCH_DATEIEN_MAX or time.monotonic() - start > PATCH_ZEIT_MAX:
+                teile.append(f"# nicht gesichert (Deckel): {name}\n")
+                continue
             if groesse > PATCH_GESAMT_MAX:
                 if not abgebrochen:
                     abgebrochen = True
@@ -254,6 +267,7 @@ def sicherung(repo: Path, mac: str, jetzt: datetime) -> str:
                 teile.append(f"# nicht gesichert (Abbruch): {name}\n")
                 continue
             try:
+                gezaehlt += 1
                 d = git(ordner, "diff", "--no-index", "--", "/dev/null", name, ok_rc=(0, 1))
             except GitFehler as e:
                 teile.append(f"# Fehler bei {name}: {e}\n")

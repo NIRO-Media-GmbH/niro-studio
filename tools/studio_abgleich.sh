@@ -44,7 +44,7 @@ im_worktree() {
 
 spiegeln() {
 	rsync -rt --update --modify-window=2 --itemize-changes --max-size=20M \
-		--exclude='.DS_Store' --exclude='__pycache__/' --exclude='node_modules/' --exclude='venv/' \
+		--exclude='.DS_Store' --exclude='.tmp-*' --exclude='__pycache__/' --exclude='node_modules/' --exclude='venv/' \
 		--exclude='work/' --exclude='frames/' --exclude='Fotos/' \
 		--exclude='*.[Mm][Oo][Vv]' --exclude='*.[Mm][Pp]4' --exclude='*.[Mm]4[Vv]' --exclude='*.[Mm][Xx][Ff]' \
 		--exclude='*.[Mm][Tt][Ss]' --exclude='*.[Aa][Vv][Ii]' --exclude='*.[Ww][Aa][Vv]' --exclude='*.[Mm][Pp]3' \

@@ -48,6 +48,7 @@ def schreiben(ziel: Path, text: str) -> None:
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as fh:
             fh.write(text)
+        os.chmod(tmp, 0o644)
         os.replace(tmp, ziel)
     except BaseException:
         try:

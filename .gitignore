@@ -13,3 +13,7 @@
 .superpowers/
 .claude/settings.local.json
 .claude/worktrees/
+
+# Geheimnisse nie ins Repo und nie in die Sicherungs-Patches der Tagesberichte
+.env
+.env.*

@@ -98,6 +98,26 @@ class GitStandAusRepo(unittest.TestCase):
         self.assertIn("+b geändert", patch)
         self.assertLess(patch.index("(main)"), patch.index("(claude/x)"))
 
+    def test_sicherung_deckel(self):
+        with mock.patch.object(git_stand, "PATCH_DATEIEN_MAX", 1):
+            patch = sicherung(self.repo, "Test-Mac", lokal(HEUTE, 16, 40))
+        self.assertEqual(patch.count("# nicht gesichert (Deckel): "), 2)
+        self.assertEqual(patch.count("# nicht gesichert (groß oder binär): "), 1)
+
+    def test_sicherung_ueberspringt_geheimnisse(self):
+        geheim = self.repo / "tools" / "geheim"
+        geheim.mkdir()
+        (geheim / ".env").write_text("ARTLIST_TOKEN=abc123\n")
+        (geheim / "server.key").write_text("PRIVATE\n")
+        try:
+            patch = sicherung(self.repo, "Test-Mac", lokal(HEUTE, 16, 40))
+        finally:
+            shutil.rmtree(geheim)
+        self.assertNotIn("ARTLIST_TOKEN", patch)
+        self.assertNotIn("PRIVATE", patch)
+        self.assertIn("# nicht gesichert (Geheimnis?): tools/geheim/.env", patch)
+        self.assertIn("# nicht gesichert (Geheimnis?): tools/geheim/server.key", patch)
+
 
 class GitStandOhneRemote(unittest.TestCase):
     def setUp(self):

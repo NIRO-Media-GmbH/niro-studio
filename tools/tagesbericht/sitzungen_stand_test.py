@@ -48,7 +48,7 @@ class SitzungenAusVerlaeufen(unittest.TestCase):
         self.assertEqual(self.s1.auftraege[1], "Auftrag zwei")
         self.assertEqual(self.s1.weitere_auftraege, 4)
         alle = " ".join(self.s1.auftraege)
-        for verboten in ("meta text", "system-reminder", "Request interrupted", "task-notification", "Gestern-Auftrag", "Subagent", "Alt"):
+        for verboten in ("meta text", "system-reminder", "Request interrupted", "task-notification", "Gestern-Auftrag", "Subagent", "Alt", "continued from a previous conversation"):
             self.assertNotIn(verboten, alle)
 
     def test_schlussbericht(self):
@@ -84,6 +84,10 @@ class SitzungenAusVerlaeufen(unittest.TestCase):
         stand = sitzungen_stand([self.basis / "fehlt"], HEUTE, self.repo)
         self.assertEqual(stand.sitzungen, [])
         self.assertEqual(len(stand.fehler), 1)
+
+    def test_nachlaufende_systemnachricht_macht_nicht_offen(self):
+        self.assertEqual(self.s1.bis, "10:00")
+        self.assertFalse(self.s1.schluss_offen)
 
 
 class Pfade(unittest.TestCase):

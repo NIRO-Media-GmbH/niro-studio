@@ -132,9 +132,7 @@ def sitzung_lesen(datei: Path, tag: date, repo: Path) -> Sitzung | None:
             zeit = _zeitpunkt(d.get("timestamp"))
             if zeit is None or not (anfang <= zeit < ende):
                 continue
-            beginn = beginn or zeit
-            letzte = zeit
-            letzter_typ = typ
+            echt = typ == "assistant"  # zählt für Zeitraum und „Schlussbericht offen“; user nur mit Tool-Ergebnis oder Auftrag
             s.branch = d.get("gitBranch") or s.branch
             if isinstance(d.get("cwd"), str) and d["cwd"]:
                 s.ordner = relativ(d["cwd"], repo)
@@ -143,17 +141,19 @@ def sitzung_lesen(datei: Path, tag: date, repo: Path) -> Sitzung | None:
             if typ == "user":
                 if isinstance(inhalt, list):
                     for b in inhalt:
-                        if isinstance(b, dict) and b.get("type") == "tool_result" and b.get("is_error"):
-                            s.fehler_anzahl += 1
-                            if len(s.fehler) < FEHLER_MAX:
-                                s.fehler.append(kuerzen(_fehlerzeile(_text_bloecke(b.get("content"))), FEHLER_ZEILE_MAX))
-                if d.get("isMeta"):
-                    continue
-                for text in _text_bloecke(inhalt):
-                    text = text.strip()
-                    if not text or text.startswith(KEIN_AUFTRAG):
-                        continue
-                    alle_auftraege.append(text)
+                        if isinstance(b, dict) and b.get("type") == "tool_result":
+                            echt = True
+                            if b.get("is_error"):
+                                s.fehler_anzahl += 1
+                                if len(s.fehler) < FEHLER_MAX:
+                                    s.fehler.append(kuerzen(_fehlerzeile(_text_bloecke(b.get("content"))), FEHLER_ZEILE_MAX))
+                if not d.get("isMeta") and not d.get("isCompactSummary"):
+                    for text in _text_bloecke(inhalt):
+                        text = text.strip()
+                        if not text or text.startswith(KEIN_AUFTRAG):
+                            continue
+                        alle_auftraege.append(text)
+                        echt = True
             else:
                 for b in inhalt if isinstance(inhalt, list) else []:
                     if not isinstance(b, dict):
@@ -169,6 +169,10 @@ def sitzung_lesen(datei: Path, tag: date, repo: Path) -> Sitzung | None:
                             rel = relativ(pfad, repo)
                             if rel not in dateien:
                                 dateien.append(rel)
+            if echt:
+                beginn = beginn or zeit
+                letzte = zeit
+                letzter_typ = typ
     if beginn is None or letzte is None:
         return None
     s.beginn = beginn

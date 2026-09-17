@@ -133,8 +133,10 @@ def sitzungen_anlegen(projects_dir: Path, repo: Path, wt: Path, heute: date) -> 
     ]
     for n in range(3, 17):
         s1.append(_rec("user", lokal(heute, 9, 6 + n), f"Auftrag {n}", repo, "main"))
+    s1.append(_rec("user", lokal(heute, 9, 25), "This session is being continued from a previous conversation. Summary: alles", repo, "main", isCompactSummary=True))
     s1.append(_rec("assistant", lokal(heute, 9, 30), [{"type": "text", "text": "Sidechain-Text"}], repo, "main", isSidechain=True))
     s1.append(_rec("assistant", lokal(heute, 10, 0), [{"type": "text", "text": "Schlussbericht: alles erledigt."}], repo, "main"))
+    s1.append(_rec("user", lokal(heute, 10, 1), "<task-notification>fertig</task-notification>", repo, "main"))
     zeilen = [json.dumps(r) for r in s1]
     zeilen.insert(3, "{kaputt")
     (haupt / "s1.jsonl").write_text("\n".join(zeilen) + "\n")

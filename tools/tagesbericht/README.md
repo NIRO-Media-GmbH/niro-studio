@@ -49,7 +49,7 @@ auch aus einem Worktree (Hauptordner = erste Zeile von `git worktree list`). Pyt
 Leere Abschnitte enthalten „- keine". Tagesgrenzen in Ortszeit. Sitzungsquellen: alle Ordner
 `~/.claude/projects/<Schlüssel>*` (Hauptordner, Worktrees, Unterordner); Subagenten-Verläufe und Sidechains zählen nicht.
 `<Mac>.patch`: `git diff HEAD` je Worktree plus `git diff --no-index` je unversionierter Textdatei (≤ 1 MB), gesamt
-höchstens 5 MB; wird bei jedem Lauf neu geschrieben, weil der Spiegel nie löscht.
+höchstens 5 MB; wird bei jedem Lauf neu geschrieben, weil der Spiegel nie löscht. Höchstens 300 Dateien bzw. 5 s je Lauf, danach nur Namen („Deckel“); Dateien mit Geheimnis-Namen (.env, *.pem, *.key, credentials*, *secret*, *token*) stehen nur als Name.
 
 ## Umgebungsvariablen (Tests)
 
