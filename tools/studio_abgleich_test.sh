@@ -105,6 +105,40 @@ pruefe "ohne Änderungen kein Aufruf" '[ ! -s "$LOG" ]'
 pruefe "ohne --nach-pull keine Abhängigkeiten" '[ ! -s "$LOG" ]'
 unset NIRO_PIP_CMD NIRO_NPM_CMD
 
+echo "Test 7: Umstieg eines Macs mit ungesicherten Projektänderungen"
+unset NIRO_STUDIO_REPO
+B="$T/t7"; mkdir -p "$B/nas_eltern" "$B/lut_lokal" "$B/lut_nas"
+NIRO_STUDIO_NAS="$B/nas_eltern/NIRO Studio"; NIRO_CLAUDE_MEMORY_DIR="$B/home_b/memory"
+NIRO_RESOLVE_LUT_DIR="$B/lut_lokal"; NIRO_NAS_LUT_DIR="$B/lut_nas/NIRO Grading"
+export NIRO_STUDIO_NAS NIRO_CLAUDE_MEMORY_DIR NIRO_RESOLVE_LUT_DIR NIRO_NAS_LUT_DIR
+git init -q --bare "$B/origin.git"
+git -C "$B/origin.git" symbolic-ref HEAD refs/heads/main
+git clone -q "$B/origin.git" "$B/a" 2>/dev/null
+(cd "$B/a" && git config user.email a@test && git config user.name a && git symbolic-ref HEAD refs/heads/main \
+	&& mkdir -p tools/resolve .githooks "projects/K/P/C/_intern" \
+	&& cp "$SKRIPT" tools/studio_abgleich.sh && cp "$HIER/resolve/luts_sync.sh" tools/resolve/luts_sync.sh \
+	&& cp "$HIER/../.githooks/post-merge" .githooks/post-merge \
+	&& echo "v1" > projects/K/P/C/Protokoll.md && echo "plan v1" > projects/K/P/C/Plan.md \
+	&& git add -A && git commit -qm start && git push -q origin main)
+git clone -q "$B/origin.git" "$B/b"
+(cd "$B/b" && git config user.email b@test && git config user.name b)
+echo "B alt" > "$B/b/projects/K/P/C/Protokoll.md"; touch -t 202609161200 "$B/b/projects/K/P/C/Protokoll.md"
+echo "B plan neu" > "$B/b/projects/K/P/C/Plan.md"; touch -t 202609171300 "$B/b/projects/K/P/C/Plan.md"
+mkdir -p "$B/b/projects/K/P/C/_intern/cache"; echo "{}" > "$B/b/projects/K/P/C/_intern/cache/b.scribe.json"
+echo "A neu" > "$B/a/projects/K/P/C/Protokoll.md"; touch -t 202609171200 "$B/a/projects/K/P/C/Protokoll.md"
+touch -t 202609100000 "$B/a/projects/K/P/C/Plan.md"
+(cd "$B/a" && sh tools/studio_abgleich.sh >/dev/null && printf '/projects/\n' > .gitignore \
+	&& git rm -r -q --cached projects && git add .gitignore && git commit -qm "projects über NAS" && git push -q origin main)
+AUS=$(cd "$B/b" && git fetch -q && git show origin/main:tools/studio_abgleich.sh | sh -s -- --umstieg 2>&1); RC=$?
+pruefe "Umstieg Exit 0" '[ "$RC" -eq 0 ]'
+pruefe "Hooks aktiviert" '[ "$(git -C "$B/b" config core.hooksPath)" = ".githooks" ]'
+pruefe "Protokoll: neuerer Stand von A" '[ "$(cat "$B/b/projects/K/P/C/Protokoll.md")" = "A neu" ]'
+pruefe "Plan: neuerer ungesicherter Stand von B erhalten" '[ "$(cat "$B/b/projects/K/P/C/Plan.md")" = "B plan neu" ] && [ "$(cat "$NIRO_STUDIO_NAS/projects/K/P/C/Plan.md")" = "B plan neu" ]'
+pruefe "unversionierter Cache von B liegt auf dem NAS" '[ -f "$NIRO_STUDIO_NAS/projects/K/P/C/_intern/cache/b.scribe.json" ]'
+pruefe "projects/ in B nicht mehr versioniert" '[ -z "$(git -C "$B/b" ls-files projects)" ]'
+AUS=$(cd "$B/b" && NIRO_STUDIO_NAS="$B/weg/NIRO Studio" sh tools/studio_abgleich.sh --umstieg 2>&1); RC=$?
+pruefe "Umstieg ohne NAS bricht mit 1 ab" '[ "$RC" -eq 1 ] && printf "%s" "$AUS" | grep -q "NAS nicht verbunden"'
+
 echo "Test 5: NAS fehlt"
 neues_setup t5
 NIRO_STUDIO_NAS="$T/t5/nicht_verbunden/NIRO Studio"; export NIRO_STUDIO_NAS

@@ -119,6 +119,35 @@ abhaengigkeiten() {
 	return 0
 }
 
+umstieg() {
+	if [ -z "$(git -C "$REPO" rev-parse --show-toplevel 2>/dev/null)" ]; then
+		echo "Umstieg abgebrochen: bitte im Ordner des NIRO-Studio-Repos ausführen."; exit 1
+	fi
+	git -C "$REPO" config core.hooksPath .githooks
+	if ! nas_da; then
+		echo "Umstieg abgebrochen: NAS nicht verbunden ($(dirname "$NAS")) — nichts geändert."; exit 1
+	fi
+	mkdir -p "$NAS/projects" || { echo "Umstieg abgebrochen: NAS-Ordner nicht anlegbar."; exit 1; }
+	if [ -d "$REPO/projects" ]; then
+		abgleich "$REPO/projects" "$NAS/projects" "lokal → NAS"
+		if [ "$RC" -ne 0 ]; then echo "Umstieg abgebrochen: Hochladen fehlgeschlagen (rsync $RC) — nichts verworfen."; exit 1; fi
+		echo "Umstieg: $ANZAHL Projektdateien aufs NAS gelegt."
+	fi
+	gedaechtnis_verknuepfen || { echo "Umstieg abgebrochen: $TEILE"; exit 1; }
+	if [ -n "$(git -C "$REPO" ls-files projects 2>/dev/null)" ]; then
+		marke=$(mktemp -t studio_umstieg)
+		git -C "$REPO" reset -q -- projects
+		git -C "$REPO" checkout -q -- projects
+		find "$REPO/projects" -type f -newer "$marke" -exec touch -t 200001010000 {} +
+		rm -f "$marke"
+	fi
+	if git -C "$REPO" pull -q --ff-only; then
+		echo "Umstieg fertig ($TEILE). Ab jetzt reicht git pull."; exit 0
+	fi
+	echo "Umstieg: git pull --ff-only gescheitert (eigene lokale Commits?) — prüfen, danach git pull."; exit 1
+}
+
+[ "$MODUS" = "umstieg" ] && umstieg
 if ! nas_da; then
 	echo "Studio-Abgleich: NAS nicht verbunden ($(dirname "$NAS")) — lokal bleibt alles, Abgleich später: sh tools/studio_abgleich.sh"
 	[ "$MODUS" = "nach-pull" ] && abhaengigkeiten && [ -n "$TEILE" ] && echo "$TEILE"
