@@ -1,9 +1,0 @@
-[
- {"block": 5, "slot": 11, "ids": ["t1-195"], "laenge": 62, "grund": "Abend-Slot leer → Paar im Gegenlicht (Weide)"},
- {"block": 5, "slot": 13, "ids": ["t1-292"], "grund": "Tagesbild am Blockende (t1-041) → Tanzfläche mit Ballons"},
- {"block": 2, "slot": 6, "ids": ["t1-058", "t1-094", "t1-067", "t1-069", "t1-066"],
-  "grund": "zwei Gäste-Emotionen hintereinander (t1-061) → Trauungs-Moment"},
- {"block": 7, "slot": 12, "ids": ["t1-272"], "grund": "Gast filmt mit Handy (t1-293) → Braut lacht mit Freundinnen"},
- {"block": 7, "slot": 7, "ids": ["t1-046", "t1-042", "t1-039", "t1-045", "t1-108", "t1-050"],
-  "grund": "Treppenkuss doppelt mit Block 2 (t1-049) → anderes Paarbild"}
-]

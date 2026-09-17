@@ -25,10 +25,18 @@ Chargen-Ebene existiert immer, auch bei nur einer Charge.
 Rohes Drehmaterial bleibt auf externen SSDs; hier liegen nur Arbeits- und
 Ergebnisdateien. Unterordner nur anlegen, wenn die Funktion genutzt wird.
 
+**NAS-Spiegel statt GitHub (seit 17.09.2026):** `projects/` ist nicht versioniert. Der gemeinsame Stand beider Macs liegt
+auf `NIRO NAS/NIRO Productions/01_Projekte/02_NIRO Productions/08_Claude Tools/NIRO Studio/projects` (ohne Medien und
+Caches); `sh tools/studio_abgleich.sh` gleicht ab (beide Richtungen, neuere Datei gewinnt, nie löschen), nach jedem
+`git pull` automatisch. Nie gleichzeitig auf beiden Macs an derselben Charge arbeiten. Das Claude-Gedächtnis ist auf
+beiden Macs eine Verknüpfung auf `NIRO Studio/claude-gedaechtnis/`.
+
 **Protokoll-Pflicht:** Bei jeder Arbeit an einer Charge (egal welche Funktion)
 `Protokoll.md` im Chargen-Ordner fortschreiben — pro Session ein kurzer
 Eintrag: Datum, was gemacht, was geliefert (Dateien), Entscheidungen/Offenes.
 Datei bei der ersten Session anlegen.
+Vor der Arbeit an einer Charge `sh tools/studio_abgleich.sh --charge "projects/<Kunde>/<Projekt>/<Charge>"` (neuester
+Stand vom NAS), nach der Arbeit mit dem Protokoll-Eintrag dasselbe (Stand aufs NAS).
 
 ## Die Funktionen (Trigger)
 

@@ -26,16 +26,18 @@ Blockt Commits mit Dateien über 5 MB. Hier gehört das Werkzeug hinein, nicht
 das Kundenmaterial — der Hook fängt Versehen ab, bevor sie in der Historie
 landen. Details in [.githooks/pre-commit](.githooks/pre-commit).
 
-**DaVinci Resolve (Grading-LUTs):** Eigene LUTs der Grades liegen auf dem NAS
-(`01_Projekte/03_Vorlagen und Tools/02_Davinci Resolve/LUTs/NIRO Grading`) und lokal im Resolve-LUT-Ordner. Abgleich beim Arbeiten:
+Dieselbe Einstellung aktiviert den **Studio-Abgleich mit dem NAS**: Nach jedem `git pull` holt
+`tools/studio_abgleich.sh` Chargen-Daten, Claude-Gedächtnis und NIRO-Grading-LUTs vom NAS, legt eigene Stände dort ab
+und zieht geänderte Abhängigkeiten nach (Spec: `docs/superpowers/specs/2026-09-17-studio-nas-abgleich-design.md`).
+
+**Einmalig je Mac, der noch `projects/` aus GitHub hat** (statt des ersten Pulls, NAS verbunden):
 
 ```bash
-sh tools/resolve/luts_sync.sh
+git fetch && git show origin/main:tools/studio_abgleich.sh | sh -s -- --umstieg
 ```
 
-Meldet das Skript fehlendes Schreibrecht, einmalig
+Meldet der LUT-Abgleich fehlendes Schreibrecht, einmalig
 `sudo chmod a+w "/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT"`.
-Details in [tools/resolve/luts/README.md](tools/resolve/luts/README.md).
 
 ## 3. Systemwerkzeuge
 
