@@ -154,3 +154,18 @@ def sitzungen_anlegen(projects_dir: Path, repo: Path, wt: Path, heute: date) -> 
     vorgestern = lokal(heute - timedelta(days=2), 12).timestamp()
     os.utime(alt, (vorgestern, vorgestern))
     return {"haupt": haupt, "wt": wt_ordner}
+
+
+def gedaechtnis_anlegen(ordner: Path, heute: date) -> None:
+    """MEMORY.md (heute, zählt nicht), notiz-a.md (heute, Beschreibung mit maskierten Anführungszeichen),
+    notiz-b.md (gestern)."""
+    ordner.mkdir(parents=True)
+    dateien = {
+        "MEMORY.md": ("- [A](notiz-a.md) — x\n", lokal(heute, 14)),
+        "notiz-a.md": ('---\nname: notiz-a\ndescription: "Eine \\"Notiz\\" von heute"\nmetadata:\n  type: project\n---\n\nInhalt\n', lokal(heute, 14)),
+        "notiz-b.md": ("---\nname: notiz-b\ndescription: gestern\n---\n", lokal(heute - timedelta(days=1), 14)),
+    }
+    for name, (text, wann) in dateien.items():
+        datei = ordner / name
+        datei.write_text(text)
+        os.utime(datei, (wann.timestamp(), wann.timestamp()))
