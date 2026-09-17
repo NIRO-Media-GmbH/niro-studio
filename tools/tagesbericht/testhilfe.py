@@ -64,3 +64,27 @@ def repo_anlegen(basis: Path, heute: date) -> dict:
     (repo / "NOTIZ.md").write_text("notiz\n")
     (repo / "tools" / "bin.dat").write_bytes(b"\x00\x01\x02")
     return {"repo": repo, "wt": wt, "origin": origin}
+
+
+def chargen_anlegen(repo: Path, heute: date) -> None:
+    """Chargen in beiden Tiefen: Kunde/Projekt/2026-09 Charge (Protokoll mit drei Überschriftenformen, Ergebnisse mit
+    a.mp4 heute, b.mp4 gestern, .DS_Store heute), Kunde/2026-08 Kurz (Sammel-Überschrift + Klammerform) und fünf
+    Chargen K0–K4 nur mit der Sammel-Überschrift „Medien aufs NAS verschoben“ (zusammen sechs)."""
+    gestern = heute - timedelta(days=1)
+    iso, deutsch = heute.isoformat(), heute.strftime("%d.%m.%Y")
+    c1 = repo / "projects" / "Kunde" / "Projekt" / "2026-09 Charge"
+    (c1 / "Ergebnisse" / "Export").mkdir(parents=True)
+    (c1 / "Protokoll.md").write_text(
+        f"# Protokoll\n\n## {iso} 11:07 — AutoCut: Kantenprüfung\n\nText\n\n## Session {deutsch} — Feinschnitt\n\n"
+        f"## {gestern.isoformat()} — Gestern\n\nText\n")
+    for name, wann in (("Export/a.mp4", lokal(heute, 12)), ("Export/b.mp4", lokal(gestern, 12)), (".DS_Store", lokal(heute, 12))):
+        datei = c1 / "Ergebnisse" / name
+        datei.write_bytes(b"x")
+        os.utime(datei, (wann.timestamp(), wann.timestamp()))
+    c2 = repo / "projects" / "Kunde" / "2026-08 Kurz"
+    c2.mkdir(parents=True)
+    (c2 / "Protokoll.md").write_text(f"# P\n\n## {iso} — Medien aufs NAS verschoben\n\n## Overlay-Export Video 1 ({iso})\n")
+    for i in range(5):
+        c = repo / "projects" / f"K{i}" / "P" / "2026-01 C"
+        c.mkdir(parents=True)
+        (c / "Protokoll.md").write_text(f"# P\n\n## {iso} — Medien aufs NAS verschoben\n")
