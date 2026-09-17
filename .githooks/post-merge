@@ -1,0 +1,5 @@
+#!/bin/sh
+# Nach „git pull" (Merge): Studio-Abgleich mit dem NAS — Chargen, Gedächtnis, LUTs, Abhängigkeiten. Blockiert nie.
+# Spec: docs/superpowers/specs/2026-09-17-studio-nas-abgleich-design.md
+sh "$(git rev-parse --show-toplevel)/tools/studio_abgleich.sh" --nach-pull
+exit 0

@@ -84,6 +84,27 @@ rm "$G"
 lauf >/dev/null
 pruefe "fehlendes Gedächtnis wird neu verknüpft" '[ -L "$G" ]'
 
+echo "Test 6: Abhängigkeiten nach dem Pull"
+neues_setup t6
+LOG="$T/t6/aufrufe.log"; : > "$LOG"
+printf '#!/bin/sh\necho "pip $*" >> "%s"\n' "$LOG" > "$T/t6/pip"; printf '#!/bin/sh\necho "npm $*" >> "%s"\n' "$LOG" > "$T/t6/npm"
+chmod +x "$T/t6/pip" "$T/t6/npm"
+NIRO_PIP_CMD="$T/t6/pip"; NIRO_NPM_CMD="$T/t6/npm"; export NIRO_PIP_CMD NIRO_NPM_CMD
+mkdir -p "$R/tools/motion" "$R/tools/transcribe"
+echo '{"v":1}' > "$R/tools/motion/package.json"; echo 'v=1' > "$R/tools/transcribe/pyproject.toml"
+(cd "$R" && git add -A && git commit -qm eins && git update-ref ORIG_HEAD HEAD)
+echo '{"v":2}' > "$R/tools/motion/package.json"
+(cd "$R" && git commit -qam zwei)
+lauf --nach-pull >/dev/null
+pruefe "npm install bei geänderter package.json" 'grep -q "^npm install" "$LOG"'
+pruefe "kein pip ohne geänderte pyproject.toml" '! grep -q "^pip" "$LOG"'
+(cd "$R" && git update-ref ORIG_HEAD HEAD); : > "$LOG"
+lauf --nach-pull >/dev/null
+pruefe "ohne Änderungen kein Aufruf" '[ ! -s "$LOG" ]'
+: > "$LOG"; lauf >/dev/null
+pruefe "ohne --nach-pull keine Abhängigkeiten" '[ ! -s "$LOG" ]'
+unset NIRO_PIP_CMD NIRO_NPM_CMD
+
 echo "Test 5: NAS fehlt"
 neues_setup t5
 NIRO_STUDIO_NAS="$T/t5/nicht_verbunden/NIRO Studio"; export NIRO_STUDIO_NAS

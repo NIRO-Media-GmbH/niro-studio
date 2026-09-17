@@ -1,0 +1,4 @@
+#!/bin/sh
+# Nach „git pull --rebase": wie post-merge; bei „git commit --amend" nichts. Blockiert nie.
+[ "$1" = "rebase" ] && sh "$(git rev-parse --show-toplevel)/tools/studio_abgleich.sh" --nach-pull
+exit 0

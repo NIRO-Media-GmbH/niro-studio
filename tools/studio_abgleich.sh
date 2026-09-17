@@ -95,11 +95,38 @@ gedaechtnis_verknuepfen() {
 	mkdir -p "$(dirname "$GEDAECHTNIS")" && ln -s "$ziel" "$GEDAECHTNIS" && teil "Gedächtnis verknüpft (neu)"
 }
 
+abhaengigkeiten() {
+	aenderungen=$(git -C "$REPO" diff --name-only ORIG_HEAD HEAD 2>/dev/null) || return 0
+	[ -n "$aenderungen" ] || return 0
+	geaendert() { printf '%s\n' "$aenderungen" | grep -qx "$1"; }
+	if geaendert 'tools/transcribe/pyproject.toml'; then
+		pip_cmd=${NIRO_PIP_CMD:-"$REPO/tools/transcribe/venv/bin/pip"}
+		if [ -x "$pip_cmd" ]; then
+			if (cd "$REPO/tools/transcribe" && "$pip_cmd" install -q -e ".[dev]" >/dev/null 2>&1); then teil "Transcribe-Pakete aktualisiert"
+			else teil "Transcribe-Pakete: pip fehlgeschlagen"; fi
+		else teil "Transcribe: venv fehlt — SETUP.md Schritt 4"; fi
+	fi
+	if geaendert 'tools/motion/package.json' || geaendert 'tools/motion/package-lock.json'; then
+		npm_cmd=${NIRO_NPM_CMD:-npm}
+		if [ -n "${NIRO_NPM_CMD:-}" ] || [ -d "$REPO/tools/motion/node_modules" ]; then
+			if (cd "$REPO/tools/motion" && "$npm_cmd" install --no-audit --no-fund >/dev/null 2>&1); then teil "Motion-Pakete aktualisiert"
+			else teil "Motion-Pakete: npm install fehlgeschlagen"; fi
+		else teil "Motion: node_modules fehlt — SETUP.md Schritt 5"; fi
+	fi
+	for datei in tools/autocut/SETUP.md tools/musik/README.md tools/sfx/README.md; do
+		geaendert "$datei" && teil "$datei geändert — Abhängigkeiten prüfen"
+	done
+	return 0
+}
+
 if ! nas_da; then
 	echo "Studio-Abgleich: NAS nicht verbunden ($(dirname "$NAS")) — lokal bleibt alles, Abgleich später: sh tools/studio_abgleich.sh"
+	[ "$MODUS" = "nach-pull" ] && abhaengigkeiten && [ -n "$TEILE" ] && echo "$TEILE"
 	exit 0
 fi
 gedaechtnis_verknuepfen
 chargen_abgleichen
+[ -f "$REPO/tools/resolve/luts_sync.sh" ] && sh "$REPO/tools/resolve/luts_sync.sh"
+[ "$MODUS" = "nach-pull" ] && abhaengigkeiten
 echo "$TEILE"
 exit 0
