@@ -115,7 +115,10 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--still", action="store_true")
     parser.add_argument("--ohne-abgleich", action="store_true")
     parser.add_argument("--hook", action="store_true")
-    args = parser.parse_args(argv)
+    try:
+        args = parser.parse_args(argv)
+    except SystemExit:  # argparse hat Hilfe oder Fehler schon auf stdout/stderr ausgegeben — nie blockieren
+        return 0
     still = args.still or args.hook
     try:
         umg = umgebung_laden()

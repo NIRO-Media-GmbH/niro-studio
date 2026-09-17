@@ -139,6 +139,12 @@ class SammlerEndeZuEnde(unittest.TestCase):
         self.assertEqual(aus.returncode, 0)
         self.assertTrue((self.basis / "kein-repo" / "berichte" / "2026-09-17" / "Test-Mac.md").exists())
 
+    def test_unbekannte_option_endet_mit_null(self):
+        aus = self.lauf("--gibt-es-nicht")
+        self.assertEqual(aus.returncode, 0)
+        self.assertIn("usage", aus.stderr.lower())
+        self.assertFalse((self.berichte / "2026-09-17").exists())
+
 
 if __name__ == "__main__":
     suite = unittest.defaultTestLoader.discover(str(HIER), pattern="*_test.py", top_level_dir=str(HIER))
