@@ -4,9 +4,13 @@ import tempfile
 import unittest
 from datetime import date, timedelta
 from pathlib import Path
+from unittest import mock
 
-from git_stand import git_stand, sicherung, worktrees_lesen
+import git_stand
+from git_stand import sicherung, worktrees_lesen
 from testhilfe import lokal, repo_anlegen
+
+git_stand_func = git_stand.git_stand
 
 HEUTE = date(2026, 9, 17)
 
@@ -17,7 +21,7 @@ class GitStandAusRepo(unittest.TestCase):
         cls.basis = Path(tempfile.mkdtemp(prefix="git_stand_test_"))
         daten = repo_anlegen(cls.basis, HEUTE)
         cls.repo, cls.wt = daten["repo"], daten["wt"]
-        cls.stand = git_stand(cls.repo, HEUTE)
+        cls.stand = git_stand_func(cls.repo, HEUTE)
 
     @classmethod
     def tearDownClass(cls):
@@ -72,7 +76,7 @@ class GitStandAusRepo(unittest.TestCase):
         self.assertEqual(self.stand.stashes, 1)
 
     def test_gestern(self):
-        gestern = git_stand(self.repo, HEUTE - timedelta(days=1))
+        gestern = git_stand_func(self.repo, HEUTE - timedelta(days=1))
         self.assertEqual([c.betreff for c in gestern.auf_main], ["A0 gestern"])
         self.assertEqual(next(b for b in gestern.branches if b.name == "claude/x").commits_heute, [])
 
@@ -112,7 +116,7 @@ class GitStandOhneRemote(unittest.TestCase):
         git(repo, "config", "commit.gpgsign", "false")
         (repo / "x.txt").write_text("x\n")
         commit(repo, "einziger", lokal(HEUTE, 8))
-        stand = git_stand(repo, HEUTE)
+        stand = git_stand_func(repo, HEUTE)
         self.assertEqual(stand.auf_main, [])
         m = next(b for b in stand.branches if b.name == "main")
         self.assertIsNone(m.vor)
@@ -120,11 +124,32 @@ class GitStandOhneRemote(unittest.TestCase):
         self.assertEqual(stand.fehler, [])
 
     def test_kein_repo(self):
-        stand = git_stand(self.basis / "leer", HEUTE)
+        stand = git_stand_func(self.basis / "leer", HEUTE)
         self.assertTrue(stand.fehler)
         self.assertEqual(stand.auf_main, [])
         patch = sicherung(self.basis / "leer", "M", lokal(HEUTE, 9))
         self.assertIn("# Fehler", patch)
+
+
+class GitStandFaengtFehlerAb(unittest.TestCase):
+    def test_origin_pruefung_wirft_nicht(self):
+        echt = git_stand.git
+
+        def kaputt(ordner, *args, **kw):
+            if "origin/main" in args:
+                raise git_stand.GitFehler("git rev-parse: Zeitüberschreitung")
+            return echt(ordner, *args, **kw)
+
+        basis = Path(tempfile.mkdtemp(prefix="git_stand_test_"))
+        try:
+            repo = repo_anlegen(basis, HEUTE)["repo"]
+            with mock.patch.object(git_stand, "git", kaputt):
+                stand = git_stand.git_stand(repo, HEUTE)
+            self.assertEqual(stand.auf_main, [])
+            self.assertTrue(any("Zeitüberschreitung" in f for f in stand.fehler))
+            self.assertTrue(stand.branches)
+        finally:
+            shutil.rmtree(basis, ignore_errors=True)
 
 
 if __name__ == "__main__":

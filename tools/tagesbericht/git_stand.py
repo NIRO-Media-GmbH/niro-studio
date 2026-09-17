@@ -162,7 +162,11 @@ def git_stand(repo: Path, tag: date) -> GitStand:
     except GitFehler as e:
         stand.fehler.append(str(e))
         return stand
-    origin_da = bool(git(repo, "rev-parse", "--verify", "-q", "origin/main", ok_rc=(0, 1)).strip())
+    try:
+        origin_da = bool(git(repo, "rev-parse", "--verify", "-q", "origin/main", ok_rc=(0, 1)).strip())
+    except GitFehler as e:
+        stand.fehler.append(str(e))
+        origin_da = False
     if origin_da:
         try:
             stand.auf_main = _commits(repo, tag, "origin/main")
