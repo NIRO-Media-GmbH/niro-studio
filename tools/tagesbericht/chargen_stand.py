@@ -32,16 +32,32 @@ class ChargenStand:
     fehler: list[str] = field(default_factory=list)
 
 
-def chargen_ordner(repo: Path) -> list[Path]:
-    """Ordner in Tiefe 2 und 3 unter projects/ mit Protokoll.md oder Ergebnisse/."""
+def chargen_ordner(repo: Path, fehler: list[str] | None = None) -> list[Path]:
+    """Ordner in Tiefe 2 und 3 unter projects/ mit Protokoll.md oder Ergebnisse/. Unlesbare Ordner werden
+    übersprungen und in `fehler` vermerkt."""
     projects = repo / "projects"
-    if not projects.is_dir():
+    try:
+        if not projects.is_dir():
+            return []
+    except OSError as e:
+        if fehler is not None:
+            fehler.append(f"projects/: {e}")
         return []
     gefunden = set()
     for muster in ("*/*", "*/*/*"):
-        for p in projects.glob(muster):
-            if p.is_dir() and ((p / "Protokoll.md").is_file() or (p / "Ergebnisse").is_dir()):
-                gefunden.add(p)
+        try:
+            kandidaten = list(projects.glob(muster))
+        except OSError as e:
+            if fehler is not None:
+                fehler.append(f"projects/{muster}: {e}")
+            continue
+        for p in kandidaten:
+            try:
+                if p.is_dir() and ((p / "Protokoll.md").is_file() or (p / "Ergebnisse").is_dir()):
+                    gefunden.add(p)
+            except OSError as e:
+                if fehler is not None:
+                    fehler.append(f"{p.relative_to(repo).as_posix()}: {e}")
     return sorted(gefunden)
 
 
@@ -60,10 +76,17 @@ def chargen_stand(repo: Path, tag: date) -> ChargenStand:
     stand = ChargenStand()
     anfang, ende = tagesgrenzen(tag)
     von, bis = anfang.timestamp(), ende.timestamp()
-    for ordner in chargen_ordner(repo):
+    for ordner in chargen_ordner(repo, stand.fehler):
         charge = ordner.relative_to(repo).as_posix()
         protokoll = ordner / "Protokoll.md"
-        if protokoll.is_file():
+        ergebnisse = ordner / "Ergebnisse"
+        try:
+            hat_protokoll = protokoll.is_file()
+            hat_ergebnisse = ergebnisse.is_dir()
+        except OSError as e:
+            stand.fehler.append(f"{charge}: {e}")
+            continue
+        if hat_protokoll:
             try:
                 eintraege = eintraege_des_tages(protokoll, tag)
             except OSError as e:
@@ -71,8 +94,7 @@ def chargen_stand(repo: Path, tag: date) -> ChargenStand:
                 eintraege = []
             if eintraege:
                 stand.je_charge_alle[charge] = eintraege
-        ergebnisse = ordner / "Ergebnisse"
-        if ergebnisse.is_dir():
+        if hat_ergebnisse:
             treffer = []
             for wurzel, _ordner, dateien in os.walk(ergebnisse):
                 for name in dateien:

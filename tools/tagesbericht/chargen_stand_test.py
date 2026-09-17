@@ -1,3 +1,4 @@
+import os
 import shutil
 import tempfile
 import unittest
@@ -47,6 +48,27 @@ class ChargenStandAusProtokollen(unittest.TestCase):
     def test_ohne_projects(self):
         leer = chargen_stand(self.basis / "nix", HEUTE)
         self.assertEqual((leer.je_charge_alle, leer.lieferungen, leer.fehler), ({}, [], []))
+
+
+class ChargenStandBeiGesperrtemOrdner(unittest.TestCase):
+    def setUp(self):
+        self.basis = Path(tempfile.mkdtemp(prefix="chargen_test_"))
+        self.repo = self.basis / "repo"
+        self.repo.mkdir()
+        chargen_anlegen(self.repo, HEUTE)
+        self.gesperrt = self.repo / "projects" / "Gesperrt" / "P"
+        (self.gesperrt / "2026-01 C").mkdir(parents=True)
+        (self.gesperrt / "2026-01 C" / "Protokoll.md").write_text("## 2026-09-17 - x\n")
+        os.chmod(self.gesperrt, 0)
+
+    def tearDown(self):
+        os.chmod(self.gesperrt, 0o755)
+        shutil.rmtree(self.basis, ignore_errors=True)
+
+    def test_gesperrter_ordner_wird_gemeldet_nicht_geworfen(self):
+        stand = chargen_stand(self.repo, HEUTE)
+        self.assertTrue(any("Gesperrt" in f for f in stand.fehler), stand.fehler)
+        self.assertIn(C1, stand.je_charge)
 
 
 if __name__ == "__main__":
