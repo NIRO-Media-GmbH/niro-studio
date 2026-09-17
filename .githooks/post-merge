@@ -1,0 +1,5 @@
+#!/bin/sh
+# Nach „git pull" (Merge): NIRO-Grading-LUTs aus dem Repo in Resolves LUT-Ordner installieren.
+# Details: tools/resolve/luts/README.md. Blockiert nie.
+sh "$(git rev-parse --show-toplevel)/tools/resolve/luts_sync.sh" --nur-installieren
+exit 0

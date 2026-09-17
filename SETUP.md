@@ -26,6 +26,19 @@ Blockt Commits mit Dateien über 5 MB. Hier gehört das Werkzeug hinein, nicht
 das Kundenmaterial — der Hook fängt Versehen ab, bevor sie in der Historie
 landen. Details in [.githooks/pre-commit](.githooks/pre-commit).
 
+Dieselbe Einstellung aktiviert den **LUT-Abgleich für DaVinci Resolve**: Nach
+jedem `git pull` installieren die Hooks die NIRO-Grading-LUTs aus
+`tools/resolve/luts/` in Resolves LUT-Ordner, damit Grades von beiden Macs
+dieselben LUTs finden. Beim ersten Mal (oder ohne Hooks) von Hand:
+
+```bash
+sh tools/resolve/luts_sync.sh
+```
+
+Meldet das Skript fehlendes Schreibrecht, einmalig
+`sudo chmod a+w "/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT"`.
+Details in [tools/resolve/luts/README.md](tools/resolve/luts/README.md).
+
 ## 3. Systemwerkzeuge
 
 ```bash

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Nach „git pull --rebase": NIRO-Grading-LUTs installieren (bei „commit --amend" nichts tun). Blockiert nie.
+[ "$1" = "rebase" ] && sh "$(git rev-parse --show-toplevel)/tools/resolve/luts_sync.sh" --nur-installieren
+exit 0
