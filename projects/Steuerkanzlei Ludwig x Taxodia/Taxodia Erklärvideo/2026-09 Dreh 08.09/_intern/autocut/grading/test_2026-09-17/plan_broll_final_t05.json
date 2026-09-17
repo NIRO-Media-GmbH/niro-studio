@@ -1,0 +1,657 @@
+{
+ "look": [
+  1.05,
+  1.0
+ ],
+ "clips": {
+  "C0250.MP4": {
+   "werte": {
+    "e": 2.809,
+    "wr": 0.102,
+    "wb": -0.087
+   },
+   "hinweise": [
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral",
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0251.MP4": {
+   "werte": {
+    "e": 2.179,
+    "wr": 0.111,
+    "wb": -0.086
+   },
+   "hinweise": [
+    "Lichterschutz",
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0252.MP4": {
+   "werte": {
+    "e": 2.801,
+    "wr": 0.083,
+    "wb": -0.085
+   },
+   "hinweise": [],
+   "anker": [
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0261.MP4": {
+   "werte": {
+    "e": 3.094,
+    "wr": 0.102,
+    "wb": -0.009
+   },
+   "hinweise": [
+    "Lichterschutz",
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "bild/neutral",
+    "haut/neutral",
+    "neutral_hell/neutral"
+   ],
+   "bilder": 18
+  },
+  "C0239.MP4": {
+   "werte": {
+    "e": 1.324,
+    "wr": 0.085,
+    "wb": -0.189
+   },
+   "hinweise": [
+    "Lichterschutz",
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral",
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0237.MP4": {
+   "werte": {
+    "e": 3.184,
+    "wr": 0.152,
+    "wb": -0.312
+   },
+   "hinweise": [],
+   "anker": [
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0247.MP4": {
+   "werte": {
+    "e": 0.763,
+    "wr": 0.062,
+    "wb": -0.14
+   },
+   "hinweise": [
+    "Lichterschutz",
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral",
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0253.MP4": {
+   "werte": {
+    "e": 3.156,
+    "wr": 0.053,
+    "wb": 0.115
+   },
+   "hinweise": [
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral",
+    "neutral_hell/neutral"
+   ],
+   "bilder": 6
+  },
+  "C0259.MP4": {
+   "werte": {
+    "e": 1.887,
+    "wr": 0.03,
+    "wb": 0.048
+   },
+   "hinweise": [
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0240.MP4": {
+   "werte": {
+    "e": 2.184,
+    "wr": 0.189,
+    "wb": -0.389
+   },
+   "hinweise": [],
+   "anker": [
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0242.MP4": {
+   "werte": {
+    "e": 2.762,
+    "wr": 0.15,
+    "wb": -0.402
+   },
+   "hinweise": [],
+   "anker": [
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0235.MP4": {
+   "werte": {
+    "e": 1.184,
+    "wr": 0.112,
+    "wb": -0.229
+   },
+   "hinweise": [
+    "Lichterschutz",
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral",
+    "neutral_hell/neutral"
+   ],
+   "bilder": 6
+  },
+  "C0246.MP4": {
+   "werte": {
+    "e": 2.707,
+    "wr": -0.135,
+    "wb": -0.12
+   },
+   "hinweise": [
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0254.MP4": {
+   "werte": {
+    "e": 3.198,
+    "wr": 0.079,
+    "wb": -0.022
+   },
+   "hinweise": [
+    "Lichterschutz",
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0260.MP4": {
+   "werte": {
+    "e": 2.91,
+    "wr": 0.072,
+    "wb": 0.173
+   },
+   "hinweise": [],
+   "anker": [
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0249.MP4": {
+   "werte": {
+    "e": 2.855,
+    "wr": 0.073,
+    "wb": -0.224
+   },
+   "hinweise": [],
+   "anker": [
+    "neutral_hell/neutral"
+   ],
+   "bilder": 3
+  },
+  "C0255.MP4": {
+   "werte": {
+    "e": 3.449,
+    "wr": 0.039,
+    "wb": -0.021
+   },
+   "hinweise": [
+    "Lichterschutz"
+   ],
+   "anker": [
+    "bild/neutral",
+    "haut/neutral",
+    "neutral_hell/neutral"
+   ],
+   "bilder": 9
+  },
+  "C0262.MP4": {
+   "werte": {
+    "e": 1.299,
+    "wr": 0.018,
+    "wb": -0.097
+   },
+   "hinweise": [
+    "Lichterschutz",
+    "Mischlicht/Haut ausserhalb"
+   ],
+   "anker": [
+    "haut/neutral"
+   ],
+   "bilder": 6
+  },
+  "C0257.MP4": {
+   "werte": {
+    "e": 3.324,
+    "wr": 0.075,
+    "wb": -0.09
+   },
+   "hinweise": [
+    "Lichterschutz"
+   ],
+   "anker": [
+    "haut/neutral"
+   ],
+   "bilder": 3
+  }
+ },
+ "items": [
+  {
+   "spur": 3,
+   "start": 313,
+   "name": "C0250.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 2.809,
+    "wr": 0.102,
+    "wb": -0.087
+   },
+   "n1": "0.2240 0.2161 0.2094"
+  },
+  {
+   "spur": 3,
+   "start": 373,
+   "name": "C0251.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 2.179,
+    "wr": 0.111,
+    "wb": -0.086
+   },
+   "n1": "0.1762 0.1677 0.1610"
+  },
+  {
+   "spur": 3,
+   "start": 405,
+   "name": "C0252.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 2.801,
+    "wr": 0.083,
+    "wb": -0.085
+   },
+   "n1": "0.2219 0.2155 0.2090"
+  },
+  {
+   "spur": 3,
+   "start": 710,
+   "name": "C0261.MP4",
+   "aktiv": true,
+   "quelle": "einsatz",
+   "werte": {
+    "e": 1.425,
+    "wr": 0.149,
+    "wb": -0.184
+   },
+   "n1": "0.1211 0.1096 0.0954"
+  },
+  {
+   "spur": 3,
+   "start": 2984,
+   "name": "C0261.MP4",
+   "aktiv": true,
+   "quelle": "einsatz",
+   "werte": {
+    "e": 3.027,
+    "wr": 0.056,
+    "wb": 0.292
+   },
+   "n1": "0.2373 0.2330 0.2554"
+  },
+  {
+   "spur": 3,
+   "start": 3747,
+   "name": "C0261.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 3.094,
+    "wr": 0.102,
+    "wb": -0.009
+   },
+   "n1": "0.2459 0.2381 0.2373"
+  },
+  {
+   "spur": 3,
+   "start": 5038,
+   "name": "C0261.MP4",
+   "aktiv": true,
+   "quelle": "einsatz",
+   "werte": {
+    "e": 3.98,
+    "wr": 0.103,
+    "wb": -0.082
+   },
+   "n1": "0.3142 0.3063 0.3000"
+  },
+  {
+   "spur": 3,
+   "start": 5096,
+   "name": "C0261.MP4",
+   "aktiv": true,
+   "quelle": "einsatz",
+   "werte": {
+    "e": 2.323,
+    "wr": 0.209,
+    "wb": -0.056
+   },
+   "n1": "0.1948 0.1787 0.1744"
+  },
+  {
+   "spur": 3,
+   "start": 5163,
+   "name": "C0261.MP4",
+   "aktiv": true,
+   "quelle": "einsatz",
+   "werte": {
+    "e": 3.863,
+    "wr": 0.064,
+    "wb": 0.004
+   },
+   "n1": "0.3022 0.2973 0.2976"
+  },
+  {
+   "spur": 3,
+   "start": 1062,
+   "name": "C0239.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 1.324,
+    "wr": 0.085,
+    "wb": -0.189
+   },
+   "n1": "0.1084 0.1019 0.0873"
+  },
+  {
+   "spur": 3,
+   "start": 1137,
+   "name": "C0237.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 3.184,
+    "wr": 0.152,
+    "wb": -0.312
+   },
+   "n1": "0.2567 0.2450 0.2209"
+  },
+  {
+   "spur": 3,
+   "start": 1192,
+   "name": "C0247.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 0.763,
+    "wr": 0.062,
+    "wb": -0.14
+   },
+   "n1": "0.0635 0.0587 0.0480"
+  },
+  {
+   "spur": 3,
+   "start": 1367,
+   "name": "C0253.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 3.156,
+    "wr": 0.053,
+    "wb": 0.115
+   },
+   "n1": "0.2470 0.2429 0.2517"
+  },
+  {
+   "spur": 3,
+   "start": 1411,
+   "name": "C0253.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 3.156,
+    "wr": 0.053,
+    "wb": 0.115
+   },
+   "n1": "0.2470 0.2429 0.2517"
+  },
+  {
+   "spur": 3,
+   "start": 1922,
+   "name": "C0259.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 1.887,
+    "wr": 0.03,
+    "wb": 0.048
+   },
+   "n1": "0.1475 0.1452 0.1489"
+  },
+  {
+   "spur": 3,
+   "start": 2125,
+   "name": "C0240.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 2.184,
+    "wr": 0.189,
+    "wb": -0.389
+   },
+   "n1": "0.1826 0.1680 0.1381"
+  },
+  {
+   "spur": 3,
+   "start": 2169,
+   "name": "C0242.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 2.762,
+    "wr": 0.15,
+    "wb": -0.402
+   },
+   "n1": "0.2241 0.2125 0.1816"
+  },
+  {
+   "spur": 3,
+   "start": 2536,
+   "name": "C0235.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 1.184,
+    "wr": 0.112,
+    "wb": -0.229
+   },
+   "n1": "0.0997 0.0911 0.0734"
+  },
+  {
+   "spur": 3,
+   "start": 2654,
+   "name": "C0235.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 1.184,
+    "wr": 0.112,
+    "wb": -0.229
+   },
+   "n1": "0.0997 0.0911 0.0734"
+  },
+  {
+   "spur": 3,
+   "start": 2576,
+   "name": "C0246.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 2.707,
+    "wr": -0.135,
+    "wb": -0.12
+   },
+   "n1": "0.1980 0.2083 0.1991"
+  },
+  {
+   "spur": 3,
+   "start": 3596,
+   "name": "C0254.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 3.198,
+    "wr": 0.079,
+    "wb": -0.022
+   },
+   "n1": "0.2521 0.2461 0.2444"
+  },
+  {
+   "spur": 3,
+   "start": 3826,
+   "name": "C0260.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 2.91,
+    "wr": 0.072,
+    "wb": 0.173
+   },
+   "n1": "0.2295 0.2239 0.2373"
+  },
+  {
+   "spur": 3,
+   "start": 3992,
+   "name": "C0249.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 2.855,
+    "wr": 0.073,
+    "wb": -0.224
+   },
+   "n1": "0.2253 0.2197 0.2025"
+  },
+  {
+   "spur": 3,
+   "start": 4067,
+   "name": "C0255.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 3.449,
+    "wr": 0.039,
+    "wb": -0.021
+   },
+   "n1": "0.2684 0.2654 0.2638"
+  },
+  {
+   "spur": 3,
+   "start": 4167,
+   "name": "C0255.MP4",
+   "aktiv": true,
+   "quelle": "einsatz",
+   "werte": {
+    "e": 1.632,
+    "wr": -0.015,
+    "wb": -0.122
+   },
+   "n1": "0.1244 0.1256 0.1162"
+  },
+  {
+   "spur": 3,
+   "start": 4786,
+   "name": "C0255.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 3.449,
+    "wr": 0.039,
+    "wb": -0.021
+   },
+   "n1": "0.2684 0.2654 0.2638"
+  },
+  {
+   "spur": 3,
+   "start": 4301,
+   "name": "C0262.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 1.299,
+    "wr": 0.018,
+    "wb": -0.097
+   },
+   "n1": "0.1014 0.1000 0.0925"
+  },
+  {
+   "spur": 3,
+   "start": 4736,
+   "name": "C0262.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 1.299,
+    "wr": 0.018,
+    "wb": -0.097
+   },
+   "n1": "0.1014 0.1000 0.0925"
+  },
+  {
+   "spur": 3,
+   "start": 4587,
+   "name": "C0257.MP4",
+   "aktiv": true,
+   "quelle": "clip",
+   "werte": {
+    "e": 3.324,
+    "wr": 0.075,
+    "wb": -0.09
+   },
+   "n1": "0.2616 0.2558 0.2489"
+  }
+ ]
+}

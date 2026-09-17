@@ -464,3 +464,107 @@
 - **Offen:** Stellen gegenhören und ggf. Kanten in die Pause legen; nach dem Weiterschneiden neuer Export → volle
   Kantenprüfung.
 
+
+## 2026-09-17 11:25 — Session: Grading-Test Node-Baum (Spec `docs/superpowers/specs/2026-09-17-autocut-grading-design.md`)
+
+- **Anlass:** User 17.09.: Grading „oft viel zu dunkel, übersättigt, zu hoher Kontrast, Weißabgleich oft off"; Test auf
+  Freigabe des Users („Taxodia ist offen, mache jetzt den Test").
+- **Resolve (Projekt „Taxodia 09.26"):** Kopie **„AutoCut video-1-taxodia-weg 2026-09-17 1040 Grading-Test"** der
+  Feinschnitt-Timeline angelegt (10 Spuren, Clips/Positionen/In-Punkte identisch), Original unverändert. Resolve
+  schaltete die Kopie selbst aktiv. Auf der Kopie:
+  - Probe-Item V1 @444 (FX3_0222): eigene 3-Node-DRX neu verpackt → angenommen; erzeugter 5-Node-Baum ohne
+    Vorschaubild (`BALANCE, ANGLEICH, KONTRAST/SAT, LUT, HAND`) → angenommen, `SetCDL` Node 1–3 + `SetLUT(4)` ok. Trägt
+    Testwerte (keine Messung).
+  - 8 Test-Items umgegradet (Node 01 gemessen, Node 02 neutral, Node 03 Kontrast 1,00/Sättigung 0,95, Node 04 Sony
+    LC-709): V2 a7_0118 @652 (01:00:27:05), V1 FX3_0228 @971 (01:00:40:10), V1 FX3_0222 @1372 (01:01:01:15),
+    V1 FX3_0223 @1788 (01:01:14:00), V3 C0242 @2169 (01:01:28:00), C0246 @2576 (01:01:44:15), C0255 @4167
+    (01:02:49:09), C0261 @5038 (01:03:22:17). Alle anderen Items der Kopie tragen den alten Grade.
+  - Für die Standbilder V4 (Adjustment Clip) und V5 (Grafik) der Kopie kurz aus, danach wieder an; Bin „Fast"
+    unverändert; Projekt gespeichert.
+- **Befunde:**
+  - Node-Rechnung stimmt: `ExportLUT` (Color-Seite) gegen Modell Mittel 0,15–0,25 / p95 0,6–1,2 8-Bit-Stufen.
+  - **Ausgabe Rec.709-A:** Resolve-Standbild = LUT-Ausgabe^(2,4/1,961) (Fehler 1,1 Stufen; ohne diese Wandlung 12,4;
+    Hypothese Video-Pegel am Eingang 11,7). Mit Wandlung Gegenprobe ΔE2000 Median 0,47–0,78 an allen 8 Items. Die alte
+    Rechnung (15.09.) kannte die Wandlung nicht; Apple-Wiedergabe gleicht sie aus, Windows/Android/viele Browser zeigen
+    die Dateien dunkler und kontrastreicher.
+  - `ExportCurrentFrameAsStill` auf der Color-Seite enthält die Begradigen-Transforms (Ausrichtung per SIFT nötig).
+  - B-Roll C0261/C0242 im Original ≈ 2 Blenden unterbelichtet (S-Log3 Mittel 0,27) → Grenze +2 Blenden greift.
+  - Mischlicht C0246: globaler Weißabgleich über den Hautwinkel ging schief (Haut-Chroma 50) → verworfen; Clip gelb,
+    Gesicht von Hand.
+- **Ergebnis (gemessen an den Resolve-Standbildern, Darstellung wie am Mac):** Schwarz (L\*≤3) bis 16 % → 0 %,
+  Chroma p95 −2 bis −5, Hautwinkel Flammann 32° → 43°, Hein Haut L\* 76 → 65, Ludwig 58 → 62, B-Roll-Median L\*
+  32 → 38–42; C0255 34 statt 38 (flacher, wirkt milchig); Fenster hinter Ludwig clippt 10 % (vorher 0).
+- **Geliefert:** `_intern/autocut/grading/test_2026-09-17/` — `kontaktbogen_test_bisher_neu.jpg`,
+  `look_varianten_test.jpg`, `gegenprobe_prototyp_709A.json`, `gegenprobe_prototyp.json`, `stills/` (16 PNG, ≈ 400 MB),
+  `exportlut_*.cube`, Test-DRX `T1…T3`. Prototyp-Skripte im Session-Scratchpad.
+- **Offen:** Look-Variante wählen (A 0,95/0,90 · B 1,00/0,95 · C 1,05/1,00); Ausgabe-Farbraum Rec.709-A vs.
+  Rec.709 Gamma 2.4 entscheiden (nur der User); Spec nachziehen (Rec.709-A im Modell, Mischlicht = Handarbeit,
+  Lichterschutz-Bezug, B-Roll-Grenze/Bild-Anker, Stills mit Transform); Test-Kopie behalten oder löschen (eigenes
+  Objekt, nur auf Wunsch).
+
+## 2026-09-17 11:10 — Session: Grading Look C auf alle Clips der Test-Kopie
+
+- **User-Entscheidungen:** Look **C** (Node 03 Kontrast 1,05 um 18 % Grau, Sättigung 1,00); Ausgabe bleibt **Rec.709-A**;
+  „kannst alle so machen" → alle Clips der Kopie graden.
+- **Messung neu mit Look C** (Prototyp, 10-Bit-Originale): 238 Bilder aus 25 Clips (je aktivem Einsatz 3), 202 mit Gesicht;
+  Wert je Clip, eigener Einsatz-Wert bei > 0,7 Bl. bzw. > 0,3 Bl. — nur 3 Einsätze von C0261 (@2984, @3747, @5096).
+  Deaktivierte a7-Stücke tragen den Clip-Wert. Node 02 (Angleich a7 → FX3) noch neutral.
+- **Resolve („Taxodia 09.26", Kopie „AutoCut video-1-taxodia-weg 2026-09-17 1040 Grading-Test"):** 115 Items (V1 37, V2 49
+  inkl. 35 deaktivierter, V3 29) mit 5-Node-Baum; Readback 115/115 ok (5 Nodes, Namen, LUT), 99 s, gespeichert. V4/V5 und
+  das Original unberührt; Kopie ist aktive Timeline, Bin „Fast". Log `_intern/autocut/grading/test_2026-09-17/einsatz_alle_lookC.json`.
+- **Werte je Clip (Belichtung in Blenden):** Interviews FX3_0222 +0,38 · FX3_0223 −0,53 · FX3_0228 −1,15 · a7_0118 +1,24 ·
+  a7_0119 +0,73 · a7_0752 +0,14. B-Roll +0,05 (C0247) bis +2,00; **10 von 19 B-Roll-Clips an der Grenze +2**
+  (C0237, C0240, C0242, C0250, C0252, C0253, C0255, C0257, C0260, C0261) — Material im Original deutlich dunkler belichtet.
+- **Geliefert:** `uebersicht_alle_lookC.jpg`, `plan_alle_lookC.json`, `einsatz_alle_lookC.json`, Prototyp-Skripte in
+  `_intern/autocut/grading/test_2026-09-17/prototyp_skripte/`.
+- **Offen:** Abnahme im Viewer (V4-Adjustment-Clip wirkt beim Abspielen mit); A/B-Angleich (Node 02); C0246 Mischlicht =
+  Hand; Fenster hinter Ludwig clippt; B-Roll an der +2-Grenze ggf. von Hand nachziehen; Hinweis „Mischlicht/Haut
+  außerhalb" schlägt im Prototyp zu oft an (nur Hinweis, keine Korrektur); Spec-Nachtrag + Umsetzungsplan.
+
+## 2026-09-17 11:40 — Session: Grading-Test — Blendengrenze aufgehoben, Fenster Ludwig geprüft
+
+- **User:** „Hebe die Blendengrenze auf, ich kann später ja NR drauf machen"; Frage nach dem ausgebrannten Fenster und
+  nach Power Windows.
+- **Neu gemessen ohne ±2-Grenze** (Look C, Cache): B-Roll jetzt C0237 +3,12 · C0255 +3,08 (Einsatz @4167 eigener Wert
+  +1,50) · C0261 +2,96 (@710 +1,33, @2984 +3,02) · C0253 +2,94 · C0260 +2,90 · C0252 +2,75 · C0242 +2,72 · C0250 +2,66 ·
+  C0257 +2,46 · C0240 +2,16. Übrige Clips ±0,03 → nicht angefasst.
+- **Resolve (Kopie „… 2026-09-17 1040 Grading-Test"):** Node 01 von 16 V3-Items neu gesetzt (`SetCDL` NodeIndex 1),
+  16/16 ok, gespeichert. Vorher Baum-Prüfung je Item (5 Nodes, Namen, LUT, HAND leer) — alle unverändert; Resolve stand
+  auf Edit, deshalb keine Werte-Prüfung per `ExportLUT`. Log `test_2026-09-17/einsatz_v2_ohne_blendengrenze.json`.
+- **Fenster hinter Ludwig (FX3_0222):** im Sensor ausgebrannt — ein Kanal steht auf dem Clip-Plateau S-Log3 CV 891/892
+  (≈ +6,1 Blenden über 18 % Grau, ≈ 10 % der Bildfläche), die anderen Kanäle bei CV 790–860, lokale Zeichnung im Median
+  < 1 Codewert. Ein Power Window kann das Fenster nur grauer machen, keine Zeichnung zurückholen.
+- **Power Windows:** keine API-Funktion; im DRX-Format enthalten (Parameterfamilien 0x085…, 0x08f…, 0x0885…, Matrizen
+  0x883…–0x88f… in den PW-Nodes der Team-Grades), Bedeutung der Werte nur per Versuch auf der Kopie belegbar.
+- **Offen:** Entscheidung Fenster (weiß lassen / leicht abdunkeln per Window-Test); NR auf der hochgezogenen B-Roll von
+  Hand; Lichterschutz-Regel: Sensor-Clip je Kamera als Plateau erkennen (FX3 ≈ CV 891), ausgebrannte Pixel nicht
+  als Grund zum Abdunkeln werten.
+
+## 2026-09-17 12:20 — Session: Grading-Test — B-Roll mit linearer Belichtung (User-Feedback am Viewer)
+
+- **User-Feedback (Screenshots Color-Seite):** C0261 Hand/Maus „zu dunkel"; C0237 Tippen „kaum Kontrast, Schwarz komplett zu
+  hell gezogen"; C0253 BenQ „kaum Kontrast"; „Schatten zu dunkel"; „Farben ziehen sich komplett so durch, nur die Interviews
+  sind on point".
+- **Ursache:** Belichtung als CDL-Offset im S-Log3-Raum ist nur im Log-Abschnitt eine lineare Verstärkung; bei +2 … +3
+  Blenden hebt sie den Schwarzpunkt (S-Log3-Schwarz CV 95 → ≈ 340) → milchig, flach, blasse Farben. Interviews (±1 Blende)
+  unauffällig.
+- **Neu nur für V3 (B-Roll), Interviews unverändert:**
+  - Node 01 = **1D-LUT je Clip** (4096 Stützstellen, exakte S-Log3-Rechnung: linear × 2^(e + w_Kanal)), CDL in Node 01 neutral;
+    LUTs unter `/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/NIRO Grading/Taxodia 09.26/` (19 Dateien,
+    Name mit Werten).
+  - **Ein Wert je Clip** (Einsatz-Sonderwerte kamen aus unterschiedlichen Messankern, nicht aus anderem Licht), WB je Clip.
+  - Lichterschutz nur auf im Sensor nicht ausgebrannte Pixel (FX3/FX3A-Clip-Plateau CV 891), **Toleranz 5 %** — gewählt am
+    Vergleich 2/4/5/8 % (`toleranz_vergleich2.jpg`); ohne Schutz überstrahlten C0254/C0257/C0262, mit 2 % blieben C0239/C0246/C0247
+    dunkel. Kein Schatten-Toe (Flare-Regel ≤ 5 % unter L\* 5 schlug überall voll an → milchig, verworfen).
+  - Belichtung je Clip: C0235 +1,18 · C0237 +3,18 · C0239 +1,32 · C0240 +2,18 · C0242 +2,76 · C0246 +2,71 · C0247 +0,76 ·
+    C0249 +2,85 · C0250 +2,81 · C0251 +2,18 · C0252 +2,80 · C0253 +3,16 · C0254 +3,20 · C0255 +3,45 · C0257 +3,32 · C0259 +1,89 ·
+    C0260 +2,91 · C0261 +3,09 · C0262 +1,30.
+- **Resolve (Kopie „… 2026-09-17 1040 Grading-Test"):** 29/29 V3-Items: Node-01-CDL neutral + `SetLUT(1, …)`, Readback Pfad ok,
+  gespeichert; Baum-Prüfung vorher ok (Seite Edit → keine Werte-Prüfung). Gegenprobe am Standbild C0252 (Abspielkopf des Users,
+  nicht bewegt; Adjustment Clip ohne Grade, V5 leer): linear ΔE2000 Median 0,81 / p90 1,16, Quellframe 502 wie berechnet;
+  Offset-Modell p90 5,68 → LUT wirkt als lineare Verstärkung.
+- **Geliefert:** `uebersicht_broll_final.jpg`, `vergleich_offset_linear.jpg`, `toleranz_vergleich2.jpg`,
+  `plan_broll_final_t05.json`, `einsatz_broll_final_lut1d.json`, Standbild `stills/final_C0252_441.png`.
+- **Offen:** Sichtung durch den User; NR auf Clips ≥ +3 Blenden (C0237, C0253, C0254, C0255, C0257, C0261); Fenster in Gegenlicht-
+  Szenen brennen aus (Handarbeit/Power Window); **LUT-Ordner fehlt auf anderen Rechnern** (Cloud-Projekt → Zweit-MacBook zeigt
+  sonst fehlende LUTs); Interviews für Konsistenz später ebenfalls auf lineare Belichtung umstellen (Wirkung dort klein).
