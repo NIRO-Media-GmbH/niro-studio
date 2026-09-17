@@ -4,6 +4,7 @@ Autoren, Bericht ``kommentare.md``. Ohne Resolve.
 """
 from __future__ import annotations
 
+import math
 import unicodedata
 
 from .charge import AutoCutError
@@ -42,6 +43,11 @@ def aus_markern(marker: dict, merkmal: dict | None, vorher: dict | None = None) 
     return _nummerieren(out)
 
 
+def _zahl(wert) -> bool:
+    """Endliche Zahl — JSON erlaubt in Python NaN/Infinity, die sich nicht in Frames umrechnen lassen."""
+    return isinstance(wert, (int, float)) and math.isfinite(wert)
+
+
 def aus_json(daten: dict, fps: float) -> list[dict]:
     """Chrome-Lesung {"quelle": "chrome", "kommentare": [{"von_s", "bis_s", "autor", "text", "antworten",
     "zeichnung"}]} → Kommentare; Sekunden → Frames kaufmännisch gerundet."""
@@ -49,11 +55,13 @@ def aus_json(daten: dict, fps: float) -> list[dict]:
         raise AutoCutError('JSON der Chrome-Lesung braucht {"quelle": "chrome", "kommentare": [...]}.')
     out = []
     for i, k in enumerate(daten["kommentare"], start=1):
-        if not isinstance(k, dict) or not isinstance(k.get("von_s"), (int, float)) or not isinstance(k.get("text"), str):
-            raise AutoCutError(f"Kommentar {i}: von_s (Zahl) und text (Text) sind Pflicht.")
+        if not isinstance(k, dict) or not _zahl(k.get("von_s")) or not isinstance(k.get("text"), str):
+            raise AutoCutError(f"Kommentar {i}: von_s (endliche Zahl) und text (Text) sind Pflicht.")
+        if not isinstance(k.get("antworten") or [], list):
+            raise AutoCutError(f"Kommentar {i}: antworten muss eine Liste sein (oder fehlen).")
         von = float(k["von_s"])
         bis = k.get("bis_s")
-        dauer = max(1, int((float(bis) - von) * fps + 0.5)) if isinstance(bis, (int, float)) and bis > von else 1
+        dauer = max(1, int((float(bis) - von) * fps + 0.5)) if _zahl(bis) and bis > von else 1
         out.append({"frame": int(von * fps + 0.5), "dauer_frames": dauer, "text": k["text"].strip(),
                     "autor": k.get("autor") or None, "antworten": [str(a) for a in (k.get("antworten") or [])],
                     "zeichnung": bool(k["zeichnung"]) if "zeichnung" in k else None, "quelle": "chrome"})

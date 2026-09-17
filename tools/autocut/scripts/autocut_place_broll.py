@@ -307,9 +307,11 @@ def main(argv: list[str] | None = None) -> int:
         if not name:
             raise AutoCutError("Kein Timeline-Name: build.json fehlt (autocut_build.py noch nicht gelaufen) — "
                                "oder mit --timeline den Namen angeben.")
-        if replay.ist_hochgeladen(ch.root, name):
-            raise AutoCutError(f"Timeline „{name}“ ist nach Replay hochgeladen, nicht mehr ändern — für weitere "
-                               f"Stufen eine neue Version per Neubau bauen (Stufe 1, Schritt 8).")
+        if replay.ist_hochgeladen(ch.root, name):     # zählt auch gescheiterte Versuche und nicht auswertbare Logs
+            raise AutoCutError(f"Timeline „{name}“ ist laut Replay-Upload-Log hochgeladen, war Ziel eines gescheiterten "
+                               f"Upload-Versuchs oder das Log ist nicht auswertbar ({replay.replay_dir(ch) / replay.UPLOADS}) — "
+                               f"im Zweifel geschützt: nicht mehr ändern, Log prüfen. Für weitere Stufen eine neue "
+                               f"Version per Neubau bauen (Stufe 1, Schritt 8).")
         if ch.read_json("timeline.json") is None:
             raise AutoCutError("timeline.json fehlt — die Beat-Positionen wurden nur berechnet; bauen erst nach autocut_build.py.")
         from niro_autocut.resolve_api import ResolveSession, connect   # lazy: Prüfung läuft auch ohne Resolve

@@ -5,6 +5,7 @@ Aufruf:
     venv/bin/python scripts/autocut_replay.py "<Charge>" hochladen --project "<offenes Projekt>" [--timeline "<Name>"] [--hochladen]
     venv/bin/python scripts/autocut_replay.py "<Charge>" einsortiert --titel "<Titel>" [--ordner "<Replay-Pfad>"]
     venv/bin/python scripts/autocut_replay.py "<Charge>" kommentare [--timeline "<Name>"] [--aus-json "<Datei>"] [--warten <s>]
+    venv/bin/python scripts/autocut_replay.py "<Charge>" kommentare [--timeline "<Name>"] --nur-stand
     venv/bin/python scripts/autocut_replay.py "<Projekt-Ordner>" finden --titel "<Replay-Titel>"
 
 hochladen ohne --hochladen = Vorschau (Resolve nur lesend). Mit --hochladen (nur nach OK des Users im Chat): Quick Export
@@ -14,8 +15,10 @@ Exit 0 = Vorschau ok bzw. „Upload Completed", 1 = Upload nicht bestätigt, 2 =
 einsortiert vermerkt das Einsortieren in Replay (macht Claude im Chrome). kommentare liest die Replay-Kommentare
 (Marker mit replay.dropbox_marker) der hochgeladenen Timeline nur lesend oder übernimmt die Chrome-Lesung (--aus-json)
 und schreibt Material/Feedback/<Upload-Datum> Replay <Titel>/kommentare.json + .md; Exit 0 = neue Kommentare,
-1 = keine neuen, 2 = Voraussetzung. finden ordnet einen Replay-Titel über die Upload-Logs der Chargen zu;
-Exit 0 = gefunden (JSON), 1 = nicht von AutoCut hochgeladen.
+1 = keine neuen, 2 = Voraussetzung. Je Video und Runde nur ein Lese-Weg (ein zweiter Lauf überschreibt die Dateien);
+kommentare --nur-stand vergleicht die Timeline im offenen Projekt nur lesend mit dem Upload-Schnappschuss und schreibt
+nichts (z. B. nach der Chrome-Lesung); Exit 0 = unverändert, 1 = verändert, 2 = Voraussetzung. finden ordnet einen
+Replay-Titel über die Upload-Logs der Chargen zu; Exit 0 = gefunden (JSON), 1 = nicht von AutoCut hochgeladen.
 """
 from __future__ import annotations
 
@@ -45,7 +48,8 @@ def _cfg(ch: Charge) -> dict:
 
 
 def _pruefen(ch: Charge, session, name: str, project: str, cfg: dict):
-    """Vorbedingungen, nur lesend: Freigabe, Timeline, In/Out-Marken, Replay-Marker, Wiedergabe."""
+    """Vorbedingungen, nur lesend: Freigabe, Timeline, In/Out-Marken, Replay-Marker, Wiedergabe, laufendes Rendern
+    (``IsRenderingInProgress``)."""
     if session.project_name != project:
         raise AutoCutError(f"Offen ist das Projekt '{session.project_name}', freigegeben wurde '{project}'. "
                            f"Nichts hochgeladen — Projekt öffnen oder --project anpassen.")
@@ -193,6 +197,25 @@ def schritt_finden(args) -> int:
     return 0
 
 
+def _stand_melden(ch: Charge, eintrag: dict, snap_upload: dict, snap_jetzt: dict) -> int:
+    """kommentare --nur-stand: Stand seit dem Upload melden, ohne etwas zu schreiben — kommentare.json/.md und Protokoll
+    bleiben, wie der Lese-Weg der Runde (z. B. Chrome) sie hinterlassen hat. Exit 0 = unverändert, 1 = verändert."""
+    aenderungen = KO.vergleiche(snap_upload, snap_jetzt)
+    zeilen = [f"Replay-Stand „{eintrag['titel']}“ (Timeline {eintrag['timeline']}), nur gelesen",
+              f"Stand seit Upload: {'verändert' if aenderungen else 'unverändert'}"]
+    zeilen += [f"  - {z}" for z in aenderungen]
+    gelesen = R.feedback_ordner(ch, eintrag) / "kommentare.json"
+    if aenderungen and gelesen.exists():
+        fps, start_tc = float(snap_jetzt["fps"]), str(snap_jetzt["start_timecode"])
+        for k in json.loads(gelesen.read_text(encoding="utf-8")).get("kommentare") or []:
+            f = KO.frame_im_stand(k.get("clips") or [], snap_jetzt)
+            zeilen.append(f"  K{k.get('nr')} {k.get('tc')} → "
+                          + ("nicht eindeutig (Rückfrage)" if f is None else f"jetzt {K.timecode(f, fps, start_tc)}"))
+    zeilen.append("Nichts geschrieben — kommentare.json, kommentare.md und Protokoll unverändert.")
+    print("\n".join(zeilen))
+    return 1 if aenderungen else 0
+
+
 def schritt_kommentare(ch: Charge, args) -> int:
     cfg = _cfg(ch)
     eintrag = R.upload_eintrag(ch, timeline=args.timeline)
@@ -206,8 +229,11 @@ def schritt_kommentare(ch: Charge, args) -> int:
         p = Path(args.aus_json).expanduser()
         if not p.is_file():
             raise AutoCutError(f"--aus-json nicht gefunden: {p}")
-        daten = json.loads(p.read_text(encoding="utf-8"))
-        json_titel = daten.get("titel")
+        try:
+            daten = json.loads(p.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            raise AutoCutError(f"--aus-json {p} ist kein gültiges UTF-8-JSON ({exc}) — Chrome-Lesung neu speichern.") from exc
+        json_titel = daten.get("titel") if isinstance(daten, dict) else None      # Form prüft KO.aus_json unten
         if json_titel:
             jt = str(json_titel)
             jt_norm = unicodedata.normalize("NFC", jt[:-4] if jt.lower().endswith(".mp4") else jt)
@@ -218,15 +244,17 @@ def schritt_kommentare(ch: Charge, args) -> int:
         kommentare, weg = KO.aus_json(daten, fps), "chrome"
     else:
         session = RA.ResolveSession(RA.connect(), path_map=ch.config.get("path_map"))
+        chrome = "" if args.nur_stand else " oder Kommentare im Chrome lesen (--aus-json)"   # prüft keinen Stand
         if eintrag.get("projekt") and session.project_name != eintrag["projekt"]:
             raise AutoCutError(f"Timeline gehört zu Projekt '{eintrag['projekt']}', offen ist "
-                               f"'{session.project_name}' — richtiges Projekt öffnen (nur lesen) oder Kommentare "
-                               f"im Chrome lesen (--aus-json).")
+                               f"'{session.project_name}' — richtiges Projekt öffnen (nur lesen){chrome}.")
         tl = session.find_timeline(eintrag["timeline"])
         if tl is None:
             raise AutoCutError(f"Timeline '{eintrag['timeline']}' ist nicht im offenen Projekt '{session.project_name}' — "
-                               f"Projekt '{eintrag.get('projekt')}' öffnen (nur lesen) oder Kommentare im Chrome lesen "
-                               f"(--aus-json).")
+                               f"Projekt '{eintrag.get('projekt')}' öffnen (nur lesen){chrome}.")
+        if args.nur_stand:
+            return _stand_melden(ch, eintrag, snap_upload,
+                                 K.snapshot_from_readback(session.read_timeline(tl), session.project_name))
         warten = int(cfg.get("sync_warten_s") or 0) if args.warten is None else int(args.warten)
         merkmal = cfg.get("dropbox_marker") or {}
         ende = time.monotonic() + max(0, warten)
@@ -291,7 +319,10 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("--ordner", help="Replay-Pfad (Standard aus replay.ordner)")
     k = sub.add_parser("kommentare", help="Replay-Kommentare holen")
     k.add_argument("--timeline", help="hochgeladene Timeline (Standard: jüngster Upload)")
-    k.add_argument("--aus-json", help="Chrome-Lesung statt Resolve")
+    lesen = k.add_mutually_exclusive_group()
+    lesen.add_argument("--aus-json", help="Chrome-Lesung statt Resolve")
+    lesen.add_argument("--nur-stand", action="store_true",
+                       help="nur den Stand seit dem Upload per API prüfen, schreibt nichts (z. B. nach der Chrome-Lesung)")
     k.add_argument("--warten", type=int, help="Sekunden, die bei 0 Kommentaren nachgelesen wird (Standard replay.sync_warten_s)")
     f = sub.add_parser("finden", help="Replay-Titel → Charge und Timeline")
     f.add_argument("--titel", required=True, help="Replay-Titel, mit oder ohne .mp4")

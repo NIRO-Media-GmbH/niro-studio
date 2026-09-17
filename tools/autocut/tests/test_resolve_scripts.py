@@ -499,6 +499,29 @@ def test_place_v2_build_refuses_uploaded_timeline(charge_dir, tmp_path, monkeypa
     assert ch.read_json("broll_build.json") is None                # keine V3-Items gebaut
 
 
+@pytest.mark.parametrize("log", ["gescheitert", "kein JSON", "keine Liste"])
+def test_place_v2_build_upload_schutz_meldung_bei_unklarem_log(charge_dir, tmp_path, monkeypatch, capsys, log):
+    """Rest-Review Punkt 5: replay.ist_hochgeladen schützt auch bei nur gescheiterten Upload-Einträgen und bei
+    nicht auswertbarem uploads.json (im Zweifel schützen). Die Meldung darf dann keinen erfolgten Upload behaupten,
+    sondern nennt das Log zum Prüfen."""
+    ch, name = _place_setup(charge_dir, tmp_path)
+    uploads_json = charge_dir / "_intern" / "replay" / "uploads.json"
+    uploads_json.parent.mkdir(parents=True)
+    gescheitert = json.dumps([{"titel": "T", "timeline": name, "projekt": "MEK", "hochgeladen_am": "2026-09-17T10:00:00",
+                               "upload_status": "Upload Failed"}])
+    uploads_json.write_text({"kein JSON": "{kaputt", "keine Liste": "{}"}.get(log, gescheitert), encoding="utf-8")
+
+    def kein_resolve():
+        raise AssertionError("Resolve darf bei geschützter Ziel-Timeline nicht verbunden werden")
+
+    monkeypatch.setattr(RA, "connect", kein_resolve)
+    rc = place.main([str(charge_dir)])
+    err = capsys.readouterr().err
+    assert rc == 1 and ch.read_json("broll_build.json") is None
+    assert "ist nach Replay hochgeladen" not in err
+    assert str(uploads_json) in err and "prüfen" in err
+
+
 def test_place_v2_compact_and_v1_plan_rejected(charge_dir, capsys):
     """--compact nutzt compact_index_v2; ein Plan im alten (v1) Format wird mit Hinweis auf --raster abgelehnt."""
     ch = Charge.open(charge_dir)

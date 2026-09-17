@@ -47,6 +47,23 @@ def test_aus_json_rechnet_frames_und_prueft_schema():
         KO.aus_json({"quelle": "chrome", "kommentare": [{"text": "ohne Zeit"}]}, 24.0)
 
 
+@pytest.mark.parametrize("kommentar, meldung", [
+    ({"von_s": float("nan"), "text": "A"}, "Kommentar 1"),
+    ({"von_s": float("inf"), "text": "A"}, "Kommentar 1"),
+    ({"von_s": 1.0, "text": "A", "antworten": "ok"}, "antworten"),
+    ({"von_s": 1.0, "text": "A", "antworten": 5}, "antworten")])
+def test_aus_json_weist_unendliche_zeiten_und_antworten_ohne_liste_ab(kommentar, meldung):
+    """Rest-Review Punkt 2 (Nachtrag): NaN/Infinity in von_s und antworten ohne Liste → AutoCutError (Exit 2) statt
+    ValueError/OverflowError/TypeError (Exit 1) oder still zerlegtem Text („ok" → ["o", "k"])."""
+    with pytest.raises(AutoCutError, match=meldung):
+        KO.aus_json({"quelle": "chrome", "kommentare": [kommentar]}, 24.0)
+
+
+def test_aus_json_unendliches_bis_s_zaehlt_als_fehlend():
+    k = KO.aus_json({"quelle": "chrome", "kommentare": [{"von_s": 2.0, "bis_s": float("inf"), "text": "A"}]}, 24.0)
+    assert (k[0]["frame"], k[0]["dauer_frames"]) == (48, 1)
+
+
 def test_clips_an_mit_tempo():
     snap = _snap(start=10, quell_in=100, tempo=50.0)
     c = KO.clips_an(snap, 30)

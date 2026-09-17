@@ -79,6 +79,7 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" hochladen --project "<Projekt>"   # Vorschau; --hochladen nur nach OK
     "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" einsortiert --titel "<Titel>"     # nach dem Verschieben im Chrome
     "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" kommentare                         # Replay-Kommentare holen
+    "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" kommentare --nur-stand             # Stand seit Upload prüfen, schreibt nichts
     "$PY" "$TOOL/scripts/autocut_readback.py" "$CHARGE" --timeline "<Name>"             # Bau-Readback nach Vorlagen-Bauten
 
 ## Aufbau
