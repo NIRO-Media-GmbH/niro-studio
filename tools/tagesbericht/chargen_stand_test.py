@@ -1,9 +1,9 @@
-import os
 import shutil
 import tempfile
 import unittest
 from datetime import date, timedelta
 from pathlib import Path
+from unittest import mock
 
 from chargen_stand import Lieferung, chargen_stand
 from testhilfe import chargen_anlegen
@@ -51,24 +51,34 @@ class ChargenStandAusProtokollen(unittest.TestCase):
 
 
 class ChargenStandBeiGesperrtemOrdner(unittest.TestCase):
+    """Bis Python 3.12 werfen is_file/is_dir bei EACCES PermissionError, ab 3.13 geben sie False zurück —
+    der Test erzwingt den Fehler unabhängig von der Version."""
+
     def setUp(self):
         self.basis = Path(tempfile.mkdtemp(prefix="chargen_test_"))
         self.repo = self.basis / "repo"
         self.repo.mkdir()
         chargen_anlegen(self.repo, HEUTE)
-        self.gesperrt = self.repo / "projects" / "Gesperrt" / "P"
-        (self.gesperrt / "2026-01 C").mkdir(parents=True)
-        (self.gesperrt / "2026-01 C" / "Protokoll.md").write_text("## 2026-09-17 - x\n")
-        os.chmod(self.gesperrt, 0)
+        gesperrt = self.repo / "projects" / "Gesperrt" / "P" / "2026-01 C"
+        gesperrt.mkdir(parents=True)
+        (gesperrt / "Protokoll.md").write_text("## 2026-09-17 - x\n")
 
     def tearDown(self):
-        os.chmod(self.gesperrt, 0o755)
         shutil.rmtree(self.basis, ignore_errors=True)
 
-    def test_gesperrter_ordner_wird_gemeldet_nicht_geworfen(self):
-        stand = chargen_stand(self.repo, HEUTE)
+    def test_permission_error_wird_gemeldet_nicht_geworfen(self):
+        echt = Path.is_file
+
+        def gesperrt(pfad):
+            if "Gesperrt" in str(pfad):
+                raise PermissionError(13, "Permission denied", str(pfad))
+            return echt(pfad)
+
+        with mock.patch.object(Path, "is_file", gesperrt):
+            stand = chargen_stand(self.repo, HEUTE)
         self.assertTrue(any("Gesperrt" in f for f in stand.fehler), stand.fehler)
         self.assertIn(C1, stand.je_charge)
+        self.assertNotIn("projects/Gesperrt/P/2026-01 C", stand.je_charge_alle)
 
 
 if __name__ == "__main__":
