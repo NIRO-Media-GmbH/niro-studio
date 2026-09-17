@@ -169,6 +169,11 @@ pruefe "Hook im Worktree: kein Abgleich, Hinweis" 'printf "%s" "$AUS" | grep -q 
 AUS=$(cd "$B/wt" && sh tools/studio_abgleich.sh 2>&1)
 pruefe "Aufruf im Worktree gleicht projects/ des Hauptordners ab" '[ -f "$NIRO_STUDIO_NAS/projects/K/P/C/haupt.md" ] && [ ! -e "$B/wt/projects" ] && printf "%s" "$AUS" | grep -q "Hauptordner"'
 
+echo "Test 9: Hooks in einem Stand ohne Skript (z. B. alter Worktree-Branch bei absolutem core.hooksPath)"
+git init -q "$T/t9"
+AUS=$(cd "$T/t9" && sh "$HIER/../.githooks/post-merge" 2>&1 && sh "$HIER/../.githooks/post-rewrite" rebase 2>&1); RC=$?
+pruefe "still und Exit 0" '[ -z "$AUS" ] && [ "$RC" -eq 0 ]'
+
 echo "Test 5: NAS fehlt"
 neues_setup t5
 NIRO_STUDIO_NAS="$T/t5/nicht_verbunden/NIRO Studio"; export NIRO_STUDIO_NAS
