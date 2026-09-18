@@ -13,6 +13,13 @@ User ↔ Claude.
 
 ## Regel: jeder fertige Stand geht ins Review
 
+**Nach jedem AutoCut-Bau in Resolve** (Rohschnitt, B-Roll, Finalisieren, Feinschnitt und jeder Baustein, der die Timeline
+verändert) übernimmt `tools/autocut/scripts/autocut_review.py` Render und Ablage in einem Schritt (Render-Queue, ≤ 1920 px,
+ohne Quick Export): `"$PY" "$TOOL/scripts/autocut_review.py" "$CHARGE" --project "<offenes Projekt>" [--timeline …]
+[--notiz …] [--umsetzung umsetzung.json]` — Pflicht, ohne Rückfrage, Link in die Meldung (Details
+`tools/autocut/WORKFLOW-AutoCut.md` „Review-Ablage nach jedem Bau"). Alles Übrige (Remotion, ffmpeg-Entwürfe, fertige
+Exporte, Renders vom anderen Mac) geht über `review.py hinzufuegen`:
+
 Sobald ein Stand fertig ist, der begutachtet werden soll — Rohschnitt, Feinschnitt, Entwurf, finalisierter Export,
 Animation **als Komposit** (Alpha-Overlays allein werden abgelehnt), Aftermovie —, wird er sofort abgelegt und der Link
 im Chat genannt. Nicht ins Review: Kontaktbögen, Fotos, PDFs, reine Grafik-Alphas, Zwischenstände ohne Bild.

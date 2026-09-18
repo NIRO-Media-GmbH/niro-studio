@@ -32,7 +32,8 @@ Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" 
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe aus der roh-Timeline |
 | „Feinschnitt" | 6 | neue Feinschnitt-Timeline: A/B-Wechsel, B-Roll-Tempo/Stabilisierung, Grafik V4, Ton, Musik, SFX, danach Grading, Begradigen, Kopfposition (Vorlagen) |
 | „Kanten" | – | Kantenprüfung am Export (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) + Schnittbilder; Resolve nur lesend |
-| „Replay" | – | Timeline nach Dropbox Replay hochladen (Vorschau, Upload nach OK), einsortieren in `Autocut/<Kunde>/<Projekt>` |
+| „Review" (Pflicht nach jedem Bau) | – | Timeline über die Render-Queue rendern (≤ 1920 px) und als Version in NIRO Review ablegen (`autocut_review.py`, http://localhost:4711) |
+| „Replay" (nur Kundenrunden) | – | Timeline nach Dropbox Replay hochladen (Vorschau, Upload nach OK), einsortieren in `Autocut/<Kunde>/<Projekt>` |
 | „Kommentare" | – | Replay-Kommentare holen (`kommentare.md` im Feedback-Ordner), Umsetzung in neuer Timeline-Version |
 
 Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
@@ -76,6 +77,7 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE"             # Kantenprüfung am Export (Resolve nur lesend)
     "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE" --ohne-export   # nur Wortkanten am Quellton, z. B. nach Handänderungen
     "$PY" "$TOOL/scripts/autocut_schnittbild.py" "$CHARGE" --clip <Datei> --von 12.3 --bis 15.8   # Schnittbild Rohclip
+    "$PY" "$TOOL/scripts/autocut_review.py" "$CHARGE" --project "<Projekt>"             # nach jedem Bau: Render + NIRO Review
     "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" hochladen --project "<Projekt>"   # Vorschau; --hochladen nur nach OK
     "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" einsortiert --titel "<Titel>"     # nach dem Verschieben im Chrome
     "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" kommentare                         # Replay-Kommentare holen

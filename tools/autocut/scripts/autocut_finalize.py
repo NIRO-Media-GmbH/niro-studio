@@ -61,6 +61,8 @@ def main(argv: list[str] | None = None) -> int:
         zeilen += [f"Warnung: {w}" for w in out["warnings"][:10]]
         append_protokoll(ch, "Finalisieren", zeilen)
         print("\n".join(zeilen))
+        print(f"→ Review-Ablage (Pflicht): scripts/autocut_review.py \"{ch.root}\" --project \"{session.project_name}\" "
+              f"--timeline \"{out['timeline']}\"")
         return 0
     except AutoCutError as e:
         print(f"FEHLER: {e}", file=sys.stderr)

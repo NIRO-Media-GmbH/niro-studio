@@ -85,6 +85,11 @@ Abweichend davon:
 
 ## Eiserne Regeln
 
+- **Nach jedem Bau in Resolve: Review-Ablage (User 18.09.2026, Pflicht, ohne Rückfrage).** Jede gebaute oder
+  veränderte Timeline — Rohschnitt (Stufe 1), B-Roll (3/3a), Finalisieren (5), Feinschnitt (6d) und jeder weitere
+  Feinschnitt-Baustein, der die Timeline verändert (6a, 6b, 6g, 6h, 6i) — wird sofort danach über
+  `autocut_review.py` gerendert (Render-Queue, ≤ 1920 px) und als neue Version in NIRO Review abgelegt; der Link kommt
+  in die Meldung an den User (Abschnitt „Review-Ablage nach jedem Bau"). Dropbox Replay nur noch für Kundenrunden auf Auftrag.
 - **Stufe 3 „B-Roll" ist ausgesetzt (User 09.09.2026).** Urteil zum Schnitt vom 09.09.: „total unpassend und
   schlecht getrimmt — solange du das noch nicht besser kannst, lass es lieber ganz." Bis Teilprojekt 2
   („B-Roll-Index v3": zuverlässige Shot-Erkennung, Ausschuss-Metriken, Trimmung) abgenommen ist, **wählt
@@ -97,7 +102,8 @@ Abweichend davon:
   Einzige Ausnahme (User 17.09.2026): Grading-LUTs in `…/03_Vorlagen und Tools/02_Davinci Resolve/LUTs/NIRO Grading/` über `tools/resolve/luts_sync.sh`.
 - **Schreibbereiche** (im Code über `Charge.assert_writable` erzwungen): nur `<Charge>/_intern/autocut/**`,
   `<Charge>/Ergebnisse/Rohschnitt/**` und `Protokoll.md` (anhängen); `autocut_replay.py` zusätzlich
-  `<Charge>/_intern/replay/**` und `<Charge>/Material/Feedback/**` (`Charge.open_basis`). Sonst nichts unter `Material/`,
+  `<Charge>/_intern/replay/**` und `<Charge>/Material/Feedback/**` (`Charge.open_basis`), `autocut_review.py` zusätzlich
+  `<Charge>/Ergebnisse/Export/Review/**` (Review-Renders). Sonst nichts unter `Material/`,
   `O-Ton-Pläne/` oder in anderen Tools. Die Vorlagen (Stufe 3a/6) sind Chargen-Skripte **ohne** diese
   Code-Sperre: Sie schreiben nur unter `<Charge>/_intern/` in eigene Unterordner, auch ihre Prüf-Renders.
   Pfade im ANPASSEN-Block vor dem ersten Lauf prüfen.
@@ -228,9 +234,9 @@ Abweichend davon:
    (O-Töne/Platzhalter), Gesamtlänge gegen Ziellänge, Sync-Paare ok/nicht ok, alle Warnungen, offene
    Punkte. Längen: `total_frames` enthält Pausen und Platzhalter; die Resolve-Timeline endet am letzten Clip,
    eine Endcard am Schluss ist nur ein Marker hinter dem Ende.
-   Danach den Upload nach Replay nur anbieten, wenn der roh-Schnitt vor B-Roll, Finalisieren oder Feinschnitt
-   begutachtet werden soll (Vorschau zeigen, Abschnitt „Review in Replay") — nach einem Upload läuft keine weitere
-   Stufe mehr auf dieser Timeline: Stufe 3a, 5 und 6 brauchen dann eine neue Version per Neubau (Schritt 8).
+   **Danach sofort die Review-Ablage** (Pflicht, ohne Rückfrage): `"$PY" "$TOOL/scripts/autocut_review.py" "$CHARGE"
+   --project "<offenes Projekt>"` → V1 des Videos in NIRO Review, Link in der Meldung (Abschnitt „Review-Ablage nach
+   jedem Bau"). Die roh-Timeline bleibt danach weiter bearbeitbar (anders als nach einem Replay-Upload).
 8. **Neubau** (z. B. Kurzfassung „1 min kürzer"):
    1. Alte Stände nach `_intern/archiv/<Datum> <Name>/` sichern (Plan-Markdowns, PDF, `plan_rows`, Cutlist,
       `timeline`/`build`/`verify`, Bericht).
@@ -324,7 +330,8 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    - Readback: identisch, 0 außerhalb der Auswahl.
    - Timeline und Bin des Users zurück → `_intern/autocut/broll_einsatz.json`.
    - Rohschnitt-Bericht um „B-Roll" (Tabelle aller Shots) ergänzen, Protokoll-Eintrag.
-   - Dem User melden: B-Roll-Anteil, ungenutzte Auswahl-Sekunden, Marker.
+   - **Review-Ablage** (`autocut_review.py`, nächste Version desselben Videos, Notiz „B-Roll aus Auswahl").
+   - Dem User melden: B-Roll-Anteil, ungenutzte Auswahl-Sekunden, Marker, Review-Link.
 
 ## Stufe 4 — „Profil" (eigener Plan: `docs/superpowers/plans/2026-09-04-autocut-profil.md`, Spec Abschnitt 8)
 
@@ -347,7 +354,8 @@ prüft per Readback und Re-Export, setzt Spurnamen, Marker, Clip-Farbe Teal für
 schließt sie beim Bau der End-Timeline. Bericht: Pegel-Tabelle im Rohschnitt-Bericht, `finalize.json`. Exit 0 = fertig, 1 = Fehler
 (End-Timeline „… FEHLER", roh bleibt stehen), 2 = Vorbedingung fehlt (erst `autocut_build.py` bzw. `resolve_probe_xml.py`).
 Abnahme: End-Timeline in Resolve öffnen (A1-Pegel im Inspector, V3 lückenlos, Zeitlupen-Clips teal), Gesichtsanteil im
-B-Roll-Bericht, keine Schwarzframes. Danach den Upload nach Replay anbieten.
+B-Roll-Bericht, keine Schwarzframes. **Danach sofort die Review-Ablage** (`autocut_review.py --timeline "<End-Timeline>"`,
+Notiz „Finalisiert: Pegel, Zeitlupen"), Link in der Meldung.
 
 ## Stufe 6 — „Feinschnitt" (Vorlagen, Stand Taxodia 15.09.2026)
 
@@ -454,6 +462,8 @@ oder einen Zwischenstand.
    - **A1** Ton mit True Peak −3 je Clip und Voice Isolation 50.
    - **A2/A3** Musik mit Überblendungen (`SetFades` in Frames).
    - Dazu Marker und voller Readback → `feinschnitt.json`.
+   - **Review-Ablage** (`autocut_review.py`, nimmt ohne `--timeline` die Timeline aus `feinschnitt.json`), Notiz mit den
+     Bausteinen des Standes (z. B. „Feinschnitt: Ton, Grafik, Musik"); nach 6g/6h/6i jeweils erneut (nächste Version).
 3. **Fallen:**
    - Kein `path_map`: Das Material muss unter den Pfaden aus `timeline.json` erreichbar sein.
    - `FPS` ist fest 25.
@@ -652,7 +662,7 @@ Meldung an den User:
   - Timeline und Bin des Users wiederhergestellt.
 - **Marker:** Blur/Klären, Abweichungen vom Plan.
 - **Erinnerung:** Stereo Fixer (Fix Mode 2) auf alle SFX- und Sprachspuren setzen.
-- **Replay:** Upload-Vorschau zeigen und nach OK hochladen (Abschnitt „Review in Replay").
+- **Review:** Link der abgelegten Version (Review-Ablage ist vor der Meldung gelaufen); Replay nur für Kundenrunden auf Auftrag.
 - **Offene Punkte:** Grading-Feinschliff, Lieferlautheit, Freigaben des Kunden. Timings stellt der User danach von
   Hand nach (Aufbau für Handarbeit).
 
@@ -715,7 +725,42 @@ Ton-Schnitte, 30 Tonclips mit Transkript; Laufzeit 18 s (VideoToolbox), mit Bild
   Schnittbild bestätigt (z. B. „Aber" 01:02:34:06 und „Und" 01:00:54:22 starten mitten im Wort). Die Grafik lag nach dem
   Verschieben auf V5 → Erkennung über den Dateipfad statt fester Spur.
 
+## Review-Ablage nach jedem Bau — „Review" (seit 18.09.2026, Pflicht)
+
+NIRO Review (`tools/review`, Ablauf `tools/review/WORKFLOW-Review.md`, Oberfläche `http://localhost:4711`) ist der interne
+Review-Kreislauf: Claude legt Stände ab, der User kommentiert am Frame, Claude setzt um und legt V+1 ab. `autocut_review.py`
+verbindet den Bau damit: Render über die **Render-Queue** (MP4/H.265, ganze Timeline, lange Kante ≤ 1920 px — kein Quick
+Export, der blieb am 18.09. bei 4K-Hochkant bei 0 fps stehen und ließ Resolve abstürzen) nach
+`<Charge>/Ergebnisse/Export/Review/<Timeline>.mp4`, dann Ablage als Version (`review.py hinzufuegen`).
+
+    "$PY" "$TOOL/scripts/autocut_review.py" "$CHARGE" --project "<offenes Projekt>" [--timeline "<Name>" …] [--video "<Titel>"]
+        [--notiz "…"] [--version N] [--umsetzung <umsetzung.json>] [--codec H265|H264] [--vorschau]
+    "$PY" "$TOOL/scripts/autocut_review.py" "$CHARGE" --datei "<fertiger Render>" [--video "<Titel>"] [--notiz "…"]
+
+1. **Wann:** direkt nach jedem Bau (Regel „Eiserne Regeln"), vor der Meldung an den User; ohne Rückfrage. Voraussetzung
+   ist nur die Projekt-Freigabe der Session (`--project` = Name des offenen Projekts; bei Abweichung Exit 1, nichts gerendert).
+2. **Was:** ohne `--timeline` die zuletzt gebaute Timeline (`feinschnitt.json`, `finalize.json`, `build.json`); mehrere
+   `--timeline` rendern in einer Queue-Runde (ein `StartRendering`). Vorbedingungen wie beim Replay-Upload: keine In/Out-Marken
+   (der Queue-Render würde sie löschen → Exit 1, in Resolve entfernen), kein laufender Render, keine Vollbild-Wiedergabe,
+   Playhead steht (sonst bis 60 s warten). Deliver-Preset des Users wird gesichert und danach geladen, eigene Jobs (auch
+   liegengebliebene mit gleichem Zielordner) gelöscht, Timeline/Playhead/Bin/Seite des Users zurück.
+3. **Titel und Version:** Ein Video = ein Review-Titel über alle Stufen: aus dem Timeline-Namen ohne „AutoCut ", Zeitstempel,
+   „(roh)", Versionsmarke, Stufenwort (`AutoCut video-1-taxodia-weg 2026-09-15 0941 (roh)` → „video-1-taxodia-weg";
+   `AutoCut Aftermovie 2026-09-18 1220 Feinschnitt` → „Aftermovie"); `--video` setzt ihn fest (Pflicht, wenn der Name
+   nicht stabil ist). Version = nächste freie; die Notiz trägt Stufe · Timeline · Projekt (+ `--notiz`: was ist neu).
+4. **Nach dem User-Feedback:** Kommentare holen mit `python3 tools/review/review.py kommentare "$CHARGE"` (Export in
+   `Material/Feedback/<Datum> Review <Titel> V<n>/`), umsetzen nach `tools/review/WORKFLOW-Review.md` („Umsetzen"), neue
+   Version mit `--umsetzung umsetzung.json` ablegen (Status/Antwort/tc_neu je Kommentar-ID).
+5. **Prüfung:** Frames des Renders gegen die Timeline (`ffprobe -count_frames`, Warnung ab > 1 Frame Abweichung),
+   Protokoll-Eintrag „AutoCut: Review-Ablage", Meldung mit Link `http://localhost:4711/#/<Kunde>/<Projekt>/<Titel>`.
+   Exit 0 = abgelegt, 1 = Eingabe/Freigabe/Timeline/Marken, 2 = NAS, Resolve, ffmpeg oder Render gescheitert (Queue nach
+   90 s ohne Fortschritt gestoppt) → melden, nicht umgehen.
+6. **Vorhandene Renders** (z. B. vom anderen Mac oder aus einer eigenen Render-Pipeline): `--datei "<MP4>"` legt sie ohne
+   Resolve ab; für ganze Ordner `python3 tools/review/review.py hinzufuegen "$CHARGE" --ordner "<Ordner>" --muster "*.mp4"`.
+
 ## Review in Replay — „Replay" und „Kommentare" (seit 16.09.2026)
+
+**Seit 18.09.2026 nur für Kundenrunden auf Auftrag** — intern läuft alles über die Review-Ablage (Abschnitt davor).
 
 Spec `docs/superpowers/specs/2026-09-16-autocut-replay-design.md` (mit Nachträgen), gemessenes Verhalten in
 `tools/resolve/WORKFLOW-Resolve.md` („Dropbox Replay"). Voraussetzungen: Resolve mit Dropbox angemeldet (Einstellungen →
@@ -890,7 +935,9 @@ Timeline als handbearbeitet (kein Neubau).
     ├── sichtung/                        Kontaktbögen (Auswahl, Grafik-Review)
     └── archiv/<Datum> <Name>/           gesicherte Stände vor einem Neubau (Kurzfassung)
 
-    <Charge>/_intern/replay/             Review in Replay (autocut_replay.py)
+    <Charge>/Ergebnisse/Export/Review/<Timeline>.mp4   Review-Renders (autocut_review.py, Render-Queue, ≤ 1920 px)
+    <Charge>/Material/Feedback/<Datum> Review <Titel> V<n>/   kommentare.md · kommentare.json · umsetzung.json (NIRO Review)
+    <Charge>/_intern/replay/             Review in Replay (autocut_replay.py, nur Kundenrunden)
     ├── uploads.json                     Upload-Log: Titel, Timeline, Projekt, Status, Replay-Ordner, einsortiert_am
     ├── schnappschuesse/<Titel>.json     Timeline beim Upload (Frames relativ, Marker)
     ├── renders/<Titel>.mp4              lokale Kopie des Uploads

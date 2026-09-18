@@ -229,6 +229,7 @@ def main(argv: list[str] | None = None) -> int:
                 print("WARNUNG:", w)
             print(report_note if report_path is None else f"Bericht: {report_path}")
             print(f"Geschrieben: {tl_json}\n             {build_json}")
+            print(f"→ Review-Ablage (Pflicht): scripts/autocut_review.py \"{ch.root}\" --project \"{session.project_name}\"")
             return 0
         finally:
             session.restore_user_timeline()

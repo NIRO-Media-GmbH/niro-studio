@@ -357,7 +357,9 @@ def main(argv: list[str] | None = None) -> int:
                 print("HINWEIS:", w)
             print(f"\nGebaut: Timeline „{name}“ — {len(items)} V3-Items aus {out['clips']} Clips, {len(markers)} Marker, "
                   f"Startframe {out['start_frame']}, Projekt {'gespeichert' if out['gespeichert'] else 'NICHT gespeichert'}\n"
-                  f"Dateien: {ch.autocut / BUILD_FILE}\n         {md_path}")
+                  f"Dateien: {ch.autocut / BUILD_FILE}\n         {md_path}\n"
+                  f"→ Review-Ablage (Pflicht): scripts/autocut_review.py \"{ch.root}\" --project \"{session.project_name}\" "
+                  f"--timeline \"{name}\"")
             n_szenen = len({(p["strecke"], p["szene_i"]) for p in placed})
             n_zeitlupen = sum(1 for p in placed if p["tempo"] > 1)
             zeilen = [f"B-Roll-Layout v2 auf V3: Timeline „{name}“, {len(items)} Shots in {n_szenen} Szenen, {n_zeitlupen} "

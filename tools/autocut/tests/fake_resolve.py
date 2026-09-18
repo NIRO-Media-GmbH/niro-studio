@@ -272,6 +272,13 @@ class FakeTimeline:
     def GetName(self):
         return self.name
 
+    def GetCurrentTimecode(self):
+        return getattr(self, "timecode", "01:00:00:00")
+
+    def SetCurrentTimecode(self, tc):
+        self.timecode = tc
+        return True
+
     def SetName(self, n):
         if any(t.name == n for t in self.project.timelines):
             return False
@@ -618,6 +625,66 @@ class FakeProject:
 
     def IsRenderingInProgress(self):
         return False
+
+    # --- Render-Queue (gemessen 16.–18.09.2026: SetRenderSettings setzt/löscht Marken der aktiven Timeline) ----------
+    def SaveAsNewRenderPreset(self, name):
+        self.render_presets = getattr(self, "render_presets", []) + [name]
+        return True
+
+    def LoadRenderPreset(self, name):
+        self.loaded_presets = getattr(self, "loaded_presets", []) + [name]
+        return name in getattr(self, "render_presets", [])
+
+    def DeleteRenderPreset(self, name):
+        if name in getattr(self, "render_presets", []):
+            self.render_presets.remove(name)
+            return True
+        return False
+
+    def SetCurrentRenderFormatAndCodec(self, fmt, codec):
+        self.render_format = (fmt, codec)
+        return fmt == "mp4" and codec in ("H264", "H265")
+
+    def SetRenderSettings(self, settings):
+        self.render_settings = {**getattr(self, "render_settings", {}), **dict(settings)}
+        self.render_settings_calls = getattr(self, "render_settings_calls", []) + [dict(settings)]
+        if settings.get("SelectAllFrames") and self.current is not None:
+            self.current.mark_in_out = {}                            # löscht die Marken der aktiven Timeline
+        return True
+
+    def AddRenderJob(self):
+        if self.current is None:
+            return ""
+        self.render_jobs = getattr(self, "render_jobs", {})
+        jid = f"job-{len(self.render_jobs) + 1}"
+        self.render_jobs[jid] = {"JobId": jid, "TimelineName": self.current.name, "TargetDir": self.render_settings.get("TargetDir"),
+                                 "CustomName": self.render_settings.get("CustomName"), "settings": dict(self.render_settings),
+                                 "format": getattr(self, "render_format", None), "status": {"JobStatus": "Ready", "CompletionPercentage": 0}}
+        return jid
+
+    def GetRenderJobList(self):
+        return [dict(j) for j in getattr(self, "render_jobs", {}).values()]
+
+    def StartRendering(self, job_ids=None, interactive=False):
+        self.rendering_started = getattr(self, "rendering_started", []) + [list(job_ids or [])]
+        for jid in job_ids or []:
+            j = self.render_jobs[jid]
+            out = Path(j["TargetDir"]) / f"{j['CustomName']}.mp4"
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_bytes(b"fake render")
+            self.renders.append((j["format"], str(out), j["settings"].get("FormatWidth"), j["settings"].get("FormatHeight")))
+            j["status"] = {"JobStatus": "Complete", "CompletionPercentage": 100}
+        return True
+
+    def GetRenderJobStatus(self, jid):
+        return dict(self.render_jobs.get(jid, {}).get("status") or {})
+
+    def DeleteRenderJob(self, jid):
+        return getattr(self, "render_jobs", {}).pop(jid, None) is not None
+
+    def StopRendering(self):
+        self.render_stopped = True
+        return True
 
     def RenderWithQuickExport(self, preset, settings=None):
         settings = dict(settings or {})
