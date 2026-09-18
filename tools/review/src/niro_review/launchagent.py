@@ -25,7 +25,7 @@ def log_pfad() -> Path:
 def plist_inhalt(python: str, skript: str, repo: str, port: int, log: str, umgebung: dict) -> bytes:
     d = {"Label": ETIKETT, "ProgramArguments": [python, skript, "server", "--port", str(port)],
          "RunAtLoad": True, "KeepAlive": True, "WorkingDirectory": repo,
-         "StandardOutPath": log, "StandardErrorPath": log, "ProcessType": "Background",
+         "StandardOutPath": log, "StandardErrorPath": log, "ProcessType": "Interactive",   # „Background“ drosselt Netz-I/O (NAS-Index 36 s statt 0,2 s, gemessen 18.09.2026)
          "EnvironmentVariables": {"PATH": PATH_STANDARD, **umgebung}}
     return plistlib.dumps(d)
 

@@ -174,3 +174,33 @@ def test_ohne_nas_503(tmp_path, ui):
     finally:
         s.shutdown()
         s.server_close()
+
+
+def test_index_wartet_nicht_auf_langsamen_bau(wurzeln, ui, monkeypatch):
+    """NAS stockt: ein Bau hängt — parallele Anfragen bekommen sofort den letzten Stand statt anzustehen."""
+    from niro_review import modell as M
+    from niro_review import server as S
+    s = _starten(wurzeln["review"], wurzeln["cache"], ui)
+    try:
+        assert js(s, "GET", "/api/index")[1] == {"kunden": []}          # erster Bau (schnell)
+        video_anlegen(wurzeln)
+        bremse = threading.Event()
+        echt = M.index_bauen
+
+        def langsam(wurzel):
+            bremse.wait(5)
+            return echt(wurzel)
+
+        monkeypatch.setattr(S.modell, "index_bauen", langsam)
+        t = threading.Thread(target=lambda: anfrage(s, "GET", "/api/index?frisch=1"), daemon=True)
+        t.start()
+        time.sleep(0.2)
+        t0 = time.time()
+        status, daten = js(s, "GET", "/api/index?frisch=1")          # darf nicht hinter dem hängenden Bau warten
+        assert status == 200 and daten == {"kunden": []} and time.time() - t0 < 2
+        bremse.set()
+        t.join(timeout=10)
+        assert js(s, "GET", "/api/index")[1]["kunden"][0]["name"] == "Dold"
+    finally:
+        s.shutdown()
+        s.server_close()

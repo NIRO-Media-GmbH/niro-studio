@@ -103,6 +103,7 @@
     const q = Z.suche.trim().toLowerCase();
     const r = Z.route;
     baum.replaceChildren();
+    if (!Z.index) { baum.append(el("div", { class: "leer", text: "Lade …" })); return; }
     for (const k of Z.index.kunden) {
       const ps = k.projekte.filter((p) => !q || (k.name + " " + p.name).toLowerCase().includes(q) || p.videos.some((v) => v.titel.toLowerCase().includes(q)));
       if (!ps.length) continue;
@@ -536,12 +537,17 @@
     if (Z.pollTimer) { clearInterval(Z.pollTimer); Z.pollTimer = null; }
     if (Z.rvfc && Z.video) { try { Z.video.cancelVideoFrameCallback(Z.rvfc); } catch (e) { /* egal */ } Z.rvfc = null; }
     Z.video = null; Z.detail = null; Z.dom = {};
+    const r = Z.route;
+    if (r.video) {                       // Player braucht den Index nicht — nicht auf ein stockendes NAS warten
+      if (!Z.index) ladeIndex().then(renderBaum).catch(() => {});
+      renderBaum(); renderKrumen();
+      await renderPlayer();
+      return;
+    }
     if (!Z.index) await ladeIndex();
     renderBaum(); renderKrumen();
-    const r = Z.route;
     if (!r.kunde) return renderStart();
-    if (!r.video) return renderProjekt();
-    await renderPlayer();
+    return renderProjekt();
   }
   window.addEventListener("hashchange", () => navigieren().catch(fehler));
   autorAnzeigen();
@@ -549,5 +555,6 @@
   nasPruefen();
   setInterval(nasPruefen, 10000);
   setInterval(() => { if (!Z.route.video) ladeIndex(true).then(() => { renderBaum(); if (Z.route.kunde) renderProjekt(); else renderStart(); }).catch(() => {}); }, 15000);
+  setInterval(() => { if (Z.route.video) ladeIndex(true).then(renderBaum).catch(() => {}); }, 30000);
   navigieren().catch(fehler);
 })();

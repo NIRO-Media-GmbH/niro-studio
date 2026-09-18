@@ -20,6 +20,8 @@ launchctl kickstart -k gui/$(id -u)/de.niro.review
 ```
 
 Entfernen: `python3 tools/review/review.py deinstallieren`. Ohne LaunchAgent: `python3 tools/review/review.py server`.
+Wer den Agent vor dem 18.09. 15 Uhr installiert hat: einmal `installieren` wiederholen — der alte Eintrag lief als
+„Background"-Prozess, macOS drosselt dann die Netz-I/O (erster NAS-Index 36 s statt 0,2 s).
 
 ## Bedienen
 

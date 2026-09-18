@@ -46,6 +46,7 @@ class ReviewServer(ThreadingHTTPServer):
         self.sperre = threading.RLock()
         self._index: Optional[dict] = None
         self._index_zeit = 0.0
+        self._index_bau = threading.Lock()      # höchstens ein Thread baut den Index; andere bekommen den alten Stand
         self.cache_laeuft: set = set()
 
     def nas_verbunden(self) -> bool:
@@ -60,15 +61,30 @@ class ReviewServer(ThreadingHTTPServer):
         super().handle_error(request, client_address)
 
     def index(self, frisch: bool = False) -> dict:
+        """Index liefern; veraltet → neu bauen, aber nie hinter einem laufenden Bau anstehen (NAS kann sekundenlang
+        stocken): wer den Bau nicht selbst übernimmt, bekommt den letzten Stand — nur der allererste Aufruf wartet."""
         with self.sperre:
-            if frisch or self._index is None or time.time() - self._index_zeit > self.index_ttl:
-                self._index = modell.index_bauen(self.wurzel)
-                self._index_zeit = time.time()
-            return self._index
+            aktuell, zeit = self._index, self._index_zeit
+        if aktuell is not None and not frisch and time.time() - zeit <= self.index_ttl:
+            return aktuell
+        if self._index_bau.acquire(blocking=False):
+            try:
+                neu = modell.index_bauen(self.wurzel)
+                with self.sperre:
+                    self._index, self._index_zeit = neu, time.time()
+                return neu
+            finally:
+                self._index_bau.release()
+        if aktuell is not None:
+            return aktuell
+        with self._index_bau:       # erster Bau läuft in einem anderen Thread — auf ihn warten
+            pass
+        with self.sperre:
+            return self._index if self._index is not None else {"kunden": []}
 
     def index_verwerfen(self) -> None:
         with self.sperre:
-            self._index = None
+            self._index_zeit = 0.0      # alter Stand bleibt lieferbar, gilt aber als veraltet
 
     def cache_fuellen(self, quelle: Path, ziel: Path, schluessel: str) -> None:
         with self.sperre:
@@ -351,6 +367,19 @@ def _autor(body: dict) -> str:
 def starten(port: int = 4711, wurzel: Optional[Path] = None, cache: Optional[Path] = None) -> None:
     srv = ReviewServer(("127.0.0.1", port), wurzel or review_wurzel(), cache or cache_wurzel())
     print(f"NIRO Review {WERKZEUG_VERSION} · http://localhost:{port} · Wurzel {srv.wurzel} · Cache {srv.cache}", flush=True)
+
+    def aufwaermen():
+        # Erster NAS-Zugriff eines LaunchAgent-Prozesses dauert bis zu 30 s (gemessen 18.09.2026) — vorab im Hintergrund,
+        # damit die erste Seite nicht darauf wartet.
+        t0 = time.time()
+        try:
+            if srv.nas_verbunden():
+                n = sum(len(p["videos"]) for k in srv.index(frisch=True)["kunden"] for p in k["projekte"])
+                print(f"Index aufgewärmt: {n} Videos in {time.time() - t0:.1f} s", flush=True)
+        except Exception as e:  # noqa: BLE001
+            print(f"Index-Aufwärmen fehlgeschlagen: {type(e).__name__}: {e}", flush=True)
+
+    threading.Thread(target=aufwaermen, daemon=True).start()
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
