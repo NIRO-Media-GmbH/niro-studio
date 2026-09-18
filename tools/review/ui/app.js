@@ -36,7 +36,9 @@
     index: null, route: {}, detail: null, detailStand: "", versionNr: null, version: null,
     autor: "", suche: "", fps: 25, frames: 0, frame: 0, video: null, dom: {}, pollTimer: null, rvfc: null,
     eingabe: { aktiv: false, frame: null, bis: null, allgemein: false }, hervor: null, startFrame: null,
+    bausteine: null, bausteineZu: false,
   };
+  try { Z.bausteineZu = localStorage.getItem("niroReviewBausteineZu") === "1"; } catch (e) { /* egal */ }
   try { Z.autor = localStorage.getItem("niroReviewAutor") || ""; } catch (e) { Z.autor = ""; }
 
   async function api(pfad, body) {
@@ -454,11 +456,70 @@
     if (v.abgeschlossen) return el("div", { class: "eingabe gesperrt" }, el("div", { class: "sperre" }, el("span", { text: `V${v.nr} ist abgeschlossen (bei Claude). Neue Kommentare erst nach „Wieder öffnen“.` }), el("button", { text: "Wieder öffnen", onclick: () => versionAktion("version/wieder_oeffnen") })));
     const d = Z.dom;
     d.stelle = el("div", { class: "stelle" });
-    d.textarea = el("textarea", { placeholder: "Kommentar an der aktuellen Stelle … (C = hierher, ⌘↩ = senden)", onfocus: () => { Z.video.pause(); if (!Z.eingabe.aktiv) { Z.eingabe.aktiv = true; if (!Z.eingabe.allgemein && Z.eingabe.frame === null) Z.eingabe.frame = Z.frame; } renderStelle(); } });
-    const eingabe = el("div", { class: "eingabe" }, d.stelle, d.textarea,
-      el("div", { class: "senden" }, el("span", { class: "hinweis", text: "I/O = Bereich · Esc = Video weiter" }), el("button", { class: "primaer", text: "Kommentar senden", onclick: senden })));
+    d.bausteine = el("div", { class: "bausteine" });
+    d.textarea = el("textarea", { placeholder: "Kommentar an der aktuellen Stelle … (C = hierher, ⌘↩ = senden)", onfocus: () => { eingabeAktivieren(); renderStelle(); } });
+    const eingabe = el("div", { class: "eingabe" }, d.stelle, d.bausteine, d.textarea,
+      el("div", { class: "senden" }, el("span", { class: "hinweis", text: "I/O = Bereich · Esc = Video weiter · ⇧-Klick auf Baustein = sofort senden" }), el("button", { class: "primaer", text: "Kommentar senden", onclick: senden })));
     renderStelle();
+    renderBausteine();
+    if (!Z.bausteine) ladeBausteine().then(renderBausteine).catch(() => {});
     return eingabe;
+  }
+  function eingabeAktivieren() {
+    Z.video.pause();
+    if (!Z.eingabe.aktiv) { Z.eingabe.aktiv = true; if (!Z.eingabe.allgemein && Z.eingabe.frame === null) Z.eingabe.frame = Z.frame; }
+  }
+
+  // ---------- Bausteine (Schnelltexte, gemeinsam auf dem NAS) ------------------------------------------------------
+  async function ladeBausteine() { Z.bausteine = (await api("bausteine")).bausteine || []; return Z.bausteine; }
+  async function speichereBausteine(liste) {
+    try { Z.bausteine = (await api("bausteine", { bausteine: liste, autor: Z.autor })).bausteine; renderBausteine(); }
+    catch (e) { fehler(e); }
+  }
+  function renderBausteine() {
+    const d = Z.dom;
+    if (!d.bausteine) return;
+    const liste = Z.bausteine || [];
+    const kopf = el("div", { class: "bausteine-kopf" },
+      el("button", { class: "leise", text: (Z.bausteineZu ? "▸" : "▾") + " Bausteine" + (liste.length ? ` (${liste.length})` : ""), title: "Schnelltexte ein-/ausklappen", onclick: () => { Z.bausteineZu = !Z.bausteineZu; try { localStorage.setItem("niroReviewBausteineZu", Z.bausteineZu ? "1" : "0"); } catch (e) { /* egal */ } renderBausteine(); } }),
+      el("button", { class: "leise", text: "＋ aus Text", title: "Text im Kommentarfeld als neuen Baustein speichern (für beide Macs)", onclick: bausteinAusText }));
+    const chips = el("div", { class: "chips", hidden: Z.bausteineZu });
+    if (!Z.bausteine) chips.append(el("span", { class: "gedaempft", text: "lade …" }));
+    for (const [i, b] of liste.entries()) {
+      chips.append(el("span", { class: "baustein", title: b.text + "\nKlick = einfügen · ⇧-Klick = sofort senden", onclick: (ev) => bausteinEinfuegen(b, ev.shiftKey) },
+        el("span", { text: b.kurz }),
+        el("button", { class: "x", text: "×", title: "Baustein entfernen", onclick: (ev) => { ev.stopPropagation(); if (confirm(`Baustein „${b.kurz}“ entfernen?`)) speichereBausteine(liste.filter((_, j) => j !== i)); } })));
+    }
+    d.bausteine.replaceChildren(kopf, chips);
+  }
+  async function bausteinEinfuegen(b, sofort) {
+    const d = Z.dom;
+    if (!d.textarea) return;
+    eingabeAktivieren();
+    if (sofort) {
+      const e = Z.eingabe;
+      const frame = e.allgemein ? null : (e.frame !== null ? e.frame : Z.frame);
+      try {
+        await api("kommentar", { ...basisDaten(Z.versionNr), autor: Z.autor, text: b.text, frame, bis_frame: e.allgemein ? null : e.bis });
+        Z.eingabe = { aktiv: false, frame: null, bis: null, allgemein: false };
+        await aktualisierePlayer(true);
+        renderStelle();
+      } catch (err) { fehler(err); }
+      return;
+    }
+    const alt = d.textarea.value;
+    d.textarea.value = alt.trim() ? alt.replace(/\s+$/, "") + " — " + b.text : b.text;
+    d.textarea.focus();
+    d.textarea.setSelectionRange(d.textarea.value.length, d.textarea.value.length);
+    renderStelle();
+  }
+  function bausteinAusText() {
+    const d = Z.dom;
+    const text = d.textarea ? d.textarea.value.trim() : "";
+    if (!text) { toast("Erst den Text ins Kommentarfeld schreiben, dann „＋ aus Text“.", ""); return; }
+    const kurz = (prompt("Kurzname für den Baustein:", text.slice(0, 28)) || "").trim();
+    if (!kurz) return;
+    speichereBausteine([...(Z.bausteine || []), { kurz: kurz.slice(0, 40), text }]);
   }
   function renderStelle() {
     const d = Z.dom, e = Z.eingabe;

@@ -16,7 +16,7 @@ from urllib.parse import parse_qs, unquote, urlsplit
 from . import WERKZEUG_VERSION
 from . import kommentare as km
 from . import modell
-from .ablage import ReviewFehler, cache_wurzel, jetzt, mac_name, name_ok, nfc, review_wurzel, sicherer_pfad
+from .ablage import ReviewFehler, cache_wurzel, jetzt, json_lesen, json_schreiben, mac_name, name_ok, nfc, review_wurzel, sicherer_pfad
 
 UI_ORDNER = Path(__file__).resolve().parents[2] / "ui"
 BLOCK = 1024 * 1024
@@ -25,6 +25,53 @@ TYPEN = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=u
          ".svg": "image/svg+xml", ".otf": "font/otf", ".ttf": "font/ttf", ".woff2": "font/woff2", ".mp4": "video/mp4",
          ".jpg": "image/jpeg", ".png": "image/png", ".json": "application/json", ".ico": "image/x-icon"}
 _RANGE = re.compile(r"^bytes=(\d*)-(\d*)$")
+
+
+# Schnellbausteine fürs Kommentarfeld — Reihenfolge nach Häufigkeit der Kommentare (Wurst & Liebe, 180 Stück, 18.09.2026).
+# Gemeinsame Datei review/_bausteine.json auf dem NAS; fehlt sie, gilt diese Liste.
+BAUSTEINE_STANDARD = [
+    {"kurz": "Andere Cam", "text": "Andere Kamera zeigen — die Person, die gerade spricht"},
+    {"kurz": "Shot tauschen", "text": "Shot austauschen"},
+    {"kurz": "Shot raus", "text": "Der Shot raus"},
+    {"kurz": "Erst ab hier", "text": "Shot erst ab hier starten (neuer In-Punkt)"},
+    {"kurz": "Länger zeigen", "text": "Den Shot länger zeigen"},
+    {"kurz": "O-Ton fehlt", "text": "Hier fehlt ein O-Ton (Frage/Antwort/Interaktion) — mit rein"},
+    {"kurz": "Grafik runter", "text": "Grafik runter setzen"},
+    {"kurz": "Stabilisieren", "text": "Shot stabilisieren"},
+    {"kurz": "Ranzoomen", "text": "Ranzoomen und mittig setzen"},
+    {"kurz": "Heller", "text": "Der Shot heller / mehr Kontrast"},
+    {"kurz": "Zu dunkel", "text": "Zu dunkel"},
+    {"kurz": "Musik wechseln", "text": "Musik wechseln"},
+    {"kurz": "Pop-SFX raus", "text": "Pop-SFX raus"},
+    {"kurz": "Satz raus", "text": "Den Satz raus"},
+    {"kurz": "Wide Shot", "text": "Hier einen Wide-/Drohnenshot einblenden"},
+    {"kurz": "Pause raus", "text": "Die Pause rauscutten und den Cut verstecken"},
+    {"kurz": "Lauter", "text": "Stimme lauter machen"},
+    {"kurz": "Totale", "text": "Hier auf die Totale wechseln"},
+    {"kurz": "Slow-Mo", "text": "Slow-Mo"},
+    {"kurz": "UT flackert", "text": "Untertitel flackert"},
+    {"kurz": "90° gedreht", "text": "Shot ist 90° falsch herum"},
+    {"kurz": "Retusche", "text": "Störendes rausretuschieren (KI)"},
+    {"kurz": "Zu kurz", "text": "Einblendung zu kurz"},
+    {"kurz": "Bestätigt?", "text": "Ist das bestätigt?"},
+]
+BAUSTEINE_MAX = 80
+
+
+def bausteine_pruefen(daten) -> list:
+    liste = daten.get("bausteine") if isinstance(daten, dict) else None
+    if not isinstance(liste, list) or len(liste) > BAUSTEINE_MAX:
+        raise HttpFehler(400, f"bausteine: Liste mit höchstens {BAUSTEINE_MAX} Einträgen erwartet.")
+    out = []
+    for i, b in enumerate(liste, start=1):
+        if not isinstance(b, dict):
+            raise HttpFehler(400, f"Baustein {i}: Objekt mit kurz und text erwartet.")
+        text = nfc(str(b.get("text") or "")).strip()
+        kurz = nfc(str(b.get("kurz") or "")).strip() or text[:28]
+        if not text or len(text) > 500 or len(kurz) > 40:
+            raise HttpFehler(400, f"Baustein {i}: text (1–500 Zeichen) und kurz (≤ 40 Zeichen).")
+        out.append({"kurz": kurz, "text": text})
+    return out
 
 
 class HttpFehler(Exception):
@@ -183,6 +230,14 @@ class Handler(BaseHTTPRequestHandler):
     def _api_get(self, weg: str, q: dict):
         if weg == "index":
             return self.server.index(frisch=_q1(q, "frisch") == "1")
+        if weg == "bausteine":
+            daten = json_lesen(self.server.wurzel / "_bausteine.json", None)
+            if isinstance(daten, dict) and isinstance(daten.get("bausteine"), list):
+                try:
+                    return {"bausteine": bausteine_pruefen(daten), "standard": False}
+                except HttpFehler:
+                    pass
+            return {"bausteine": list(BAUSTEINE_STANDARD), "standard": True}
         if weg == "video":
             ordner, _ = self._video({k: _q1(q, k) for k in ("kunde", "projekt", "video")})
             detail = modell.video_detail(ordner)
@@ -235,6 +290,10 @@ class Handler(BaseHTTPRequestHandler):
                 modell.version_schreiben(ordner, nr, version)
                 srv.index_verwerfen()
                 return version
+            if weg == "bausteine":
+                liste = bausteine_pruefen(body)
+                json_schreiben(srv.wurzel / "_bausteine.json", {"bausteine": liste, "geaendert": jetzt(), "von": _autor(body)})
+                return {"bausteine": liste, "standard": False}
             if weg in ("video/freigeben", "video/freigabe_zuruecknehmen"):
                 ordner, video = self._video(body)
                 video["freigegeben"] = {"am": jetzt(), "von": _autor(body)} if weg.endswith("freigeben") else None

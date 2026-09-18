@@ -204,3 +204,18 @@ def test_index_wartet_nicht_auf_langsamen_bau(wurzeln, ui, monkeypatch):
     finally:
         s.shutdown()
         s.server_close()
+
+
+def test_bausteine_standard_und_eigene(srv, wurzeln):
+    status, daten = js(srv, "GET", "/api/bausteine")
+    assert status == 200 and daten["standard"] is True and daten["bausteine"][0]["kurz"] == "Andere Cam"
+    assert len(daten["bausteine"]) >= 20 and all(b["text"] for b in daten["bausteine"])
+    eigene = [{"kurz": "Shot tauschen", "text": "Shot austauschen"}, {"text": "Pop-SFX raus"}]
+    status, daten = js(srv, "POST", "/api/bausteine", {"bausteine": eigene, "autor": "Jan"})
+    assert status == 200 and daten["bausteine"] == [{"kurz": "Shot tauschen", "text": "Shot austauschen"}, {"kurz": "Pop-SFX raus", "text": "Pop-SFX raus"}]
+    assert json.loads((wurzeln["review"] / "_bausteine.json").read_text(encoding="utf-8"))["von"] == "Jan"
+    assert js(srv, "GET", "/api/bausteine")[1] == {"bausteine": daten["bausteine"], "standard": False}
+    assert js(srv, "POST", "/api/bausteine", {"bausteine": "kaputt"})[0] == 400
+    assert js(srv, "POST", "/api/bausteine", {"bausteine": [{"text": ""}]})[0] == 400
+    assert js(srv, "POST", "/api/bausteine", {"bausteine": []})[0] == 200        # leer = alle weg (bewusst)
+    assert js(srv, "GET", "/api/index")[1]["kunden"] == []                        # _bausteine.json stört den Index nicht

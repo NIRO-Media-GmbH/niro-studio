@@ -190,6 +190,15 @@ input:focus, textarea:focus { border-color: var(--gruen); }
 .eingabe .stelle button { padding: 2px 9px; font-size: 12px; }
 .eingabe .stelle button.aktiv { border-color: var(--blau); color: var(--blau); }
 .eingabe textarea { min-height: 64px; resize: vertical; }
+.bausteine { display: flex; flex-direction: column; gap: 4px; }
+.bausteine-kopf { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+.bausteine-kopf .leise { font-size: 12px; padding: 2px 6px; }
+.bausteine .chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 108px; overflow: auto; }
+.baustein { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; line-height: 1; padding: 5px 4px 5px 9px; border-radius: 999px; background: var(--flaeche-2); border: 1px solid var(--linie); color: var(--text); cursor: pointer; user-select: none; white-space: nowrap; }
+.baustein:hover { border-color: var(--gruen); background: var(--flaeche-3); }
+.baustein .x { border: 0; background: transparent; color: var(--gedaempft); padding: 0 4px; font-size: 12px; line-height: 1; opacity: 0; cursor: pointer; }
+.baustein:hover .x { opacity: 1; }
+.baustein .x:hover { color: var(--rot); background: transparent; }
 .eingabe .senden { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .eingabe .senden .hinweis { font-size: 11.5px; color: var(--gedaempft); }
 .eingabe.gesperrt { opacity: .7; }

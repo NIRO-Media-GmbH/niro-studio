@@ -32,6 +32,12 @@ Wer den Agent vor dem 18.09. 15 Uhr installiert hat: einmal `installieren` wiede
   frame-genau, Scrubber mit Kommentar-Markern (Punkt = Stelle, Balken = Bereich), Versions-Pillen.
   Tippen im Kommentarfeld pausiert das Video; der Kommentar landet am aktuellen Frame. „Bereich bis hier" (oder `O`)
   macht einen Bereich, „Allgemein" einen Kommentar ohne Zeit.
+- **Bausteine** über dem Kommentarfeld: Klick fügt den Text ein (mehrere Klicks hängen an), ⇧-Klick sendet sofort an der
+  aktuellen Stelle. „＋ aus Text" speichert den Text im Feld als neuen Baustein, × am Chip entfernt ihn. Die Liste liegt
+  auf dem NAS (`review/_bausteine.json`) und gilt auf beiden Macs; ohne Datei die Standardliste (nach Häufigkeit der
+  Wurst-&-Liebe-Kommentare vom 18.09.: Andere Cam, Shot tauschen, Shot raus, Erst ab hier, Länger zeigen, O-Ton fehlt,
+  Grafik runter, Stabilisieren, Ranzoomen, Heller, Zu dunkel, Musik wechseln, Pop-SFX raus, Satz raus, Wide Shot, Pause raus,
+  Lauter, Totale, Slow-Mo, UT flackert, 90° gedreht, Retusche, Zu kurz, Bestätigt?).
 - **Review abschließen** sperrt die Version für neue Kommentare und stellt sie auf „bei Claude" — dann im Chat
   „fertig" oder „Review: Kunde/Projekt" sagen. **Freigeben**, wenn das Video fertig ist.
 - Ab V2 zeigt „Seit V1 geändert" jede Antwort von Claude mit Sprung zur neuen Stelle; dort abhaken („erledigt") oder auf
