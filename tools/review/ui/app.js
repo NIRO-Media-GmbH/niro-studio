@@ -47,6 +47,7 @@
     return daten;
   }
 
+  const frameAusZeit = (t, fps = Z.fps) => Math.max(0, Math.floor(t * fps + 0.001));
   function tc(frame, fps = Z.fps) {
     if (frame === null || frame === undefined) return "—";
     const b = Math.max(1, Math.round(fps));
@@ -109,8 +110,8 @@
       for (const p of ps) {
         kunde.append(el("a", { class: "projekt" + (r.kunde === k.name && r.projekt === p.name ? " aktiv" : ""), href: pfad(k.name, p.name) },
           el("span", { class: "name", text: p.name }),
-          p.review_offen ? el("span", { class: "zahl gruen", text: String(p.offen || p.review_offen), title: "offene Kommentare / Videos im Review" }) : null,
-          p.bei_claude ? el("span", { class: "zahl blau", text: String(p.bei_claude), title: "bei Claude" }) : null));
+          p.review_offen ? el("span", { class: "zahl gruen", text: String(p.review_offen), title: p.review_offen + " im Review" + (p.offen ? " · " + p.offen + " offene Kommentare" : "") }) : null,
+          p.bei_claude ? el("span", { class: "zahl blau", text: String(p.bei_claude), title: p.bei_claude + " bei Claude" }) : null));
       }
       baum.append(kunde);
     }
@@ -233,13 +234,14 @@
     video.addEventListener("loadedmetadata", () => {
       if (!Z.frames && video.duration) { Z.frames = Math.round(video.duration * Z.fps); d.zeit.lastChild.textContent = `F 0 / ${Z.frames}`; }
       if (Z.startFrame !== null && Z.startFrame !== undefined) { springe(Z.startFrame); Z.startFrame = null; }
+      else springe(0);  // erstes Bild zeichnen (sonst bleibt der Player bis zum Play schwarz)
       renderMarker();
     });
     video.addEventListener("play", () => { d.play.innerHTML = ICON.pause; frameSchleife(); });
-    video.addEventListener("pause", () => { d.play.innerHTML = ICON.play; setzeFrame(Math.round(video.currentTime * Z.fps)); });
+    video.addEventListener("pause", () => { d.play.innerHTML = ICON.play; setzeFrame(frameAusZeit(video.currentTime)); });
     video.addEventListener("ended", () => { d.play.innerHTML = ICON.play; });
-    video.addEventListener("timeupdate", () => { if (!video.requestVideoFrameCallback) setzeFrame(Math.round(video.currentTime * Z.fps)); });
-    video.addEventListener("seeked", () => setzeFrame(Math.round(video.currentTime * Z.fps)));
+    video.addEventListener("timeupdate", () => { if (!video.requestVideoFrameCallback) setzeFrame(frameAusZeit(video.currentTime)); });
+    video.addEventListener("seeked", () => { if (!video.seeking) setzeFrame(frameAusZeit(video.currentTime)); });
     video.addEventListener("click", umschalten);
     video.addEventListener("error", () => toast("Video lässt sich nicht laden (" + (video.error ? video.error.message || video.error.code : "?") + ").", "fehler"));
 
@@ -260,7 +262,7 @@
     const video = Z.video;
     if (!video || !video.requestVideoFrameCallback) return;
     if (Z.rvfc) video.cancelVideoFrameCallback(Z.rvfc);
-    const cb = (now, meta) => { if (Z.video !== video) return; setzeFrame(Math.round(meta.mediaTime * Z.fps)); if (!video.paused) Z.rvfc = video.requestVideoFrameCallback(cb); };
+    const cb = (now, meta) => { if (Z.video !== video) return; setzeFrame(frameAusZeit(meta.mediaTime)); if (!video.paused) Z.rvfc = video.requestVideoFrameCallback(cb); };
     Z.rvfc = video.requestVideoFrameCallback(cb);
   }
   function setzeFrame(f) {
@@ -350,6 +352,7 @@
       const e = el("div", { class: "eintrag " + (k.status === "rueckfrage" ? "rueckfrage" : "") },
         el("div", { class: "orig" }, el("span", { class: "tc", text: k.frame !== null ? tc(k.frame) : "allg." }), el("span", { text: `${k.id} · ${k.autor}: ${k.text}` })),
         k.antwort_claude ? el("div", { class: "antwort" }, el("b", { text: k.status === "rueckfrage" ? "Claude · Rückfrage: " : "Claude: " }), el("span", { text: k.antwort_claude })) : null,
+        k.antworten && k.antworten.length ? el("div", { class: "thread" }, k.antworten.map((a) => el("div", { class: "antwort" }, el("b", { text: a.autor + ": " }), el("span", { text: a.text })))) : null,
         el("div", { class: "zeile" },
           k.frame_neu !== null && k.frame_neu !== undefined ? el("button", { class: "leise", text: "→ " + tc(k.frame_neu), title: "Stelle in V" + Z.versionNr, onclick: () => { Z.video.pause(); springe(k.frame_neu); } }) : null,
           el("span", { class: "chip status-" + k.status, text: STATUS[k.status] || k.status }),
@@ -487,11 +490,11 @@
       case "ArrowRight": ev.preventDefault(); schritt(ev.shiftKey ? fps : 1); break;
       case "Home": ev.preventDefault(); Z.video.pause(); springe(0); break;
       case "End": ev.preventDefault(); Z.video.pause(); springe(Z.frames - 1); break;
-      case "i": case "I": setzeIn(); break;
-      case "o": case "O": setzeOut(); break;
+      case "i": case "I": ev.preventDefault(); setzeIn(); break;
+      case "o": case "O": ev.preventDefault(); setzeOut(); break;
       case "c": case "C": ev.preventDefault(); if (Z.dom.textarea) Z.dom.textarea.focus(); break;
-      case "m": case "M": stumm(); break;
-      case "f": case "F": vollbild(); break;
+      case "m": case "M": ev.preventDefault(); stumm(); break;
+      case "f": case "F": ev.preventDefault(); vollbild(); break;
       default:
         if (/^[1-9]$/.test(ev.key)) { const nr = parseInt(ev.key, 10); if (Z.detail.versionen.some((v) => v.nr === nr) && nr !== Z.versionNr) geheZu(Z.route.kunde, Z.route.projekt, Z.route.video, nr); }
     }

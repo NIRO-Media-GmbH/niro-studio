@@ -51,6 +51,14 @@ class ReviewServer(ThreadingHTTPServer):
     def nas_verbunden(self) -> bool:
         return self.wurzel.parent.is_dir()
 
+    def handle_error(self, request, client_address):
+        """Abgebrochene Verbindungen (Browser bricht Video-Streams ständig ab) nicht ins Log schreiben."""
+        import sys
+        typ = sys.exc_info()[0]
+        if typ is not None and issubclass(typ, (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, TimeoutError)):
+            return
+        super().handle_error(request, client_address)
+
     def index(self, frisch: bool = False) -> dict:
         with self.sperre:
             if frisch or self._index is None or time.time() - self._index_zeit > self.index_ttl:

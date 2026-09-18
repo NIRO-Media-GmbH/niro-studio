@@ -161,6 +161,9 @@ input:focus, textarea:focus { border-color: var(--gruen); }
 .seit-block .eintrag .orig { color: var(--gedaempft); }
 .seit-block .eintrag .orig .tc { font-family: var(--mono); color: var(--blau); margin-right: 6px; }
 .seit-block .eintrag .antwort { margin-top: 4px; }
+.seit-block .eintrag .thread { margin-top: 4px; display: flex; flex-direction: column; gap: 3px; }
+.seit-block .eintrag .thread .antwort { margin: 0; padding-left: 10px; border-left: 2px solid var(--linie); }
+.seit-block .eintrag .thread .antwort b { color: var(--gedaempft); font-family: var(--schrift); font-weight: 600; }
 .seit-block .eintrag .antwort b { color: var(--gruen); font-family: var(--titel); }
 .seit-block .eintrag.rueckfrage .antwort b { color: var(--blau); }
 .seit-block .eintrag .zeile { display: flex; align-items: center; gap: 8px; margin-top: 6px; }

@@ -108,7 +108,7 @@ def ffmpeg_befehl(quelle, ziel, encoder: str = "h264_videotoolbox", hat_ton: boo
     cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(quelle), "-map", "0:v:0"]
     if hat_ton:
         cmd += ["-map", "0:a:0?"]
-    cmd += ["-c:v", encoder, "-vf", skalierung(max_kante)]
+    cmd += ["-c:v", encoder, "-vf", skalierung(max_kante), "-g", "25"]  # kurze GOP: flottes Scrubben und Frame-Steppen
     if encoder == "h264_videotoolbox":
         gross = max_kante is None and pixel > 1920 * 1080
         cmd += ["-b:v", "16M" if gross else "8M", "-allow_sw", "1"]
