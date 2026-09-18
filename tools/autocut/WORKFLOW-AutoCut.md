@@ -937,3 +937,24 @@ Meldung an den User immer mit: Timeline-Name, Berichtspfad, Zahlen, Warnungen, o
 - **Vision-Messungen** (Gesichter, Köpfe) laufen auf den Proxys (1920×1080). Pan/Tilt zählen in Resolve
   dagegen in Timeline-Pixeln: Bei einer 4K-Timeline sind Proxy-Pixel × 2 umzurechnen. Abstände in Berichten
   deshalb immer mit Bezug angeben („60 px @1080p").
+
+## Sonderfall: Aftermovie ohne Sprache (seit 17.09.2026, MN Deko „Hochzeitszauber")
+
+Ohne Interviews gibt es keine O-Ton-Pläne, also weder Stufe 1 noch `Charge.open`. Der Weg läuft dann über die
+Entwurfs-Pipeline der Charge (`_intern/entwurf/`, adaptiert aus der Dold-Charge): Inventar + Kontaktbögen → Sichtungs-Katalog
+(A/B/C je Clip) → Musik-Analyse → Schnittplan auf dem Beat-Raster (`schnitt.py` → EDL je Fassung) → Entwurf per ffmpeg
+(`render.py`, Text als PNG-Overlays, VO-Platzhalter `vo.py`) → Resolve-Bau aus derselben EDL (`resolve_bau.py A|B --bauen`, nur
+mit Freigabe; V1 Bild mit Tempo, V2 Text, A1 Musik, A2 VO, A3 Atmo, Marker). Referenz:
+`projects/MN Deko und Verleih/Hochzeitsmesse Aftermovie/2026-09 Hochzeitsmesse 13.09/` (README in `_intern/entwurf/`).
+
+**Regeln aus dem Hochzeitszauber-Feedback (18.09.2026):**
+- **Jeder Stand kommt vor.** Bei Messe-Aftermovies für den Veranstalter muss jeder Aussteller mindestens einmal zu sehen sein
+  (auch der eigene Stand) — vor dem Schnitt alle Clips nach Ständen durchsehen (Stand-Boards, Zooms auf Banner/Rollups/Schilder),
+  Tabelle mit Belegen (`Ergebnisse/Schnittplan/aussteller.md`); Stände ohne lesbaren Namen kommen als „Rundgang" (je 1 Shot,
+  Karte „… und viele mehr"), Namen holt der Kunde nach.
+- **Szene = Aussteller, ≥ 3 Shots** (Totale 4 Beats + zwei Details je 2), nur bei zwei brauchbaren Clips Ausnahme; **Ruhe-Regel:**
+  Quell-Ins nur in gemessenen ruhigen 2-s-Fenstern (`_intern/skripte/ruhe.py`, `ruhe_fenster.py`), Rest stabilisieren
+  (`stabil.py` im Entwurf, `Stabilize()` in Resolve). Nur Musik, keine Sprache; mehr Länge über eine Musikschleife von 8 Takten
+  (Sprung exakt auf dem Takt) statt über schnellere Schnitte.
+- **Resolve-Bau:** `AppendToTimeline.endFrame` exklusiv, ein Marker je Frame (zusammenführen), Aspekt-Zoom für Mavic/Avata,
+  Readback muss 0 Lücken/Abweichungen zeigen; Stereo Fixer entfällt ohne Sprach-/SFX-Spur.
