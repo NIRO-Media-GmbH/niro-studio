@@ -3250,8 +3250,8 @@ input:focus, textarea:focus { border-color: var(--gruen); }
     }
     d.kopf.replaceChildren(el("h1", { text: det.video.titel, title: det.video.titel }), chipZustand(zustand), pillen, aktionen);
     const teile = [`V${v.nr} · ${wann(v.angelegt)}${v.von ? " · " + v.von : ""} · ${Number(v.dauer_s || 0).toFixed(2)} s · ${v.breite}×${v.hoehe} · ${Z.fps} fps`];
-    d.notiz.replaceChildren(el("span", { text: teile[0] }), v.notiz ? el("span", { html: " · <b>Notiz:</b> " }) : null, v.notiz ? el("span", { text: v.notiz }) : null,
-      v.abgeschlossen ? el("span", { text: ` · abgeschlossen ${wann(v.abgeschlossen.am)} von ${v.abgeschlossen.von}` }) : null);
+    d.notiz.replaceChildren(...[el("span", { text: teile[0] }), v.notiz ? el("span", { html: " · <b>Notiz:</b> " }) : null, v.notiz ? el("span", { text: v.notiz }) : null,
+      v.abgeschlossen ? el("span", { text: ` · abgeschlossen ${wann(v.abgeschlossen.am)} von ${v.abgeschlossen.von}` }) : null].filter(Boolean));
   }
   function kommentareSortiert(liste) {
     const nr = (k) => parseInt(String(k.id).slice(1), 10) || 0;
@@ -3264,7 +3264,7 @@ input:focus, textarea:focus { border-color: var(--gruen); }
     for (const k of v.kommentare) {
       if (k.frame === null || k.frame === undefined) continue;
       const links = (k.frame / Math.max(1, Z.frames - 1)) * 100;
-      const m = el("div", { class: "marker status-" + k.status + (Z.hervor === k.id ? " hervor" : ""), title: `${tc(k.frame)} ${k.autor}: ${k.text}`, onclick: (ev) => { ev.stopPropagation(); Z.video.pause(); springe(k.frame); hervorheben(k.id); } });
+      const m = el("div", { class: "marker status-" + k.status + (Z.hervor === k.id ? " hervor" : ""), "data-id": k.id, title: `${tc(k.frame)} ${k.autor}: ${k.text}`, onclick: (ev) => { ev.stopPropagation(); Z.video.pause(); springe(k.frame); hervorheben(k.id); } });
       m.style.left = links + "%";
       if (k.bis_frame !== null && k.bis_frame !== undefined) { m.classList.add("bereich"); m.style.width = Math.max(0.5, ((k.bis_frame - k.frame) / Math.max(1, Z.frames - 1)) * 100) + "%"; }
       d.marker.append(m);
@@ -3371,13 +3371,13 @@ input:focus, textarea:focus { border-color: var(--gruen); }
     const d = Z.dom, e = Z.eingabe;
     if (!d.stelle) return;
     const frame = e.aktiv && e.frame !== null ? e.frame : Z.frame;
-    d.stelle.replaceChildren(
+    d.stelle.replaceChildren(...[
       el("button", { class: e.allgemein ? "aktiv" : "", text: "Allgemein", title: "ohne Zeitbezug", onclick: () => { e.allgemein = !e.allgemein; e.aktiv = true; if (!e.allgemein && e.frame === null) e.frame = Z.frame; renderStelle(); } }),
       e.allgemein ? el("span", { text: "kein Zeitbezug" }) : el("span", {}, el("span", { text: "am " }), el("span", { class: "tc", text: tc(frame) })),
       !e.allgemein ? el("button", { text: "hierher", title: "auf den aktuellen Frame setzen (I)", onclick: () => { e.aktiv = true; e.frame = Z.frame; if (e.bis !== null && e.bis <= e.frame) e.bis = null; renderStelle(); } }) : null,
       !e.allgemein ? (e.bis !== null
         ? el("span", {}, el("span", { text: "bis " }), el("span", { class: "tc", text: tc(e.bis) }), el("button", { class: "leise", text: "×", title: "Bereich aufheben", onclick: () => { e.bis = null; renderStelle(); } }))
-        : el("button", { text: "Bereich bis hier", title: "Out auf den aktuellen Frame (O)", onclick: setzeOut }) : null));
+        : el("button", { text: "Bereich bis hier", title: "Out auf den aktuellen Frame (O)", onclick: setzeOut })) : null].filter(Boolean));
   }
   function setzeIn() { const e = Z.eingabe; e.aktiv = true; e.allgemein = false; e.frame = Z.frame; if (e.bis !== null && e.bis <= e.frame) e.bis = null; renderStelle(); }
   function setzeOut() { const e = Z.eingabe; e.aktiv = true; e.allgemein = false; if (e.frame === null) e.frame = Z.frame; if (Z.frame <= e.frame) { toast("Out muss nach In liegen — erst weiter scrubben.", ""); return; } e.bis = Z.frame; renderStelle(); if (Z.dom.textarea) Z.dom.textarea.focus(); }
