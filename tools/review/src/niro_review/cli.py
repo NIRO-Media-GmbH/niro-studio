@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -88,10 +89,13 @@ def version_anlegen(kunde: str, projekt: str, charge: Optional[str], titel: str,
         video = modell.video_anlegen(ordner, kunde, projekt, titel, charge, sortierung)
     vo.mkdir(parents=True, exist_ok=True)
     try:
-        shutil.copy2(cache_video, vo / "video.mp4")
-        shutil.copy2(cache_thumb, vo / "thumb.jpg")
-        if (vo / "video.mp4").stat().st_size != cache_video.stat().st_size:
-            raise ReviewFehler("Kopie aufs NAS unvollständig (Größe weicht ab).", 2)
+        # erst als .teil kopieren, dann umbenennen: der Server des anderen Macs sieht nie eine halbe Datei
+        for quelle_datei, zielname in ((cache_video, "video.mp4"), (cache_thumb, "thumb.jpg")):
+            teil = vo / (zielname + ".teil")
+            shutil.copy2(quelle_datei, teil)
+            if teil.stat().st_size != quelle_datei.stat().st_size:
+                raise ReviewFehler("Kopie aufs NAS unvollständig (Größe weicht ab).", 2)
+            os.replace(teil, vo / zielname)
         km.speichern(vo, modell.KOMMENTARE_LEER())
         version = {"nr": nr, "angelegt": jetzt(), "von": ablage.mac_name(), "quelle": _quelle_rel(datei),
                    "dauer_s": round(info.dauer_s, 3), "fps": info.fps, "frames": info.frames, "breite": info.breite,

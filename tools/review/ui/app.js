@@ -311,7 +311,20 @@
     video.addEventListener("timeupdate", () => { if (!video.requestVideoFrameCallback) setzeFrame(frameAusZeit(video.currentTime)); });
     video.addEventListener("seeked", () => { if (!video.seeking) setzeFrame(frameAusZeit(video.currentTime)); });
     video.addEventListener("click", umschalten);
-    video.addEventListener("error", () => toast("Video lässt sich nicht laden (" + (video.error ? video.error.message || video.error.code : "?") + ").", "fehler"));
+    // Abgerissener Stream (Server-Neustart, NAS-Hänger): Quelle neu laden und zur Stelle zurück, erst nach 3 Fehlversuchen melden
+    let versuche = 0;
+    video.addEventListener("error", () => {
+      if (Z.video !== video) return;
+      const frame = Z.frame, warSpielend = !video.paused && !video.ended;
+      versuche += 1;
+      if (versuche > 3) { toast("Video lässt sich nicht laden (" + (video.error ? video.error.message || video.error.code : "?") + ") — Seite neu laden.", "fehler"); return; }
+      setTimeout(() => {
+        if (Z.video !== video) return;
+        video.load();
+        video.addEventListener("loadedmetadata", () => { springe(frame); if (warSpielend) video.play().catch(() => {}); }, { once: true });
+      }, 800 * versuche);
+    });
+    video.addEventListener("playing", () => { versuche = 0; });
 
     // Scrubber
     let zieht = false;
