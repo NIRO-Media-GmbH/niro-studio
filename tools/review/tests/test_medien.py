@@ -8,8 +8,9 @@ from niro_review import medien
 from niro_review.ablage import ReviewFehler
 
 
-def probe(codec="h264", pix="yuv420p", audio="aac", container="mov,mp4,m4a,3gp,3g2,mj2", nb_frames="574", dauer="23.040000"):
-    streams = [{"codec_type": "video", "codec_name": codec, "pix_fmt": pix, "width": 2160, "height": 3840,
+def probe(codec="h264", pix="yuv420p", audio="aac", container="mov,mp4,m4a,3gp,3g2,mj2", nb_frames="574", dauer="23.040000",
+          breite=2160, hoehe=3840):
+    streams = [{"codec_type": "video", "codec_name": codec, "pix_fmt": pix, "width": breite, "height": hoehe,
                 "r_frame_rate": "25/1", "avg_frame_rate": "25/1", "nb_frames": nb_frames}]
     if audio:
         streams.append({"codec_type": "audio", "codec_name": audio})
@@ -37,8 +38,9 @@ def test_info_ohne_video():
 
 
 @pytest.mark.parametrize("kw,erwartet", [
-    ({}, "kopie"),
-    ({"audio": None}, "kopie"),
+    ({}, "umkodieren"),  # 2160×3840 > 1920 → skalieren
+    ({"breite": 1080, "hoehe": 1920}, "kopie"),
+    ({"breite": 1920, "hoehe": 1080, "audio": None}, "kopie"),
     ({"codec": "hevc"}, "umkodieren"),
     ({"pix": "yuv422p"}, "umkodieren"),
     ({"audio": "pcm_s16le"}, "umkodieren"),
@@ -50,13 +52,21 @@ def test_entscheidung(kw, erwartet):
     assert medien.entscheidung(medien.info_aus_probe(probe(**kw))) == erwartet
 
 
+def test_entscheidung_original():
+    assert medien.entscheidung(medien.info_aus_probe(probe()), None) == "kopie"
+    assert medien.skalierung(None) == "scale=trunc(iw/2)*2:trunc(ih/2)*2"
+    assert "min(ih,1920)" in medien.skalierung(1920) and "min(iw,1920)" in medien.skalierung(1920)
+
+
 def test_ffmpeg_befehl():
     cmd = medien.ffmpeg_befehl("/q.mov", "/z.mp4", "h264_videotoolbox", True, 1920 * 1080)
     assert cmd[:2] == ["ffmpeg", "-y"] and "-c:v" in cmd and cmd[cmd.index("-c:v") + 1] == "h264_videotoolbox"
     assert "yuv420p" in cmd and "+faststart" in cmd and cmd[-1] == "/z.mp4" and "0:a:0?" in cmd
-    assert cmd[cmd.index("-b:v") + 1] == "8M"
+    assert cmd[cmd.index("-b:v") + 1] == "8M" and "min(iw,1920)" in cmd[cmd.index("-vf") + 1]
     cmd4k = medien.ffmpeg_befehl("/q.mov", "/z.mp4", "libx264", False, 2160 * 3840)
     assert "-crf" in cmd4k and "0:a:0?" not in cmd4k
+    orig = medien.ffmpeg_befehl("/q.mov", "/z.mp4", "h264_videotoolbox", True, 2160 * 3840, None)
+    assert orig[orig.index("-b:v") + 1] == "16M" and orig[orig.index("-vf") + 1] == "scale=trunc(iw/2)*2:trunc(ih/2)*2"
 
 
 @pytest.mark.parametrize("frame,fps,tc", [

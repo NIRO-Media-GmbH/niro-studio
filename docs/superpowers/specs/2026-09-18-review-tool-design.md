@@ -146,7 +146,7 @@ der neuesten Version, neue seit `geholt_am`.
 
 | Befehl | Wirkung | Exit |
 |---|---|---|
-| `hinzufuegen "<Charge>" --datei "<Video>" [--video "<Titel>"] [--version N] [--notiz "…"] [--umsetzung <json>] [--sortierung 02] [--kunde/--projekt]` | Version anlegen: ffprobe, Kopie oder Umkodierung in den Cache, Vorschaubild, aufs NAS kopieren, Größe prüfen, `version.json` zuletzt schreiben; Link ausgeben | 0 ok · 1 Eingabefehler (Datei fehlt, Version belegt, Alpha-Datei) · 2 NAS/ffmpeg fehlt |
+| `hinzufuegen "<Charge>" --datei "<Video>" [--video "<Titel>"] [--version N] [--notiz "…"] [--umsetzung <json>] [--sortierung 02] [--kunde/--projekt] [--original]` | Version anlegen: ffprobe, Kopie oder Umkodierung in den Cache, Vorschaubild, aufs NAS kopieren, Größe prüfen, `version.json` zuletzt schreiben; Link ausgeben | 0 ok · 1 Eingabefehler (Datei fehlt, Version belegt, Alpha-Datei) · 2 NAS/ffmpeg fehlt |
 | `hinzufuegen "<Charge>" --ordner "<Ordner>" [--muster "*.mp4"] …` | Stapel: jede Datei ein eigenes Video, Titel aus dem Dateinamen, gleiche `--version` (sonst je Video die nächste) | wie oben; Fehler je Datei gesammelt, Exit 1 wenn eine scheiterte |
 | `kommentare "<Charge>" [--video "<Titel>"] [--version N] [--alle] [--json]` | Kommentare der neuesten (oder genannten) Version je Video lesen, Export nach `Material/Feedback/<Datum> Review <Titel> V<n>/kommentare.{md,json}`, `geholt_am` setzen, Kurzfassung ausgeben; `--alle` auch schon geholte | 0 neue Kommentare · 1 keine neuen · 2 NAS fehlt |
 | `umsetzung "<Charge>" --video "<Titel>" --version N --datei umsetzung.json` | Status/Antwort/`tc_neu` je Kommentar-ID setzen (`{"K1": {"status": "umgesetzt", "antwort": "…", "tc_neu": "00:00:29:04"}}`) | 0 · 1 unbekannte ID/Status · 2 |
@@ -159,10 +159,14 @@ der neuesten Version, neue seit `geholt_am`.
 
 - Titel aus Dateinamen: Endung weg, Versionsmarken am Ende weg (` – Entwurf v1`, ` - Entwurf v1`, ` V6`, `_V6`,
   ` (Claude 2026-09-17)`), Leerraum trimmen. `--version` fehlt → nächste freie Nummer des Videos (Start 1).
-- Review-Kopie: Container MP4/MOV mit H.264 `yuv420p` und Ton AAC (oder ohne Ton) → byte-gleiche Kopie
-  (`umkodiert: false`). Sonst ffmpeg → MP4, `h264_videotoolbox` (Fallback `libx264` CRF 18), `yuv420p`,
-  Auflösung unverändert, AAC 192 kbit/s, `+faststart`. Dateien mit Alpha-Kanal (`yuva…`, ProRes 4444 Alpha) werden
-  abgelehnt (Exit 1: „Alpha-Overlay ohne Bild darunter — erst als Komposit rendern"), `--trotzdem` erzwingt.
+- Review-Kopie: Container MP4/MOV mit H.264 `yuv420p`, Ton AAC (oder ohne Ton) **und lange Kante ≤ 1920 px** →
+  byte-gleiche Kopie (`umkodiert: false`). Sonst ffmpeg → MP4, `h264_videotoolbox` (Fallback `libx264` CRF 18),
+  `yuv420p`, lange Kante auf 1920 px begrenzt (nie vergrößert; 2160×3840 → 1080×1920, 3840×2160 → 1920×1080), AAC
+  192 kbit/s, `+faststart`; `--original` behält die Auflösung. Grund (Messung 18.09.): 4K-Vertikalvideo verwirft im
+  Browser 131 von 142 Frames, 1080p läuft ohne Drop; Replay und Frame.io kodieren ebenfalls auf 1080p. Frames und
+  fps bleiben erhalten; `version.json` trägt `quelle_breite/quelle_hoehe/quelle_codec`. Dateien mit Alpha-Kanal
+  (`yuva…`, ProRes 4444 Alpha) werden abgelehnt (Exit 1: „Alpha-Overlay ohne Bild darunter — erst als Komposit
+  rendern"), `--trotzdem` erzwingt.
 - Vorschaubild: Frame bei 25 % der Dauer, 640 px breit, JPEG.
 - Kopie aufs NAS mit `shutil.copy2`, danach Größenvergleich; bei Abweichung Fehler und Aufräumen des V-Ordners.
 

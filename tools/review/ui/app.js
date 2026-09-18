@@ -236,7 +236,7 @@
       renderMarker();
     });
     video.addEventListener("play", () => { d.play.innerHTML = ICON.pause; frameSchleife(); });
-    video.addEventListener("pause", () => { d.play.innerHTML = ICON.play; });
+    video.addEventListener("pause", () => { d.play.innerHTML = ICON.play; setzeFrame(Math.round(video.currentTime * Z.fps)); });
     video.addEventListener("ended", () => { d.play.innerHTML = ICON.play; });
     video.addEventListener("timeupdate", () => { if (!video.requestVideoFrameCallback) setzeFrame(Math.round(video.currentTime * Z.fps)); });
     video.addEventListener("seeked", () => setzeFrame(Math.round(video.currentTime * Z.fps)));

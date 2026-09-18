@@ -129,12 +129,12 @@ class Handler(BaseHTTPRequestHandler):
             pfad = unquote(teile.path)
             q = parse_qs(teile.query)
             if pfad in ("/", "/index.html"):
-                return self._datei(self.server.ui / "index.html", kopf_nur, cache="no-cache")
+                return self._datei(self.server.ui / "index.html", kopf_nur, cache="no-store")
             if pfad.startswith("/ui/"):
                 ziel = sicherer_pfad(self.server.ui, pfad[4:])
                 if not ziel or not ziel.is_file():
                     raise HttpFehler(404, "Datei fehlt.")
-                return self._datei(ziel, kopf_nur, cache="no-cache")
+                return self._datei(ziel, kopf_nur, cache="no-store")
             if pfad.startswith("/media/"):
                 return self._medien(pfad[7:], kopf_nur)
             if pfad == "/api/zustand":

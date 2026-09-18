@@ -45,8 +45,9 @@ def _umsetzung_lesen(pfad: Optional[str]) -> Optional[dict]:
 
 def version_anlegen(kunde: str, projekt: str, charge: Optional[str], titel: str, datei: Path, nr: Optional[int] = None,
                     notiz: str = "", sortierung: Optional[str] = None, basis: Optional[int] = None,
-                    trotzdem: bool = False, umsetzung: Optional[dict] = None) -> dict:
-    """Version anlegen: prüfen, Review-Kopie in den Cache, Vorschaubild, aufs NAS, version.json zuletzt."""
+                    trotzdem: bool = False, umsetzung: Optional[dict] = None, original: bool = False) -> dict:
+    """Version anlegen: prüfen, Review-Kopie (lange Kante ≤ 1920 px, außer original=True) in den Cache, Vorschaubild,
+    aufs NAS, version.json zuletzt."""
     datei = Path(datei)
     if not datei.is_file():
         raise ReviewFehler(f"Datei fehlt: {datei}")
@@ -67,8 +68,10 @@ def version_anlegen(kunde: str, projekt: str, charge: Optional[str], titel: str,
         basis_daten = km.laden(modell.version_ordner(ordner, basis_nr))
         basis_fps = float((modell.version_lesen(ordner, basis_nr) or {}).get("fps") or 25.0)
         km.umsetzung_anwenden(copy.deepcopy(basis_daten), umsetzung, basis_fps)  # nur prüfen — alles oder nichts
+    max_kante = None if original else medien.MAX_KANTE
     info = medien.info_aus_probe(medien.ffprobe(datei), datei.stat().st_size)
-    weg = medien.entscheidung(info)
+    quelle_info = info
+    weg = medien.entscheidung(info, max_kante)
     if weg == "alpha" and not trotzdem:
         raise ReviewFehler("Alpha-Overlay ohne Bild darunter — erst als Komposit rendern (oder --trotzdem).")
     cache_v = ablage.cache_wurzel() / nfc(kunde) / nfc(projekt) / nfc(titel) / f"V{nr}"
@@ -78,7 +81,7 @@ def version_anlegen(kunde: str, projekt: str, charge: Optional[str], titel: str,
     if weg == "kopie":
         shutil.copy2(datei, cache_video)
     else:
-        encoder = medien.umkodieren(datei, cache_video, info)
+        encoder = medien.umkodieren(datei, cache_video, info, max_kante)
         info = medien.info_aus_probe(medien.ffprobe(cache_video), cache_video.stat().st_size)
     medien.vorschaubild(cache_video, cache_thumb, info.dauer_s)
     if video is None:
@@ -93,7 +96,9 @@ def version_anlegen(kunde: str, projekt: str, charge: Optional[str], titel: str,
         version = {"nr": nr, "angelegt": jetzt(), "von": ablage.mac_name(), "quelle": _quelle_rel(datei),
                    "dauer_s": round(info.dauer_s, 3), "fps": info.fps, "frames": info.frames, "breite": info.breite,
                    "hoehe": info.hoehe, "groesse": cache_video.stat().st_size, "umkodiert": weg != "kopie",
-                   "encoder": encoder, "notiz": notiz or "", "basis": basis_nr, "abgeschlossen": None, "geholt_am": None}
+                   "encoder": encoder, "quelle_breite": quelle_info.breite, "quelle_hoehe": quelle_info.hoehe,
+                   "quelle_codec": quelle_info.video_codec, "notiz": notiz or "", "basis": basis_nr,
+                   "abgeschlossen": None, "geholt_am": None}
         modell.version_schreiben(ordner, nr, version)
     except BaseException:
         shutil.rmtree(vo, ignore_errors=True)
@@ -132,7 +137,7 @@ def cmd_hinzufuegen(args) -> int:
         titel = args.video if (args.video and args.datei) else modell.titel_aus_dateiname(datei.name)
         try:
             e = version_anlegen(kunde, projekt, ziel.charge, titel, datei, args.nr, args.notiz, args.sortierung,
-                                args.basis, args.trotzdem, umsetzung)
+                                args.basis, args.trotzdem, umsetzung, args.original)
         except ReviewFehler as ex:
             if args.datei:
                 raise
@@ -330,6 +335,7 @@ def _parser() -> argparse.ArgumentParser:
     a.add_argument("--kunde")
     a.add_argument("--projekt")
     a.add_argument("--trotzdem", action="store_true", help="auch Alpha-Dateien annehmen")
+    a.add_argument("--original", action="store_true", help="Auflösung behalten (Standard: lange Kante ≤ 1920 px)")
     port(a)
     k = sub.add_parser("kommentare", help="Kommentare holen und in die Charge exportieren")
     k.add_argument("charge")
