@@ -121,6 +121,15 @@ mkdir -p "projects/<Kunde>/<Projekt>/<Charge>/Material/Audio"
 Struktur und Chargen-Konvention stehen in [CLAUDE.md](CLAUDE.md). Rohes
 Drehmaterial bleibt auf NAS/SSD.
 
+## 8. Review
+
+```bash
+python3 tools/review/review.py installieren
+```
+
+Richtet den Review-Server als LaunchAgent ein (`http://localhost:4711`, startet bei Anmeldung). Braucht ffmpeg aus
+Schritt 3 und das verbundene NAS; Ablage und Bedienung in [tools/review/README.md](tools/review/README.md).
+
 ## Arbeiten mit dem Repo
 
 **Updates holen:** `git pull` — regelmäßig, damit Workflows und Kompositionen

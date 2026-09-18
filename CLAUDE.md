@@ -1,6 +1,6 @@
 # NIRO Studio
 
-Master-Werkzeug von NIRO Media: acht Funktionen, ein Projektsystem, eine Session.
+Master-Werkzeug von NIRO Media: neun Funktionen, ein Projektsystem, eine Session.
 
 ## Projektstruktur
 
@@ -41,8 +41,9 @@ zurückkopieren (Resolve dann per „Relink“). Stand 17.09.2026: alle Chargen 
 
 **Protokoll-Pflicht:** Bei jeder Arbeit an einer Charge (egal welche Funktion)
 `Protokoll.md` im Chargen-Ordner fortschreiben — pro Session ein kurzer
-Eintrag: Datum, was gemacht, was geliefert (Dateien), Entscheidungen/Offenes.
-Datei bei der ersten Session anlegen.
+Eintrag: Datum, was gemacht, was geliefert (Dateien), Entscheidungen/Offenes;
+Review-Ablagen (Titel, Version, Link) und geholte Kommentar-Runden gehören in
+denselben Eintrag. Datei bei der ersten Session anlegen.
 Vor der Arbeit an einer Charge `sh tools/studio_abgleich.sh --charge "projects/<Kunde>/<Projekt>/<Charge>"` (neuester
 Stand vom NAS), nach der Arbeit mit dem Protokoll-Eintrag dasselbe (Stand aufs NAS).
 
@@ -58,6 +59,7 @@ Stand vom NAS), nach der Arbeit mit dem Protokoll-Eintrag dasselbe (Stand aufs N
 | „AutoCut: <Kunde>/<Projekt>[/<Charge>]" | Schnittplan → Rohschnitt-Timeline in Resolve (roh) → B-Roll aus der Auswahl-Timeline des Users → Feinschnitt (A/B-Wechsel, Grafik, Ton, Musik, SFX, Grading, Begradigen; Vorlagen) · Finalisieren (Pegel, Zeitlupe) · Kantenprüfung am Export · Review in Dropbox Replay (Upload nach OK, Kommentare holen) | `tools/autocut/WORKFLOW-AutoCut.md` |
 | „Resolve: <Aufgabe>" | Ad-hoc-Arbeit im offenen Resolve-Projekt über den nativen MCP (lesen, prüfen, rendern, importieren) | `tools/resolve/WORKFLOW-Resolve.md` |
 | „Tagesbericht" / „Tagesbericht: gestern" / „Tagesbericht: <JJJJ-MM-TT>" | Tagesstände beider Macs (Git, Chargen, Sitzungen, Gedächtnis) → `berichte/<Tag>/Tagesbericht.md`: Gemacht, neue Funktionen, Empfehlung für main (nur Empfehlung, kein Merge), Probleme, Offenes | `tools/tagesbericht/WORKFLOW-Tagesbericht.md` |
+| „Review: <Kunde>/<Projekt>[/<Video>]" · „fertig" nach einem Review | Lokales Review-Werkzeug (http://localhost:4711, Ablage auf dem NAS, beide Macs): Kommentare holen, umsetzen, V+1 mit Antworten ablegen. **Jeder fertige Review-Stand** (Rohschnitt, Feinschnitt, Entwurf, Export, Animation als Komposit) wird sofort per `review.py hinzufuegen` abgelegt und der Link im Chat genannt; Dropbox Replay nur noch für Kundenrunden | `tools/review/WORKFLOW-Review.md` |
 
 Beim Trigger die jeweilige Workflow-Datei lesen und ihr folgen.
 Projektpfad-Konvention überall: `projects/<Kunde>/<Projekt>/<Charge>/` (relativ
@@ -104,5 +106,9 @@ die Charge wird dann automatisch gefunden.
   vorinjiziert, Rückgabe über `result`), `search_scripting_api`, `get_scripting_docs`;
   Stubs und README lokal unter `/Library/Application Support/Blackmagic Design/DaVinci
   Resolve/Developer/Scripting/`. AutoCut nutzt weiter `tools/autocut/venv/bin/python`.
+- **Review (review):** `python3 tools/review/review.py` (Standardbibliothek + ffmpeg); Server als LaunchAgent
+  `de.niro.review` auf Port 4711 (`installieren` einmal je Mac; nach `git pull` mit Änderungen an `tools/review`
+  `launchctl kickstart -k gui/$(id -u)/de.niro.review`); Ablage `<NAS>/08_Claude Tools/NIRO Studio/review/`, Cache
+  `~/Library/Caches/NIRO Review`; Review-Kopien max. 1920 px lange Kante.
 - **Neues Projekt:** Ordner nach Bedarf anlegen, z. B.
   `mkdir -p "projects/<Kunde>/<Projekt>/<Charge>/Material/Audio"`.
