@@ -1,6 +1,6 @@
 # NIRO Studio
 
-Master-Werkzeug von NIRO Media: sieben Funktionen, ein Projektsystem, eine Session.
+Master-Werkzeug von NIRO Media: acht Funktionen, ein Projektsystem, eine Session.
 
 ## Projektstruktur
 
@@ -31,6 +31,13 @@ Caches); `sh tools/studio_abgleich.sh` gleicht ab (beide Richtungen, neuere Date
 `git pull` automatisch. Nie gleichzeitig auf beiden Macs an derselben Charge arbeiten. Das Claude-Gedächtnis ist auf
 beiden Macs eine Verknüpfung auf `NIRO Studio/claude-gedaechtnis/`. Worktrees haben kein eigenes `projects/`:
 Chargen-Daten nur im Hauptordner des Repos lesen und schreiben (erste Zeile von `git worktree list`).
+Ebenso gespiegelt wird `berichte/` (Tagesstand je Mac aus `tools/tagesbericht/sammler.py`, geschrieben vom SessionStart-Hook
+und vom Abgleich, plus `Tagesbericht.md` der Funktion „Tagesbericht"); Mac-Name über `git config niro.mac`.
+**Medien liegen auf dem NAS, nicht im Abgleich:** Was der Abgleich ausschließt (Medien-Endungen, Dateien > 20 MB, `work/`,
+`frames/`, `Fotos/`), wird bei fertigen Chargen nicht synchronisiert, sondern verschoben — in denselben NAS-Ordner in
+gleicher Struktur (`…/NIRO Studio/projects/<Kunde>/<Projekt>/<Charge>/Ergebnisse/Renders/…`; Motion-Inputs unter
+`…/NIRO Studio/tools-medien/motion/`). Lokal bleiben nur laufende Chargen; zum Weiterarbeiten die Ordner vom NAS
+zurückkopieren (Resolve dann per „Relink“). Stand 17.09.2026: alle Chargen außer Dold und Taxodia verschoben.
 
 **Protokoll-Pflicht:** Bei jeder Arbeit an einer Charge (egal welche Funktion)
 `Protokoll.md` im Chargen-Ordner fortschreiben — pro Session ein kurzer
@@ -50,6 +57,7 @@ Stand vom NAS), nach der Arbeit mit dem Protokoll-Eintrag dasselbe (Stand aufs N
 | „Foto: <Kunde>/<Projekt>[/<Charge>]" | ARW-RAWs → Culling, Look, fertige Bilder | `tools/photo/WORKFLOW-Foto.md` |
 | „AutoCut: <Kunde>/<Projekt>[/<Charge>]" | Schnittplan → Rohschnitt-Timeline in Resolve (roh) → B-Roll aus der Auswahl-Timeline des Users → Feinschnitt (A/B-Wechsel, Grafik, Ton, Musik, SFX, Grading, Begradigen; Vorlagen) · Finalisieren (Pegel, Zeitlupe) · Kantenprüfung am Export · Review in Dropbox Replay (Upload nach OK, Kommentare holen) | `tools/autocut/WORKFLOW-AutoCut.md` |
 | „Resolve: <Aufgabe>" | Ad-hoc-Arbeit im offenen Resolve-Projekt über den nativen MCP (lesen, prüfen, rendern, importieren) | `tools/resolve/WORKFLOW-Resolve.md` |
+| „Tagesbericht" / „Tagesbericht: gestern" / „Tagesbericht: <JJJJ-MM-TT>" | Tagesstände beider Macs (Git, Chargen, Sitzungen, Gedächtnis) → `berichte/<Tag>/Tagesbericht.md`: Gemacht, neue Funktionen, Empfehlung für main (nur Empfehlung, kein Merge), Probleme, Offenes | `tools/tagesbericht/WORKFLOW-Tagesbericht.md` |
 
 Beim Trigger die jeweilige Workflow-Datei lesen und ihr folgen.
 Projektpfad-Konvention überall: `projects/<Kunde>/<Projekt>/<Charge>/` (relativ
