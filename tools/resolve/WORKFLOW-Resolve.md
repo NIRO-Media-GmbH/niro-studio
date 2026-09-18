@@ -107,6 +107,15 @@ lesen. Abgrenzung: AutoCut (`tools/autocut/WORKFLOW-AutoCut.md`) bleibt skriptge
   `project.RenderWithQuickExport("H.265 Master", {"TargetDir": "<Charge>/Ergebnisse/Export", "CustomName": "<Name>"})`
   — Presets per `project.GetQuickExportRenderPresets()`; Ergebnis-Dict mit `JobStatus` melden; Timeline des
   Users wiederherstellen. Braucht `run_script_unsafe` nur, wenn der Zielordner erst angelegt werden muss.
+  ⚠️ Nicht direkt nach Marken-Änderungen per API (Absturz Craiss 16.09., siehe „Mark In/Out").
+- **Liefer-Render über die Render-Queue** (schreibend, nach Freigabe; Vorlage
+  `projects/Craiss Logistik/4 Ads/2026-08 Viele Jahre Viele Geschichten/_intern/resolve/r12_renders.py`): Format/Codec
+  und Seite merken, `SaveAsNewRenderPreset(<Sicherung>)`, `OpenPage("deliver")`, je Timeline `SetCurrentTimeline` +
+  2 s warten, `SetCurrentRenderFormatAndCodec("mp4", "H265")`, `SetRenderSettings({MarkIn, MarkOut (absolut), TargetDir,
+  CustomName, VideoQuality: 8000, EncodingProfile: "Main10", AudioCodec: "aac", …})`, `AddRenderJob()` + Readback über
+  `GetRenderJobList()`, dann nur die eigenen Jobs per `StartRendering([ids])`, auf `GetRenderJobStatus` warten, Jobs
+  löschen, Preset laden + löschen, **Format/Codec ausdrücklich zurücksetzen**, Timeline und Seite zurück, Seite nachlesen.
+  Fertige Dateien mit `ffprobe -count_frames` zählen (Resolve-MP4 vom 11.09. meldeten 1 Frame mehr als dekodierbar).
 - **Medien importieren** (schreibend, nach Freigabe): `mp = project.GetMediaPool()`, Bin
   `Claude Import <Datum>` per `mp.AddSubFolder(mp.GetRootFolder(), name)`, `mp.SetCurrentFolder(bin)`,
   `mp.ImportMedia([pfad, …])` (**Liste von Pfad-Strings** — die Dict-Form `[{"FilePath": pfad}]` aus dem
@@ -185,6 +194,39 @@ Skripte mit diesen Aufrufen liegen als Vorlagen unter `tools/autocut/vorlagen/fe
   eigenen Aufruf aktivieren.
 - **`Timeline.DetectSceneCuts()`** blockiert (76 s für 21 min 4K vom NAS) und schneidet alle Video-Items der
   Timeline in place — nur auf eigenen Timelines.
+- **Clips verschieben / Platz vorn** (Craiss 03, 16.09.): Die API kann bestehende Clips weder verschieben noch nach
+  hinten rippeln. `SetStartTimecode` verschiebt alle Clips mit (Positionen relativ zum Start) und schaltete die Timeline
+  ungefragt aktiv. Weg: in einer Kopie Handgriff des Users (Cmd+A, `+N`, Enter) und danach jeden Clip gegen das
+  Original nachmessen — der Handgriff lieferte 33 statt 35 Frames; das 20-min-Safezone-PNG (Spur aus) wandert nicht mit.
+- **Compound Clips lesen:** `MediaPoolItem.GetTimeline()` liefert für Compound Clips `None`. Der OTIO-Export
+  (`Timeline.Export(pfad, resolve.EXPORT_OTIO)`) enthält den Compound als verschachtelten `Stack` mit allen Clips:
+  Quell-In = `source_range.start_time` − `media_reference.available_range.start_time` (Frames), `enabled`, Effekt-
+  Parameter unter `effects[].metadata.Resolve_OTIO` (Transform: `transformationZoomX/Y`, `transformationPan` = Pan/
+  Timeline-Breite, `transformationTilt` = Tilt/Timeline-Höhe; Ton: `Fairlight Clip Volume and Fades.volume` in dB;
+  `Dynamic Zoom` mit Keyframes). Deaktivierte Clips auf höheren Spuren im Compound (a7-Perspektive) beachten.
+- **Look nachbauen:** Der Serien-Look lag in der **Color-Gruppe** (Pre/Post-Clip), nicht im Clip-Knoten — `CopyGrades`
+  überträgt nur den Clip-Knoten. Neue Clips per `item.AssignToColorGroup(gruppe)` in die Gruppe des Originals hängen
+  (Gruppe über `GetColorGroup()` des Original-Items). Einen Compound aus bereits gruppierten Clips nicht zusätzlich
+  gruppieren (sonst doppelter Gruppen-Grade). Mittelwert-Vergleiche von Bildern täuschen, solange der Ausschnitt nicht
+  stimmt — immer mit dem Auge gegenprüfen.
+- **Dynamic Zoom:** `SetProperty("DynamicZoomEnabled", True)` wirkt; die Rechtecke sind per API nicht setzbar. Standard
+  (Keyframes 0,8 → 1,0) = Herauszoomen von 1,25× auf 1,0× über die Clip-Dauer (per Bildvergleich gemessen).
+  `Timeline.CreateCompoundClip(items, {"name", "startTimecode"})` legt den Media-Pool-Eintrag im aktuellen Bin an —
+  vorher eigenen Bin setzen.
+- **Mark In/Out:** `SetMarkInOut(0, N)` exportiert N + 1 Frames (Out zählt mit). `DuplicateTimeline` übernimmt Marken
+  nicht, und `DeleteClips` + `AppendToTimeline` auf der aktiven Timeline löschen sie — vorher lesen, danach neu setzen. `MediaPoolItem`-Objekte sind nie `==` (Wrapper) — Rollen über Positionen zuordnen, nicht per Vergleich.
+  `SetMarkInOut(0, N)` meldete mehrfach `False`, obwohl die Out-Marke danach auf N stand (In = 0 wird nicht als Marke
+  gespeichert) — nur der Readback zählt. **Absturz 16.09.2026:** Marke per `run_script` auf einer inaktiven Timeline
+  gesetzt, dieselbe Timeline extern aktiviert und sofort `RenderWithQuickExport("H.265 Master", {…, "VideoQuality": 8000})`
+  → Resolve stürzte 2 s nach Encode-Start ab (Assertion `SmRecordManager::GetRecord`), die Marken-Änderung war nach dem
+  Neustart weg. Seitdem Render-Bereiche nur über die Render-Queue. Dabei gilt: `SetRenderSettings` mit `MarkIn`/`MarkOut`
+  **setzt die Marken der aktiven Timeline**, `SelectAllFrames: True` **löscht sie** (traf die Original-Timeline des Users,
+  wiederhergestellt) — Render-Einstellungen nur bei aktiver eigener Timeline ändern.
+- **`SetRenderSettings` für MP4/H.265** (gemessen einzeln): ein abgelehnter Schlüssel lässt den ganzen Aufruf scheitern.
+  Abgelehnt: `ExportAlpha` (auch `False`), `VideoQuality: "8000"` (String), `EncodingProfile: "Main 10"`, `AudioCodec: "AAC"`.
+  Angenommen: `VideoQuality: 8000` (kbit/s, ergibt 8,08 Mbit/s), `EncodingProfile: "Main10"`, `AudioCodec: "aac"`,
+  `AudioSampleRate`, `FormatWidth/Height`, `ExportSubtitle`, `NetworkOptimization`, `DataBurnIn`. `LoadRenderPreset` stellt
+  Format/Codec nicht zurück (blieb MP4/H.265).
 - **Dropbox Replay** (Live-Test 16.09.2026 im Untitled Project; Spec `docs/superpowers/specs/2026-09-16-autocut-replay-design.md`):
   - **Upload nur nach OK des Users, jeder einzeln.** Resolve ist in Einstellungen → System → Internet-Konten mit Dropbox angemeldet.
   - `RenderWithQuickExport("Replay", {"TargetDir", "CustomName", "EnableUpload": True})` → `JobStatus` „Upload Completed";
