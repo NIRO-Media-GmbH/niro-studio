@@ -26,6 +26,8 @@
     ton: '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/></svg>',
     stumm: '<svg viewBox="0 0 24 24"><path d="M4.3 3 3 4.3 7.7 9H3v6h4l5 5v-6.7l4.3 4.3-1.4 1.4 2.8 2.8 1.3-1.3zM12 4 9.9 6.1 12 8.2zm4.5 8A4.5 4.5 0 0 0 14 8v2.2l2.5 2.5z"/></svg>',
     vollbild: '<svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7zm-2-4h2V7h3V5H5zm12 7h-3v2h5v-5h-2zm-3-12v2h3v3h2V5z"/></svg>',
+    hoch: '<svg viewBox="0 0 24 24"><path d="M7.4 15.4 12 10.8l4.6 4.6L18 14l-6-6-6 6z"/></svg>',
+    runter: '<svg viewBox="0 0 24 24"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg>',
   };
   const ZUSTAND = { "review-offen": "Review offen", "bei-claude": "bei Claude", freigegeben: "Freigegeben", leer: "keine Version" };
   const STATUS = { offen: "offen", umgesetzt: "umgesetzt", rueckfrage: "Rückfrage", erledigt: "erledigt" };
@@ -98,6 +100,20 @@
     return out;
   }
   function projekt(kunde, name) { return projekte().find((p) => p.kunde === kunde && p.name === name) || null; }
+  function nachbarn() {
+    const r = route();                   // aus dem Hash, nicht aus Z.route: schnelle Doppeltasten vor dem hashchange
+    const p = Z.index && r.video ? projekt(r.kunde, r.projekt) : null;
+    if (!p) return { i: -1, n: 0, vorher: null, nachher: null };
+    const i = p.videos.findIndex((v) => v.titel === r.video);
+    return { i, n: p.videos.length, vorher: i > 0 ? p.videos[i - 1] : null, nachher: i >= 0 && i < p.videos.length - 1 ? p.videos[i + 1] : null };
+  }
+  function videoWechseln(delta) {
+    const nb = nachbarn();
+    const ziel = delta < 0 ? nb.vorher : nb.nachher;
+    const r = route();
+    if (ziel) geheZu(r.kunde, r.projekt, ziel.titel);
+  }
+  function indexAngekommen() { renderBaum(); if (Z.dom && Z.dom.kopf && Z.detail) renderKopf(); }
   function renderBaum() {
     const baum = $("#baum");
     const q = Z.suche.trim().toLowerCase();
@@ -109,12 +125,28 @@
       if (!ps.length) continue;
       const kunde = el("div", { class: "kunde" }, el("div", { class: "kunde-name", text: k.name }));
       for (const p of ps) {
-        kunde.append(el("a", { class: "projekt" + (r.kunde === k.name && r.projekt === p.name ? " aktiv" : ""), href: pfad(k.name, p.name) },
+        const aktiv = r.kunde === k.name && r.projekt === p.name;
+        kunde.append(el("a", { class: "projekt" + (aktiv ? " aktiv" : ""), href: pfad(k.name, p.name) },
           el("span", { class: "name", text: p.name }),
           p.review_offen ? el("span", { class: "zahl gruen", text: String(p.review_offen), title: p.review_offen + " im Review" + (p.offen ? " · " + p.offen + " offene Kommentare" : "") }) : null,
           p.bei_claude ? el("span", { class: "zahl blau", text: String(p.bei_claude), title: p.bei_claude + " bei Claude" }) : null));
+        if (aktiv) {
+          const liste = el("div", { class: "videos" });
+          for (const v of p.videos) {
+            if (q && !v.titel.toLowerCase().includes(q) && !(k.name + " " + p.name).toLowerCase().includes(q)) continue;
+            const ist = r.video === v.titel;
+            liste.append(el("a", { class: "video" + (ist ? " aktiv" : ""), href: pfad(k.name, p.name, v.titel), title: `${v.titel} · ${ZUSTAND[v.zustand] || v.zustand}${v.gesamt ? " · " + v.gesamt + " Kommentare" : ""}` },
+              el("i", { class: "punkt " + v.zustand }),
+              el("span", { class: "name", text: v.titel }),
+              v.neueste ? el("span", { class: "v", text: "V" + v.neueste }) : null,
+              v.offen ? el("span", { class: "zahl", text: String(v.offen), title: v.offen + " offene Kommentare" }) : null));
+          }
+          kunde.append(liste);
+        }
       }
       baum.append(kunde);
+      const aktives = kunde.querySelector(".video.aktiv");
+      if (aktives) requestAnimationFrame(() => aktives.scrollIntoView({ block: "nearest" }));
     }
     if (!baum.children.length) baum.append(el("div", { class: "leer", text: Z.index.kunden.length ? "Nichts gefunden." : "Noch keine Reviews." }));
   }
@@ -303,7 +335,12 @@
         : el("button", { class: "primaer", text: "Review abschließen", title: "Sperrt V" + v.nr + " für neue Kommentare — dann Claude Bescheid sagen", onclick: () => versionAktion("version/abschliessen") }));
       aktionen.append(el("button", { text: "Freigeben", title: "Video ist fertig", onclick: () => { if (confirm(`„${det.video.titel}“ freigeben?`)) videoAktion("video/freigeben"); } }));
     }
-    d.kopf.replaceChildren(el("h1", { text: det.video.titel, title: det.video.titel }), chipZustand(zustand), pillen, aktionen);
+    const nb = nachbarn();
+    const nav = el("div", { class: "nav-videos" },
+      el("button", { class: "knopf", html: ICON.hoch, title: nb.vorher ? `Vorheriges Video (↑): ${nb.vorher.titel}` : "Erstes Video", disabled: !nb.vorher, onclick: () => videoWechseln(-1) }),
+      el("span", { class: "position", text: nb.n ? `${nb.i + 1} / ${nb.n}` : "…", title: "Position im Projekt" }),
+      el("button", { class: "knopf", html: ICON.runter, title: nb.nachher ? `Nächstes Video (↓): ${nb.nachher.titel}` : "Letztes Video", disabled: !nb.nachher, onclick: () => videoWechseln(1) }));
+    d.kopf.replaceChildren(nav, el("h1", { text: det.video.titel, title: det.video.titel }), chipZustand(zustand), pillen, aktionen);
     const teile = [`V${v.nr} · ${wann(v.angelegt)}${v.von ? " · " + v.von : ""} · ${Number(v.dauer_s || 0).toFixed(2)} s · ${v.breite}×${v.hoehe} · ${Z.fps} fps`];
     d.notiz.replaceChildren(...[el("span", { text: teile[0] }), v.notiz ? el("span", { html: " · <b>Notiz:</b> " }) : null, v.notiz ? el("span", { text: v.notiz }) : null,
       v.abgeschlossen ? el("span", { text: ` · abgeschlossen ${wann(v.abgeschlossen.am)} von ${v.abgeschlossen.von}` }) : null].filter(Boolean));
@@ -489,6 +526,8 @@
       case " ": ev.preventDefault(); umschalten(); break;
       case "ArrowLeft": ev.preventDefault(); schritt(ev.shiftKey ? -fps : -1); break;
       case "ArrowRight": ev.preventDefault(); schritt(ev.shiftKey ? fps : 1); break;
+      case "ArrowUp": ev.preventDefault(); videoWechseln(-1); break;
+      case "ArrowDown": ev.preventDefault(); videoWechseln(1); break;
       case "Home": ev.preventDefault(); Z.video.pause(); springe(0); break;
       case "End": ev.preventDefault(); Z.video.pause(); springe(Z.frames - 1); break;
       case "i": case "I": ev.preventDefault(); setzeIn(); break;
@@ -539,7 +578,7 @@
     Z.video = null; Z.detail = null; Z.dom = {};
     const r = Z.route;
     if (r.video) {                       // Player braucht den Index nicht — nicht auf ein stockendes NAS warten
-      if (!Z.index) ladeIndex().then(renderBaum).catch(() => {});
+      if (!Z.index) ladeIndex().then(indexAngekommen).catch(() => {});
       renderBaum(); renderKrumen();
       await renderPlayer();
       return;
@@ -555,6 +594,6 @@
   nasPruefen();
   setInterval(nasPruefen, 10000);
   setInterval(() => { if (!Z.route.video) ladeIndex(true).then(() => { renderBaum(); if (Z.route.kunde) renderProjekt(); else renderStart(); }).catch(() => {}); }, 15000);
-  setInterval(() => { if (Z.route.video) ladeIndex(true).then(renderBaum).catch(() => {}); }, 30000);
+  setInterval(() => { if (Z.route.video) ladeIndex(true).then(indexAngekommen).catch(() => {}); }, 30000);
   navigieren().catch(fehler);
 })();

@@ -26,8 +26,10 @@ Wer den Agent vor dem 18.09. 15 Uhr installiert hat: einmal `installieren` wiede
 ## Bedienen
 
 - **Projekte** links, Videos als Karten mit Vorschaubild, Versions-Chip und Zustand (Review offen · bei Claude ·
-  Freigegeben). Suchfeld filtert Projekte und Titel.
-- **Player:** Timecode frame-genau, Scrubber mit Kommentar-Markern (Punkt = Stelle, Balken = Bereich), Versions-Pillen.
+  Freigegeben). Im geöffneten Projekt listet die Seitenleiste alle Videos (Punkt = Zustand, Version, offene Kommentare),
+  das aktuelle ist markiert. Suchfeld filtert Projekte und Titel.
+- **Player:** oben links ▲/▼ zum vorherigen/nächsten Video des Projekts mit Position „3 / 30" (Tasten ↑/↓); Timecode
+  frame-genau, Scrubber mit Kommentar-Markern (Punkt = Stelle, Balken = Bereich), Versions-Pillen.
   Tippen im Kommentarfeld pausiert das Video; der Kommentar landet am aktuellen Frame. „Bereich bis hier" (oder `O`)
   macht einen Bereich, „Allgemein" einen Kommentar ohne Zeit.
 - **Review abschließen** sperrt die Version für neue Kommentare und stellt sie auf „bei Claude" — dann im Chat
@@ -44,6 +46,7 @@ Wer den Agent vor dem 18.09. 15 Uhr installiert hat: einmal `installieren` wiede
 |---|---|
 | Leertaste | Play / Pause |
 | ← / → | ein Frame zurück / vor (mit ⇧ eine Sekunde) |
+| ↑ / ↓ | vorheriges / nächstes Video im Projekt |
 | Home / End | Anfang / Ende |
 | I / O | Bereich: In / Out auf den aktuellen Frame |
 | C | Kommentarfeld fokussieren (pausiert) |
