@@ -2003,6 +2003,9 @@ def test_plist_inhalt():
 
 def test_installieren_und_deinstallieren(tmp_path, monkeypatch, wurzeln):
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: tmp_path))
+    einstieg = wurzeln["repo"] / "tools" / "review" / "review.py"
+    einstieg.parent.mkdir(parents=True)
+    einstieg.write_text("# Einstieg", encoding="utf-8")
     aufrufe = []
 
     def launchctl(cmd, **kw):
@@ -2023,6 +2026,9 @@ def test_installieren_und_deinstallieren(tmp_path, monkeypatch, wurzeln):
 
 def test_installieren_fehler(tmp_path, monkeypatch, wurzeln):
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: tmp_path))
+    einstieg = wurzeln["repo"] / "tools" / "review" / "review.py"
+    einstieg.parent.mkdir(parents=True)
+    einstieg.write_text("# Einstieg", encoding="utf-8")
 
     def launchctl(cmd, **kw):
         return subprocess.CompletedProcess(cmd, 5 if cmd[1] == "bootstrap" else 0, "", "Input/output error")
