@@ -75,7 +75,7 @@ werden in Reihenfolge aneinandergehängt).
   `json_schreiben(pfad, daten)`; `sicherer_pfad(wurzel, rel)` → Optional[Path]; `name_ok(s)` → bool;
   `mac_name()`, `jetzt()` (ISO-Sekunden lokal), `heute()` („JJJJ-MM-TT"), `datum_de(iso)` („TT.MM.JJJJ").
 
-- [ ] **Step 1: Tests schreiben**
+- [x] **Step 1: Tests schreiben**
 
 ```python file=tools/review/tests/conftest.py
 """Testaufbau: Paket aus src/ importieren, Wurzeln auf Temp-Ordner, Testvideos per ffmpeg."""
@@ -234,12 +234,12 @@ def test_zeit_helfer():
     assert len(ablage.heute()) == 10
 ```
 
-- [ ] **Step 2: Tests laufen lassen — erwartet ImportError**
+- [x] **Step 2: Tests laufen lassen — erwartet ImportError**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_ablage.py -q`
 Expected: Fehler „No module named niro_review".
 
-- [ ] **Step 3: Implementieren**
+- [x] **Step 3: Implementieren**
 
 ```python file=tools/review/review.py
 #!/usr/bin/env python3
@@ -433,12 +433,12 @@ def datum_de(iso: str) -> str:
     return f"{iso[8:10]}.{iso[5:7]}.{iso[0:4]}" if iso and len(iso) >= 10 else "—"
 ```
 
-- [ ] **Step 4: Tests grün**
+- [x] **Step 4: Tests grün**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_ablage.py -q`
 Expected: alle bestanden.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/review/review.py tools/review/src/niro_review/__init__.py tools/review/src/niro_review/ablage.py tools/review/tests/conftest.py tools/review/tests/test_ablage.py
@@ -462,7 +462,7 @@ git commit -m "feat(review): Grundgerüst und Ablage (Wurzeln, Ziel aus Chargenp
   neueste)`, `zaehler(kommentare, geholt_am)`, `index_bauen(wurzel)`, `video_detail(ordner)`, `KOMMENTARE_LEER()`.
   Kommentar-Rohdaten liest das Modell nur als JSON (`kommentare.json`), die Regeln liegen in Task 4.
 
-- [ ] **Step 1: Tests schreiben**
+- [x] **Step 1: Tests schreiben**
 
 ```python file=tools/review/tests/test_modell.py
 from __future__ import annotations
@@ -556,12 +556,12 @@ def test_index_und_detail(tmp_path):
     assert modell.index_bauen(tmp_path / "gibtsnicht") == {"kunden": []}
 ```
 
-- [ ] **Step 2: Tests laufen lassen — erwartet ImportError**
+- [x] **Step 2: Tests laufen lassen — erwartet ImportError**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_modell.py -q`
 Expected: „cannot import name modell" / ModuleNotFoundError.
 
-- [ ] **Step 3: Implementieren**
+- [x] **Step 3: Implementieren**
 
 ```python file=tools/review/src/niro_review/modell.py
 """Datenmodell: video.json / version.json, Versionsnummern, Zustände, Zähler, Titel aus Dateinamen, Sortierung,
@@ -745,12 +745,12 @@ def video_detail(ordner: Path) -> Optional[dict]:
     return {"video": video, "ordner": nfc(ordner.name), "versionen": versionen, "zustand": zustand(video, neueste)}
 ```
 
-- [ ] **Step 4: Tests grün**
+- [x] **Step 4: Tests grün**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_modell.py -q`
 Expected: alle bestanden.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/review/src/niro_review/modell.py tools/review/tests/test_modell.py
@@ -773,7 +773,7 @@ git commit -m "feat(review): Datenmodell — Videos, Versionen, Zustände, Index
   hat_ton, pixel)` → list[str], `umkodieren(quelle, ziel, info)` → Encoder-Name, `vorschaubild(quelle, ziel,
   dauer_s)`, `timecode(frame, fps)` → „HH:MM:SS:FF" (None → „—"), `frame_aus_timecode(tc, fps)` → int.
 
-- [ ] **Step 1: Tests schreiben**
+- [x] **Step 1: Tests schreiben**
 
 ```python file=tools/review/tests/test_medien.py
 from __future__ import annotations
@@ -869,11 +869,11 @@ def test_probe_kopie_und_umkodieren(testvideo_h264, testvideo_mpeg4, tmp_path):
     assert bild.stat().st_size > 1000
 ```
 
-- [ ] **Step 2: Tests laufen lassen — erwartet ImportError**
+- [x] **Step 2: Tests laufen lassen — erwartet ImportError**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_medien.py -q`
 
-- [ ] **Step 3: Implementieren**
+- [x] **Step 3: Implementieren**
 
 ```python file=tools/review/src/niro_review/medien.py
 """Medien: ffprobe → Medieninfo, Entscheidung Kopie/Umkodierung/Alpha, ffmpeg-Aufrufe, Vorschaubild, Timecode.
@@ -1024,11 +1024,11 @@ def frame_aus_timecode(tc: str, fps: float) -> int:
     return ((h * 60 + m) * 60 + s) * basis + ff
 ```
 
-- [ ] **Step 4: Tests grün**
+- [x] **Step 4: Tests grün**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_medien.py -q`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/review/src/niro_review/medien.py tools/review/tests/test_medien.py
@@ -1054,7 +1054,7 @@ git commit -m "feat(review): Medien — ffprobe, Kopie/Umkodierung, Vorschaubild
 - Kommentar-Felder: `id, frame, bis_frame, autor, text, angelegt, geaendert, status, antworten[], antwort_claude,
   tc_neu (Text), frame_neu (int)`.
 
-- [ ] **Step 1: Tests schreiben**
+- [x] **Step 1: Tests schreiben**
 
 ```python file=tools/review/tests/test_kommentare.py
 from __future__ import annotations
@@ -1172,9 +1172,9 @@ def test_export():
     assert "Keine Kommentare." in leer
 ```
 
-- [ ] **Step 2: Tests laufen lassen — erwartet ImportError**
+- [x] **Step 2: Tests laufen lassen — erwartet ImportError**
 
-- [ ] **Step 3: Implementieren**
+- [x] **Step 3: Implementieren**
 
 ```python file=tools/review/src/niro_review/kommentare.py
 """Kommentare einer Version: anlegen, ändern, löschen, antworten (User über den Server), Umsetzung durch Claude
@@ -1378,11 +1378,11 @@ def export_json(video: dict, version: dict, daten: dict, geholt_am_vorher: Optio
             "abgeschlossen": version.get("abgeschlossen"), "geholt_am_vorher": geholt_am_vorher, "kommentare": out}
 ```
 
-- [ ] **Step 4: Tests grün**
+- [x] **Step 4: Tests grün**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_kommentare.py -q`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/review/src/niro_review/kommentare.py tools/review/tests/test_kommentare.py
@@ -1411,7 +1411,7 @@ git commit -m "feat(review): Kommentare — Regeln, Umsetzung alles-oder-nichts,
   `POST /api/video/freigeben|freigabe_zuruecknehmen {kunde, projekt, video, autor}` ·
   `GET|HEAD /media/<K>/<P>/<V>/V<n>/video.mp4|thumb.jpg` (Range, Header `X-Quelle: cache|nas`) · `GET /`, `GET /ui/*`.
 
-- [ ] **Step 1: Tests schreiben**
+- [x] **Step 1: Tests schreiben**
 
 ```python file=tools/review/tests/test_server.py
 from __future__ import annotations
@@ -1592,9 +1592,9 @@ def test_ohne_nas_503(tmp_path, ui):
         s.server_close()
 ```
 
-- [ ] **Step 2: Tests laufen lassen — erwartet ImportError**
+- [x] **Step 2: Tests laufen lassen — erwartet ImportError**
 
-- [ ] **Step 3: Implementieren**
+- [x] **Step 3: Implementieren**
 
 ```python file=tools/review/src/niro_review/server.py
 """HTTP-Server: Oberfläche (ui/), JSON-API, Medien mit Range-Streaming aus Cache oder NAS (Cache-Füllung im
@@ -1728,12 +1728,12 @@ class Handler(BaseHTTPRequestHandler):
             pfad = unquote(teile.path)
             q = parse_qs(teile.query)
             if pfad in ("/", "/index.html"):
-                return self._datei(self.server.ui / "index.html", kopf_nur, cache="no-cache")
+                return self._datei(self.server.ui / "index.html", kopf_nur, cache="no-store")
             if pfad.startswith("/ui/"):
                 ziel = sicherer_pfad(self.server.ui, pfad[4:])
                 if not ziel or not ziel.is_file():
                     raise HttpFehler(404, "Datei fehlt.")
-                return self._datei(ziel, kopf_nur, cache="no-cache")
+                return self._datei(ziel, kopf_nur, cache="no-store")
             if pfad.startswith("/media/"):
                 return self._medien(pfad[7:], kopf_nur)
             if pfad == "/api/zustand":
@@ -1950,11 +1950,11 @@ def starten(port: int = 4711, wurzel: Optional[Path] = None, cache: Optional[Pat
         srv.server_close()
 ```
 
-- [ ] **Step 4: Tests grün**
+- [x] **Step 4: Tests grün**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_server.py -q`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/review/src/niro_review/server.py tools/review/tests/test_server.py
@@ -1975,7 +1975,7 @@ git commit -m "feat(review): Server — API, Medien mit Range, Cache-Füllung, 5
   umgebung)` → bytes, `installieren(port=4711, launchctl=subprocess.run)` → Path, `deinstallieren(launchctl=subprocess.run)`
   → bool (Plist existierte).
 
-- [ ] **Step 1: Tests schreiben**
+- [x] **Step 1: Tests schreiben**
 
 ```python file=tools/review/tests/test_launchagent.py
 from __future__ import annotations
@@ -2037,9 +2037,9 @@ def test_installieren_fehler(tmp_path, monkeypatch, wurzeln):
         launchagent.installieren(4711, launchctl=launchctl)
 ```
 
-- [ ] **Step 2: Tests laufen lassen — erwartet ImportError**
+- [x] **Step 2: Tests laufen lassen — erwartet ImportError**
 
-- [ ] **Step 3: Implementieren**
+- [x] **Step 3: Implementieren**
 
 ```python file=tools/review/src/niro_review/launchagent.py
 """LaunchAgent de.niro.review: Server bei Anmeldung starten, bei Absturz neu starten. Spec „LaunchAgent"."""
@@ -2105,11 +2105,11 @@ def deinstallieren(launchctl=subprocess.run) -> bool:
     return False
 ```
 
-- [ ] **Step 4: Tests grün**
+- [x] **Step 4: Tests grün**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests/test_launchagent.py -q`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/review/src/niro_review/launchagent.py tools/review/tests/test_launchagent.py
@@ -2130,7 +2130,7 @@ git commit -m "feat(review): LaunchAgent de.niro.review (installieren/deinstalli
   `version_anlegen(kunde, projekt, charge, titel, datei, nr=None, notiz="", sortierung=None, basis=None, trotzdem=False)`
   → dict `{"titel", "nr", "weg", "ordner", "version"}` (wird von den Tests direkt und von `cmd_hinzufuegen` genutzt).
 
-- [ ] **Step 1: Tests schreiben**
+- [x] **Step 1: Tests schreiben**
 
 ```python file=tools/review/tests/test_cli.py
 from __future__ import annotations
@@ -2274,9 +2274,9 @@ def test_hinzufuegen_alpha_abgelehnt(wurzeln, tmp_path, monkeypatch):
     assert lauf("hinzufuegen", wurzeln["charge_rel"], "--datei", alpha, "--trotzdem") == 0
 ```
 
-- [ ] **Step 2: Tests laufen lassen — erwartet ImportError**
+- [x] **Step 2: Tests laufen lassen — erwartet ImportError**
 
-- [ ] **Step 3: Implementieren**
+- [x] **Step 3: Implementieren**
 
 ```python file=tools/review/src/niro_review/cli.py
 """CLI von NIRO Review (Aufruf über tools/review/review.py). Befehle und Exit-Codes: Spec „Befehle"."""
@@ -2662,11 +2662,11 @@ def main(argv=None) -> int:
         return e.code
 ```
 
-- [ ] **Step 4: Tests grün**
+- [x] **Step 4: Tests grün**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests -q`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/review/src/niro_review/cli.py tools/review/tests/test_cli.py
@@ -2690,7 +2690,7 @@ git commit -m "feat(review): CLI — hinzufuegen, kommentare, umsetzung, antwort
   (Segmente `encodeURIComponent`).
 - Autor im Browser: `localStorage["niroReviewAutor"]`.
 
-- [ ] **Step 1: Assets kopieren**
+- [x] **Step 1: Assets kopieren**
 
 ```bash
 mkdir -p tools/review/ui/fonts
@@ -2698,7 +2698,7 @@ cp tools/motion/public/clients/niro/niro-symbol.svg tools/review/ui/niro-symbol.
 for w in Regular Medium SemiBold Bold; do cp "tools/motion/public/fonts/Meutas-$w.otf" tools/review/ui/fonts/; done
 ```
 
-- [ ] **Step 2: index.html**
+- [x] **Step 2: index.html**
 
 ```html file=tools/review/ui/index.html
 <!doctype html>
@@ -2746,7 +2746,7 @@ for w in Regular Medium SemiBold Bold; do cp "tools/motion/public/fonts/Meutas-$
 </html>
 ```
 
-- [ ] **Step 3: style.css**
+- [x] **Step 3: style.css**
 
 ```css file=tools/review/ui/style.css
 @font-face { font-family: "Meutas"; font-weight: 400; src: url("/ui/fonts/Meutas-Regular.otf") format("opentype"); }
@@ -2823,10 +2823,10 @@ input:focus, textarea:focus { border-color: var(--gruen); }
 .raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
 .karte { background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: transform .12s, border-color .12s; display: flex; flex-direction: column; }
 .karte:hover { transform: translateY(-2px); border-color: #4a574e; }
-.karte .bild { aspect-ratio: 16 / 10; background: #0f1411; display: flex; align-items: center; justify-content: center; position: relative; }
-.karte .bild img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.karte .bild .chip { position: absolute; top: 8px; left: 8px; }
-.karte .bild .zustand { position: absolute; top: 8px; right: 8px; }
+.karte .bild { aspect-ratio: 16 / 10; background: #0f1411; position: relative; overflow: hidden; }
+.karte .bild img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.karte .bild .chip.version { position: absolute; top: 8px; left: 8px; }
+.karte .bild .chip.zustand { position: absolute; top: 8px; right: 8px; }
 .karte .text { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; }
 .karte .titel { font-weight: 500; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .karte .meta { display: flex; justify-content: space-between; align-items: center; color: var(--gedaempft); font-size: 12px; }
@@ -2943,7 +2943,7 @@ input:focus, textarea:focus { border-color: var(--gruen); }
 @media (max-width: 1100px) { .kommentare { width: 320px; } :root { --seite-breite: 220px; } }
 ```
 
-- [ ] **Step 4: app.js**
+- [x] **Step 4: app.js**
 
 ```javascript file=tools/review/ui/app.js
 "use strict";
@@ -3498,7 +3498,7 @@ input:focus, textarea:focus { border-color: var(--gruen); }
 })();
 ```
 
-- [ ] **Step 5: Syntax prüfen und committen**
+- [x] **Step 5: Syntax prüfen und committen**
 
 ```bash
 node --check tools/review/ui/app.js
@@ -3516,7 +3516,7 @@ git commit -m "feat(review): Oberfläche — Übersicht, Player mit Frame-Timeco
   `SETUP.md` (Schritt 8 „Review")
 - Nicht anfassen: `tools/autocut/WORKFLOW-AutoCut.md` (fremde, unkommittierte Änderungen) — der Verweis steht in CLAUDE.md.
 
-- [ ] **Step 1: WORKFLOW-Review.md**
+- [x] **Step 1: WORKFLOW-Review.md**
 
 ```markdown file=tools/review/WORKFLOW-Review.md
 # Review — Ablauf für Claude (seit 18.09.2026)
@@ -3614,7 +3614,7 @@ gleichzeitig am selben Video arbeiten.
 - Video ruckelt beim Scrubben: Cache füllt sich beim ersten Abspielen (`~/Library/Caches/NIRO Review`); danach flüssig.
 ```
 
-- [ ] **Step 2: README.md**
+- [x] **Step 2: README.md**
 
 ```markdown file=tools/review/README.md
 # NIRO Review
@@ -3679,7 +3679,7 @@ tools/autocut/venv/bin/python -m pytest tools/review/tests -q
 ```
 ```
 
-- [ ] **Step 3: CLAUDE.md anpassen**
+- [x] **Step 3: CLAUDE.md anpassen**
 
 Drei Änderungen mit Edit (exakte Stellen):
 
@@ -3693,7 +3693,7 @@ Drei Änderungen mit Edit (exakte Stellen):
 Außerdem im Absatz „Protokoll-Pflicht" den Satz ergänzen: „Review-Ablagen (Titel, Version, Link) und geholte
 Kommentar-Runden gehören in denselben Eintrag."
 
-- [ ] **Step 4: SETUP.md — Schritt 8 vor „## Arbeiten mit dem Repo"**
+- [x] **Step 4: SETUP.md — Schritt 8 vor „## Arbeiten mit dem Repo"**
 
 ```markdown
 ## 8. Review
@@ -3706,7 +3706,7 @@ Richtet den Review-Server als LaunchAgent ein (`http://localhost:4711`, startet 
 Schritt 3 und das verbundene NAS; Ablage und Bedienung in [tools/review/README.md](tools/review/README.md).
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/review/WORKFLOW-Review.md tools/review/README.md CLAUDE.md SETUP.md
@@ -3721,12 +3721,12 @@ git commit -m "docs(review): Ablauf für Claude, README, neunte Funktion in CLAU
 - Keine neuen Quelldateien; Nacharbeiten an `tools/review/ui/*` oder `server.py` nach der Sichtprüfung (je Fix ein
   Commit). Memory-Datei `~/.claude/projects/-Users-jansantos-NIRO-Studio/memory/niro-review.md` + Zeile in `MEMORY.md`.
 
-- [ ] **Step 1: Alle Tests**
+- [x] **Step 1: Alle Tests**
 
 Run: `tools/autocut/venv/bin/python -m pytest tools/review/tests -q` — erwartet: alle grün.
 Zusätzlich mit Apple-Python 3.9: `/usr/bin/python3 -c "import sys; sys.path.insert(0, 'tools/review/src'); import niro_review.cli, niro_review.server; print('3.9 ok')"`.
 
-- [ ] **Step 2: LaunchAgent installieren und prüfen**
+- [x] **Step 2: LaunchAgent installieren und prüfen**
 
 ```bash
 python3 tools/review/review.py installieren
@@ -3734,7 +3734,7 @@ sleep 2; curl -s http://localhost:4711/api/zustand; echo; tail -n 5 ~/Library/Lo
 ```
 Erwartet: JSON mit `"nas_verbunden": true`, `"wurzel": "/Volumes/NIRO NAS/…/NIRO Studio/review"`.
 
-- [ ] **Step 3: Erste Befüllung Dold (V1 = Entwürfe vom 17.09.)**
+- [x] **Step 3: Erste Befüllung Dold (V1 = Entwürfe vom 17.09.)**
 
 ```bash
 python3 tools/review/review.py hinzufuegen "projects/Dold/Recruiting/2026-07 Dreh 27-28.07" \
@@ -3745,7 +3745,7 @@ python3 tools/review/review.py status "Dold/Recruiting"
 Erwartet: 24 Videos `Dold 02 … Dold 26` als V1 (Kopie, 2160×3840, 25 fps), Link `http://localhost:4711/#/Dold/Recruiting`.
 Liegen v2-Renders vor (`Ergebnisse/Export/…v2…`), als V2 mit Notiz nachlegen — sonst offen lassen und im Bericht nennen.
 
-- [ ] **Step 4: Sichtprüfung im Browser-Fenster der App** (preview_start `{url: "http://localhost:4711"}`)
+- [x] **Step 4: Sichtprüfung im Browser-Fenster der App** (preview_start `{url: "http://localhost:4711"}`)
 
 1. Startseite: Projektkarte „Dold · Recruiting", Baum links, NAS-Punkt grün, Namensabfrage → „Jan".
 2. Projekt: 24 Karten mit Vorschaubild, Chip V1, Zustand „Review offen", sortiert 02 … 26.
@@ -3760,14 +3760,14 @@ Liegen v2-Renders vor (`Ergebnisse/Export/…v2…`), als V2 mit Notiz nachlegen
 5. Konsole ohne Fehler (`read_console_messages`), Netzwerk: `/media/...` mit 206.
 6. Screenshot Übersicht + Player für den Bericht.
 
-- [ ] **Step 5: Memory und Protokoll**
+- [x] **Step 5: Memory und Protokoll**
 
 - Memory `niro-review.md` (type project): Zweck, Ablage-Pfade, Befehle, LaunchAgent, Regel „jeder fertige Stand ins
   Review", Stand der Dold-Befüllung; Zeile in `MEMORY.md` (kurz, < 200 Zeichen).
 - `Protokoll.md` der Dold-Charge: Eintrag „Review-Ablage V1 (24 Videos), Link".
 - Vorher/nachher `sh tools/studio_abgleich.sh --charge "projects/Dold/Recruiting/2026-07 Dreh 27-28.07"`.
 
-- [ ] **Step 6: Abschluss-Commit und Bericht**
+- [x] **Step 6: Abschluss-Commit und Bericht**
 
 ```bash
 git status --short   # nur eigene Dateien stagen
@@ -3785,3 +3785,19 @@ Bericht an den User: Link, was liegt, was offen ist (Zweit-Mac `installieren`, v
   die Regel steht in CLAUDE.md. Kommentar-Feld `frame_neu` (int) ergänzt `tc_neu` (Text).
 - Typen: `Ziel(kunde, projekt, charge)`, `version_anlegen(...)` → dict, `umsetzung_anwenden(daten, umsetzung, fps)` →
   list, API-Felder `kunde/projekt/video/version/autor/text/frame/bis_frame/id/status/loeschen` überall gleich.
+
+
+## Abweichungen bei der Umsetzung (18.09.2026, alle Tasks erledigt)
+
+- **Review-Kopie max. 1920 px lange Kante** (statt „Auflösung unverändert"): 2160×3840 verwarf im Browser 131 von
+  142 Frames, 1080×1920 keinen; `--original` behält die Auflösung; `-g 25` für flottes Steppen; `version.json` trägt
+  `quelle_breite/quelle_hoehe/quelle_codec`. Spec angepasst.
+- `launchagent.installieren` prüft, dass `tools/review/review.py` im Repo liegt (Test legt die Datei im Temp-Repo an).
+- Server liefert `/` und `/ui/*` mit `Cache-Control: no-store` (sonst hält der Browser alte UI-Dateien nach `git pull`);
+  Verbindungsabbrüche des Browsers (Video-Streams) werden nicht mehr ins Log geschrieben.
+- Oberfläche: Frame aus Zeit per `floor(t·fps + 0,001)` (Sprungziel `(f+0,5)/fps` rundete sonst auf f+1), erstes Bild
+  nach `loadedmetadata` per Sprung auf Frame 0, Thread auch im „Seit V<n> geändert"-Block, Baum-Badges = Videos je
+  Zustand, I/O/C/M/F mit `preventDefault` (das „o" landete sonst im Kommentarfeld), Karten-Bild 16:10 mit `object-fit`.
+- README.md und WORKFLOW-Review.md nennen die 1920-px-Regel; `tools/autocut/WORKFLOW-AutoCut.md` unverändert (fremde
+  unkommittierte Änderungen), Regel steht in CLAUDE.md.
+- Erste Befüllung: Dold 24 Entwürfe v1 als V1 (1080×1920), Testlauf des Kreislaufs an Dold 02 danach rückgebaut.
