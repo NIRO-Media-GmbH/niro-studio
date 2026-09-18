@@ -8,6 +8,7 @@ from typing import Optional
 
 from .ablage import ReviewFehler, datum_de, jetzt, json_lesen, json_schreiben
 from .medien import frame_aus_timecode, timecode
+from .modell import sterne_text
 
 STATUS = ("offen", "umgesetzt", "rueckfrage", "erledigt")
 STATUS_USER = ("offen", "erledigt")
@@ -167,7 +168,14 @@ def export_md(video: dict, version: dict, daten: dict, geholt_am_vorher: Optiona
              f"{version.get('breite') or '?'}×{version.get('hoehe') or '?'}")
     if version.get("notiz"):
         zeile += f" · Notiz V{nr}: {_zelle(version['notiz'])}"
-    zeilen = [kopf, "", zeile, ""]
+    zeilen = [kopf, "", zeile]
+    bew = version.get("bewertung")
+    if bew:
+        b = f"Bewertung V{nr}: {sterne_text(bew)} von {bew.get('von')}"
+        if bew.get("text"):
+            b += f" — „{_zelle(bew['text'])}“"
+        zeilen.append(b)
+    zeilen.append("")
     ks = sortiert(daten.get("kommentare") or [])
     if not ks:
         zeilen.append("Keine Kommentare.")
@@ -196,4 +204,5 @@ def export_json(video: dict, version: dict, daten: dict, geholt_am_vorher: Optio
     return {"quelle": "niro-review", "gelesen_am": jetzt(), "titel": video.get("titel"), "kunde": video.get("kunde"),
             "projekt": video.get("projekt"), "charge": video.get("charge"), "version": int(version.get("nr") or 0),
             "fps": fps, "dauer_s": version.get("dauer_s"), "frames": version.get("frames"),
-            "abgeschlossen": version.get("abgeschlossen"), "geholt_am_vorher": geholt_am_vorher, "kommentare": out}
+            "abgeschlossen": version.get("abgeschlossen"), "bewertung": version.get("bewertung"),
+            "geholt_am_vorher": geholt_am_vorher, "kommentare": out}

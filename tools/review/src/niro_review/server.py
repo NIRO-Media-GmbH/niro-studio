@@ -283,6 +283,16 @@ class Handler(BaseHTTPRequestHandler):
                 a = km.antworten(daten, str(body.get("id") or ""), body.get("autor"), body.get("text"))
                 km.speichern(vo, daten)
                 return a
+            if weg == "version/bewerten":
+                ordner, _ = self._video(body)
+                nr, version = self._version(ordner, body)
+                try:
+                    version["bewertung"] = modell.bewertung_pruefen(body.get("sterne"), body.get("text"), _autor(body))
+                except ValueError as e:
+                    raise HttpFehler(400, str(e))
+                modell.version_schreiben(ordner, nr, version)
+                srv.index_verwerfen()
+                return version
             if weg in ("version/abschliessen", "version/wieder_oeffnen"):
                 ordner, _ = self._video(body)
                 nr, version = self._version(ordner, body)

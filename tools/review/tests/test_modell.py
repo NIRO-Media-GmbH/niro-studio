@@ -87,3 +87,14 @@ def test_index_und_detail(tmp_path):
     assert detail["video"]["titel"] == "Dold 02 Fokus" and [v["nr"] for v in detail["versionen"]] == [1, 2]
     assert detail["versionen"][0]["kommentare"] == [] and detail["zustand"] == "review-offen"
     assert modell.index_bauen(tmp_path / "gibtsnicht") == {"kunden": []}
+
+
+def test_bewertung_pruefen_und_sterne():
+    b = modell.bewertung_pruefen(3, "  ok ", "Jan")
+    assert b["sterne"] == 3 and b["text"] == "ok" and b["von"] == "Jan" and b["am"]
+    assert modell.bewertung_pruefen(0, "", "Jan") is None and modell.bewertung_pruefen(None, "", "Jan") is None
+    with pytest.raises(ValueError):
+        modell.bewertung_pruefen(6, "", "Jan")
+    with pytest.raises(ValueError):
+        modell.bewertung_pruefen("drei", "", "Jan")
+    assert modell.sterne_text(b) == "★★★☆☆ (3/5)" and modell.sterne_text(None) == "—"

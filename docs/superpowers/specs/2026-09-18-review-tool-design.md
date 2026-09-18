@@ -304,3 +304,16 @@ gegenüber v1 geändert wurde; der Kreislauf über Kommentare beginnt mit V2. Ko
 
 Bild-an-Bild-Vergleich zweier Versionen, Zeichnen im Bild (als PNG am Kommentar), macOS-Mitteilung beim Anlegen,
 Kunden-Freigabelink über Replay-Export, Versionsvergleich der Kommentare als Änderungsliste im Protokoll.
+
+## Nachträge 18.09.2026 (nach der Inbetriebnahme)
+
+- **Review-Kopie ≤ 1920 px** (siehe „Befehle"), LaunchAgent als `Interactive`-Prozess (Background drosselte NAS-I/O),
+  Index-Aufwärmen beim Start, Index-Bau blockiert keine parallelen Anfragen.
+- **AutoCut-Anbindung:** `tools/autocut/scripts/autocut_review.py` rendert nach jedem Bau über die Render-Queue und legt ab
+  (Pflicht, `tools/autocut/WORKFLOW-AutoCut.md`).
+- **Seitenleiste** listet alle Videos des aktiven Projekts; ▲/▼ und ↑/↓ wechseln zum Nachbarvideo (Position „3 / 30").
+- **Bausteine:** Schnelltexte über dem Kommentarfeld, gemeinsame Liste `review/_bausteine.json` (`GET/POST /api/bausteine`),
+  Standardliste nach Häufigkeit der Wurst-&-Liebe-Kommentare; Klick fügt ein, ⇧-Klick sendet sofort.
+- **Bewertung je Version:** `version.json.bewertung = {sterne 1–5, text, von, am}` (`POST /api/version/bewerten`, 0 =
+  entfernen), im Index `bewertung` + `bewertung_vorher`, in Karten/Seitenleiste/Export; Regeln für Claude in
+  `tools/review/WORKFLOW-Review.md`.

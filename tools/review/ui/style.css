@@ -111,6 +111,22 @@ input:focus, textarea:focus { border-color: var(--gruen); }
 .player { display: flex; flex-direction: column; height: 100%; }
 .player-kopf { padding: 14px 20px 12px; border-bottom: 1px solid var(--linie); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: var(--flaeche); }
 .player-kopf h1 { font-size: 18px; flex: 1 1 320px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bewertung { display: flex; align-items: center; gap: 8px; }
+.bewertung .sterne { display: flex; gap: 0; }
+.bewertung .stern { border: 0; background: transparent; padding: 0 2px; font-size: 22px; line-height: 1; color: var(--gedaempft); cursor: pointer; }
+.bewertung .stern:hover { color: var(--gelb); background: transparent; }
+.bewertung .stern.voll { color: var(--gelb); }
+.bewertung.s1 .stern.voll, .bewertung.s2 .stern.voll { color: var(--rot); }
+.bewertung.s3 .stern.voll { color: var(--gelb); }
+.bewertung.s4 .stern.voll, .bewertung.s5 .stern.voll { color: var(--gruen); }
+.bewertung .trend { font-family: var(--mono); font-size: 11.5px; color: var(--gedaempft); }
+.bewertung .eindruck { width: 220px; padding: 5px 9px; font-size: 12.5px; }
+.sterne-klein { font-size: 12px; letter-spacing: 1px; color: var(--gelb); white-space: nowrap; }
+.sterne-klein.s1, .sterne-klein.s2 { color: var(--rot); }
+.sterne-klein.s4, .sterne-klein.s5 { color: var(--gruen); }
+.baum .video .sterne-zahl { font-family: var(--schrift); color: var(--gelb); }
+.baum .video .sterne-zahl.s1, .baum .video .sterne-zahl.s2 { color: var(--rot); }
+.baum .video .sterne-zahl.s4, .baum .video .sterne-zahl.s5 { color: var(--gruen); }
 .versionen { display: flex; gap: 6px; }
 .versionen button { border-radius: 999px; padding: 4px 12px; font-family: var(--mono); font-weight: 600; }
 .versionen button.aktiv { background: var(--text); color: var(--grund); border-color: var(--text); }

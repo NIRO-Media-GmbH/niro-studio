@@ -140,6 +140,7 @@
             liste.append(el("a", { class: "video" + (ist ? " aktiv" : ""), href: pfad(k.name, p.name, v.titel), title: `${v.titel} · ${ZUSTAND[v.zustand] || v.zustand}${v.gesamt ? " · " + v.gesamt + " Kommentare" : ""}` },
               el("i", { class: "punkt " + v.zustand }),
               el("span", { class: "name", text: v.titel }),
+              v.bewertung && v.bewertung.sterne ? el("span", { class: "v sterne-zahl s" + v.bewertung.sterne, text: "★" + v.bewertung.sterne, title: v.bewertung.text || "" }) : null,
               v.neueste ? el("span", { class: "v", text: "V" + v.neueste }) : null,
               v.offen ? el("span", { class: "zahl", text: String(v.offen), title: v.offen + " offene Kommentare" }) : null));
           }
@@ -164,6 +165,38 @@
 
   // ---------- Übersichten ----------------------------------------------------------------------------------------
   function chipZustand(z) { return el("span", { class: "chip zustand " + z, text: ZUSTAND[z] || z }); }
+  function sterneKlein(bew, vorher) {
+    if (!bew || !bew.sterne) return null;
+    const n = bew.sterne;
+    let title = `${n}/5 von ${bew.von}${bew.text ? " — " + bew.text : ""}`;
+    if (vorher && vorher.sterne) title = `V vorher ${vorher.sterne}/5 → jetzt ${n}/5` + (bew.text ? " — " + bew.text : "");
+    return el("span", { class: "sterne-klein s" + n, text: "★".repeat(n) + "☆".repeat(5 - n), title });
+  }
+  async function bewerten(sterne, text) {
+    try { await api("version/bewerten", { ...basisDaten(Z.versionNr), autor: Z.autor, sterne, text }); await aktualisierePlayer(true); }
+    catch (e) { fehler(e); }
+  }
+  function bewertungElement(v, basis) {
+    const bew = v.bewertung || null;
+    const n = bew ? bew.sterne : 0;
+    const wrap = el("div", { class: "bewertung" + (n ? " s" + n : ""), title: bew ? `${n}/5 von ${bew.von} · ${wann(bew.am)}` : "Gesamteindruck dieser Version bewerten (1–5)" });
+    const reihe = el("div", { class: "sterne" });
+    for (let i = 1; i <= 5; i++) {
+      reihe.append(el("button", { class: "stern" + (i <= n ? " voll" : ""), text: i <= n ? "★" : "☆", title: ["", "1 — grundsätzlich daneben", "2 — viel Arbeit", "3 — geht in die Richtung", "4 — fast fertig", "5 — passt"][i],
+        onmouseenter: () => { for (const [j, b] of [...reihe.children].entries()) b.textContent = j < i ? "★" : "☆"; },
+        onmouseleave: () => { for (const [j, b] of [...reihe.children].entries()) b.textContent = j < n ? "★" : "☆"; },
+        onclick: () => { if (i === n) { if (confirm("Bewertung entfernen?")) bewerten(0, ""); return; } bewerten(i, bew ? bew.text : ""); } }));
+    }
+    wrap.append(reihe);
+    if (basis && basis.bewertung && basis.bewertung.sterne) wrap.append(el("span", { class: "trend", text: `V${basis.nr}: ${basis.bewertung.sterne}/5`, title: `Bewertung der Vorversion: ${basis.bewertung.text || "—"}` }));
+    if (n) {
+      const input = el("input", { type: "text", class: "eindruck", placeholder: "Gesamteindruck in einem Satz … (⏎)", value: bew.text || "", maxlength: "300",
+        onkeydown: (ev) => { if (ev.key === "Enter") { ev.preventDefault(); bewerten(n, input.value); input.blur(); } if (ev.key === "Escape") { input.value = bew.text || ""; input.blur(); } },
+        onblur: () => { if (input.value.trim() !== (bew.text || "")) bewerten(n, input.value); } });
+      wrap.append(input);
+    }
+    return wrap;
+  }
   function renderStart() {
     const inhalt = $("#inhalt");
     const ps = projekte();
@@ -200,7 +233,7 @@
           el("div", { class: "titel", text: v.titel, title: v.titel }),
           el("div", { class: "meta" },
             el("span", { text: v.gesamt ? `${v.gesamt} Kommentar${v.gesamt === 1 ? "" : "e"}${v.offen ? ` · ${v.offen} offen` : ""}` : "keine Kommentare" }),
-            el("span", { text: wann(v.angelegt) })),
+            sterneKlein(v.bewertung, v.bewertung_vorher) || el("span", { text: wann(v.angelegt) })),
           v.notiz ? el("div", { class: "meta gedaempft", text: v.notiz, title: v.notiz }) : null)));
     }
     inhalt.replaceChildren(el("div", { class: "uebersicht" }, el("h1", { text: p.name }),
@@ -342,7 +375,7 @@
       el("button", { class: "knopf", html: ICON.hoch, title: nb.vorher ? `Vorheriges Video (↑): ${nb.vorher.titel}` : "Erstes Video", disabled: !nb.vorher, onclick: () => videoWechseln(-1) }),
       el("span", { class: "position", text: nb.n ? `${nb.i + 1} / ${nb.n}` : "…", title: "Position im Projekt" }),
       el("button", { class: "knopf", html: ICON.runter, title: nb.nachher ? `Nächstes Video (↓): ${nb.nachher.titel}` : "Letztes Video", disabled: !nb.nachher, onclick: () => videoWechseln(1) }));
-    d.kopf.replaceChildren(nav, el("h1", { text: det.video.titel, title: det.video.titel }), chipZustand(zustand), pillen, aktionen);
+    d.kopf.replaceChildren(nav, el("h1", { text: det.video.titel, title: det.video.titel }), chipZustand(zustand), bewertungElement(v, versionBasis()), pillen, aktionen);
     const teile = [`V${v.nr} · ${wann(v.angelegt)}${v.von ? " · " + v.von : ""} · ${Number(v.dauer_s || 0).toFixed(2)} s · ${v.breite}×${v.hoehe} · ${Z.fps} fps`];
     d.notiz.replaceChildren(...[el("span", { text: teile[0] }), v.notiz ? el("span", { html: " · <b>Notiz:</b> " }) : null, v.notiz ? el("span", { text: v.notiz }) : null,
       v.abgeschlossen ? el("span", { text: ` · abgeschlossen ${wann(v.abgeschlossen.am)} von ${v.abgeschlossen.von}` }) : null].filter(Boolean));
@@ -597,6 +630,7 @@
       case "m": case "M": ev.preventDefault(); stumm(); break;
       case "f": case "F": ev.preventDefault(); vollbild(); break;
       default:
+        if (/^[1-5]$/.test(ev.key) && ev.altKey) { ev.preventDefault(); bewerten(parseInt(ev.key, 10), (versionAktuell().bewertung || {}).text || ""); break; }
         if (/^[1-9]$/.test(ev.key)) { const nr = parseInt(ev.key, 10); if (Z.detail.versionen.some((v) => v.nr === nr) && nr !== Z.versionNr) geheZu(Z.route.kunde, Z.route.projekt, Z.route.video, nr); }
     }
   });

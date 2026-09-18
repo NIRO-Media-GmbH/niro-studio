@@ -48,6 +48,12 @@ im Chat genannt. Nicht ins Review: Kontaktbögen, Fotos, PDFs, reine Grafik-Alph
 - `kommentare.md` lesen: `ID` (K1 …) ist die Referenz für Umsetzung, Protokoll und Chat; `TC` = Timecode in **dieser**
   Version, `Bereich` = Out; `Antworten` = Thread (User kann auf Rückfragen antworten); `Neu` = seit dem letzten Holen.
 - Status-Werte: `offen` (User) · `umgesetzt` / `rueckfrage` (Claude) · `erledigt` (User hakt ab).
+- **Bewertung** (Kopfzeile von `kommentare.md`, `bewertung` im JSON: 1–5 Sterne + Satz): sie sagt, wie weit das Video
+  insgesamt weg ist — die Kommentare sagen nur, was auffiel. 4–5: nur die Kommentare umsetzen, sonst nichts anfassen.
+  3: Kommentare umsetzen und die Punkte im Satz mitdenken. 1–2: **nicht nur die Kommentare abarbeiten** — das Video gegen
+  Konzept und Regeln neu prüfen (Tempo, Auswahl der O-Töne, B-Roll, Musik), im Bericht sagen, was grundsätzlich geändert
+  wurde; fehlt ein erklärender Satz, gesammelt nachfragen. Sinkt die Bewertung von V<n> zu V<n+1>, anhalten und fragen,
+  statt V<n+2> zu bauen. Bewertungen je Projekt vergleichen: niedrig bewertete Videos zuerst und mit größerem Budget.
 
 ## Umsetzen
 

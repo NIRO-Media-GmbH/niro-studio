@@ -209,7 +209,9 @@ def cmd_kommentare(args) -> int:
         modell.version_schreiben(vo, nr, version)
         neue_gesamt += len(neue)
         exportiert += 1
-        print(f"✓ {video['titel']} V{nr}: {len(neue)} neu, {len(daten['kommentare'])} gesamt, {stand} → {ziel_ordner}")
+        bew = version.get("bewertung")
+        print(f"✓ {video['titel']} V{nr}: {len(neue)} neu, {len(daten['kommentare'])} gesamt, {stand}, "
+              f"Bewertung {modell.sterne_text(bew)}{(' „' + bew['text'] + '“') if bew and bew.get('text') else ''} → {ziel_ordner}")
         fps = float(version.get("fps") or 25.0)
         for k in neue:
             tc = medien.timecode(k["frame"], fps) if k.get("frame") is not None else "allgemein"
@@ -259,7 +261,8 @@ def cmd_status(args) -> int:
                 if ziel and ziel.charge and v.get("charge") and nfc(v["charge"]) != nfc(ziel.charge):
                     continue
                 zeilen.append(f"{kunde['name']}/{projekt['name']} · {v['titel']} · V{v['neueste']} · {v['zustand']} · "
-                              f"{v['offen']} offen ({v['neu']} neu) · {link(kunde['name'], projekt['name'], v['titel'], args.port)}")
+                              f"{modell.sterne_text(v.get('bewertung'))} · {v['offen']} offen ({v['neu']} neu) · "
+                              f"{link(kunde['name'], projekt['name'], v['titel'], args.port)}")
     print("\n".join(zeilen) if zeilen else "Keine Videos.")
     return 0
 

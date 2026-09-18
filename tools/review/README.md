@@ -38,6 +38,9 @@ Wer den Agent vor dem 18.09. 15 Uhr installiert hat: einmal `installieren` wiede
   Wurst-&-Liebe-Kommentare vom 18.09.: Andere Cam, Shot tauschen, Shot raus, Erst ab hier, Länger zeigen, O-Ton fehlt,
   Grafik runter, Stabilisieren, Ranzoomen, Heller, Zu dunkel, Musik wechseln, Pop-SFX raus, Satz raus, Wide Shot, Pause raus,
   Lauter, Totale, Slow-Mo, UT flackert, 90° gedreht, Retusche, Zu kurz, Bestätigt?).
+- **Bewertung** je Version: fünf Sterne oben im Player (⌥1–5), dazu ein Satz Gesamteindruck. 1 = grundsätzlich daneben,
+  2 = viel Arbeit, 3 = geht in die Richtung, 4 = fast fertig, 5 = passt. Rot bis grün auf Karten und in der Seitenleiste,
+  in V2 steht daneben die Bewertung von V1; Claude sieht sie im Kommentar-Export.
 - **Review abschließen** sperrt die Version für neue Kommentare und stellt sie auf „bei Claude" — dann im Chat
   „fertig" oder „Review: Kunde/Projekt" sagen. **Freigeben**, wenn das Video fertig ist.
 - Ab V2 zeigt „Seit V1 geändert" jede Antwort von Claude mit Sprung zur neuen Stelle; dort abhaken („erledigt") oder auf

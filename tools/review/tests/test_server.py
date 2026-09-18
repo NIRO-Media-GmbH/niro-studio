@@ -219,3 +219,22 @@ def test_bausteine_standard_und_eigene(srv, wurzeln):
     assert js(srv, "POST", "/api/bausteine", {"bausteine": [{"text": ""}]})[0] == 400
     assert js(srv, "POST", "/api/bausteine", {"bausteine": []})[0] == 200        # leer = alle weg (bewusst)
     assert js(srv, "GET", "/api/index")[1]["kunden"] == []                        # _bausteine.json stört den Index nicht
+
+
+def test_bewerten(srv, wurzeln):
+    ordner = video_anlegen(wurzeln)
+    basis = {"kunde": "Dold", "projekt": "Recruiting", "video": "Dold 02 Fokus", "version": 1, "autor": "Jan"}
+    status, v = js(srv, "POST", "/api/version/bewerten", {**basis, "sterne": 4, "text": " Guter Rhythmus, Karten zu früh "})
+    assert status == 200 and v["bewertung"]["sterne"] == 4 and v["bewertung"]["text"] == "Guter Rhythmus, Karten zu früh" and v["bewertung"]["von"] == "Jan"
+    assert modell.version_lesen(ordner, 1)["bewertung"]["sterne"] == 4
+    eintrag = js(srv, "GET", "/api/index?frisch=1")[1]["kunden"][0]["projekte"][0]["videos"][0]
+    assert eintrag["bewertung"]["sterne"] == 4 and eintrag["bewertung_vorher"] is None
+    assert js(srv, "POST", "/api/version/bewerten", {**basis, "sterne": 7})[0] == 400
+    assert js(srv, "POST", "/api/version/bewerten", {**basis, "sterne": "x"})[0] == 400
+    status, v = js(srv, "POST", "/api/version/bewerten", {**basis, "sterne": 0})
+    assert status == 200 and v["bewertung"] is None
+    video_anlegen(wurzeln, nr=2)
+    js(srv, "POST", "/api/version/bewerten", {**basis, "sterne": 2})
+    js(srv, "POST", "/api/version/bewerten", {**basis, "version": 2, "sterne": 5})
+    eintrag = js(srv, "GET", "/api/index?frisch=1")[1]["kunden"][0]["projekte"][0]["videos"][0]
+    assert eintrag["bewertung"]["sterne"] == 5 and eintrag["bewertung_vorher"]["sterne"] == 2

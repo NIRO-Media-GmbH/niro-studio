@@ -110,4 +110,8 @@ def test_export():
     assert [k["id"] for k in js["kommentare"]] == ["K2", "K1", "K3"] and js["kommentare"][1]["tc"] == "00:00:02:00"
     assert js["kommentare"][2]["tc_bis"] == "00:00:06:00" and all(k["neu"] for k in js["kommentare"])
     leer = km.export_md(video, version, {"naechste_id": 1, "kommentare": []}, None, "18.09.2026")
-    assert "Keine Kommentare." in leer
+    assert "Keine Kommentare." in leer and "Bewertung" not in leer
+    bewertet = dict(version, bewertung={"sterne": 2, "text": "zu hektisch | insgesamt", "von": "Jan", "am": "2026-09-18T15:00:00"})
+    md2 = km.export_md(video, bewertet, d, None, "18.09.2026")
+    assert "Bewertung V1: ★★☆☆☆ (2/5) von Jan — „zu hektisch \\| insgesamt“" in md2
+    assert km.export_json(video, bewertet, d, None)["bewertung"]["sterne"] == 2

@@ -95,6 +95,27 @@ def version_schreiben(ordner: Path, nr: int, daten: dict) -> None:
     json_schreiben(version_ordner(ordner, nr) / "version.json", daten)
 
 
+def bewertung_pruefen(sterne, text, autor: str) -> Optional[dict]:
+    """1–5 Sterne + optionaler Satz → Bewertungs-Dict; 0/None = Bewertung entfernen (None)."""
+    try:
+        n = int(sterne) if sterne not in (None, "") else 0
+    except (TypeError, ValueError):
+        raise ValueError("sterne: Zahl 0–5 erwartet.")
+    if n < 0 or n > 5:
+        raise ValueError("sterne: 0 (entfernen) bis 5.")
+    if n == 0:
+        return None
+    t = nfc(str(text or "")).strip()[:300]
+    return {"sterne": n, "text": t, "von": autor, "am": jetzt()}
+
+
+def sterne_text(bewertung: Optional[dict]) -> str:
+    if not bewertung or not bewertung.get("sterne"):
+        return "—"
+    n = int(bewertung["sterne"])
+    return "★" * n + "☆" * (5 - n) + f" ({n}/5)"
+
+
 def zustand(video: dict, neueste: Optional[dict]) -> str:
     if video.get("freigegeben"):
         return "freigegeben"
@@ -127,9 +148,11 @@ def _kinder(ordner: Path) -> list:
 def _video_eintrag(kunde: str, projekt: str, ordner: Path, video: dict) -> dict:
     nrs = versionsnummern(ordner)
     neueste = version_lesen(ordner, nrs[-1]) if nrs else None
+    vorherige = version_lesen(ordner, nrs[-2]) if len(nrs) > 1 else None
     komm = json_lesen(version_ordner(ordner, nrs[-1]) / "kommentare.json", {}) if nrs else {}
     z = zaehler(komm if isinstance(komm, dict) else {}, (neueste or {}).get("geholt_am"))
     return {"titel": video["titel"], "ordner": nfc(ordner.name), "kunde": kunde, "projekt": projekt,
+            "bewertung": (neueste or {}).get("bewertung"), "bewertung_vorher": (vorherige or {}).get("bewertung"),
             "sortierung": video.get("sortierung") or video["titel"], "charge": video.get("charge"),
             "zustand": zustand(video, neueste), "versionen": nrs, "neueste": nrs[-1] if nrs else None,
             "angelegt": (neueste or {}).get("angelegt") or video.get("angelegt"),
