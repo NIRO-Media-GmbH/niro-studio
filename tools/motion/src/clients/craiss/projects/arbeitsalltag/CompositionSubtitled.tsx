@@ -26,6 +26,9 @@ import captionsJson from "../../captions/arbeitsalltag-v3.json";
 import planJson from "../../captions/arbeitsalltag-v3.plan.json";
 import { CaptionMixTrack } from "../../captionMix/CaptionMix";
 import { captionPlanSchema } from "../../captionMix/plan";
+// Sperrzeiten (per Kontaktbogen gegen den V3-Proxy verifiziert) liegen seit 2026-09-16 in schlagwoerter.ts
+import { BLOCKED, DURATION_SEC, KEYWORDS } from "./schlagwoerter";
+import { KeywordChipsLayer } from "../../KeywordChips";
 import { z } from "zod";
 
 const ci = loadBrand("craiss", brandJson as any);
@@ -36,16 +39,6 @@ export const craissArbeitsalltagSubtitledSchema = projectPropsSchema.extend({
 });
 
 export type CraissArbeitsalltagSubtitledProps = z.infer<typeof craissArbeitsalltagSubtitledSchema>;
-
-const DURATION_SEC = 74.08; // Neuexport 11.09. 18:42: 1853 Frames (Endshot +1s)
-
-// Sperrzeiten per Kontaktbogen gegen den V3-Proxy verifiziert (2026-09-07,
-// s. scripts/craiss-captions.ts — die Root.tsx-Defaults sind fuer einen
-// aelteren Schnitt und weichen ~9,5s ab).
-export const BLOCKED: BlockedRange[] = [
-  { startSec: 0, durationSec: 3.0 }, // Hook „MEIN ARBEITSALLTAG / BEI CRAISS"
-  { startSec: 61.6, durationSec: DURATION_SEC - 61.6 }, // CTA
-];
 
 export const craissArbeitsalltagSubtitledDefaults: CraissArbeitsalltagSubtitledProps = {
   format: "portrait-4k" as const,
@@ -75,6 +68,9 @@ const STAGE = { top: 1037, height: 230, left: 54, innerWidth: BASE_W - 108 };
 
 // Neuer Untertitel-Look „Mix" (Spec 2026-09-11) — nur Spur, ohne Footage
 const mixPlan = captionPlanSchema.parse(planJson);
+
+// Schlagwort-Chips (Spec 2026-09-16) — ersetzen in der Lieferung die Satz-Untertitel
+export const CraissArbeitsalltagKeywordLayer: React.FC = () => <KeywordChipsLayer keywords={KEYWORDS} />;
 
 export const CraissArbeitsalltagMixLayer: React.FC = () => {
   const { width } = useVideoConfig();

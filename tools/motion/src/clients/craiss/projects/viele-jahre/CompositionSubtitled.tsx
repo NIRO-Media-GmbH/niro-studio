@@ -26,6 +26,9 @@ import captionsJson from "../../captions/viele-jahre-v3.json";
 import planJson from "../../captions/viele-jahre-v3.plan.json";
 import { CaptionMixTrack } from "../../captionMix/CaptionMix";
 import { captionPlanSchema } from "../../captionMix/plan";
+// Sperrzeiten des V3-Schnitts (Kontaktbogen 07.09., exakt auf die Overlays 11.09.) liegen seit 2026-09-16 in schlagwoerter.ts
+import { BLOCKED_V3, DURATION_SEC_V3, KEYWORDS } from "./schlagwoerter";
+import { KeywordChipsLayer } from "../../KeywordChips";
 import { z } from "zod";
 
 const ci = loadBrand("craiss", brandJson as any);
@@ -37,23 +40,10 @@ export const craissVieleJahreSubtitledSchema = projectPropsSchema.extend({
 
 export type CraissVieleJahreSubtitledProps = z.infer<typeof craissVieleJahreSubtitledSchema>;
 
-const DURATION_SEC = 51.6;
-
-// Sperrzeiten per Kontaktbogen gegen den V3-Proxy verifiziert (2026-09-07,
-// s. scripts/craiss-captions.ts — die Root.tsx-Defaults sind fuer einen
-// aelteren/kuerzeren Schnitt und weichen ~5,7s ab).
-export const BLOCKED: BlockedRange[] = [
-  // 2026-09-11 exakt auf die Overlay-Sequenzen gesetzt (Differenz animiert −
-  // ohne Animation bestätigt); nötig, weil der Mix-Look nur ganze Sätze zeigt.
-  { startSec: 0, durationSec: 2.72 }, // Hook „VIELE JAHRE / VIELE GESCHICHTEN" (Overlay 0,24–2,72)
-  { startSec: 7.84, durationSec: 3.76 }, // Laender-Flaggen (Overlay 7,84–11,6)
-  { startSec: 46.64, durationSec: DURATION_SEC - 46.64 }, // CTA (Overlay ab 46,64)
-];
-
 export const craissVieleJahreSubtitledDefaults: CraissVieleJahreSubtitledProps = {
   format: "portrait-4k" as const,
   fps: 25 as const,
-  durationInSeconds: DURATION_SEC,
+  durationInSeconds: DURATION_SEC_V3,
   transparent: true,
   review: {
     showGuides: false,
@@ -78,11 +68,14 @@ const STAGE = { top: 1037, height: 230, left: 54, innerWidth: BASE_W - 108 };
 // Neuer Untertitel-Look „Mix" (Spec 2026-09-11) — nur Spur, ohne Footage
 const mixPlan = captionPlanSchema.parse(planJson);
 
+// Schlagwort-Chips (Spec 2026-09-16) — ersetzen in der Lieferung die Satz-Untertitel
+export const CraissVieleJahreKeywordLayer: React.FC = () => <KeywordChipsLayer keywords={KEYWORDS} />;
+
 export const CraissVieleJahreMixLayer: React.FC = () => {
   const { width } = useVideoConfig();
   return (
     <div style={{ position: "absolute", top: 0, left: 0, width: BASE_W, height: BASE_H, transform: `scale(${width / BASE_W})`, transformOrigin: "top left" }}>
-      <CaptionMixTrack plan={mixPlan} blocked={BLOCKED} />
+      <CaptionMixTrack plan={mixPlan} blocked={BLOCKED_V3} />
     </div>
   );
 };
@@ -94,7 +87,7 @@ export const CraissVieleJahreSubtitleLayer: React.FC<{
   const { width } = useVideoConfig();
   return (
     <div style={{ position: "absolute", top: 0, left: 0, width: BASE_W, height: BASE_H, transform: `scale(${width / BASE_W})`, transformOrigin: "top left" }}>
-      <SubtitleTrack pages={captions.pages} blocked={BLOCKED} settings={subtitles} stage={STAGE} />
+      <SubtitleTrack pages={captions.pages} blocked={BLOCKED_V3} settings={subtitles} stage={STAGE} />
     </div>
   );
 };

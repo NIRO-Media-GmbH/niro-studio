@@ -708,3 +708,66 @@ export const Cta: React.FC<{ cta: CtaProps }> = ({ cta }) => {
     </div>
   );
 };
+
+// =============================================================
+// RedChip — roter Text-Chip (Zitate Video 05, Schlagwörter 01–05,
+// Begrüßung/Titel Video 03). Ruhig: SOFT-Feder nur auf Skalierung,
+// Deckkraft linear. Zeit 0 = Beginn der umgebenden Sequence.
+// =============================================================
+
+export const chipSchema = z.object({
+  text: z.string().describe("Text"),
+  startSec: z.number().step(0.04).describe("Start (Sek)"),
+  endSec: z.number().step(0.04).describe("Ende inkl. Ausblenden (Sek)"),
+  offsetY: z.number().step(1).describe("Y-Offset (px, Basis 1920)"),
+});
+
+export type ChipProps = z.infer<typeof chipSchema>;
+
+export const CHIP_BOX_STYLE: React.CSSProperties = {
+  backgroundColor: RED,
+  borderRadius: 6,
+  padding: "14px 34px",
+  fontFamily: FONT_BOLD,
+  fontSize: 42,
+  letterSpacing: 2,
+  color: WHITE,
+  textTransform: "uppercase",
+  whiteSpace: "nowrap",
+  boxShadow: "0 6px 24px rgba(0,0,0,0.35)",
+};
+
+export const RedChip: React.FC<{ chip: ChipProps }> = ({ chip }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const F = (sec: number) => Math.round(sec * fps);
+  const durFrames = F(chip.endSec - chip.startSec);
+
+  const inP = spring({ frame, fps, config: SOFT });
+  const scale = interpolate(inP, [0, 1], [0.95, 1]);
+  const inOp = interpolate(frame, [0, 8], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const outOp = interpolate(frame, [durFrames - F(0.32), durFrames - 2], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const op = inOp * outOp;
+  if (op <= 0) return null;
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: 990 + chip.offsetY,
+        left: 0,
+        right: 0,
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <div style={{ ...CHIP_BOX_STYLE, opacity: op, transform: `scale(${scale})` }}>{chip.text}</div>
+    </div>
+  );
+};

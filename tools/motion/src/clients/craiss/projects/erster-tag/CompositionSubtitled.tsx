@@ -26,6 +26,8 @@ import captionsJson from "../../captions/erster-tag-v3.json";
 import planJson from "../../captions/erster-tag-v3.plan.json";
 import { CaptionMixTrack } from "../../captionMix/CaptionMix";
 import { captionPlanSchema } from "../../captionMix/plan";
+import { BLOCKED, DURATION_SEC, KEYWORDS } from "./schlagwoerter";
+import { KeywordChipsLayer } from "../../KeywordChips";
 import { z } from "zod";
 
 const ci = loadBrand("craiss", brandJson as any);
@@ -36,13 +38,6 @@ export const craissErsterTagSubtitledSchema = projectPropsSchema.extend({
 });
 
 export type CraissErsterTagSubtitledProps = z.infer<typeof craissErsterTagSubtitledSchema>;
-
-// Hook (0,24–3,6s) und CTA (24,32s–Ende) liegen bereits im Footage —
-// Sperrzeiten fuer die Untertitel-Fenster wie in Craiss-ErsterTag.
-const HOOK_BLOCK: BlockedRange = { startSec: 0.24, durationSec: 3.6 - 0.24 };
-const DURATION_SEC = 29.6;
-const CTA_START = 24.32;
-const CTA_BLOCK: BlockedRange = { startSec: CTA_START, durationSec: DURATION_SEC - CTA_START };
 
 export const craissErsterTagSubtitledDefaults: CraissErsterTagSubtitledProps = {
   format: "portrait-4k" as const,
@@ -74,11 +69,14 @@ const STAGE = { top: 1037, height: 230, left: 54, innerWidth: BASE_W - 108 };
 // Neuer Untertitel-Look „Mix" (Spec 2026-09-11) — nur Spur, ohne Footage
 const mixPlan = captionPlanSchema.parse(planJson);
 
+// Schlagwort-Chips (Spec 2026-09-16) — ersetzen in der Lieferung die Satz-Untertitel
+export const CraissErsterTagKeywordLayer: React.FC = () => <KeywordChipsLayer keywords={KEYWORDS} />;
+
 export const CraissErsterTagMixLayer: React.FC = () => {
   const { width } = useVideoConfig();
   return (
     <div style={{ position: "absolute", top: 0, left: 0, width: BASE_W, height: BASE_H, transform: `scale(${width / BASE_W})`, transformOrigin: "top left" }}>
-      <CaptionMixTrack plan={mixPlan} blocked={[HOOK_BLOCK, CTA_BLOCK]} />
+      <CaptionMixTrack plan={mixPlan} blocked={BLOCKED} />
     </div>
   );
 };
@@ -90,7 +88,7 @@ export const CraissErsterTagSubtitleLayer: React.FC<{
   const { width } = useVideoConfig();
   return (
     <div style={{ position: "absolute", top: 0, left: 0, width: BASE_W, height: BASE_H, transform: `scale(${width / BASE_W})`, transformOrigin: "top left" }}>
-      <SubtitleTrack pages={captions.pages} blocked={[HOOK_BLOCK, CTA_BLOCK]} settings={subtitles} stage={STAGE} />
+      <SubtitleTrack pages={captions.pages} blocked={BLOCKED} settings={subtitles} stage={STAGE} />
     </div>
   );
 };

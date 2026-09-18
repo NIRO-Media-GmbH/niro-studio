@@ -1,0 +1,183 @@
+{
+ "fps": 25,
+ "shiftFrames": 33,
+ "montageFrames": 101,
+ "altMontageFrames": 68,
+ "wipes": [
+  {
+   "country": "PL",
+   "cutFrame": 0,
+   "inFrames": 0,
+   "outFrames": 4
+  },
+  {
+   "country": "HU",
+   "cutFrame": 21,
+   "inFrames": 4,
+   "outFrames": 4
+  },
+  {
+   "country": "RO",
+   "cutFrame": 48,
+   "inFrames": 4,
+   "outFrames": 4
+  },
+  {
+   "country": "CZ",
+   "cutFrame": 76,
+   "inFrames": 4,
+   "outFrames": 4
+  },
+  {
+   "country": "CRAISS",
+   "cutFrame": 101,
+   "inFrames": 4,
+   "outFrames": 2
+  }
+ ],
+ "greetings": [
+  {
+   "text": "DZIEŃ DOBRY",
+   "fromFrame": 0
+  },
+  {
+   "text": "SZIASZTOK",
+   "fromFrame": 20
+  },
+  {
+   "text": "BUNĂ ZIUA",
+   "fromFrame": 47
+  },
+  {
+   "text": "ZDRAVÍM",
+   "fromFrame": 75
+  }
+ ],
+ "helloToFrame": 100,
+ "titleChip": {
+  "text": "VIELE SPRACHEN. EIN TEAM.",
+  "fromFrame": 102,
+  "toFrame": 164,
+  "offsetY": 160
+ },
+ "sfx": [
+  {
+   "country": "PL",
+   "recFrame": 0
+  },
+  {
+   "country": "HU",
+   "recFrame": 16
+  },
+  {
+   "country": "RO",
+   "recFrame": 43
+  },
+  {
+   "country": "CZ",
+   "recFrame": 71
+  },
+  {
+   "country": "CRAISS",
+   "recFrame": 96
+  }
+ ],
+ "shots": [
+  {
+   "person": "Jakub",
+   "country": "PL",
+   "text": "DZIEŃ DOBRY",
+   "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Craiss Generation Logistik GmbH & Co. KG/02_Projekte/01_Projekt-4 Ads/03_Medien/01_Footage/Sortiert/Interviews/Jakub Platek - LKW-Fahrer Fernverkehr/FX3_0785.MP4",
+   "altSrcIn": 132,
+   "altSrcOut": 145,
+   "altRecIn": 0,
+   "altRecOut": 13,
+   "zoomX": 1.05,
+   "zoomY": 1.05,
+   "pan": 0.0,
+   "tilt": 0.0,
+   "audioVolume": 9.1,
+   "srcIn": 129,
+   "srcOut": 150,
+   "recIn": 0,
+   "recOut": 21,
+   "speechRecIn": 6,
+   "speechRecOut": 15,
+   "audioSrcIn": 134,
+   "audioSrcOut": 145,
+   "audioRecIn": 5
+  },
+  {
+   "person": "Victor",
+   "country": "HU",
+   "text": "SZIASZTOK",
+   "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Craiss Generation Logistik GmbH & Co. KG/02_Projekte/01_Projekt-4 Ads/03_Medien/01_Footage/Sortiert/Interviews/Victor Fodor - LKW-Fahrer Fernverkehr/FX3_0782.MP4",
+   "altSrcIn": 9702,
+   "altSrcOut": 9717,
+   "altRecIn": 13,
+   "altRecOut": 28,
+   "zoomX": 1.05,
+   "zoomY": 1.05,
+   "pan": 12.0,
+   "tilt": -15.0,
+   "audioVolume": 3.8,
+   "srcIn": 9696,
+   "srcOut": 9723,
+   "recIn": 21,
+   "recOut": 48,
+   "speechRecIn": 27,
+   "speechRecOut": 42,
+   "audioSrcIn": 9701,
+   "audioSrcOut": 9718,
+   "audioRecIn": 26
+  },
+  {
+   "person": "Adrian",
+   "country": "RO",
+   "text": "BUNĂ ZIUA",
+   "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Craiss Generation Logistik GmbH & Co. KG/02_Projekte/01_Projekt-4 Ads/03_Medien/01_Footage/Sortiert/Interviews/Adrian Mules - LKW-Fahrer Nahverkehr/FX3_0783.MP4",
+   "altSrcIn": 12853,
+   "altSrcOut": 12870,
+   "altRecIn": 28,
+   "altRecOut": 45,
+   "zoomX": 1.05,
+   "zoomY": 1.05,
+   "pan": 20.0,
+   "tilt": -33.0,
+   "audioVolume": 9.7,
+   "srcIn": 12848,
+   "srcOut": 12876,
+   "recIn": 48,
+   "recOut": 76,
+   "speechRecIn": 54,
+   "speechRecOut": 70,
+   "audioSrcIn": 12853,
+   "audioSrcOut": 12871,
+   "audioRecIn": 53
+  },
+  {
+   "person": "Jan",
+   "country": "CZ",
+   "text": "ZDRAVÍM",
+   "file": "/Volumes/NIRO NAS/NIRO Productions/01_Projekte/01_Kunden/Craiss Generation Logistik GmbH & Co. KG/02_Projekte/01_Projekt-4 Ads/03_Medien/01_Footage/Sortiert/Interviews/Jan Machuta - LKW-Fahrer Fernverkehr/FX3_0786.MP4",
+   "altSrcIn": 13517,
+   "altSrcOut": 13540,
+   "altRecIn": 45,
+   "altRecOut": 68,
+   "zoomX": 1.05,
+   "zoomY": 1.05,
+   "pan": 4.0,
+   "tilt": 6.0,
+   "audioVolume": 4.5,
+   "srcIn": 13513,
+   "srcOut": 13538,
+   "recIn": 76,
+   "recOut": 101,
+   "speechRecIn": 82,
+   "speechRecOut": 95,
+   "audioSrcIn": 13518,
+   "audioSrcOut": 13533,
+   "audioRecIn": 81
+  }
+ ]
+}

@@ -4,15 +4,14 @@
 // Kollegen-Aufzählung mit Flaggen (HU/CZ/RO/LT), polnischer Fluch
 // bei ~28,5–29,2s (bleibt evtl. im Schnitt — kein Overlay dazu).
 //
-// Hook als LOWER-THIRD (Talking-Head-Opener) 0,24–2,72s.
-// Flaggen-Reihe synchron zur Aufzählung 7,84–12,16s.
-// CTA als OPAKE ENDCARD ab 40,84s: die Sprache läuft bis 40,8s und
-// der letzte Shot (Büro ab 38,16s) ist ein Talking Head — es gibt
-// keinen freien Endshot. Die Komposition verlängert das Video auf 46s.
+// Seit 2026-09-16 (Kundenfeedback): Intro mit Flaggen-Wischern über das
+// ganze Bild, groß HALLO + Begrüßung je Sprache, Titel-Chip „VIELE SPRACHEN.
+// EIN TEAM." statt Hook „VIELE JAHRE / VIELE GESCHICHTEN". Die Begrüßungs-
+// Montage ist im Schnitt (Resolve-Kopie „Claude 03 Begrüßung …") um D Frames
+// länger; alles dahinter liegt + D. Schnittframes aus intro-layout.json.
 //
-// 9:16 portrait-4k (2160×3840), 25fps, 46s (Video: 40,76s / 1019 Frames).
-// Schnittgrenzen vorn: 2,72 / 6,64 / 10,68 / 12,36s … letzter 38,16s.
-// Gemeinsame Bausteine: ../../lib
+// 9:16 portrait-4k (2160×3840), 25fps.
+// Gemeinsame Bausteine: ../../lib, ../../intro
 // ============================================================
 
 import React from "react";
@@ -22,23 +21,31 @@ import { loadBrand } from "../../../../core/ci-loader";
 import { projectPropsSchema } from "../../../../core/schemas";
 import { ReviewOverlay } from "../../../../components/layout/ReviewOverlay";
 import {
-  Hook,
   Cta,
   FlagsRow,
   FootageCompare,
-  hookSchema,
+  RedChip,
+  chipSchema,
   ctaSchema,
   flagsSchema,
   footageSchema,
   CTA_TEXTS,
 } from "../../lib";
+import { GreetingIntro } from "../../intro/GreetingIntro";
+import { introEndFrame, introLayoutSchema } from "../../intro/wipeTiming";
 import brandJson from "../../brand.json";
+import introJson from "./intro-layout.json";
 import { z } from "zod";
 
 const ci = loadBrand("craiss", brandJson as any);
 
+const INTRO = introLayoutSchema.parse(introJson);
+export const INTRO_SHIFT_FRAMES = INTRO.shiftFrames;
+const SHIFT_SEC = INTRO.shiftFrames / INTRO.fps;
+const r2 = (v: number) => Math.round(v * 100) / 100;
+
 export const craissVieleJahreSchema = projectPropsSchema.extend({
-  hook: hookSchema.describe("Hook"),
+  titleChip: chipSchema.describe("Titel-Chip nach der Begrüßung"),
   flags: flagsSchema.describe("Flaggen (Kollegen-Aufzählung)"),
   cta: ctaSchema.describe("CTA (Endcard)"),
   footage: footageSchema.describe("Footage-Vergleich"),
@@ -46,11 +53,10 @@ export const craissVieleJahreSchema = projectPropsSchema.extend({
 
 export type CraissVieleJahreProps = z.infer<typeof craissVieleJahreSchema>;
 
-// Stand 2026-09-11: Kunden-Schnitt V3 ohne Animation, 1291 Frames = 51,64s.
-// Hook/Flaggen per Differenz gegen den animierten V3 bestätigt (unverändert),
-// CTA liegt dort auf dem Drohnen-Endshot (Schnitt 46,68s) statt als Endcard
-// hinter dem Video. Die Kopf-Angaben oben beziehen sich auf den alten V1.
-const VIDEO_SECONDS = 51.64;
+// Kunden-Schnitt V3 hatte 1291 Frames (51,64 s); die Kopie „Claude 03 Begrüßung"
+// ist um D Frames länger (Begrüßungs-Montage mit Luft für die Wischer).
+const VIDEO_SECONDS = (1291 + INTRO.shiftFrames) / INTRO.fps;
+export const VIELE_JAHRE_SECONDS = VIDEO_SECONDS;
 
 export const craissVieleJahreDefaults: CraissVieleJahreProps = {
   format: "portrait-4k" as const,
@@ -64,32 +70,31 @@ export const craissVieleJahreDefaults: CraissVieleJahreProps = {
     showGrid: false,
     guideOpacity: 0.35,
   },
-  hook: {
-    headline: "VIELE JAHRE",
-    chip: "VIELE GESCHICHTEN",
-    startSec: 0.24,
-    endSec: 2.72,
-    offsetY: 0,
+  titleChip: {
+    text: INTRO.titleChip.text,
+    startSec: INTRO.titleChip.fromFrame / INTRO.fps,
+    endSec: INTRO.titleChip.toFrame / INTRO.fps,
+    offsetY: INTRO.titleChip.offsetY,
   },
   flags: {
     items: [
-      { country: "HU" as const, label: "UNGARN", startSec: 7.84 },
-      { country: "CZ" as const, label: "TSCHECHIEN", startSec: 8.64 },
-      { country: "RO" as const, label: "RUMÄNIEN", startSec: 9.28 },
+      { country: "HU" as const, label: "UNGARN", startSec: r2(7.84 + SHIFT_SEC) },
+      { country: "CZ" as const, label: "TSCHECHIEN", startSec: r2(8.64 + SHIFT_SEC) },
+      { country: "RO" as const, label: "RUMÄNIEN", startSec: r2(9.28 + SHIFT_SEC) },
       // SRT sagt 9,76 — real beginnt das Wort nach einer Sprechpause erst
       // bei ~10,05–10,25 (Wellenform); Davids Feedback: 9,76 war zu früh.
-      { country: "LT" as const, label: "LITAUEN", startSec: 10.08 },
+      { country: "LT" as const, label: "LITAUEN", startSec: r2(10.08 + SHIFT_SEC) },
     ],
-    startSec: 7.84,
-    // Litauen (ab 10,08) hält über den Schnitt bei 10,68 hinweg durch
-    // „Alles." und geht während „Internationale" raus — im Close-up danach
-    // bleibt das Kinn (~47%) knapp über der Flaggen-Oberkante (49%).
-    endSec: 11.6,
+    startSec: r2(7.84 + SHIFT_SEC),
+    // Litauen hält über den Schnitt (alt 10,68) hinweg durch „Alles." und geht
+    // während „Internationale" raus — im Close-up danach bleibt das Kinn (~47%)
+    // knapp über der Flaggen-Oberkante (49%).
+    endSec: r2(11.6 + SHIFT_SEC),
     offsetY: 0,
   },
   cta: {
     ...CTA_TEXTS,
-    startSec: 46.64,
+    startSec: r2(46.64 + SHIFT_SEC),
     offsetY: 0,
   },
   footage: {
@@ -110,13 +115,13 @@ export const craissVieleJahrePreviewDefaults: CraissVieleJahreProps = {
 };
 
 const FOOTAGE_SRC =
-  "projects/craiss-viele-jahre/ohne-Animation/proxy/03_Viele_Jahre_Viele_Geschichten_V3_ohneAnim_proxy.mp4";
+  "projects/craiss-viele-jahre/ohne-Animation/proxy/03_Viele_Jahre_Viele_Geschichten_Begruessung_ohneAnim_proxy.mp4";
 const BASE_W = 1080;
 const BASE_H = 1920;
 
 export const CraissVieleJahre: React.FC<CraissVieleJahreProps> = ({
   review,
-  hook,
+  titleChip,
   flags,
   cta,
   footage,
@@ -128,7 +133,7 @@ export const CraissVieleJahre: React.FC<CraissVieleJahreProps> = ({
   return (
     <CIProvider ci={ci}>
       <AbsoluteFill style={{ backgroundColor: "transparent" }}>
-        {/* Footage endet vor der Endcard — Sequence begrenzt auf Videolänge,
+        {/* Footage endet mit dem Schnitt — Sequence begrenzt auf Videolänge,
             damit OffthreadVideo nie hinter das Medienende seekt. */}
         <Sequence from={0} durationInFrames={s(VIDEO_SECONDS)} name="Footage">
           <FootageCompare src={FOOTAGE_SRC} footage={footage} ctaStartSec={cta.startSec} />
@@ -146,12 +151,16 @@ export const CraissVieleJahre: React.FC<CraissVieleJahreProps> = ({
             transformOrigin: "top left",
           }}
         >
+          <Sequence from={0} durationInFrames={introEndFrame(INTRO)} name="Begrüßung + Flaggen-Wischer">
+            <GreetingIntro layout={INTRO} />
+          </Sequence>
+
           <Sequence
-            from={s(hook.startSec)}
-            durationInFrames={s(hook.endSec) - s(hook.startSec)}
-            name="Hook"
+            from={s(titleChip.startSec)}
+            durationInFrames={s(titleChip.endSec) - s(titleChip.startSec)}
+            name="Titel-Chip"
           >
-            <Hook hook={hook} layout="lower" />
+            <RedChip chip={titleChip} />
           </Sequence>
 
           <Sequence

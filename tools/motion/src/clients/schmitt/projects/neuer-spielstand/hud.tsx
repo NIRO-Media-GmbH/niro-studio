@@ -232,6 +232,121 @@ export const Subtitles: React.FC<{ cues: CueWindow[] }> = ({ cues }) => {
   );
 };
 
+export type QuestWindow = {
+  label: string;
+  steps: number[]; // Zeitpunkte der Teilschritte (Zähler 0/2 → 2/2)
+  progress?: { from: number; to: number }; // Fortschrittsbalken, solange die Quest aktiv ist
+  doneAt: number;
+};
+export type QuestLogWindow = { title: string; from: number; to: number; quests: QuestWindow[] };
+
+// Quest-Log oben links: Kästchen haken sich mit kurzem Pop ab, die aktive Quest ist hervorgehoben,
+// Teilschritte zählen hoch, Beladen zeigt einen Fortschrittsbalken.
+export const QuestLog: React.FC<{ log: QuestLogWindow }> = ({ log }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const t = frame / fps;
+  if (t < log.from || t >= log.to) return null;
+  const inV = interpolate(t - log.from, [0, 0.3], [0, 1], { ...clamp, easing: easeOut });
+  const outV = interpolate(log.to - t, [0, 0.25], [0, 1], { ...clamp, easing: easeIn });
+  const activeIdx = log.quests.findIndex((q) => t < q.doneAt);
+  const doneCount = log.quests.filter((q) => t >= q.doneAt).length;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 54,
+        top: HUD_TOP,
+        width: 560,
+        padding: "14px 22px 18px",
+        borderRadius: 16,
+        backgroundColor: "rgba(10,16,28,0.78)",
+        boxShadow: "0 12px 34px rgba(0,0,0,0.4)",
+        fontFamily,
+        opacity: Math.min(inV, outV),
+        translate: `${interpolate(inV, [0, 1], [-40, 0])}px 0px`,
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: ci.colors.accent }}>
+          {log.title}
+        </div>
+        <div style={{ fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.7)", fontVariantNumeric: "tabular-nums" }}>
+          {doneCount}/{log.quests.length}
+        </div>
+      </div>
+      <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10 }}>
+        {log.quests.map((q, i) => {
+          const done = t >= q.doneAt;
+          const pop = interpolate(t - q.doneAt, [0, 0.12, 0.3], [1, 1.28, 1], clamp);
+          const fill = interpolate(t - q.doneAt, [0, 0.12], [0, 1], clamp);
+          const active = i === activeIdx;
+          const stepsDone = q.steps.filter((s) => t >= s).length;
+          const stepPop = q.steps.reduce((m, s) => Math.max(m, interpolate(t - s, [0, 0.1, 0.28], [0, 1, 0], clamp)), 0);
+          const prog = q.progress ? interpolate(t, [q.progress.from, q.progress.to], [0, 1], clamp) : 0;
+          return (
+            <div key={q.label} style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  flexShrink: 0,
+                  boxShadow: `inset 0 0 0 3px ${done ? ci.colors.accent : "rgba(255,255,255,0.65)"}`,
+                  backgroundColor: `rgba(242,178,51,${fill.toFixed(3)})`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  scale: sc(pop),
+                }}
+              >
+                {done && (
+                  <svg width={24} height={24} viewBox="0 0 24 24">
+                    <path d="M4 12.5l5 5L20 6.5" fill="none" stroke={NAVY} strokeWidth={3.6} strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
+                  <span
+                    style={{
+                      fontSize: 34,
+                      fontWeight: active ? 700 : 600,
+                      lineHeight: 1.1,
+                      whiteSpace: "nowrap",
+                      color: done ? "rgba(255,255,255,0.55)" : ci.colors.text,
+                    }}
+                  >
+                    {q.label}
+                  </span>
+                  {q.steps.length > 0 && !done && (
+                    <span
+                      style={{
+                        fontSize: 28,
+                        fontWeight: 700,
+                        color: ci.colors.accent,
+                        fontVariantNumeric: "tabular-nums",
+                        scale: sc(1 + 0.25 * stepPop),
+                      }}
+                    >
+                      {stepsDone}/{q.steps.length}
+                    </span>
+                  )}
+                </div>
+                {q.progress && active && t >= q.progress.from - 0.2 && (
+                  <div style={{ marginTop: 6, height: 6, borderRadius: 3, overflow: "hidden", backgroundColor: "rgba(255,255,255,0.2)" }}>
+                    <div style={{ width: `${prog * 100}%`, height: "100%", backgroundColor: ci.colors.accent }} />
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 // Logo-Karte am Ende: Marine-Grund mit blauem Schimmer, Logo skaliert ein, Adresse darunter.
 // Ohne Logodatei steht ein Wortmarken-Platzhalter.
 export const LogoCard: React.FC<{ src: string; url?: string; frames: number }> = ({ src, url, frames }) => {
@@ -239,7 +354,7 @@ export const LogoCard: React.FC<{ src: string; url?: string; frames: number }> =
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const total = frames / fps;
-  const bgIn = interpolate(t, [0, 0.3], [0, 1], { ...clamp, easing: easeOut });
+  const bgIn = 1; // der CTA davor klingt schon in den Marine-Grund aus
   const logoIn = interpolate(t, [0.12, 0.6], [0, 1], { ...clamp, easing: easeOut });
   const urlIn = interpolate(t, [0.6, 0.95], [0, 1], { ...clamp, easing: easeOut });
   const out = interpolate(t, [total - 0.3, total], [1, 0], { ...clamp, easing: easeIn });
@@ -257,7 +372,7 @@ export const LogoCard: React.FC<{ src: string; url?: string; frames: number }> =
             position: "absolute",
             left: 90,
             right: 90,
-            top: 470,
+            top: 500, // Logo 760 × 173 → Unterkante 673, Adresse bei 740 (Block mittig in der Safe Zone)
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -294,7 +409,7 @@ export const LogoCard: React.FC<{ src: string; url?: string; frames: number }> =
               position: "absolute",
               left: 0,
               right: 0,
-              top: 780,
+              top: 740,
               textAlign: "center",
               fontFamily,
               fontSize: 40,

@@ -27,6 +27,9 @@ import planJson from "../../captions/testimonial-v2.plan.json";
 import { CaptionMixTrack } from "../../captionMix/CaptionMix";
 import { captionPlanSchema } from "../../captionMix/plan";
 import { CraissTestimonial, craissTestimonialDefaults } from "./Composition";
+// Sperrzeiten (1s-Kontaktbogen 07.09., exakt auf Overlay v3 11.09.) liegen seit 2026-09-16 in schlagwoerter.ts
+import { BLOCKED, DURATION_SEC, KEYWORDS } from "./schlagwoerter";
+import { KeywordChipsLayer } from "../../KeywordChips";
 import { z } from "zod";
 
 const ci = loadBrand("craiss", brandJson as any);
@@ -37,28 +40,6 @@ export const craissTestimonialSubtitledSchema = projectPropsSchema.extend({
 });
 
 export type CraissTestimonialSubtitledProps = z.infer<typeof craissTestimonialSubtitledSchema>;
-
-const DURATION_SEC = 52.56; // Neuexport 11.09. 18:46: 1315 Frames
-
-// Sperrzeiten per lueckenlosem 1s-Kontaktbogen (0-52s) gegen den V2-Proxy
-// verifiziert (2026-09-07) — die Root.tsx-Defaults (projects/testimonial/
-// Composition.tsx) trafen den tatsaechlichen Schnitt oft nicht (z. B. Zitat
-// „JEDEN TAG ZU HAUSE." blendet real ~1,8s frueher ein als dokumentiert und
-// kollidierte im ersten Durchlauf sichtbar mit dem Untertitel).
-export const BLOCKED: BlockedRange[] = [
-  // 2026-09-11: Mix-Look zeigt nur ganze Sätze → Sperren exakt = Sequenzen von
-  // Craiss-Testimonial v3 (Hook, Chips, Flaggen, CTA; Dauern als Literale).
-  { startSec: 0, durationSec: 2.28 }, // Hook „ICH MAG MEINE ARBEIT / LKW-FAHRER BEI CRAISS"
-  { startSec: 3.32, durationSec: 2.48 }, // Zitat „JEDER TAG IST EIN GUTER TAG."
-  { startSec: 6.88, durationSec: 1.92 }, // Zitat „DIE FREIHEIT. DIE RUHE."
-  // „KEIN STRESS." entfaellt ab Overlay v3 (Kundenfeedback) — kein Sperrfenster;
-  // die Phrase ist auch aus den Untertiteln gestrichen (scripts/craiss-captions.ts).
-  // ab 16,96s −0,52s (Neuexport 18:46 ohne „Kein Stress")
-  { startSec: 28.44, durationSec: 1.88 }, // Zitat „JEDEN TAG ZU HAUSE."
-  { startSec: 34.88, durationSec: 1.72 }, // Zitat „BEI CRAISS PASST'S."
-  { startSec: 39.64, durationSec: 3.88 }, // Laender-Flaggen (HU/CZ/RO/LT)
-  { startSec: 46.12, durationSec: DURATION_SEC - 46.12 }, // CTA auf dem Drohnen-Endshot
-];
 
 export const craissTestimonialSubtitledDefaults: CraissTestimonialSubtitledProps = {
   format: "portrait-4k" as const,
@@ -89,6 +70,9 @@ const STAGE = { top: 1037, height: 230, left: 54, innerWidth: BASE_W - 108 };
 
 // Neuer Untertitel-Look „Mix" (Spec 2026-09-11) — nur Spur, ohne Footage
 const mixPlan = captionPlanSchema.parse(planJson);
+
+// Schlagwort-Chips (Spec 2026-09-16) — ersetzen in der Lieferung die Satz-Untertitel
+export const CraissTestimonialKeywordLayer: React.FC = () => <KeywordChipsLayer keywords={KEYWORDS} />;
 
 export const CraissTestimonialMixLayer: React.FC = () => {
   const { width } = useVideoConfig();

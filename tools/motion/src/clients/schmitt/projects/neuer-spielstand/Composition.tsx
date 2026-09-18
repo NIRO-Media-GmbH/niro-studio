@@ -33,9 +33,9 @@ import { CIProvider } from "../../../../core/ci-provider";
 import { getCalculateMetadata } from "../../../../core/format-utils";
 import { projectPropsSchema } from "../../../../core/schemas";
 import { ReviewOverlay } from "../../../../components/layout/ReviewOverlay";
-import { asset, ci, clamp, easeIn, easeOut, fontFamily, sc } from "./shared";
-import { LogoCard, Minimap, Subtitles, Toasts } from "./hud";
-import { CUES, HUD, MUSIC, SEGMENTS, SOUNDS } from "./timeline";
+import { asset, ci, clamp, easeIn, easeOut, fontFamily, NAVY, sc } from "./shared";
+import { LogoCard, Minimap, QuestLog, Subtitles, Toasts } from "./hud";
+import { CUES, HUD, MUSIC, QUESTLOG, SEGMENTS, SOUNDS } from "./timeline";
 
 const segmentSchema = z.object({
   id: z.string().describe("Kennung für Ton, Untertitel und HUD"),
@@ -43,9 +43,12 @@ const segmentSchema = z.object({
   src: z.string().describe("Clip bzw. Standbild (relativ zu Material/Video); Logo leer = Platzhalter"),
   seconds: z.number().describe("Dauer in s (Clip: höchstens Bilder ÷ Clip-fps − trimStart)"),
   trimStart: z.number().optional().describe("Clip: Start im Quellclip in s"),
+  overlap: z.number().optional().describe("Überblendung in s: beginnt so viel früher und blendet über den Vorgänger ein"),
+  pause: z.boolean().optional().describe("CTA: eingefrorenes Bild wird wie ein Pausemenü unscharf"),
   kicker: z.string().optional().describe("Ladescreen/CTA: Kicker"),
   title: z.string().optional().describe("Ladescreen: Quest-Titel · CTA: Stellentitel"),
   hint: z.string().optional().describe("Ladescreen: Ziel-Zeile · CTA: Zusatz zum Titel, z. B. (m/w/d)"),
+  quests: z.array(z.string()).optional().describe("Ladescreen: Quest-Liste"),
   perks: z.array(z.string()).optional().describe("CTA: Benefits, nur wörtlich laut schmitt.jobs"),
   button: z.string().optional().describe("CTA: Button-Text"),
   url: z.string().optional().describe("CTA/Logo: Adresse"),
@@ -83,9 +86,27 @@ const musicSchema = z.object({
   hitSeg: z.string(),
   hitAt: z.number(),
   volume: z.number(),
+  boostAfterHit: z.number(),
   duckTo: z.number(),
   fadeIn: z.number(),
   fadeOut: z.number(),
+});
+
+const questSchema = z.object({
+  label: z.string(),
+  steps: z.array(z.object({ seg: z.string(), at: z.number() })),
+  progress: z.object({ seg: z.string(), from: z.number(), to: z.number() }).optional(),
+  doneSeg: z.string(),
+  doneAt: z.number(),
+});
+
+const questLogSchema = z.object({
+  title: z.string(),
+  fromSeg: z.string(),
+  from: z.number(),
+  untilSeg: z.string(),
+  until: z.number(),
+  quests: z.array(questSchema),
 });
 
 export const schmittNeuerSpielstandSchema = projectPropsSchema.extend({
@@ -95,6 +116,7 @@ export const schmittNeuerSpielstandSchema = projectPropsSchema.extend({
   cues: z.array(cueSchema).describe("Untertitel"),
   hud: z.array(hudSchema).describe("Minimap und Hinweise"),
   music: musicSchema.describe("Musik mit Drop"),
+  questlog: questLogSchema.describe("Quest-Log oben links"),
   sfx: z.boolean().describe("Geräusche an"),
   clipAudio: z.boolean().describe("Ton der Seedance-Clips (enthält generierte Musik)"),
 });
@@ -105,7 +127,7 @@ type Segment = z.infer<typeof segmentSchema>;
 export const schmittNeuerSpielstandDefaults: Props = {
   format: "portrait",
   fps: 25,
-  durationInSeconds: 44.8, // nur Fallback — die Länge rechnet schmittNeuerSpielstandMetadata aus den Segmenten
+  durationInSeconds: 54, // nur Fallback — die Länge rechnet schmittNeuerSpielstandMetadata aus den Segmenten
   transparent: false,
   bgSrc: "startscreen/halle.mp4",
   shots: SEGMENTS,
@@ -113,6 +135,7 @@ export const schmittNeuerSpielstandDefaults: Props = {
   cues: CUES,
   hud: HUD,
   music: MUSIC,
+  questlog: QUESTLOG,
   sfx: true,
   clipAudio: false,
   review: {
@@ -183,13 +206,15 @@ const T = {
   clipFade: 0.25, // Clip vor/nach einem Ladescreen
 };
 
-// Jeder Clip läuft bis zu seinem letzten Bild (abrunden), damit der Anschluss-Shot nahtlos übernimmt
+// Jeder Clip läuft bis zu seinem letzten Bild (abrunden), damit der Anschluss-Shot nahtlos übernimmt.
+// Mit `overlap` beginnt ein Segment früher und blendet über das Ende des Vorgängers ein.
 const segFrames = (seconds: number, fps: number) => Math.floor(seconds * fps);
+const overlapFrames = (s: Segment, fps: number) => Math.round((s.overlap ?? 0) * fps);
 const segStarts = (segs: Segment[], fps: number) => {
   let from = Math.round(T.shot1At * fps);
   return segs.map((s) => {
-    const start = from;
-    from += segFrames(s.seconds, fps);
+    const start = from - overlapFrames(s, fps);
+    from = start + segFrames(s.seconds, fps);
     return start;
   });
 };
@@ -502,11 +527,13 @@ const ShotClip: React.FC<{
   landing: boolean;
   fadeIn: boolean;
   fadeOut: boolean;
-}> = ({ src, frames, trimStart, muted, landing, fadeIn, fadeOut }) => {
+  crossfade: number;
+}> = ({ src, frames, trimStart, muted, landing, fadeIn, fadeOut, crossfade }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const total = frames / fps;
+  const xfade = crossfade > 0 ? interpolate(t, [0, crossfade], [0, 1], clamp) : 1;
   const fade = (x: number) =>
     (fadeIn ? interpolate(x, [0, T.clipFade], [0, 1], clamp) : 1) *
     (fadeOut ? interpolate(x, [total - T.clipFade, total], [1, 0], clamp) : 1);
@@ -520,7 +547,7 @@ const ShotClip: React.FC<{
     />
   );
   return (
-    <AbsoluteFill style={{ backgroundColor: "#000" }}>
+    <AbsoluteFill style={{ backgroundColor: "#000", opacity: xfade }}>
       {landing ? (
         <AbsoluteFill
           style={{
@@ -636,6 +663,46 @@ const Ladescreen: React.FC<{ seg: Segment; frames: number }> = ({ seg, frames })
               {seg.hint}
             </div>
           )}
+          {seg.quests && seg.quests.length > 0 && (
+            <div style={{ marginTop: 22, display: "flex", flexDirection: "column", gap: 12 }}>
+              {seg.quests.map((q, k) => {
+                const v = interpolate(t, [0.45 + k * 0.16, 0.8 + k * 0.16], [0, 1], { ...clamp, easing: easeOut });
+                return (
+                  <div
+                    key={q}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 16,
+                      opacity: v,
+                      translate: `${interpolate(v, [0, 1], [-24, 0])}px 0px`,
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 46,
+                        height: 46,
+                        borderRadius: 10,
+                        flexShrink: 0,
+                        backgroundColor: ci.colors.accent,
+                        color: NAVY,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 30,
+                        fontWeight: 800,
+                      }}
+                    >
+                      {k + 1}
+                    </span>
+                    <span style={{ fontSize: 42, fontWeight: 700, color: ci.colors.text, textShadow: "0 3px 14px rgba(0,0,0,0.5)" }}>
+                      {q}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           {/* Fortschrittsbalken und Lade-Indikator in einer Zeile */}
           <div style={{ marginTop: 30, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div
@@ -698,11 +765,22 @@ const Cta: React.FC<{ seg: Segment; frames: number }> = ({ seg, frames }) => {
   const buttonIn = inAt(1.7, 0.45);
   const press = interpolate(t, [2.6, 2.68, 2.85], [1, 0.94, 1], clamp);
   const perks = seg.perks ?? [];
+  // Pausemenü: das eingefrorene letzte Bild des Vorgängers wird unscharf und dunkler, kein Bildsprung
+  const pauseBlur = seg.pause ? interpolate(t, [0, 0.45], [0, 12], { ...clamp, easing: easeOut }) : 0;
+  const pauseDim = seg.pause ? interpolate(t, [0, 0.45], [0, 0.3], { ...clamp, easing: easeOut }) : 0;
+  const toNavy = interpolate(t, [total - 0.35, total], [0, 1], { ...clamp, easing: easeIn });
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
-      <AbsoluteFill style={{ scale: sc(interpolate(t, [0, total], [1, 1.06])), transformOrigin: "50% 55%" }}>
+      <AbsoluteFill
+        style={{
+          scale: sc(seg.pause ? interpolate(t, [0, total], [1.0, 1.05]) : interpolate(t, [0, total], [1, 1.06])),
+          transformOrigin: "50% 55%",
+          filter: pauseBlur > 0 ? `blur(${pauseBlur}px)` : undefined,
+        }}
+      >
         <Img src={asset(seg.src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       </AbsoluteFill>
+      {seg.pause && <AbsoluteFill style={{ backgroundColor: "rgba(8,12,22,1)", opacity: pauseDim }} />}
       {/* Abdunklung: oben kräftig für Titel und Benefits, Mitte frei fürs Gebäude, unten für Button und Adresse */}
       <AbsoluteFill
         style={{
@@ -850,11 +928,13 @@ const Cta: React.FC<{ seg: Segment; frames: number }> = ({ seg, frames }) => {
           )}
         </div>
       )}
+      {/* Ausklang in den Marine-Grund der Logo-Karte: kein Sprung zum Logo */}
+      <AbsoluteFill style={{ backgroundColor: ci.colors.background, opacity: toNavy }} />
     </AbsoluteFill>
   );
 };
 
-export const SchmittNeuerSpielstand: React.FC<Props> = ({ bgSrc, shots, sounds, cues, hud, music, sfx, clipAudio, review }) => {
+export const SchmittNeuerSpielstand: React.FC<Props> = ({ bgSrc, shots, sounds, cues, hud, music, questlog, sfx, clipAudio, review }) => {
   const { fps } = useVideoConfig();
   const f = (s: number) => Math.round(s * fps);
   const starts = segStarts(shots, fps);
@@ -885,6 +965,19 @@ export const SchmittNeuerSpielstand: React.FC<Props> = ({ bgSrc, shots, sounds, 
       text: h.text ?? "",
       icon: h.icon ?? "pin",
     }));
+  const questLog = {
+    title: questlog.title,
+    from: segSec(questlog.fromSeg) + questlog.from,
+    to: segSec(questlog.untilSeg) + questlog.until,
+    quests: questlog.quests.map((q) => ({
+      label: q.label,
+      steps: q.steps.map((s) => segSec(s.seg) + s.at),
+      progress: q.progress
+        ? { from: segSec(q.progress.seg) + q.progress.from, to: segSec(q.progress.seg) + q.progress.to }
+        : undefined,
+      doneAt: segSec(q.doneSeg) + q.doneAt,
+    })),
+  };
 
   // Musik: Drop auf hitSeg + hitAt; unter Dialog abgesenkt, am Anfang und Ende weich
   const hit = segSec(music.hitSeg) + music.hitAt;
@@ -899,7 +992,9 @@ export const SchmittNeuerSpielstand: React.FC<Props> = ({ bgSrc, shots, sounds, 
       (m, c) => Math.min(m, interpolate(t, [c.from - 0.25, c.from, c.to, c.to + 0.35], [1, music.duckTo, music.duckTo, 1], clamp)),
       1,
     );
-    return music.volume * ramp * duck;
+    // ab dem Drop (LKW fährt los) etwas lauter
+    const boost = interpolate(t, [hit - 0.05, hit], [1, music.boostAfterHit], clamp);
+    return music.volume * ramp * duck * boost;
   };
 
   return (
@@ -927,6 +1022,7 @@ export const SchmittNeuerSpielstand: React.FC<Props> = ({ bgSrc, shots, sounds, 
                   landing={i === 0}
                   fadeIn={shots[i - 1]?.kind === "ladescreen"}
                   fadeOut={shots[i + 1]?.kind === "ladescreen"}
+                  crossfade={s.overlap ?? 0}
                 />
               )}
             </Sequence>
@@ -935,6 +1031,7 @@ export const SchmittNeuerSpielstand: React.FC<Props> = ({ bgSrc, shots, sounds, 
 
         <Minimap windows={minimaps} />
         <Toasts items={toasts} />
+        <QuestLog log={questLog} />
         <Subtitles cues={cueWindows} />
 
         {/* Ton: jedes Geräusch in eigener Sequenz, so lang wie die Datei, mit weichen Rampen (nichts wird abgehackt) */}

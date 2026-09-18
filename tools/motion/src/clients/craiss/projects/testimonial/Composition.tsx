@@ -15,14 +15,7 @@
 // ============================================================
 
 import React from "react";
-import {
-  AbsoluteFill,
-  Sequence,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { AbsoluteFill, Sequence, useVideoConfig } from "remotion";
 import { CIProvider } from "../../../../core/ci-provider";
 import { loadBrand } from "../../../../core/ci-loader";
 import { projectPropsSchema } from "../../../../core/schemas";
@@ -38,22 +31,13 @@ import {
   flagsSchema,
   footageSchema,
   CTA_TEXTS,
-  SOFT,
-  FONT_BOLD,
-  RED,
-  WHITE,
+  RedChip,
+  chipSchema,
 } from "../../lib";
 import brandJson from "../../brand.json";
 import { z } from "zod";
 
 const ci = loadBrand("craiss", brandJson as any);
-
-const chipSchema = z.object({
-  text: z.string().describe("Text"),
-  startSec: z.number().step(0.04).describe("Start (Sek)"),
-  endSec: z.number().step(0.04).describe("Ende inkl. Ausblenden (Sek)"),
-  offsetY: z.number().step(1).describe("Y-Offset (px, Basis 1920)"),
-});
 
 export const craissTestimonialSchema = projectPropsSchema.extend({
   hook: hookSchema.describe("Hook (Headline + Chip)"),
@@ -147,63 +131,6 @@ export const craissTestimonialPreviewDefaults: CraissTestimonialProps = {
 const FOOTAGE_SRC = "projects/craiss-testimonial/ohne-Animation/proxy/05_Testimonial_Video_V2_ohneAnim_proxy.mp4";
 const BASE_W = 1080;
 const BASE_H = 1920;
-
-// =============================================================
-// Roter Text-Chip (Hook / Zitate) — kompakt, Lower-Third
-// =============================================================
-
-const RedChip: React.FC<{ chip: z.infer<typeof chipSchema> }> = ({ chip }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const F = (sec: number) => Math.round(sec * fps);
-  const durFrames = F(chip.endSec - chip.startSec);
-
-  // Ruhig (Kundenfeedback „hüpft zu stark"): SOFT-Feder, kaum Skalierung
-  const inP = spring({ frame, fps, config: SOFT });
-  const scale = interpolate(inP, [0, 1], [0.95, 1]);
-  const inOp = interpolate(frame, [0, 8], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const outOp = interpolate(frame, [durFrames - F(0.32), durFrames - 2], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const op = inOp * outOp;
-  if (op <= 0) return null;
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top: 990 + chip.offsetY,
-        left: 0,
-        right: 0,
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: RED,
-          borderRadius: 6,
-          padding: "14px 34px",
-          fontFamily: FONT_BOLD,
-          fontSize: 42,
-          letterSpacing: 2,
-          color: WHITE,
-          textTransform: "uppercase",
-          whiteSpace: "nowrap",
-          boxShadow: "0 6px 24px rgba(0,0,0,0.35)",
-          opacity: op,
-          transform: `scale(${scale})`,
-        }}
-      >
-        {chip.text}
-      </div>
-    </div>
-  );
-};
 
 // =============================================================
 // Composition

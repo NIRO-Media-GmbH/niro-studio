@@ -1,0 +1,7 @@
+{
+  "name": "Autohaus Rappold GmbH",
+  "colors": { "primary": "#0D69B3", "secondary": "#434F4F", "accent": "#EBE9E8", "background": "#FFFFFF", "text": "#FFFFFF" },
+  "fonts": { "heading": "Open Sans", "body": "Open Sans" },
+  "logo": "clients/rappold/rappold-logo.svg",
+  "style": { "borderRadius": 0, "animationSpeed": "normal" }
+}

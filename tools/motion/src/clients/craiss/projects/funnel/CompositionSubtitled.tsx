@@ -28,6 +28,9 @@ import captionsJson from "../../captions/funnel-v4.json";
 import planJson from "../../captions/funnel-v4.plan.json";
 import { CaptionMixTrack } from "../../captionMix/CaptionMix";
 import { captionPlanSchema } from "../../captionMix/plan";
+// Sperrzeiten (1s-Kontaktbogen 07.09., exakt auf die Sequenzen 11.09.) liegen seit 2026-09-16 in schlagwoerter.ts
+import { BLOCKED, DURATION_SEC, KEYWORDS } from "./schlagwoerter";
+import { KeywordChipsLayer } from "../../KeywordChips";
 import { z } from "zod";
 
 const ci = loadBrand("craiss", brandJson as any);
@@ -38,30 +41,6 @@ export const craissFunnelSubtitledSchema = projectPropsSchema.extend({
 });
 
 export type CraissFunnelSubtitledProps = z.infer<typeof craissFunnelSubtitledSchema>;
-
-const DURATION_SEC = 59.08;
-
-// Sperrzeiten per lueckenlosem 1s-Kontaktbogen (0-59s) gegen den V4-Proxy
-// verifiziert (2026-09-07) — ein erster Durchlauf mit den Root.tsx-Defaults
-// (projects/funnel/Composition.tsx) + kleiner Polsterung kollidierte an
-// mehreren Stellen (z. B. "KEIN LEBENSLAUF"-Chip real ~1s frueher als
-// dokumentiert), deshalb hier komplett gegen echte Frames neu vermessen.
-export const BLOCKED: BlockedRange[] = [
-  // 2026-09-11 exakt = Sequenzen von Craiss-Funnel (auf V4 ausgerichtet, per
-  // Differenz animiert − ohne Animation bestätigt). Dauern als Literale, damit
-  // Math.floor in freeWindows nicht an Rundungsresten einen Frame verliert.
-  { startSec: 0.64, durationSec: 2.48 }, // Chef-Namenskarte "MICHAEL CRAISS"
-  { startSec: 5.24, durationSec: 1.4 }, // Standort-Chip "MUEHLACKER"
-  { startSec: 21.0, durationSec: 1.68 }, // Swipe-Transition
-  { startSec: 23.76, durationSec: 3.56 }, // Namenskarte "EVA"
-  { startSec: 32.48, durationSec: 3.04 }, // "KEIN LEBENSLAUF / KEIN ANSCHREIBEN"
-  { startSec: 35.72, durationSec: 1.36 }, // Schritt 1 "TRAG DICH EIN"
-  { startSec: 37.08, durationSec: 2.44 }, // Schritt 2 "TELEFONAT"
-  { startSec: 39.56, durationSec: 3.96 }, // Phone-Chip "SEI ERREICHBAR"
-  { startSec: 46.88, durationSec: 2.44 }, // Schritt 3 "PERSÖNLICHES KENNENLERNEN"
-  { startSec: 50.32, durationSec: 2.6 }, // Outro "WORAUF WARTEST DU?"
-  { startSec: 54.72, durationSec: DURATION_SEC - 54.72 }, // CTA
-];
 
 export const craissFunnelSubtitledDefaults: CraissFunnelSubtitledProps = {
   format: "portrait-4k" as const,
@@ -90,6 +69,9 @@ const STAGE = { top: 1037, height: 230, left: 54, innerWidth: BASE_W - 108 };
 
 // Neuer Untertitel-Look „Mix" (Spec 2026-09-11) — nur Spur, ohne Footage
 const mixPlan = captionPlanSchema.parse(planJson);
+
+// Schlagwort-Chips (Spec 2026-09-16) — ersetzen in der Lieferung die Satz-Untertitel
+export const CraissFunnelKeywordLayer: React.FC = () => <KeywordChipsLayer keywords={KEYWORDS} />;
 
 export const CraissFunnelMixLayer: React.FC = () => {
   const { width } = useVideoConfig();
