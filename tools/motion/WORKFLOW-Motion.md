@@ -40,6 +40,33 @@ Konventionen:
   `docs/motion-doctrine.md` (Easing, Szenen-Rhythmus, Video-Skalen,
   Transition-Rezepte, Technik-Fallen) — bei neuen Animationen vorher
   lesen.
+- **Handwerk und Bausteine (seit 2026-09-19):** Zwei Projekt-Skills unter
+  `.claude/skills/` (Repo-Root, beide Macs):
+  - `remotion-craft` — Art Direction / Motion-Personality, Lower Thirds,
+    Testimonial-Karten, Logo-Reveals, Style-System, Custom-Transitions,
+    Beat-Sync, 3D, Ken-Burns-Shimmer, QA-Rubrik; Tabelle „Was zuerst lesen"
+    im SKILL.md, Texte in `references/`. Vor dem Bauen die zur Aufgabe
+    passende Referenz lesen.
+  - `remocn` — Copy-Paste-Komponenten von remocn.dev (Text-Reveals,
+    Signature-Transitions, Shader-Hintergründe, Odometer, Handschrift,
+    Konfetti, Charts). Katalog live: `https://remocn.dev/llms-components.txt`.
+    Installieren **nur** über `npm run remocn:add -- <name> [<name> …]`
+    (die shadcn-CLI beschädigt String-Literale); Dateien landen in
+    `src/components/remocn/`, Import `@/components/remocn/<name>`.
+    Eigene Änderungen an Komponenten in `src/components/remocn/_NIRO-PATCHES.md`
+    festhalten. Kundenschrift für alle Remocn-Textkomponenten per CSS-Variable
+    am Root: `style={{ "--font-geist-sans": '"Meutas", sans-serif' }}`.
+    Lebender Nachweis: `NiroDemo-RemocnShowcase` (Ordner NIRO-Demo im Studio).
+  - Shader-Komponenten brauchen WebGL im Headless-Render — `remotion.config.ts`
+    setzt deshalb `Config.setChromiumOpenGlRenderer("angle")` (ohne: schwarze
+    Flächen, Log „WebGL is not supported"). Nicht-WebGL-Kompositionen rendern
+    damit identisch (geprüft 2026-09-19).
+  - SFX ohne Downloads: `npm run sfx` erzeugt `public/sfx/*.wav` (Whoosh, Pop,
+    Bass, Tick, Pad; gitignored, jederzeit neu erzeugbar) → `<Audio
+    src={staticFile("sfx/whoosh.wav")}>`; Hit 2–3 Frames vor dem visuellen Landen.
+  - Alpha-Overlays: Shader/Backdrops sind opak — nur in Vollbild-Szenen oder
+    hinter `!transparent`; vor jedem Komponenten-Einsatz `background:` am Root
+    prüfen (Alpha-Falle oben).
 - **Untertitel/Text-Overlays, Premium-Stufe:** Für gestaltete Captions
   (Hero-Wörter, Glass-Look, Platzierung um den Sprecher) gilt
   `docs/cinematic-captions.md` — vor dem Bauen lesen, Caption-Plan nach

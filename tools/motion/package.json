@@ -13,9 +13,12 @@
     "render:draft": "remotion render src/index.ts --scale=0.5 --codec=h264 --crf=28",
     "render:gif": "remotion render src/index.ts --codec=gif --every-nth-frame=2 --number-of-gif-loops=0",
     "new:client": "npx tsx scripts/new-client.ts",
-    "new:project": "npx tsx scripts/new-project.ts"
+    "new:project": "npx tsx scripts/new-project.ts",
+    "remocn:add": "npx tsx scripts/remocn-add.ts",
+    "sfx": "node scripts/gen-sfx.mjs"
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.81",
     "@remotion/animation-utils": "4.0.519",
     "@remotion/captions": "4.0.519",
     "@remotion/cli": "4.0.519",

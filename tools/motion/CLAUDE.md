@@ -37,6 +37,13 @@ Every composition follows `docs/motion-doctrine.md` (easing doctrine,
 scene rhythm, video-scale typography, transition recipes, technical
 traps). Read it before building new animations.
 
+Craft references (art direction, lower thirds, testimonials, style
+system, custom transitions, beat sync, 3D, QA) live in the project skill
+`.claude/skills/remotion-craft/`; ready-made components (text reveals,
+signature transitions, shader backgrounds) in the skill `remocn` — install
+only via `npm run remocn:add -- <name>`, never via the shadcn CLI. Details:
+`WORKFLOW-Motion.md` („Handwerk und Bausteine").
+
 ## Captions
 
 For designed caption work (hero words, tinted-glass fills, subject-aware
@@ -52,3 +59,4 @@ never replaces — the review checklist above.
 - Integrate `<ReviewOverlay>` in every new composition (conditional on `review?.showGuides`)
 - Safe zone constants from `src/core/format-utils.ts`
 - Face zone defaults from `getDefaultFaceZone()` in `src/core/format-utils.ts`
+- Overlay band (below the face zone, inside the safe zone) from `getOverlayBandPixels()` in `src/core/format-utils.ts` — lower thirds, cards and CTAs in 9:16 talking-head pieces live there (reference: `src/clients/niro-demo/projects/recruiting-overlay-test/`)

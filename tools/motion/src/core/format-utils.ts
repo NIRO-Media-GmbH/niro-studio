@@ -153,3 +153,50 @@ export function getSafeZonePixels(format: VideoFormat, actualDims?: { width: num
     height: dims.height - 2 * margin,
   };
 }
+
+// ---- Overlay-Band (unter der Face Zone, in der Safe Zone) ----
+// Für Talking-Head-Formate: der Streifen, in dem Lower Thirds, Karten und CTAs
+// liegen dürfen, ohne das Gesicht zu verdecken oder in die Plattform-UI zu
+// rutschen. Bei 9:16 mit Standard-Face-Zone bleibt ~12 % der Höhe (y ≈ 45–57 %).
+// Eingeführt 2026-09-19 (Recruiting-Overlay-Test, Craft-Skill).
+
+export interface OverlayBand {
+  /** linke Kante (px, absolut) */
+  left: number;
+  /** rechte Kante (px, absolut) */
+  right: number;
+  /** obere Kante (px, absolut) — Face-Zone-Unterkante + Luft */
+  top: number;
+  /** untere Kante (px, absolut) — Safe-Zone-Unterkante − Luft */
+  bottom: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Overlay-Band als absolute Pixelwerte. `gap` ist die Luft zu Face Zone und
+ * Safe-Zone-Unterkante als Anteil der Höhe (Standard 1,2 %). Reicht die Face
+ * Zone bis unter die Safe Zone, bleibt ein leeres Band (height ≤ 0) — dann
+ * Face Zone für das Projekt anpassen (review.faceZone), nicht das Band.
+ */
+export function getOverlayBandPixels(
+  format: VideoFormat,
+  faceZone?: FaceZone,
+  actualDims?: { width: number; height: number },
+  gap = 0.012,
+): OverlayBand {
+  const dims = actualDims ?? getDimensions(format);
+  const safe = getSafeZonePixels(format, dims);
+  const face = getFaceZonePixels(format, faceZone, dims);
+  const gapPx = Math.round(dims.height * gap);
+  const top = face.top + face.height + gapPx;
+  const bottom = dims.height - safe.bottom - gapPx;
+  return {
+    left: safe.left,
+    right: dims.width - safe.right,
+    top,
+    bottom,
+    width: dims.width - safe.left - safe.right,
+    height: bottom - top,
+  };
+}

@@ -153,3 +153,24 @@ neu prüfen. (Quellen bleiben Artlist/Envato.)
 Auftrag exakt halten: „Title-Card" heißt Title-Card — nicht Title-Card +
 drei Szenen + Musik. Erweiterungen im Chat anbieten, nicht ungefragt
 einbauen.
+
+## 10. Werkzeugkasten: Craft-Skill und Remocn (seit 2026-09-19)
+
+Diese Doktrin sagt, was gilt; das Handwerk dazu liegt im Projekt-Skill
+`.claude/skills/remotion-craft/` (Tabelle „Was zuerst lesen" je Aufgabe:
+Art Direction, Lower Thirds, Testimonial-Karten, Logo-Reveals, Style-System,
+Custom-Transitions, Beat-Sync, 3D, Ken-Burns-Shimmer, QA-Rubrik). Fertige
+Bausteine — Text-Reveals, Signature-Transitions, Shader-Hintergründe,
+Odometer, Handschrift — kommen aus dem Skill `remocn` (Katalog live auf
+remocn.dev, Installation nur über `npm run remocn:add`). Drei Ergänzungen
+zur Easing-Doktrin oben, die sich in der Praxis bewährt haben:
+
+- **Motion-Personality je Kunde festlegen** (Premium / Corporate / Playful /
+  Energetic — Tabelle mit Frames, Easing und Overshoot im Craft-Skill) und
+  im ganzen Stück durchhalten: eine Easing-Familie, eine Zeiteinheit, eine
+  Transition-Familie, ein Stagger-Rhythmus. Wechsel zwischen Personalities
+  innerhalb eines Stücks ist die häufigste Ursache für „wirkt unruhig".
+- **Lower-Third-Budget (30 fps):** Enter 12–18 f gestaffelt (Balken → Name
+  → Rolle), Hold 90–150 f, Exit 8–12 f; links verankert, Name ≥ 1,6× Rolle.
+- **QA am gerenderten File:** Kontaktbogen aus Stills an Szenen- und
+  Transition-Mitten plus erstem/letztem Frame, bevor etwas als fertig gilt.

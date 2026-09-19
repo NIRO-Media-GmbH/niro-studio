@@ -53,6 +53,8 @@ import { LandhausWolfDiePerfekteBeilage, landhausWolfDiePerfekteBeilageSchema } 
 import { LandhausWolfPetrischale, landhausWolfPetrischaleSchema } from "./clients/landhaus-wolf/projects/petrischale/Composition";
 import { SWSolarVerkaeufer, swSolarVerkaeuferSchema } from "./clients/sw-projektentwicklung/projects/solar-verkaeufer/Composition";
 import { PraktikantReel, praktikantReelSchema } from "./clients/niro-demo/projects/praktikant-reel/Composition";
+import { RemocnShowcase, remocnShowcaseSchema, remocnShowcaseDefaults } from "./clients/niro-demo/projects/remocn-showcase/Composition";
+import { RecruitingOverlayTest, recruitingOverlayTestSchema, recruitingOverlayTestDefaults } from "./clients/niro-demo/projects/recruiting-overlay-test/Composition";
 import { BremsenSchneiderCta, bremsenSchneiderCtaSchema } from "./clients/bremsen-schneider/projects/cta-endslide/Composition";
 import { BremsenSchneiderAzubi, azubiOverlaySchema, azubiOverlayDefaults } from "./clients/bremsen-schneider/projects/azubi-overlay/Composition";
 import { BremsenSchneiderFachkraft, fachkraftOverlaySchema, fachkraftOverlayDefaults } from "./clients/bremsen-schneider/projects/fachkraft-overlay/Composition";
@@ -333,6 +335,20 @@ export const RemotionRoot: React.FC = () => {
               outro:       { startSec: 29,   durationSec: 4,   mainText: "RICHTIG COOL!", subText: "Danke ans Team", textPos: { x: 0, y: 0 } },
               cta:         { startSec: 33,   durationSec: 2.8, brandName: "NeuroMedia", ctaText: "Jetzt bewerben", brandPos: { x: 0, y: 0 } },
             }}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="NiroDemo-RemocnShowcase"
+            component={RemocnShowcase}
+            schema={remocnShowcaseSchema}
+            defaultProps={remocnShowcaseDefaults}
+            calculateMetadata={({ props }) => getCalculateMetadata(props)}
+          />
+          <Composition
+            id="NiroDemo-RecruitingOverlayTest"
+            component={RecruitingOverlayTest}
+            schema={recruitingOverlayTestSchema}
+            defaultProps={recruitingOverlayTestDefaults}
             calculateMetadata={({ props }) => getCalculateMetadata(props)}
           />
         </Folder>
