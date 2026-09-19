@@ -6,3 +6,6 @@
   Praat, syncstart. Kandidat für einen späteren Austausch der Engine in `src/niro_autocut/sync.py`,
   falls Frame-Genauigkeit einmal nicht reicht. Empfohlene Gates: PSR ≥ 1,8, z ≥ 12, ≥ 2 Feinfenster,
   Spread < 40 ms.
+- `2026-09-19-github-recherche.md` — GitHub-Recherche vom 19.09.2026: Bausteine je AutoCut-Bereich (Gyro-Daten,
+  Beat-Tracking, Shot-Boundary-Detection, Embeddings, Alignment, Mischsimulation, QC) mit Sternen, Lizenz und
+  Einsatzpunkt; Reihenfolge nach Nutzen ÷ Aufwand.
