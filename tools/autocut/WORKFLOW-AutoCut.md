@@ -693,6 +693,14 @@ Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b 
 `bewegungsart`/`haltung` je Abschnitt) und 6d (Stabilisieren nur bei Bedarf). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
 Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
 
+**Kalibrierwerte (21.09.2026):** Hochzeitszauber, 301 FX3- und 54 a7-IV-Clips, Gyro gegen optischen Weg auf denselben Frames:
+Schwenk um Gyro-y (+), Tilt um Gyro-x (−) bei beiden Kameras (FX3 r 0,65/−0,83); `px_faktor` FX3 0,60, a7 IV 0,69 (IBIS/Gimbal
+dämpfen), Spearman 0,76/0,71 → beide belastbar, `optisch_fuer` leer. Der optische Weg stimmt mit cv2 (Hanning) auf identischen Frames
+überein (r 0,97, Verhältnis 1,00; `ruhe.py` rechnete ohne Fenster). `hand_hf_anteil_min` 0,15 = Mitte zwischen P75 der FX3-Gimbal-Clips
+(0,107) und P25 der a7-IV-Handclips (0,191). MEK (463 Clips) gegen den Stufe-2b-Index: Perspektive Höhe 76 % gleich (Pitch-Vorzeichen
+bestätigt), Brennweite nur 47 % — Claude nennt bis etwa 75 mm KB „normal", und Zoomfahrten (157 Clips) bekommen die Klasse des
+Clip-Medians; Grenzen [30, 60] vorerst unverändert (offen, Spec-Nachtrag „Kalibrierung").
+
 ## Kantenprüfung — „Kanten" (seit 16.09.2026)
 
 Misst die Schnitte einer AutoCut-Timeline am **fertigen Export** (Spec

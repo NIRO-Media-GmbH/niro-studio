@@ -231,3 +231,29 @@ Schärfe und Verwacklung je B-Roll-Einsatz, optisch), `katalog_*.json` (Assenhei
 Nicht Teil dieses Specs, aber durch den MacBook-Stand belegt: Musik als gemeinsames Werkzeug (`musik_scan.json` mit 267 Titeln,
 `musik_struktur.py` mit Drops/Breaks → beat_this, all-in-one, CLAP), DRT-Stabilisierung als Modul, 9:16-Reframe-Vorschlag aus der
 Gesichtslage (`pan_korrektur.py`, `gesicht_check.py`).
+
+## Nachtrag 21.09.2026 — Kalibrierung (Hochzeitszauber, MEK)
+
+Kalibrierlauf `autocut_telemetrie.py --kalibrieren` über Hochzeitszauber: 368 Clips, davon 355 mit Gyro und Brennweite (ohne:
+6 Mavic, 2 Avata, 5 a7 IV), je Clip 4 s ab `von_s` des Sichtungs-Katalogs, Gyro und optischer Weg auf denselben Frames.
+
+| Kamera | Clips | Frames | Schwenk (Achse, Vorzeichen, r) | Tilt (Achse, Vorzeichen, r) | px_faktor | Spearman | belastbar |
+|---|---|---|---|---|---|---|---|
+| FX3 | 301 | 28 553 | y, +, 0,65 | x, −, −0,83 | 0,597 | 0,76 | ja |
+| a7 IV | 54 | 4 844 | y, +, 0,58 | x, −, −0,27 | 0,689 | 0,71 | ja |
+
+| Punkt | Befund und gesetzter Wert |
+|---|---|
+| Achsen, Vorzeichen | Beide Kameras gleich: Schwenk um y (+), Tilt um x (−); Basis FX3 (\|r\| ≥ 0,6), die a7 IV korreliert schwächer (IBIS glättet das Bild). Gesetzt `achsen: {schwenk: 1, tilt: 0}`, `vorzeichen: {schwenk: 1, tilt: -1, pitch: 1}`. Physikalisch stimmig mit x links, y oben, z vorwärts: +y = Drehung nach links → Inhalt wandert nach rechts (dx > 0); +x = Neigen nach unten → Inhalt wandert nach oben (dy < 0). Die Stichprobe im Messwerte-Nachtrag (Gyro-y ↔ dx −0,91, ein a7-Clip mit korrelierten Achsen) ist damit überholt. |
+| px_faktor | FX3 0,60, a7 IV 0,69 — IBIS und Gimbal dämpfen, das Bild wackelt weniger, als der Gyro misst. `optisch_fuer` bleibt leer (beide Spearman ≥ 0,7). |
+| Gegenprobe cv2 | Eingebaut gegen `ruhe.json`: n 341, r 0,748, Verhältnis 0,97 — unter der Schwelle 0,9. Ursache: `ruhe.py` rechnete `cv2.phaseCorrelate` ohne Hanning-Fenster, und 99 Clips auf kürzerem Fenster (`bis_s − von_s` < 4 s). Gleichartig nachgemessen (identische Frames, 4-s-Fenster, 355 Clips): numpy ↔ cv2 mit Hanning r 0,967, Spearman 0,979, Verhältnis 1,00 (FX3 0,955, a7 IV 0,950); numpy ↔ cv2 ohne Fenster 0,868. `telemetrie_optisch.py` ist bestätigt; das Fenster ist gewollt (ohne Fenster springt der Peak zwischen echter Verschiebung und Randeffekt). |
+| `hand_hf_anteil_min` | Messlauf Hochzeitszauber, `hf_anteil` ohne Stativ: FX3-Gimbal (290 Clips) P10/25/50/75/90 = 0,009/0,018/0,046/0,107/0,175, a7-IV-Hand (54) = 0,152/0,191/0,281/0,377/0,507. Keine Überlappung von P75 und P25 → Mitte 0,149 → **0,15** (vorher 0,35: 36 von 59 a7-IV-Clips galten als gimbal). Bei 0,15 gelten 44 von 290 FX3-Clips als hand und 5 von 58 a7-IV-Clips als gimbal. |
+| Schlusslauf Hochzeitszauber | `--force --schaerfe` mit allen Endwerten: 368 Clips (355 rtmd, 13 optisch, 0 Fehler), Schärfe für alle. Haltung FX3 gimbal 247 / hand 43 / stativ 11, a7 IV hand 52 / gimbal 6 / stativ 1, DJI gimbal 8 — FX3 überwiegend gimbal, a7 IV überwiegend hand. Bericht `Ergebnisse/Rohschnitt/telemetrie.md`. |
+| MEK: Perspektive Höhe | 463 B-Roll-Clips (453 rtmd, 10 optisch) gegen den Stufe-2b-Index: 765 von 1000 Abschnitten gleich (76 %); Aufsicht ↔ Untersicht vertauscht nur 7 → Pitch-Vorzeichen +1 und Grenzen −60/−8/8 bleiben. |
+| MEK: Brennweite | 483 von 1017 gleich (47 %); `brennweite_klassen_kb` [30, 60] und [35, 70] beide 47 % → bleibt [30, 60]. Claude nennt KB-Brennweiten bis etwa 75 mm „normal" (Median der normal-Abschnitte 73,6 mm, P90 139,8); ein an Claude angelehntes Raster [30, 85] käme auf 62 %. 157 von 463 Clips haben eine Zoomfahrt (`kb_max/kb_min` > 1,3; Zoom, a7-IV-Crop und Klarbild-Zoom), 447 der 1017 Abschnitte liegen darin — die Clip-Klasse (Median) passt dort nicht auf jeden Abschnitt (ohne Zoomfahrt 49 %, mit 45 %). |
+| MEK: Haltung | 136 von 463 gleich (29 %): hand ↔ Handkamera 72, gimbal ↔ Gimbal 46, gimbal ↔ Handkamera 127. Verteilung FX3 gimbal 175 / hand 84 / stativ 19, a7 IV hand 116 / gimbal 69. Nur Doku, Schwelle bleibt. |
+| Fixtures | `tests/fixtures/rtmd_fx3_25p.bin` (FX3_0330, 0,3 s, 156 KB), `rtmd_a7iv_50p.bin` (a7MK4_20260913_2128, 0,3 s, 292 KB); `test_rtmd.py` ohne Skips. |
+
+Offen (Entscheidung User): (1) Brennweitengrenzen — Filmkonvention (tele ab 60 mm KB) oder an Claudes Wahrnehmung angelehnt
+([30, 85]); (2) Zoomfahrten — Stufe 2b überschreibt `brennweite` je Abschnitt mit der Clip-Klasse; bei Zoomfahrten besser die
+KB-Reihe je Abschnitt auswerten oder dort Claudes Wert behalten.

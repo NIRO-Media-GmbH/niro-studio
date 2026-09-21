@@ -108,14 +108,15 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   schwenk_min_grad_s: 3.0   # dominante Drehung ab hier Schwenk/Tilt
   schwenk_min_px: 1.0
   hf_grenze_hz: 3.0         # Grenze zwischen Gimbal-/Fahrt-Bewegung und Hand-Zittern
-  hand_hf_anteil_min: 0.35  # Leistungsanteil ab hf_grenze_hz, ab dem „hand" statt „gimbal" (Kalibrierung:
-                            # Hochzeitszauber, MEK)
+  hand_hf_anteil_min: 0.15  # Leistungsanteil ab hf_grenze_hz, ab dem „hand" statt „gimbal"; Kalibrierung 21.09.2026
+                            # Hochzeitszauber: Mitte P75 FX3-Gimbal 0,107 / P25 a7-IV-Hand 0,191
   brennweite_klassen_kb: [30, 60]    # KB-Brennweite: < 30 weit, > 60 tele, sonst normal
   pitch_klassen_grad: [-60, -8, 8]   # Pitch: ≤ −60 Vogelperspektive, ≤ −8 Aufsicht, ≥ 8 Untersicht, sonst Augenhöhe
   achsen: {schwenk: 1, tilt: 0}                    # Gyro-Spalten (x links, y oben, z vorwärts): Schwenk um y, Tilt um x
-  vorzeichen: {schwenk: -1, tilt: 1, pitch: 1}     # Kalibrierung; Stichprobe 21.09.: Gyro-y ↔ dx negativ
-                                                   # (Inhalt wandert entgegen)
-  px_faktor: {FX3: 1.0, a7IV: 1.0}                 # IBIS-Dämpfung je Kamera (Kalibrierung: Gyro-px ↔ optisch-px)
+  vorzeichen: {schwenk: 1, tilt: -1, pitch: 1}     # Kalibrierung 21.09.2026, Hochzeitszauber 301 FX3/54 a7 IV: Gyro-y ↔ dx
+                                                   # r 0,65/0,58, Gyro-x ↔ dy r −0,83/−0,27 (+y: nach links, Inhalt rechts)
+  px_faktor: {FX3: 0.60, a7IV: 0.69}               # IBIS-Dämpfung je Kamera (Gyro-px → optisch-px), Kalibrierung 21.09.2026,
+                                                   # Hochzeitszauber 301/54 Clips, Spearman 0,76/0,71
   optisch_fuer: []          # Kameras, deren Gyro-Wert nicht belastbar ist (Rangkorrelation < 0,7) → optischer Weg
   optisch_breite: 480       # Bildbreite der Messung (Höhe 9:16-passend 270)
   parallel: 2               # Clips gleichzeitig (Lesen der ganzen Datei ≈ 300 MB/s übers NAS)
