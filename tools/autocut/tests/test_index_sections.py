@@ -414,3 +414,57 @@ def test_index_sections_zaehlt_telemetrie(tmp_path, monkeypatch):
     out = S.index_sections(ch, {"clips": [rec]}, _CFG2, parallel=1)
     assert out["mit_telemetrie"] == 1 and gesehen[rec["datei"]]["clip"] == "FX3_1"
     assert json.loads((ch.autocut / "broll_index.json").read_text())["nachlauf"]["mit_telemetrie"] == 1
+
+
+# --- Fix-Runde 1: fenster_s muss bis in die Kontextzeile durchgereicht werden (Task-8-Review) --------------------
+
+_TELE_FENSTER = {"path": "/nas/B-Roll/Flur/FX3_9.MP4", "clip": "FX3_9", "quelle": "rtmd", "kb_mm": 50.0,
+                 "brennweitenklasse": "normal", "pitch_grad": 0.0, "perspektive_hoehe": "Augenhöhe",
+                 "haltung": "gimbal", "wackeln": 0.02, "fehler": None,
+                 "fenster": [[0.0, 0.02, 0.1, "statisch"], [1.0, 0.02, 0.1, "statisch"],
+                             [2.0, 0.05, 1.0, "schwenk_links"], [3.0, 0.05, 1.0, "schwenk_links"],
+                             [4.0, 0.05, 1.0, "schwenk_links"], [5.0, 0.05, 1.0, "schwenk_links"]]}
+
+
+def test_telemetrie_text_nutzt_konfigurierten_fenster_s():
+    """Mit fenster_s 2.0 zählen für Abschnitt 2–4 s die Fenster bei 1/2/3 s (2× schwenk_links, 1× statisch =
+    Mehrheit schwenk_links); mit fenster_s 6.0 zählen nur die Fenster bei 0/1 s (2× statisch). Ohne die
+    Weitergabe von fenster_s würde telemetrie_text immer den Default 2.0 verwenden und der Hinweis an Claude
+    widerspräche dem, was telemetrie_anwenden mit demselben fenster_s tatsächlich in bewegungsart schreibt."""
+    abschnitte = [{"von_s": 2, "bis_s": 4}]
+    assert "A1 schwenk_links" in S.telemetrie_text(_TELE_FENSTER, abschnitte, fenster_s=2.0)
+    assert "A1 schwenk_links" in S.telemetrie_text(_TELE_FENSTER, abschnitte)          # Default weiterhin 2.0
+    assert "A1 statisch" in S.telemetrie_text(_TELE_FENSTER, abschnitte, fenster_s=6.0)
+
+    rec = {"abschnitte": [{"von_s": 2, "bis_s": 4, "brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}]}
+    geschrieben, _ = S.telemetrie_anwenden(rec, _TELE_FENSTER, fenster_s=6.0)
+    art = geschrieben["abschnitte"][0]["bewegungsart"]
+    assert art == "statisch"
+    # Die Kontextzeile mit demselben fenster_s muss denselben Wert zeigen wie telemetrie_anwenden geschrieben hat.
+    assert f"A1 {art}" in S.telemetrie_text(_TELE_FENSTER, rec["abschnitte"], fenster_s=6.0)
+    assert f"A1 {art}" in S.section_meta_text(rec, _TELE_FENSTER, fenster_s=6.0)
+
+
+def test_index_sections_clip_meta_text_stimmt_mit_geschriebenem_bewegungsart_ueberein(tmp_path):
+    """End-to-End über index_sections_clip: cfg['telemetrie']['fenster_s'] = 6.0 (Charge-Override) muss in der
+    Kontextzeile denselben Bewegungsart-Wert zeigen, den telemetrie_anwenden danach in den Abschnitt schreibt."""
+    _frames(tmp_path, stem="FX3_9")
+    ch = _Ch(tmp_path)
+    (ch.autocut / "broll_index").mkdir()
+    rec = {"path": "/nas/B-Roll/Flur/FX3_9.MP4", "datei": "FX3_9.MP4", "fingerprint": "abcdefabcdef0000",
+           "orientierung": "16:9",
+           "abschnitte": [{"von_s": 2, "bis_s": 4, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": True}]}
+    cfg = {**_CFG_T, "telemetrie": {"fenster_s": 6.0}}
+    gesehen = {}
+
+    def fake_describe(client, sheet, meta_text, cfg2, prompt):
+        gesehen["meta_text"] = meta_text
+        return {"abschnitte": [{"nr": 1, "einstellung": "Halbtotale", "perspektive_hoehe": "Augenhöhe",
+                                "perspektive_ansicht": "seitlich", "brennweite": "normal",
+                                "bewegungsrichtung": "keine", "hauptmotiv": "Flur"}],
+                "_usage": {"input": 1, "output": 1, "cache_read": 0, "cache_write": 0}}
+
+    out = S.index_sections_clip(ch, rec, None, cfg, "prompt", describe=fake_describe, telemetrie=_TELE_FENSTER)
+    art = out["abschnitte"][0]["bewegungsart"]
+    assert art == "statisch"
+    assert f"A1 {art}" in gesehen["meta_text"]

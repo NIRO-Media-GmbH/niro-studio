@@ -132,8 +132,12 @@ def hamming(a: str, b: str) -> int:
 
 # --- Claude -----------------------------------------------------------------------
 
-def telemetrie_text(tele: dict | None, abschnitte: list[dict]) -> str:
-    """Kontextzeile für den Abschnittsbogen aus der gemessenen Kamera-Telemetrie; leer ohne Daten."""
+def telemetrie_text(tele: dict | None, abschnitte: list[dict], fenster_s: float = 2.0) -> str:
+    """Kontextzeile für den Abschnittsbogen aus der gemessenen Kamera-Telemetrie; leer ohne Daten.
+
+    ``fenster_s`` muss dasselbe sein, das ``telemetrie_anwenden`` später für denselben Clip verwendet
+    (Charge-Override aus ``cfg["telemetrie"]["fenster_s"]``) — sonst zeigt der Hinweis an Claude eine
+    andere Bewegungsart, als der Code hinterher tatsächlich in ``bewegungsart`` schreibt."""
     if not tele or tele.get("quelle") in (None, "keine"):
         return ""
     teile = []
@@ -143,7 +147,7 @@ def telemetrie_text(tele: dict | None, abschnitte: list[dict]) -> str:
         teile.append(f"Pitch {tele['pitch_grad']:g}° = {tele.get('perspektive_hoehe')}")
     if tele.get("haltung"):
         teile.append(f"Haltung {tele['haltung']}")
-    arten = [abschnitt_werte(tele, float(a.get("von_s", 0)), float(a.get("bis_s", 0)))["bewegungsart"]
+    arten = [abschnitt_werte(tele, float(a.get("von_s", 0)), float(a.get("bis_s", 0)), fenster_s)["bewegungsart"]
              for a in abschnitte]
     if any(arten):
         teile.append("Bewegungsart je Abschnitt: " + ", ".join(f"A{i} {x or '?'}" for i, x in enumerate(arten, 1)))
@@ -153,11 +157,11 @@ def telemetrie_text(tele: dict | None, abschnitte: list[dict]) -> str:
     return praefix + " · ".join(teile)
 
 
-def section_meta_text(rec: dict, tele: dict | None = None) -> str:
+def section_meta_text(rec: dict, tele: dict | None = None, fenster_s: float = 2.0) -> str:
     lines = [f"Clip: {rec.get('datei') or Path(str(rec.get('path', ''))).name}",
              f"Motiv-Ordner: {rec.get('ordner') or '(keiner)'} · Standort: {rec.get('standort') or '(unbekannt)'}",
              f"Kamerabewegung laut Erst-Index: {rec.get('kamerabewegung') or '?'}"]
-    t = telemetrie_text(tele, rec.get("abschnitte") or [])
+    t = telemetrie_text(tele, rec.get("abschnitte") or [], fenster_s)
     if t:
         lines.append(t)
     lines.append("")
@@ -343,7 +347,7 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
                           portrait=str(rec.get("orientierung") or "") == "9:16")
     call_cfg = {"model": icfg["model"], "effort": scfg.get("effort", icfg.get("effort", "medium")),
                 "max_tokens": scfg.get("max_tokens", 2500)}
-    meta_text = section_meta_text({**rec, "abschnitte": abs_}, telemetrie)
+    meta_text = section_meta_text({**rec, "abschnitte": abs_}, telemetrie, fenster_s)
     usage = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0}
     reparaturen = 0
     data = normalize_sections(describe(client, sheet, meta_text, call_cfg, system_prompt))
