@@ -1,6 +1,6 @@
 """Kamera-Telemetrie je Clip (Spec 2026-09-19): Kennzahlen aus der Sony-rtmd-Datenspur (Gyro, Beschleunigung, Brennweite)
 oder aus der optischen Verschiebungsreihe, Clip-Messung mit Cache, Charge-Lauf, Abschnittswerte für Stufe 2b und der
-Stabilisierungs-Vorschlag für 6d.
+Stabilisierungs-Vorschlag für 6d; Zoomfahrten aus der KB-Brennweite und die Brennweitenregel für 3a/6d (Spec 2026-09-21).
 
 Beide Messwege liefern dieselbe Größe: Verschiebung des Bildinhalts je 25-fps-Frame in px @480 (``dx`` > 0 nach rechts,
 ``dy`` > 0 nach unten). Der Gyro wird über die KB-Brennweite umgerechnet: ``f_px = 480 · kb_mm / 36``,
@@ -238,6 +238,127 @@ def kennzahlen(dxy: np.ndarray, cfg: dict, kb_mm: float | None,
             "fenster": [[f["t_s"], f["wackeln"], f["bewegung"], f["bewegungsart"], _schaerfe(f)] for f in fen],
             "ruhige_fenster": [f["t_s"] for f in fen if f["wackeln"] <= float(cfg["ruhig_max_px"])],
             "schaerfe_p10": round(float(np.percentile(rel, 10)), 2) if rel is not None else None}
+
+
+# --- Zoomfahrten (Spec 2026-09-21) ---------------------------------------------------------------------------------------
+
+ZOOM_MEDIAN_S = 0.2           # gleitender Median der Brennweite je Sample (Ausreißer, Quantisierung)
+ZOOM_GLAETTUNG_S = 0.2        # gleitendes Mittel des Tempos
+ZOOM_LUECKE_S = 0.3           # Bereiche mit kürzerem Abstand sind eine Fahrt (Stop-and-go)
+ZOOM_KERN_RAND = 0.10         # Anteil je am Anfang und Ende einer Fahrt, der für ruck nicht zählt
+ZOOM_RUCK_SCHRITT_S = 0.2     # Schrittweite der Mittelwerte von |v| für ruck
+URTEILE_ZOOM = ["langsam", "schnell"]
+
+
+def _median_gleitend(x: np.ndarray, breite: int) -> np.ndarray:
+    """Gleitender Median über ``breite`` Werte (auf ungerade aufgerundet), Ränder mit dem Randwert aufgefüllt."""
+    x = np.asarray(x, np.float64)
+    h = max(0, int(breite) // 2)
+    if h == 0 or len(x) < 2:
+        return x
+    fenster_ = np.lib.stride_tricks.sliding_window_view(np.pad(x, (h, h), mode="edge"), 2 * h + 1)
+    return np.median(fenster_, axis=1)
+
+
+def kb_je_frame(kb_mm: list[float], kb_index: list[int] | None, fps: float, samples: int,
+                ziel_fps: float = ZIEL_FPS) -> np.ndarray:
+    """KB-Brennweite je rtmd-Sample → je Zielframe (25 fps): gleitender Median über ``ZOOM_MEDIAN_S``, dann linear auf
+    die Zeiten k / ziel_fps interpoliert (Ränder gehalten). ``kb_index`` = Sample-Nummer je Wert (Lücken, wo der Tag
+    fehlt oder 0xFFFF ist); leer oder unpassend = lückenlos ab 0. Leer ohne Werte."""
+    kb = np.asarray(kb_mm, np.float64)
+    if len(kb) == 0 or fps <= 0:
+        return np.zeros(0, np.float64)
+    idx = np.asarray(kb_index if kb_index and len(kb_index) == len(kb) else range(len(kb)), np.float64)
+    glatt = _median_gleitend(kb, int(round(ZOOM_MEDIAN_S * fps)))
+    n = max(1, int(round(max(int(samples), int(idx[-1]) + 1) * ziel_fps / fps)))
+    return np.interp(np.arange(n) / ziel_fps, idx / fps, glatt)
+
+
+def zoom_tempo(kb25: np.ndarray, ziel_fps: float = ZIEL_FPS) -> np.ndarray:
+    """Tempo der Brennweite je Zielframe in % pro s: Änderung von ln(KB) je Sekunde, gemittelt über ZOOM_GLAETTUNG_S."""
+    kb25 = np.asarray(kb25, np.float64)
+    if len(kb25) < 2:
+        return np.zeros(len(kb25), np.float64)
+    v = np.gradient(np.log(np.maximum(kb25, 0.1))) * ziel_fps * 100.0
+    return _tiefpass(v[:, None], int(round(ZOOM_GLAETTUNG_S * ziel_fps)))[:, 0]
+
+
+def zoom_bereiche(v: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list[tuple[int, int]]:
+    """Frame-Bereiche [a, b) mit |v| über ``zoom_rausch_proz_s``; Bereiche mit weniger als ZOOM_LUECKE_S Abstand werden
+    zusammengefasst (Stop-and-go = eine Fahrt)."""
+    ueber = (np.abs(np.asarray(v, np.float64)) > float(cfg["zoom_rausch_proz_s"])).astype(np.int8)
+    kanten = np.diff(np.concatenate([[0], ueber, [0]]))
+    out: list[list[int]] = []
+    for a, b in zip(np.flatnonzero(kanten == 1).tolist(), np.flatnonzero(kanten == -1).tolist()):
+        if out and (a - out[-1][1]) / ziel_fps < ZOOM_LUECKE_S:
+            out[-1][1] = b
+        else:
+            out.append([a, b])
+    return [(a, b) for a, b in out]
+
+
+def zoom_ruck(betrag: np.ndarray, stocken_anteil: float, ziel_fps: float = ZIEL_FPS) -> tuple[float, bool]:
+    """(ruck, stockt) einer Zoomfahrt aus |v| je Frame. ruck = Variationskoeffizient der Mittel über
+    ZOOM_RUCK_SCHRITT_S-Schritte im Kern (ohne je ZOOM_KERN_RAND am Anfang/Ende; unter zwei Schritten 0,0);
+    stockt = |v| fällt im Kern unter ``stocken_anteil`` × Spitze und steigt danach wieder darüber."""
+    av = np.asarray(betrag, np.float64)
+    if len(av) == 0:
+        return 0.0, False
+    rand = int(round(len(av) * ZOOM_KERN_RAND))
+    kern = av[rand:len(av) - rand] if len(av) - 2 * rand >= 1 else av
+    s = max(1, int(round(ZOOM_RUCK_SCHRITT_S * ziel_fps)))
+    mittel = np.array([kern[i:i + s].mean() for i in range(0, len(kern) - s + 1, s)])
+    ruck = float(mittel.std() / mittel.mean()) if len(mittel) >= 2 and mittel.mean() > 0 else 0.0
+    ueber = np.flatnonzero(kern >= stocken_anteil * float(av.max()))
+    stockt = len(ueber) > 0 and int(ueber[-1] - ueber[0] + 1) > len(ueber)
+    return ruck, bool(stockt)
+
+
+def zoomfahrten(kb25: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list[dict]:
+    """Zoomfahrten einer Brennweitenreihe je Zielframe: Bereiche aus ``zoom_bereiche`` mit mindestens ``zoom_min_proz``
+    Änderung (größte / kleinste Brennweite im Bereich − 1). Je Fahrt Zeiten (s), Brennweiten am Anfang/Ende (mm), Tempo
+    (% pro s), ruck, ruckartig (ruck > ``zoom_ruck_max`` oder Stocken) und Urteil: schnell, wenn tempo_max >
+    ``zoom_schnell_proz_s`` oder ruckartig, sonst langsam."""
+    kb25 = np.asarray(kb25, np.float64)
+    v = zoom_tempo(kb25, ziel_fps)
+    out = []
+    for a, b in zoom_bereiche(v, cfg, ziel_fps):
+        teil = kb25[a:b]
+        if (float(teil.max()) / max(float(teil.min()), 0.1) - 1.0) * 100.0 < float(cfg["zoom_min_proz"]):
+            continue
+        betrag = np.abs(v[a:b])
+        ruck, stockt = zoom_ruck(betrag, float(cfg["zoom_stocken_anteil"]), ziel_fps)
+        ruckartig = ruck > float(cfg["zoom_ruck_max"]) or stockt
+        tempo_max = float(betrag.max())
+        schnell = tempo_max > float(cfg["zoom_schnell_proz_s"]) or ruckartig
+        out.append({"von_s": round(a / ziel_fps, 2), "bis_s": round(b / ziel_fps, 2),
+                    "von_mm": round(float(kb25[a]), 1), "bis_mm": round(float(kb25[b - 1]), 1),
+                    "tempo_max": round(tempo_max, 1), "tempo_mittel": round(float(betrag.mean()), 1),
+                    "ruck": round(ruck, 2), "ruckartig": ruckartig, "urteil": "schnell" if schnell else "langsam"})
+    return out
+
+
+def kb_verlauf(kb25: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list[list[float]]:
+    """[[t_s, kb_mm], …] mit ``zoom_verlauf_hz`` Werten je Sekunde (letzter Frame immer dabei); ändert sich die
+    Brennweite um weniger als ``zoom_min_proz``, genau ein Eintrag [0.0, Median]. Leer ohne Werte."""
+    kb25 = np.asarray(kb25, np.float64)
+    if len(kb25) == 0:
+        return []
+    if (float(kb25.max()) / max(float(kb25.min()), 0.1) - 1.0) * 100.0 < float(cfg["zoom_min_proz"]):
+        return [[0.0, round(float(np.median(kb25)), 1)]]
+    schritt = max(1, int(round(ziel_fps / float(cfg["zoom_verlauf_hz"]))))
+    idx = list(range(0, len(kb25), schritt))
+    if idx[-1] != len(kb25) - 1:
+        idx.append(len(kb25) - 1)
+    return [[round(i / ziel_fps, 2), round(float(kb25[i]), 1)] for i in idx]
+
+
+def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samples: int, cfg: dict) -> dict:
+    """``kb_verlauf`` und ``zooms`` eines Clips aus der KB-Brennweite je rtmd-Sample; beide leer ohne Brennweite."""
+    kb25 = kb_je_frame(kb_mm, kb_index, fps, samples)
+    if len(kb25) == 0:
+        return {"kb_verlauf": [], "zooms": []}
+    return {"kb_verlauf": kb_verlauf(kb25, cfg), "zooms": zoomfahrten(kb25, cfg)}
 
 
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------

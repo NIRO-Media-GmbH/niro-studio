@@ -122,3 +122,10 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   optisch_fuer: []          # Kameras, deren Gyro-Wert nicht belastbar ist (Rangkorrelation < 0,7) → optischer Weg
   optisch_breite: 480       # Bildbreite der Messung (Höhe 9:16-passend 270)
   parallel: 2               # Clips gleichzeitig (Lesen der ganzen Datei ≈ 300 MB/s übers NAS)
+  # Zoomfahrten (Spec 2026-09-21): KB-Brennweite je Frame aus der rtmd-Spur, Tempo = Änderung von ln(KB) in % pro s
+  zoom_min_proz: 3.0        # Mindeständerung der Brennweite für eine Zoomfahrt (%); Fokus-Atmen bleibt darunter
+  zoom_rausch_proz_s: 1.0   # Rauschgrenze des Tempos: Frames mit |v| darüber gehören zu einer Fahrt
+  zoom_schnell_proz_s: 20.0 # Spitzentempo, ab dem eine Zoomfahrt schnell ist (% pro s) — Startwert bis zur Kalibrierung
+  zoom_ruck_max: 0.6        # Ungleichmäßigkeit (Variationskoeffizient von |v|), ab der eine Fahrt ruckartig = schnell ist
+  zoom_stocken_anteil: 0.2  # Stocken: |v| fällt mitten in der Fahrt unter diesen Anteil der Spitze und steigt wieder
+  zoom_verlauf_hz: 5        # Auflösung von kb_verlauf (Werte je Sekunde)

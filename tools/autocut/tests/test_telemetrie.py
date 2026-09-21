@@ -21,7 +21,9 @@ CFG = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_max_px": 0.
        "stativ_max_px": 0.02, "schwenk_min_grad_s": 3.0, "schwenk_min_px": 1.0, "hf_grenze_hz": 3.0,
        "hand_hf_anteil_min": 0.35, "brennweite_klassen_kb": [30, 60], "pitch_klassen_grad": [-60, -8, 8],
        "achsen": {"schwenk": 1, "tilt": 0}, "vorzeichen": {"schwenk": -1, "tilt": 1, "pitch": 1},
-       "px_faktor": {"FX3": 1.0, "a7IV": 1.0}, "optisch_fuer": [], "optisch_breite": 480, "parallel": 2}
+       "px_faktor": {"FX3": 1.0, "a7IV": 1.0}, "optisch_fuer": [], "optisch_breite": 480, "parallel": 2,
+       "zoom_min_proz": 3.0, "zoom_rausch_proz_s": 1.0, "zoom_schnell_proz_s": 20.0, "zoom_ruck_max": 0.6,
+       "zoom_stocken_anteil": 0.2, "zoom_verlauf_hz": 5}
 
 
 def _sinus(hz: float, amp: float, n: int = 100, fps: float = 25.0) -> np.ndarray:
@@ -668,3 +670,114 @@ def test_ausgelieferte_konvention_aus_defaults_yaml(achse, erwartet):
     rate[:, achse] = 10.0                                                         # 10 °/s um die Gyro-Achse
     dxy = T.verschiebung_aus_rate(rate, 36.0, cfg) * float(cfg["px_faktor"]["FX3"])
     assert T.bewegungsart(dxy, cfg, min_px, stativ_px) == erwartet
+
+
+# --- Zoomfahrten (Spec 2026-09-21, Abschnitt 1) ----------------------------------------------------------------------
+
+def _zoomreihe(*stuecke: tuple[float, float, float], fps: float = 25.0) -> list[float]:
+    """KB-Brennweite je Sample aus Stücken (Dauer s, mm von, mm bis), log-linear, auf 0,1 mm gerundet wie die Kamera."""
+    werte: list[float] = []
+    for dauer, von, bis in stuecke:
+        n = int(round(dauer * fps))
+        werte += np.exp(np.linspace(math.log(von), math.log(bis), n, endpoint=False)).tolist()
+    werte.append(stuecke[-1][2])
+    return [round(w, 1) for w in werte]
+
+
+def _fahrten(kb: list[float], fps: float = 25.0) -> list[dict]:
+    return T.zoomfahrten(T.kb_je_frame(kb, None, fps, len(kb)), CFG)
+
+
+def test_defaults_haben_zoom_schluessel():
+    cfg = load_config(Path("/nirgendwo"))["telemetrie"]
+    for k in ("zoom_min_proz", "zoom_rausch_proz_s", "zoom_schnell_proz_s", "zoom_ruck_max", "zoom_stocken_anteil",
+              "zoom_verlauf_hz"):
+        assert k in cfg
+
+
+def test_kb_je_frame_median_raster_und_luecken():
+    ausreisser = [50.0] * 10 + [80.0] + [50.0] * 10
+    assert np.allclose(T.kb_je_frame(ausreisser, None, 25.0, 21), 50.0)         # Median über 0,2 s (5 Samples)
+    reihe50 = _zoomreihe((1.0, 24, 24), (4.0, 24, 36), (1.0, 36, 36), fps=50.0)  # 301 Samples bei 50p
+    k50 = T.kb_je_frame(reihe50, None, 50.0, len(reihe50))
+    assert len(k50) == 150 and k50[0] == 24.0 and k50[-1] == 36.0              # 25-fps-Raster
+    idx = [i for i in range(len(reihe50)) if i % 3]                             # jedes dritte Sample ohne Brennweite
+    luecken = T.kb_je_frame([reihe50[i] for i in idx], idx, 50.0, len(reihe50))
+    assert len(luecken) == 150 and float(np.abs(luecken - k50).max()) < 0.5
+    assert len(T.kb_je_frame([], [], 25.0, 100)) == 0
+    assert np.allclose(T.kb_je_frame([50.0, 50.0], [0, 1, 2], 25.0, 2), 50.0)   # unpassender Index: lückenlos
+
+
+def test_zoomfahrten_festbrennweite_und_rauschen():
+    assert _fahrten([50.0] * 100) == []
+    rng = np.random.default_rng(1)
+    assert _fahrten((50.0 + 0.1 * rng.integers(0, 2, 200)).round(1).tolist()) == []     # Quantisierung 0,1 mm
+    atmen = [round(50.0 * (1 + 0.01 * math.sin(math.pi * k / 25.0)), 1) for k in range(200)]
+    assert _fahrten(atmen) == []                                                 # Fokus-Atmen ±1 % < zoom_min_proz
+
+
+def test_zoomfahrt_langsam_gleichmaessig():
+    z = _fahrten(_zoomreihe((1.0, 24, 24), (4.0, 24, 36), (1.0, 36, 36)))
+    assert len(z) == 1 and z[0]["urteil"] == "langsam" and z[0]["ruckartig"] is False
+    # ln(36/24) / 4 s = 10,1 % pro s; 0,1-mm-Stufen und Glättung heben die Spitze etwas an
+    assert 9.0 < z[0]["tempo_max"] < 13.0 and z[0]["tempo_mittel"] < z[0]["tempo_max"] and z[0]["ruck"] < 0.1
+    assert abs(z[0]["von_s"] - 1.0) <= 0.15 and abs(z[0]["bis_s"] - 5.0) <= 0.15
+    assert (z[0]["von_mm"], z[0]["bis_mm"]) == (24.0, 36.0)
+
+
+def test_zoomfahrt_schnell():
+    z = _fahrten(_zoomreihe((1.0, 24, 24), (0.8, 24, 70), (1.0, 70, 70)))
+    # ln(70/24) / 0,8 s = 134 % pro s
+    assert len(z) == 1 and z[0]["urteil"] == "schnell" and 120.0 < z[0]["tempo_max"] < 145.0
+    assert (z[0]["von_mm"], z[0]["bis_mm"]) == (24.0, 70.0) and z[0]["ruckartig"] is False
+
+
+def test_zoom_ruck_variationskoeffizient_und_stocken():
+    # 20 Frames, Kern ohne je 2 Frames: Mittel der 5er-Schritte 6,4 / 4,6 / 10,0 → CV 2,245 / 7,0 = 0,32;
+    # |v| fällt im Kern unter 20 % der Spitze (1 < 2) und steigt wieder → Stocken
+    ruck, stockt = T.zoom_ruck(np.array([10.0] * 5 + [1.0] * 5 + [10.0] * 10), 0.2)
+    assert ruck == pytest.approx(0.32, abs=0.005) and stockt is True
+    assert T.zoom_ruck(np.full(20, 10.0), 0.2) == (0.0, False)
+    assert T.zoom_ruck(np.linspace(0.0, 10.0, 20), 0.2)[1] is False            # Anlauf ist kein Stocken
+    assert T.zoom_ruck(np.array([]), 0.2) == (0.0, False)
+
+
+def test_zoomfahrt_mit_stocken_ist_ruckartig():
+    # 15 % pro s (unter zoom_schnell_proz_s 20), dazwischen 0,2 s Halt: eine Fahrt, Stocken → ruckartig → schnell
+    z = _fahrten(_zoomreihe((1.0, 24, 24), (1.0, 24, 27.9), (0.2, 27.9, 27.9), (1.0, 27.9, 32.4), (1.0, 32.4, 32.4)))
+    assert len(z) == 1 and z[0]["tempo_max"] < 20.0
+    assert z[0]["ruckartig"] is True and z[0]["urteil"] == "schnell"
+
+
+def test_stop_and_go_unter_0_3_s_ist_eine_fahrt():
+    def halt(s: float) -> list[float]:
+        return _zoomreihe((1.0, 24, 24), (0.5, 24, 32.4), (s, 32.4, 32.4), (0.5, 32.4, 43.7), (1.0, 43.7, 43.7))
+    eine = _fahrten(halt(0.2))
+    assert len(eine) == 1 and (eine[0]["von_mm"], eine[0]["bis_mm"]) == (24.0, 43.7) and eine[0]["ruckartig"] is True
+    zwei = _fahrten(halt(0.6))
+    assert [(z["von_mm"], z["bis_mm"]) for z in zwei] == [(24.0, 32.4), (32.4, 43.7)]
+
+
+def test_stufiger_sprung_ist_schnell():
+    # Klarbild-Zoom der a7 IV schaltet stufig: 50 → 60 mm in zwei Frames (+20 %)
+    z = _fahrten(_zoomreihe((1.0, 50, 50), (0.08, 50, 60), (1.0, 60, 60)))
+    assert len(z) == 1 and z[0]["urteil"] == "schnell" and z[0]["tempo_max"] > 20.0
+    assert (z[0]["von_mm"], z[0]["bis_mm"]) == (50.0, 60.0)
+
+
+def test_kb_verlauf_kompakt_und_5_hz():
+    assert T.kb_verlauf(np.full(100, 50.0), CFG) == [[0.0, 50.0]]
+    assert T.kb_verlauf(np.array([50.0, 51.0, 50.4]), CFG) == [[0.0, 50.4]]    # 2 % < zoom_min_proz: Median
+    k = T.kb_je_frame(_zoomreihe((1.0, 24, 24), (4.0, 24, 36), (1.0, 36, 36)), None, 25.0, 151)
+    v = T.kb_verlauf(k, CFG)
+    assert len(v) == 31 and v[:2] == [[0.0, 24.0], [0.2, 24.0]] and v[-1] == [6.0, 36.0]
+    assert all(round(b[0] - a[0], 2) == 0.2 for a, b in zip(v, v[1:]))
+    assert T.kb_verlauf(np.zeros(0), CFG) == []
+
+
+def test_zoom_messen():
+    assert T.zoom_messen([], [], 25.0, 100, CFG) == {"kb_verlauf": [], "zooms": []}
+    assert T.zoom_messen([71.6] * 100, list(range(100)), 25.0, 100, CFG) == {"kb_verlauf": [[0.0, 71.6]], "zooms": []}
+    kb = _zoomreihe((1.0, 24, 24), (0.8, 24, 70), (1.0, 70, 70))
+    m = T.zoom_messen(kb, list(range(len(kb))), 25.0, len(kb), CFG)
+    assert len(m["zooms"]) == 1 and m["zooms"][0]["urteil"] == "schnell" and m["kb_verlauf"][-1][1] == 70.0
