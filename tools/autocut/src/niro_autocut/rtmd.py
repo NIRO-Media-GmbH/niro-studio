@@ -45,6 +45,7 @@ class RtmdDaten:
     brennweite_mm: list[float] = field(default_factory=list)   # je Sample
     kb_mm: list[float] = field(default_factory=list)
     fokus_m: list[float] = field(default_factory=list)
+    kb_index: list[int] = field(default_factory=list)         # Sample-Nummer je kb_mm-Wert (Lücken: Tag fehlt/0xFFFF)
 
 
 def datenspur_lesen(path: str | Path) -> bytes:
@@ -119,10 +120,11 @@ def imu_block(block: bytes, skala: float) -> np.ndarray:
 
 
 def auswerten(sample_list: list[dict[int, bytes]]) -> RtmdDaten:
-    """Samples → RtmdDaten (Gyro/Acc aneinandergehängt, Distanzen je Sample; 0xFFFF und fehlende Tags übersprungen)."""
-    gyro, acc, f_ist, f_kb, fokus = [], [], [], [], []
+    """Samples → RtmdDaten (Gyro/Acc aneinandergehängt, Distanzen je Sample; 0xFFFF und fehlende Tags übersprungen —
+    ``kb_index`` hält je KB-Wert die Sample-Nummer, damit die Zeitachse der Brennweite auch mit Lücken stimmt)."""
+    gyro, acc, f_ist, f_kb, fokus, kb_idx = [], [], [], [], [], []
     hz = None
-    for s in sample_list:
+    for i, s in enumerate(sample_list):
         if TAG_GYRO in s and TAG_GYRO_SKALA in s and len(s[TAG_GYRO_SKALA]) == 4:
             gyro.append(imu_block(s[TAG_GYRO], struct.unpack(">f", s[TAG_GYRO_SKALA])[0]))
         if TAG_ACC in s and TAG_ACC_SKALA in s and len(s[TAG_ACC_SKALA]) == 4:
@@ -135,11 +137,13 @@ def auswerten(sample_list: list[dict[int, bytes]]) -> RtmdDaten:
                 v = struct.unpack(">H", s[tag])[0]
                 if v != 0xFFFF:
                     ziel.append(round(distanz(v) * faktor, stellen))
+                    if tag == TAG_KB_MM:
+                        kb_idx.append(i)
     g = np.concatenate(gyro) if gyro else np.zeros((0, 3), np.float64)
     a = np.concatenate(acc) if acc else np.zeros((0, 3), np.float64)
     proben = int(gyro[0].shape[0]) if gyro else 0
     return RtmdDaten(samples=len(sample_list), imu_hz=hz, proben_je_sample=proben, gyro=g, acc=a,
-                     brennweite_mm=f_ist, kb_mm=f_kb, fokus_m=fokus)
+                     brennweite_mm=f_ist, kb_mm=f_kb, fokus_m=fokus, kb_index=kb_idx)
 
 
 def sidecar_modell(path: str | Path) -> str | None:

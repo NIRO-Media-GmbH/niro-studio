@@ -116,3 +116,11 @@ def test_samples_behaelt_nur_ausgewertete_tags():
     echt = FIXTURES / "rtmd_fx3_25p.bin"
     if echt.exists():
         assert all(set(x) <= R.TAGS_AUSWERTUNG for x in R.samples(echt.read_bytes()))
+
+
+def test_auswerten_kb_index_mit_luecken():
+    """Samples ohne KB-Tag oder mit 0xFFFF fehlen in kb_mm — kb_index hält je Wert die Sample-Nummer (Zeitachse)."""
+    pakete = [R.paket_bauen({R.TAG_KB_MM: bytes.fromhex("c2cc")}), R.paket_bauen({R.TAG_FOKUS_M: bytes.fromhex("e62e")}),
+              R.paket_bauen({R.TAG_KB_MM: b"\xff\xff"}), R.paket_bauen({R.TAG_KB_MM: bytes.fromhex("c2a5")})]
+    d = R.auswerten(R.samples(b"".join(pakete)))
+    assert d.samples == 4 and d.kb_mm == [71.6, 67.7] and d.kb_index == [0, 3]

@@ -699,6 +699,16 @@ Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b 
 `bewegungsart`/`haltung` je Abschnitt) und 6d (Stabilisieren nur bei Bedarf). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
 Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
 
+**Zoomfahrten (seit 21.09.2026, Spec `docs/superpowers/specs/2026-09-21-autocut-zoom-brennweite-design.md`):** aus der
+KB-Brennweite je rtmd-Sample (0x8004, mit Crop und Klarbild-Zoom): Median über 0,2 s, 25-fps-Raster, Tempo = Änderung von
+ln(KB) in % pro s. Je Clip `kb_verlauf` ([t_s, kb_mm] mit 5 Hz; bei gleichbleibender Brennweite ein Eintrag) und `zooms`
+(`von_s`/`bis_s`, `von_mm`/`bis_mm`, `tempo_max`/`tempo_mittel`, `ruck`, `ruckartig`, `urteil` langsam/schnell);
+`zoomfahrt` = mindestens eine Fahrt. Eine Fahrt ändert die Brennweite um mindestens `zoom_min_proz` (3 %), Pausen unter
+0,3 s gehören dazu (Stop-and-go). Schnell = Spitze über `zoom_schnell_proz_s` oder ruckartig (`ruck` über `zoom_ruck_max`
+oder Stocken unter `zoom_stocken_anteil` der Spitze). Fenster, die eine schnelle Fahrt schneiden, zählen nicht zu den
+`ruhige_fenster`. Ohne rtmd-Brennweite (Mavic, Avata) bleiben `kb_verlauf` und `zooms` leer (Brennweite unbekannt).
+Startwerte bis zur Kalibrierung: 20 %/s, `ruck` 0,6, Stocken 0,2.
+
 **Kalibrierwerte (21.09.2026):** Hochzeitszauber, 301 FX3- und 54 a7-IV-Clips, Gyro gegen optischen Weg auf denselben Frames:
 Schwenk um Gyro-y (+), Tilt um Gyro-x (−) bei beiden Kameras (FX3 r 0,65/−0,83); `px_faktor` FX3 0,60, a7 IV 0,69 (IBIS/Gimbal
 dämpfen), Spearman 0,76/0,71 → beide belastbar, `optisch_fuer` leer. Der optische Weg stimmt mit cv2 (Hanning) auf identischen Frames

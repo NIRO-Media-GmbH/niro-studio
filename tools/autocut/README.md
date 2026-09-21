@@ -122,7 +122,7 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
       readback.py            Bau-Readback (_intern/autocut/readback/) für „seit dem Bau von Hand geändert?"
       wiedergabe.py          Vollbild-Wiedergabe über werkzeuge/fenster.swift erkennen
       rtmd.py                Sony-rtmd-Datenspur: Samples, IMU-Blöcke, Brennweite/Fokus, Sidecar-XML, Kamera
-      telemetrie.py          Kennzahlen (Gyro → px @480, wackeln, Fenster, Haltung, Bewegungsart, Lage), Clip-Messung, Cache, 2b/6d-Helfer
+      telemetrie.py          Kennzahlen (Gyro → px @480, wackeln, Fenster, Haltung, Bewegungsart, Lage, Zoomfahrten), Clip-Messung, Cache, 2b/6d-Helfer
       telemetrie_optisch.py  Graustufen-Frames + numpy-Phasenkorrelation (Rückfall ohne Datenspur, Kalibrier-Referenz)
       telemetrie_bericht.py  Bericht telemetrie.md, Vergleich mit dem B-Roll-Index
       telemetrie_kalibrierung.py  Gyro ↔ optisch auf demselben Fenster: Achsen, Vorzeichen, px_faktor, Spearman

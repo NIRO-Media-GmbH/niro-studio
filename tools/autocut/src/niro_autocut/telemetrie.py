@@ -353,6 +353,13 @@ def kb_verlauf(kb25: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list[
     return [[round(i / ziel_fps, 2), round(float(kb25[i]), 1)] for i in idx]
 
 
+def ruhige_ohne_schnelle_zooms(ruhige: list[float], zooms: list[dict], fenster_s: float | None) -> list[float]:
+    """Ruhige Fenster (Startzeiten) ohne die, deren Fenster [t, t + fenster_s) eine schnelle Zoomfahrt schneidet."""
+    schnell = [z for z in zooms or [] if z.get("urteil") == "schnell"]
+    lang = float(fenster_s or 0.0)
+    return [t for t in ruhige or [] if not any(t < z["bis_s"] and t + lang > z["von_s"] for z in schnell)]
+
+
 def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samples: int, cfg: dict) -> dict:
     """``kb_verlauf`` und ``zooms`` eines Clips aus der KB-Brennweite je rtmd-Sample; beide leer ohne Brennweite."""
     kb25 = kb_je_frame(kb_mm, kb_index, fps, samples)
@@ -373,10 +380,11 @@ def config_hash(cfg: dict) -> str:
 def _leer(path: Path, kamera: str, modell: str | None) -> dict:
     return {"path": str(path), "clip": path.stem, "kamera": kamera, "modell": modell, "dauer_s": None, "fps": None,
             "quelle": "keine", "imu_hz": None, "samples": 0, "brennweite_mm": None, "kb_mm": None, "kb_min": None,
-            "kb_max": None, "zoomfahrt": False, "fokus_m": None, "brennweitenklasse": None, "pitch_grad": None,
-            "roll_grad": None, "lage_grund": None, "perspektive_hoehe": None, "haltung": None, "hf_anteil": None,
-            "bewegungsart": None, "wackeln": None, "bewegung": None, "fenster_s": None, "fenster": [],
-            "ruhige_fenster": [], "schaerfe_p10": None, "config_hash": None, "fehler": None}
+            "kb_max": None, "kb_verlauf": [], "zooms": [], "zoomfahrt": False, "fokus_m": None,
+            "brennweitenklasse": None, "pitch_grad": None, "roll_grad": None, "lage_grund": None,
+            "perspektive_hoehe": None, "haltung": None, "hf_anteil": None, "bewegungsart": None, "wackeln": None,
+            "bewegung": None, "fenster_s": None, "fenster": [], "ruhige_fenster": [], "schaerfe_p10": None,
+            "config_hash": None, "fehler": None}
 
 
 def _frames(p: Path, cfg: dict) -> np.ndarray:
@@ -406,7 +414,8 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
                 kb = float(np.median(daten.kb_mm))
                 out["kb_mm"], out["kb_min"], out["kb_max"] = (round(kb, 1), round(min(daten.kb_mm), 1),
                                                               round(max(daten.kb_mm), 1))
-                out["zoomfahrt"] = bool(out["kb_max"] / max(out["kb_min"], 0.1) > 1.3)
+                out.update(zoom_messen(daten.kb_mm, daten.kb_index, float(info.fps), daten.samples, cfg))
+                out["zoomfahrt"] = bool(out["zooms"])
                 out["brennweitenklasse"] = brennweitenklasse(kb, cfg["brennweite_klassen_kb"])
             if daten.brennweite_mm:
                 out["brennweite_mm"] = round(float(np.median(daten.brennweite_mm)), 1)
@@ -428,6 +437,7 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
         elif not ohne_optisch:
             frames = _frames(p, cfg)
             out.update(quelle="optisch", **kennzahlen(verschiebungen(frames), cfg, kb, schaerfe_frames(frames)))
+        out["ruhige_fenster"] = ruhige_ohne_schnelle_zooms(out["ruhige_fenster"], out["zooms"], out["fenster_s"])
     except AutoCutError as e:
         out["fehler"] = str(e)
     return out

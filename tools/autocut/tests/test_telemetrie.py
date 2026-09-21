@@ -150,9 +150,15 @@ def _info(path: str, fps: float = 25.0, dauer: float = 4.0) -> MediaInfo:
                      timecode=None, has_audio=True, sample_rate=48000, channels=2)
 
 
+def _kb(mm: float) -> bytes:
+    """KB-Brennweite in mm als RDD-18-Wert (Exponent −4: 0,1 mm Auflösung bis 409,5 mm), z. B. 71,6 → c2cc."""
+    return struct.pack(">H", 0xC000 | int(round(mm * 10)))
+
+
 def _rtmd_puffer(frames: int = 100, proben: int = 80, gyro_y: float = 0.0, acc=(0.0, 1.15, 0.0),
-                 kb: bytes = bytes.fromhex("c2cc")) -> bytes:
-    """Synthetische Datenspur: je Frame ein Sample mit konstantem Gyro (°/s um y) und Schwerkraftvektor."""
+                 kb: bytes | list[bytes] = bytes.fromhex("c2cc")) -> bytes:
+    """Synthetische Datenspur: je Frame ein Sample mit konstantem Gyro (°/s um y) und Schwerkraftvektor; ``kb`` als
+    Liste = KB-Brennweite je Frame (``_kb``)."""
     def imu(v):
         out = struct.pack(">II", proben, 6)
         for _ in range(proben):
@@ -162,9 +168,11 @@ def _rtmd_puffer(frames: int = 100, proben: int = 80, gyro_y: float = 0.0, acc=(
     a = imu(tuple(int(round(x * 8192)) for x in acc))
     tags = {R.TAG_GYRO: g, R.TAG_GYRO_SKALA: struct.pack(">f", 65.5), R.TAG_ACC: a,
             R.TAG_ACC_SKALA: struct.pack(">f", 8192.0),
-            R.TAG_IMU_HZ: struct.pack(">I", 2000), R.TAG_KB_MM: kb, R.TAG_BRENNWEITE_MM: bytes.fromhex("c2a5"),
-            R.TAG_FOKUS_M: bytes.fromhex("e62e")}
-    return R.paket_bauen(tags) * frames
+            R.TAG_IMU_HZ: struct.pack(">I", 2000), R.TAG_KB_MM: kb if isinstance(kb, bytes) else kb[0],
+            R.TAG_BRENNWEITE_MM: bytes.fromhex("c2a5"), R.TAG_FOKUS_M: bytes.fromhex("e62e")}
+    if isinstance(kb, bytes):
+        return R.paket_bauen(tags) * frames
+    return b"".join(R.paket_bauen({**tags, R.TAG_KB_MM: k}) for k in kb[:frames])
 
 
 def test_defaults_haben_telemetrie_block():
@@ -781,3 +789,40 @@ def test_zoom_messen():
     kb = _zoomreihe((1.0, 24, 24), (0.8, 24, 70), (1.0, 70, 70))
     m = T.zoom_messen(kb, list(range(len(kb))), 25.0, len(kb), CFG)
     assert len(m["zooms"]) == 1 and m["zooms"][0]["urteil"] == "schnell" and m["kb_verlauf"][-1][1] == 70.0
+
+
+def test_ruhige_fenster_ohne_schnelle_zooms():
+    zooms = [{"von_s": 2.4, "bis_s": 3.4, "urteil": "schnell"}, {"von_s": 6.0, "bis_s": 9.0, "urteil": "langsam"}]
+    # Fenster [t, t + 2): 1, 2 und 3 schneiden den schnellen Zoom, 6 nur den langsamen
+    assert T.ruhige_ohne_schnelle_zooms([0.0, 1.0, 2.0, 3.0, 4.0, 6.0], zooms, 2.0) == [0.0, 4.0, 6.0]
+    assert T.ruhige_ohne_schnelle_zooms([0.0, 1.0], [], 2.0) == [0.0, 1.0]
+    assert T.ruhige_ohne_schnelle_zooms([], zooms, None) == []
+
+
+def test_clip_messen_zoomfahrt_und_ruhige_fenster(monkeypatch, tmp_path):
+    clip = tmp_path / "FX3_0070.MP4"
+    clip.write_bytes(b"x")
+    kb = _zoomreihe((2.5, 24, 24), (0.8, 24, 70), (1.7, 70, 70))                 # 125 Frames, schneller Zoom ab 2,5 s
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p), dauer=5.0))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=len(kb), kb=[_kb(x) for x in kb]))
+    rec = T.clip_messen(clip, CFG)
+    assert rec["quelle"] == "rtmd" and rec["zoomfahrt"] is True and len(rec["zooms"]) == 1
+    z = rec["zooms"][0]
+    assert z["urteil"] == "schnell" and (z["von_mm"], z["bis_mm"]) == (24.0, 70.0) and 2.3 < z["von_s"] < 2.5
+    # 5 Hz über 125 Frames: 0,0 … 4,8 s plus der letzte Frame (4,96 s)
+    assert len(rec["kb_verlauf"]) == 26 and rec["kb_verlauf"][0] == [0.0, 24.0] and rec["kb_verlauf"][-1] == [4.96, 70.0]
+    # Stativ (Gyro 0): alle Fenster ruhig — bis auf die drei, die den schnellen Zoom schneiden (ab 1, 2 und 3 s)
+    assert [f[0] for f in rec["fenster"]] == [0.0, 1.0, 2.0, 3.0, 4.0] and rec["ruhige_fenster"] == [0.0, 4.0]
+
+
+def test_clip_messen_ohne_rtmd_brennweite_ohne_zooms(monkeypatch, tmp_path):
+    clip = tmp_path / "DJI_0071.MOV"
+    clip.write_bytes(b"x")
+    _optisch_fakes(monkeypatch, seed=21)
+    rec = T.clip_messen(clip, CFG)
+    assert rec["quelle"] == "optisch" and rec["kb_verlauf"] == [] and rec["zooms"] == [] and rec["zoomfahrt"] is False
+    fest = tmp_path / "FX3_0072.MP4"
+    fest.write_bytes(b"x")
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=100))
+    rec2 = T.clip_messen(fest, CFG)
+    assert rec2["kb_verlauf"] == [[0.0, 71.6]] and rec2["zooms"] == [] and rec2["zoomfahrt"] is False
