@@ -809,6 +809,24 @@ def zoom_hinweise(sid: str, rec: dict | None, von_s: float, bis_s: float,
     return out
 
 
+def telemetrie_hinweise(recs: list[dict | None], cfg: dict) -> list[str]:
+    """Probelauf-Hinweise (3a/6d) zu veralteten Datensätzen der tatsächlich genutzten Clips (je Clip einmal, nach Pfad):
+    rtmd-Datensätze ohne ``kb_verlauf`` (vor der Umstellung gemessen — Brennweite dort „unbekannt", die Regel schwiege)
+    und übrige mit anderem ``config_hash`` als ``config_hash(cfg)`` (Urteile und Fenster hängen an den Schwellen zur
+    Messzeit). None (Clip nicht in ``telemetrie.json``) und Datensätze mit ``fehler`` zählen nicht; leer, wenn alles
+    passt."""
+    je_clip = {str(r.get("path") or id(r)): r for r in recs if r and not r.get("fehler")}
+    alt = {k for k, r in je_clip.items() if r.get("quelle") == "rtmd" and "kb_verlauf" not in r}
+    h = config_hash(cfg)
+    anders = {k for k, r in je_clip.items() if k not in alt and r.get("config_hash") != h}
+    out = []
+    for n, text in ((len(alt), "ohne Brennweitenverlauf (alte Telemetrie)"),
+                    (len(anders), "mit anderen Telemetrie-Schwellen gemessen")):
+        if n:
+            out.append(f"{n} {'Clip' if n == 1 else 'Clips'} {text} — autocut_telemetrie.py neu laufen lassen")
+    return out
+
+
 # --- Brennweitenfolge: nie zweimal dieselbe Brennweite direkt hintereinander (Spec 2026-09-21, Abschnitt 2) -----
 
 def brennweite_abstand(kb_a: float, kb_b: float) -> float:

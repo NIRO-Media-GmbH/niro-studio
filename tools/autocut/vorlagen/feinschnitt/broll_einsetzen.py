@@ -126,7 +126,9 @@ def bericht(zeilen: list[dict], tl: dict) -> None:
         print(f"  #{z['beat']:<3} {tc(z['rec_in_f'])}–{tc(z['rec_out_f'])}  S{z['shot']:02d} {z['clip']} "
               f"{z['left_offset_f'] / FPS:7.2f}–{(z['left_offset_f'] + z['dauer_f']) / FPS:7.2f}s  {z['inhalt']}"
               + (f"  Zoom {z['zoom']:g}×".replace(".", ",") if z.get("zoom", 1.0) != 1.0 else ""))
-    hinweise = [] if TELE else [TM.OHNE_TELEMETRIE]
+    # ohne telemetrie.json eine Zeile; sonst alte oder mit anderen Schwellen gemessene Datensätze der genutzten Clips
+    hinweise = (TM.telemetrie_hinweise([TM.finden(TELE, z["datei"]) for z in zeilen], TCFG) if TELE
+                else [TM.OHNE_TELEMETRIE])
     for z in zeilen:
         hinweise += z.get("zoom_hinweise", []) + ([z["zoom_hinweis"]] if z.get("zoom_hinweis") else [])
     for h in hinweise:

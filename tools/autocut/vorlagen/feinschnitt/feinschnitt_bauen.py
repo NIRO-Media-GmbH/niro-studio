@@ -449,7 +449,9 @@ def bericht(p: dict) -> None:
         zoom = f"  Zoom {m['zoom']:g}×".replace(".", ",") if m.get("zoom", 1.0) != 1.0 else ""
         print(f"  S{m['shot']:02d} {'stabilisieren' if m['stabil'] else 'lassen       '}  {m['stabil_grund']}{schief}"
               f"  {kb}{zoom}")
-    hinweise = [] if TELE else [TM.OHNE_TELEMETRIE]
+    # ohne telemetrie.json eine Zeile; sonst alte oder mit anderen Schwellen gemessene Datensätze der genutzten Clips
+    hinweise = (TM.telemetrie_hinweise([TM.finden(TELE, it.clip) for it in p["V3"]], TCFG) if TELE
+                else [TM.OHNE_TELEMETRIE])
     for m in p["v3_meta"]:
         hinweise += m.get("zoom_hinweise", []) + ([m["zoom_hinweis"]] if m.get("zoom_hinweis") else [])
     for h in hinweise:

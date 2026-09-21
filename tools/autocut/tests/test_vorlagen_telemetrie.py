@@ -8,6 +8,9 @@ from pathlib import Path
 
 import pytest
 
+from niro_autocut import telemetrie as T
+from niro_autocut.charge import load_config
+
 VORLAGE = Path(__file__).resolve().parents[1] / "vorlagen" / "feinschnitt" / "feinschnitt_bauen.py"
 VORLAGE_3A = VORLAGE.with_name("broll_einsetzen.py")
 README = VORLAGE.parents[1] / "README.md"
@@ -76,9 +79,10 @@ def _zoom(von: float, bis: float, von_mm: float, bis_mm: float, tempo: float) ->
 
 
 # Clip A: 35 → 50 mm bei 0,4–0,9 s, 50 mm bis 2 s, dann Zoom auf 100 mm. Clip B: 24 → 52 mm bei 2,0–2,5 s, 52 mm bis
-# 3,7 s, dann Zoom auf 70 mm (4,2 s). Beide 50p, gimbal.
+# 3,7 s, dann Zoom auf 70 mm (4,2 s). Beide 50p, gimbal, gemessen mit den ausgelieferten Schwellen (config_hash).
+HASH = T.config_hash(load_config(Path("/nirgendwo"))["telemetrie"])
 TELE_A = {"path": "/ssd/FX3/FX3_A.MP4", "quelle": "rtmd", "haltung": "gimbal", "wackeln": 0.02, "fehler": None,
-          "fenster": [[0.0, 0.02, 0.1, "statisch"]],
+          "config_hash": HASH, "fenster": [[0.0, 0.02, 0.1, "statisch"]],
           "kb_verlauf": [[0.0, 35.0], [0.4, 35.0], [0.9, 50.0], [2.0, 50.0], [3.0, 100.0], [10.0, 100.0]],
           "zooms": [_zoom(0.4, 0.9, 35.0, 50.0, 72.4), _zoom(2.0, 3.0, 50.0, 100.0, 69.3)]}
 TELE_B = {**TELE_A, "path": "/ssd/FX3/FX3_B.MP4",
@@ -120,6 +124,7 @@ def test_6d_plan_brennweitenregel_mit_50_prozent(monkeypatch, capsys):
     assert "Hinweis: S01: schneller Zoom 0,4–0,9 s (35 → 50 mm, 72 %/s)" in out
     assert "Hinweis: S02: 50 → 52 mm am Schnitt, Zoom 1,25× auf S02" in out
     assert "KB 52 → 52 mm  Zoom 1,25×" in out and "keine Telemetrie" not in out
+    assert "neu laufen lassen" not in out                        # aktuelle Datensätze: kein Hinweis auf alte Telemetrie
 
 
 def test_6d_plan_spalte_zoom_und_ohne_telemetrie(monkeypatch, capsys):
@@ -133,6 +138,20 @@ def test_6d_plan_spalte_zoom_und_ohne_telemetrie(monkeypatch, capsys):
     assert fehler3 == [] and [m["zoom"] for m in p3["v3_meta"]] == [1.0, 1.0]
     fb.bericht(p3)
     assert "Hinweis: keine Telemetrie — Brennweitenregel nicht geprüft" in capsys.readouterr().out
+
+
+def test_6d_meldet_alte_und_abweichende_telemetrie(monkeypatch, capsys):
+    """I2 (Final Review 21.09.2026): Datensätze von vor der Umstellung (rtmd ohne kb_verlauf) bzw. mit anderen
+    Schwellen schalten die Brennweitenregel sonst stumm ab — der Probelauf meldet sie je genutztem Clip."""
+    alt_a = {k: v for k, v in TELE_A.items() if k not in ("kb_verlauf", "zooms")}
+    anders_b = {**TELE_B, "config_hash": "ffffffffffff"}
+    fb, p, fehler = _fb_plan(monkeypatch, [(1, 0, 40, 0, "1", False), (2, 20, 40, 40, "1", True)], [alt_a, anders_b])
+    assert fehler == [] and p["v3_meta"][0]["kb_anfang"] is None
+    fb.bericht(p)
+    out = capsys.readouterr().out
+    assert "Hinweis: 1 Clip ohne Brennweitenverlauf (alte Telemetrie) — autocut_telemetrie.py neu laufen lassen" in out
+    assert "Hinweis: 1 Clip mit anderen Telemetrie-Schwellen gemessen — autocut_telemetrie.py neu laufen lassen" in out
+    assert "keine Telemetrie" not in out
 
 
 def test_6d_vorlage_setzt_zoom_beim_bau():
@@ -193,6 +212,17 @@ def test_3a_pruefen_spalte_zoom_und_ohne_telemetrie(monkeypatch, capsys):
     assert fehler3 == [] and [z["zoom"] for z in zeilen3] == [1.0, 1.0]
     mod.bericht(zeilen3, tl)
     assert "Hinweis: keine Telemetrie — Brennweitenregel nicht geprüft" in capsys.readouterr().out
+
+
+def test_3a_meldet_alte_telemetrie(monkeypatch, capsys):
+    """I2: wie 6d — beide Clips vor der Umstellung gemessen → Hinweis, jeder Shot „KB –"."""
+    alte = [{k: v for k, v in r.items() if k not in ("kb_verlauf", "zooms", "config_hash")} for r in (TELE_A, TELE_B)]
+    mod, tl, zeilen, fehler = _3a_pruefen(monkeypatch, [(1, 0, 40, 0, "1", "A"), (2, 20, 40, 40, "1", "B")], alte)
+    assert fehler == [] and [z["zoom"] for z in zeilen] == [1.0, 1.0]
+    mod.bericht(zeilen, tl)
+    out = capsys.readouterr().out
+    assert "Hinweis: 2 Clips ohne Brennweitenverlauf (alte Telemetrie) — autocut_telemetrie.py neu laufen lassen" in out
+    assert "anderen Telemetrie-Schwellen" not in out
 
 
 def test_3a_vorlage_setzt_zoom_beim_bau():

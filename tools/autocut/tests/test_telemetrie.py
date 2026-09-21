@@ -980,6 +980,30 @@ def test_zoom_hinweise_mit_sprung():
     assert T.zoom_hinweise("S10", alt, 2.0, 4.0, tempo_faktor=0.5, cfg=cfg) == []
 
 
+def test_telemetrie_hinweise_alte_und_abweichende_datensaetze():
+    """I2 (Final Review 21.09.2026): alte Datensätze (rtmd ohne kb_verlauf) und solche mit anderen Schwellen schalten die
+    Brennweitenregel sonst stumm ab — die Vorlagen melden sie je genutztem Clip (einmal je Clip, alt geht vor)."""
+    h = T.config_hash(CFG)
+    neu = {"path": "/ssd/FX3_1.MP4", "quelle": "rtmd", "kb_verlauf": [[0.0, 50.0]], "config_hash": h}
+    alt = {"path": "/ssd/FX3_2.MP4", "quelle": "rtmd", "kb_mm": 50.0, "config_hash": "0123456789ab"}
+    alt_ohne_hash = {"path": "/ssd/a7MK4_3.MP4", "quelle": "rtmd", "kb_mm": 70.0}
+    anders = {"path": "/ssd/FX3_4.MP4", "quelle": "rtmd", "kb_verlauf": [], "config_hash": "ffffffffffff"}
+    drohne = {"path": "/ssd/DJI_5.MOV", "quelle": "optisch", "kb_verlauf": [], "config_hash": h}
+    drohne_alt = {"path": "/ssd/DJI_6.MOV", "quelle": "optisch"}                  # optisch: nur die Schwellen zählen
+    kaputt = {"path": "/ssd/FX3_7.MP4", "quelle": "keine", "fehler": "Datei nicht gefunden", "config_hash": None}
+    assert T.telemetrie_hinweise([], CFG) == [] and T.telemetrie_hinweise([neu, None, drohne, kaputt], CFG) == []
+    assert T.telemetrie_hinweise([neu, alt, alt_ohne_hash, alt, anders, drohne, drohne_alt, None], CFG) == [
+        "2 Clips ohne Brennweitenverlauf (alte Telemetrie) — autocut_telemetrie.py neu laufen lassen",
+        "2 Clips mit anderen Telemetrie-Schwellen gemessen — autocut_telemetrie.py neu laufen lassen"]
+    assert T.telemetrie_hinweise([alt, alt, anders], CFG) == [                  # derselbe Clip in zwei Shots: einmal
+        "1 Clip ohne Brennweitenverlauf (alte Telemetrie) — autocut_telemetrie.py neu laufen lassen",
+        "1 Clip mit anderen Telemetrie-Schwellen gemessen — autocut_telemetrie.py neu laufen lassen"]
+    # Vorlagen-Schlüssel der Brennweitenfolge ändern den Hash nicht (M1) → kein Hinweis
+    assert T.telemetrie_hinweise([neu], {**CFG, "digitalzoom_max": 1.3}) == []
+    assert T.telemetrie_hinweise([neu], {**CFG, "zoom_sprung_proz": 12.0}) == [
+        "1 Clip mit anderen Telemetrie-Schwellen gemessen — autocut_telemetrie.py neu laufen lassen"]
+
+
 # --- Brennweitenfolge: gleiche Brennweite, digitaler Zoom (Spec 2026-09-21, Abschnitt 2) -----------
 
 def test_defaults_haben_brennweitenregel():

@@ -157,6 +157,7 @@ Entfällt: `brennweite_klassen_kb`. Der Config-Hash der Telemetrie ändert sich 
 |---|---|
 | Clip ohne rtmd-Brennweite (Drohne) | keine Zoom- und Brennweitenprüfung für ihn; Paar mit ihm wird übersprungen |
 | keine `telemetrie.json` | Vorlagen laufen wie bisher, eine Hinweiszeile |
+| Datensätze genutzter Clips von vor der Umstellung (rtmd ohne `kb_verlauf`) oder mit anderem `config_hash` | Hinweiszeilen im Probelauf („N Clips ohne Brennweitenverlauf (alte Telemetrie)", „N Clips mit anderen Telemetrie-Schwellen gemessen" — `autocut_telemetrie.py` neu laufen lassen); sonst bliebe die Regel stumm (Final Review 21.09., `telemetrie_hinweise`) |
 | erzwungener `zoom` > `digitalzoom_max` | Plan-Fehler (Bau stoppt) |
 | schneller Zoom im genutzten Bereich | Hinweis, kein Fehler |
 | Verlauf mit Sprüngen (Klarbild-Zoom a7 IV schaltet stufig) | Sprung innerhalb weniger Frames = Zoomfahrt mit hohem Tempo → schnell. Umsetzung (Final Review 21.09.): ändert sich ln(KB) innerhalb von 0,12 s (3 Frames, vor dem 0,2-s-Gleitmittel, das die Spitze eines Sprungs auf Δln / 0,2 s kappt) um mindestens `zoom_sprung_proz` (10 %), ist die Fahrt schnell; Feld `sprung_proz` je Fahrt. Sonst gälten mit 100 %/s Sprünge unter ≈ 20 % als langsam (50 → 60 mm in 2 Frames: 91 %/s) |
