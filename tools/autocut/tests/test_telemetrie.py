@@ -187,7 +187,9 @@ def test_clip_messen_rtmd_weg(monkeypatch, tmp_path):
     assert mit["quelle"] == "rtmd" and mit["schaerfe_p10"] == 1.0 and mit["fenster"][0][4] == 1.0
     assert rec["kb_mm"] == 71.6 and rec["brennweite_mm"] == 67.7 and rec["fokus_m"] == 15.82 and rec["zoomfahrt"] is False
     assert rec["brennweitenklasse"] == "tele" and rec["pitch_grad"] == 0.0 and rec["perspektive_hoehe"] == "Augenhöhe"
-    assert rec["bewegungsart"] == "schwenk_rechts"          # Gyro-y +10 °/s → dx negativ (vorzeichen −1) → Inhalt nach links
+    # Rechnet mit der Test-CFG (Vorzeichen Schwenk −1, Stand vor der Kalibrierung): Gyro-y +10 °/s → dx negativ →
+    # schwenk_rechts. Ausgeliefert ist +1 (defaults.yaml) → schwenk_links: test_ausgelieferte_konvention_aus_defaults_yaml
+    assert rec["bewegungsart"] == "schwenk_rechts"
     assert rec["haltung"] == "gimbal" and rec["wackeln"] == 0.0 and rec["bewegung"] > 3
     # 10 °/s bei 71,6 mm KB ≈ 6,7 px dx, Mittel über dx/dy ≈ 3,3
     assert len(rec["fenster"]) == 4 and rec["ruhige_fenster"] == [0.0, 1.0, 2.0, 3.0] and rec["fehler"] is None
@@ -651,3 +653,18 @@ def test_telemetrie_charge_ersetzt_alten_pfad_mit_gleichem_fingerprint(monkeypat
     tele = T.laden(ac)
     assert [r["path"] for r in tele] == [str(ssd), "/nas/Mavic/DJI_0002.MOV", "/nas/Mavic/kaputt.MOV"]
     assert out["gesamt"] == 3 and len(out["clips"]) == 1
+
+
+# --- Final Review (21.09.2026): ausgelieferte Konvention gepinnt (M6) ------------------------------------------------------
+
+@pytest.mark.parametrize("achse,erwartet", [(1, "schwenk_links"), (0, "tilt_ab")])
+def test_ausgelieferte_konvention_aus_defaults_yaml(achse, erwartet):
+    """M6: pinnt die Kalibrierung in defaults.yaml (21.09.2026, Hochzeitszauber): +ω_y → Bildinhalt wandert nach rechts
+    (dx > 0) → schwenk_links; +ω_x → Bildinhalt wandert nach oben (dy < 0) → tilt_ab. Die übrigen Tests rechnen mit der
+    Test-CFG (Vorzeichen Schwenk −1, Tilt +1, Stand vor der Kalibrierung)."""
+    cfg = load_config(Path("/nirgendwo"))["telemetrie"]
+    min_px, stativ_px = T.schwellen_px(36.0, cfg)
+    rate = np.zeros((50, 3))
+    rate[:, achse] = 10.0                                                         # 10 °/s um die Gyro-Achse
+    dxy = T.verschiebung_aus_rate(rate, 36.0, cfg) * float(cfg["px_faktor"]["FX3"])
+    assert T.bewegungsart(dxy, cfg, min_px, stativ_px) == erwartet
