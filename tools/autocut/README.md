@@ -32,6 +32,7 @@ Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" 
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe aus der roh-Timeline |
 | „Feinschnitt" | 6 | neue Feinschnitt-Timeline: A/B-Wechsel, B-Roll-Tempo/Stabilisierung, Grafik V4, Ton, Musik, SFX, danach Grading, Begradigen, Kopfposition (Vorlagen) |
 | „Kanten" | – | Kantenprüfung am Export (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) + Schnittbilder; Resolve nur lesend |
+| „Telemetrie" | – | Gyro, Beschleunigung, Brennweite je Clip aus der Sony-rtmd-Spur (optischer Rückfall) → `telemetrie.json`, `telemetrie.md`: wackeln, ruhige Fenster, Haltung, Bewegungsart, Brennweiten- und Perspektivklasse; Abnehmer Sichtung/Aftermovie, Stufe 2b, 6d |
 | „Review" (Pflicht nach jedem Bau) | – | Timeline über die Render-Queue rendern (≤ 1920 px) und als Version in NIRO Review ablegen (`autocut_review.py`, http://localhost:4711) |
 | „Replay" (nur Kundenrunden) | – | Timeline nach Dropbox Replay hochladen (Vorschau, Upload nach OK), einsortieren in `Autocut/<Kunde>/<Projekt>` |
 | „Kommentare" | – | Replay-Kommentare holen (`kommentare.md` im Feedback-Ordner), Umsetzung in neuer Timeline-Version |
@@ -76,6 +77,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
     "$PY" "$TOOL/scripts/autocut_finalize.py" "$CHARGE"           # Stufe 5: End-Timeline (Pegel, Zeitlupe) + Bericht
     "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE"             # Kantenprüfung am Export (Resolve nur lesend)
     "$PY" "$TOOL/scripts/autocut_kanten.py" "$CHARGE" --ohne-export   # nur Wortkanten am Quellton, z. B. nach Handänderungen
+    "$PY" "$TOOL/scripts/autocut_telemetrie.py" "$CHARGE" [--ordner <Pfad>] [--dry-run]   # Telemetrie je Clip: telemetrie.json + Bericht
+    "$PY" "$TOOL/scripts/autocut_telemetrie.py" "$CHARGE" --kalibrieren                    # einmalig: Gyro ↔ optisch (defaults.yaml telemetrie:)
     "$PY" "$TOOL/scripts/autocut_schnittbild.py" "$CHARGE" --clip <Datei> --von 12.3 --bis 15.8   # Schnittbild Rohclip
     "$PY" "$TOOL/scripts/autocut_review.py" "$CHARGE" --project "<Projekt>"             # nach jedem Bau: Render + NIRO Review
     "$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" hochladen --project "<Projekt>"   # Vorschau; --hochladen nur nach OK
@@ -116,6 +119,11 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
       replay_kommentare.py   Replay-Kommentare aus FrameIO-Markern/Chrome-JSON, Clips, Stand-Vergleich, kommentare.md
       readback.py            Bau-Readback (_intern/autocut/readback/) für „seit dem Bau von Hand geändert?"
       wiedergabe.py          Vollbild-Wiedergabe über werkzeuge/fenster.swift erkennen
+      rtmd.py                Sony-rtmd-Datenspur: Samples, IMU-Blöcke, Brennweite/Fokus, Sidecar-XML, Kamera
+      telemetrie.py          Kennzahlen (Gyro → px @480, wackeln, Fenster, Haltung, Bewegungsart, Lage), Clip-Messung, Cache, 2b/6d-Helfer
+      telemetrie_optisch.py  Graustufen-Frames + numpy-Phasenkorrelation (Rückfall ohne Datenspur, Kalibrier-Referenz)
+      telemetrie_bericht.py  Bericht telemetrie.md, Vergleich mit dem B-Roll-Index
+      telemetrie_kalibrierung.py  Gyro ↔ optisch auf demselben Fenster: Achsen, Vorzeichen, px_faktor, Spearman
     scripts/                 CLI je Schritt (siehe Schnellstart; autocut_read_timelines.py für Stufe 4,
                              resolve_probe_xml.py für die Finalisieren-Vorprobe,
                              resolve_probe_api.py für die 21.1-API-Probe (--project = Freigabe), setup_env.py für die .env)
@@ -133,13 +141,14 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
 `_intern/autocut/`: `media.json`, `sync.json`, `cutlist.json`, `verify.json`, `probe.json`,
 `timeline.json`, `build.json`, `broll_index.json` (+ Cache `broll_index/<fingerprint>.json`),
 `broll_index_kompakt.json`, `raster.json`, `broll_plan.json`, `broll_build.json`, `probe_xml.json`,
-`probe_api.json`, `ton.json`, `finalize.json`, `kanten_readback.json`, `kanten.json`, `work/` (Audio, Frames,
+`probe_api.json`, `ton.json`, `finalize.json`, `kanten_readback.json`, `kanten.json`, `telemetrie.json`
+(+ Cache `telemetrie/<fingerprint>.json`), `telemetrie_kalibrierung.json`, `work/` (Audio, Frames,
 Kontaktbögen/Abschnittsbögen, `kanten/` Bild-Metriken, `schnittbild/` PNGs,
 `ton_cache.json`, `xml/`, `probe_api/` (synthetische Medien, Render)).
 `_intern/autocut/readback/<Titel>.json` (Bau-Readback). `_intern/replay/`: `uploads.json`, `schnappschuesse/`, `renders/`,
 `<Titel>.chrome.json`. `Material/Feedback/<Upload-Datum> Replay <Titel>/`: `kommentare.md`, `kommentare.json`, `umsetzung.md`.
 `Ergebnisse/Rohschnitt/`: `<video>-rohschnitt.md` (mit Pegel-Abschnitt nach Stufe 5), `broll-index.md`,
-`<video>-raster.md`, `<video>-broll.md`, `<video>-kanten.md`, `<Timeline>.xml`.
+`<video>-raster.md`, `<video>-broll.md`, `<video>-kanten.md`, `telemetrie.md`, `<Timeline>.xml`.
 Stufe 3a/6 (Vorlagen): `_intern/autocut/broll_auswahl.json`, `broll_einsatz.json`, `audio.json`,
 `grafik_einsatz.json`, `feinschnitt.json`, `feinschnitt_umbau.json` sowie `_intern/grafik/`, `musik/`, `sfx/`,
 `color/`, `begradigen/`, `gesichtscheck/`, `sichtung/` (Liste in `WORKFLOW-AutoCut.md`, Ausgabe-Konvention).

@@ -15,7 +15,7 @@ SPEC_SCRIPTS = ["autocut_prepare.py", "autocut_sync.py", "autocut_find_quote.py"
                 "autocut_build.py", "autocut_export_xml.py", "autocut_index_broll.py",
                 "autocut_place_broll.py", "autocut_read_timelines.py", "autocut_index_sections.py",
                 "autocut_finalize.py", "resolve_probe_xml.py", "resolve_probe_api.py",
-                "autocut_replay.py", "autocut_readback.py"]
+                "autocut_replay.py", "autocut_readback.py", "autocut_telemetrie.py"]
 
 
 def _text(p) -> str:
