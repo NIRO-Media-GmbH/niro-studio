@@ -161,6 +161,9 @@ def test_6d_vorlage_setzt_zoom_beim_bau():
     assert 'RA._safe(x.SetProperty, False, k, float(m["zoom"]))' in text and 'for k in ("ZoomX", "ZoomY")' in text
     assert 'RA._safe(x.GetProperty, None, "ZoomX")' in text and 'out["zoom_abweichungen"]' in text
     assert "8. Spalte optional" in text
+    # M3: Readback über den Record-In (TM.zoom_abweichungen), nicht über die Position der Items
+    assert 'out["zoom_abweichungen"] = TM.zoom_abweichungen(p["v3_meta"], zoom_ist)' in text
+    assert "zip(sorted(p[\"v3_meta\"], key=lambda v: v[\"rec_in_f\"]), v3_zoom)" not in text
 
 
 def _3a_pruefen(monkeypatch, plan: list[tuple], tele: list[dict]):
@@ -185,9 +188,12 @@ def test_3a_pruefen_brennweitenregel_bei_100_prozent(monkeypatch, capsys):
     assert zeilen[0]["zoom_hinweise"] == ["S01: schneller Zoom 0,4–0,9 s (35 → 50 mm, 72 %/s)"]
     assert zeilen[1]["zoom_hinweise"] == ["S02: schneller Zoom 3,7–4,2 s (52 → 70 mm, 59 %/s)"]
     assert zeilen[1]["zoom_hinweis"] == "S02: 50 → 52 mm am Schnitt, Zoom 1,25× auf S02"
+    # M4: KB-Brennweite am Quell-In/-Out je Shot im Plan (→ broll_einsatz.json) — S02 3,9–4,4 s: 59,2 … 70 → 68,2
+    assert [(z["kb_anfang"], z["kb_ende"]) for z in zeilen] == [(35.0, 50.0), (52.0, 68.2)]
     mod.bericht(zeilen, tl)
     out = capsys.readouterr().out
     assert "Zoom 1,25×" in out and "Hinweis: S02: schneller Zoom 3,7–4,2 s (52 → 70 mm, 59 %/s)" in out
+    assert "A  KB 35 → 50 mm" in out and "B  KB 52 → 68,2 mm  Zoom 1,25×" in out
 
 
 def test_3a_hinweis_nennt_den_sprung(monkeypatch):
@@ -210,8 +216,10 @@ def test_3a_pruefen_spalte_zoom_und_ohne_telemetrie(monkeypatch, capsys):
     assert fehler2 == ["S01: Spalte zoom 1,6× außerhalb 1,0–1,5× (telemetrie.digitalzoom_max)"]
     mod, tl, zeilen3, fehler3 = _3a_pruefen(monkeypatch, [(1, 0, 40, 0, "1", "A"), (2, 20, 40, 40, "1", "B")], [])
     assert fehler3 == [] and [z["zoom"] for z in zeilen3] == [1.0, 1.0]
+    assert [(z["kb_anfang"], z["kb_ende"]) for z in zeilen3] == [(None, None), (None, None)]
     mod.bericht(zeilen3, tl)
-    assert "Hinweis: keine Telemetrie — Brennweitenregel nicht geprüft" in capsys.readouterr().out
+    out = capsys.readouterr().out
+    assert "Hinweis: keine Telemetrie — Brennweitenregel nicht geprüft" in out and out.count("KB –") == 2
 
 
 def test_3a_meldet_alte_telemetrie(monkeypatch, capsys):
@@ -231,3 +239,4 @@ def test_3a_vorlage_setzt_zoom_beim_bau():
     assert "TM.brennweitenfolge(folge, TCFG)" in text and "TM.genutzter_quellbereich_s(" in text
     assert 'SetProperty, False, k, float(z["zoom"]))' in text and 'for k in ("ZoomX", "ZoomY")' in text
     assert 'RA._safe(it.GetProperty, None, "ZoomX")' in text and '"zoom_abweichungen": zoom_abweichungen' in text
+    assert "zoom_abweichungen = TM.zoom_abweichungen(zeilen, zoom_ist)" in text      # M3: wie 6d, Liste {shot, soll, ist}

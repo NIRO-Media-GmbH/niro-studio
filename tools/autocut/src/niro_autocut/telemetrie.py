@@ -909,3 +909,16 @@ def brennweitenfolge(eintraege: list[dict], cfg: dict) -> list[dict]:
         out[ib]["hinweis"] = (f"{b['id']}: {_zahl(schein_a)} → {_zahl(schein_b)} mm am Schnitt, Zoom "
                               f"{_zahl(wahl[1], 3)}× auf {eintraege[ziel]['id']}")
     return out
+
+
+def zoom_abweichungen(plan: list[dict], ist_je_rec_in: dict[int, float | None]) -> list[dict]:
+    """Readback des digitalen Zooms (3a/6d): je Plan-Shot (``shot``, ``rec_in_f``, ``zoom``) der gelesene ``ZoomX`` des
+    V3-Items am selben Record-In (Timeline-Frames ab Timeline-Start) — nicht über die Position, sonst verrutscht nach
+    einem fehlenden Item jeder Vergleich. Abweichung, wenn dort kein Item bzw. kein Wert ist oder er um mehr als 0,001
+    vom Plan abweicht; Liste ``{shot, soll, ist}`` in Plan-Reihenfolge."""
+    out = []
+    for m in plan:
+        ist = ist_je_rec_in.get(m["rec_in_f"])
+        if ist is None or abs(float(ist) - float(m["zoom"])) > 1e-3:
+            out.append({"shot": m["shot"], "soll": m["zoom"], "ist": ist})
+    return out

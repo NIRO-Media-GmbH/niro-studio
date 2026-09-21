@@ -337,14 +337,16 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    - Jeder Shot höchstens einmal, nie über die Grenzen der Auswahl hinaus.
 5. **Probelauf** — `broll_einsetzen.py` ohne Flag. Er prüft Auswahl-Grenzen, Doppelnutzung und Überlappung und
    gibt die Tabelle aus. Die Frame-Umrechnung ist für 50p-Clips in 25p gemessen; andere Bildraten vorher prüfen.
-   Mit `telemetrie.json` zeigt er je Shot den digitalen Zoom und Hinweise (schneller Zoom im genutzten Bereich,
-   gesetzter Zoom, Zoom nicht möglich), ohne sie „keine Telemetrie — Brennweitenregel nicht geprüft". Datensätze
-   genutzter Clips von vor der Umstellung („N Clips ohne Brennweitenverlauf (alte Telemetrie)") oder mit anderen
-   Schwellen („N Clips mit anderen Telemetrie-Schwellen gemessen") meldet er ebenfalls — dann `autocut_telemetrie.py`
-   neu laufen lassen, sonst bleibt die Regel für diese Clips ungeprüft.
+   Mit `telemetrie.json` zeigt er je Shot die KB-Brennweite am Quell-In → -Out (wie 6d, `kb_anfang`/`kb_ende`, auch in
+   `broll_einsatz.json`), den digitalen Zoom und Hinweise (schneller Zoom im genutzten Bereich, gesetzter Zoom, Zoom
+   nicht möglich), ohne sie „keine Telemetrie — Brennweitenregel nicht geprüft". Datensätze genutzter Clips von vor der
+   Umstellung („N Clips ohne Brennweitenverlauf (alte Telemetrie)") oder mit anderen Schwellen („N Clips mit anderen
+   Telemetrie-Schwellen gemessen") meldet er ebenfalls — dann `autocut_telemetrie.py` neu laufen lassen, sonst bleibt
+   die Regel für diese Clips ungeprüft.
 6. **Vorlegen, dann bauen** — nach Freigabe `broll_einsetzen.py --bauen`:
    - V3 der roh-Timeline (muss leer sein) in einem Append, dazu Marker. Shots mit digitalem Zoom bekommen
-     `ZoomX`/`ZoomY` (Readback `zoom_gesetzt`, `zoom_abweichungen` in `broll_einsatz.json`).
+     `ZoomX`/`ZoomY` (Readback `zoom_gesetzt`, `zoom_abweichungen` in `broll_einsatz.json`: Liste `{shot, soll, ist}`,
+     gepaart über den Record-In wie in 6d).
    - Readback: identisch, 0 außerhalb der Auswahl.
    - Timeline und Bin des Users zurück → `_intern/autocut/broll_einsatz.json`.
    - Rohschnitt-Bericht um „B-Roll" (Tabelle aller Shots) ergänzen, Protokoll-Eintrag.
@@ -485,7 +487,8 @@ oder einen Zwischenstand.
      Avata-Exporte — nie). Der Stabilisierungs-Modus bleibt Sache des DRT-Roundtrips der Charge (User-Standard
      Translation, Smooth 0,25; `drt_stabilisierung.py` in WTN/Wurst & Liebe/Assenheimer, noch kein gemeinsames
      Werkzeug) — `Stabilize()` allein nimmt Perspective. Danach der digitale Zoom der Brennweitenregel (`SetProperty`
-     `ZoomX`/`ZoomY`, Bildmitte); Readback `zoom_gesetzt` und `zoom_abweichungen` in `feinschnitt.json`.
+     `ZoomX`/`ZoomY`, Bildmitte); Readback `zoom_gesetzt` und `zoom_abweichungen` (Liste `{shot, soll, ist}`, gepaart
+     über den Record-In) in `feinschnitt.json`.
    - **V4** Grafik je Element, auf sichtbare Frames getrimmt.
    - **A1** Ton mit True Peak −3 je Clip und Voice Isolation 50.
    - **A2/A3** Musik mit Überblendungen (`SetFades` in Frames).

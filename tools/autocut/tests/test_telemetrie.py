@@ -1100,6 +1100,19 @@ def test_brennweitenfolge_kein_rueckfall_zum_vorgaenger():
     assert _zooms(ohne_vorgaenger) == [1.25, 1.0]                          # ohne S01 darf A den Zoom tragen
 
 
+def test_zoom_abweichungen_nach_record_in():
+    """M3 (Final Review 21.09.2026): der Readback paart Plan und Resolve-Item über den Record-In, nicht über die Position —
+    fehlt ein Item, verrutscht sonst jeder folgende Vergleich. Liste {shot, soll, ist} in Plan-Reihenfolge."""
+    plan = [{"shot": 3, "rec_in_f": 100, "zoom": 1.25}, {"shot": 1, "rec_in_f": 0, "zoom": 1.0},
+            {"shot": 2, "rec_in_f": 50, "zoom": 1.3}]
+    assert T.zoom_abweichungen(plan, {0: 1.0, 50: 1.3004, 100: 1.25}) == []          # 0,001 Toleranz
+    assert T.zoom_abweichungen(plan, {0: 1.0, 50: 1.3, 100: 1.0}) == [{"shot": 3, "soll": 1.25, "ist": 1.0}]
+    # S02 fehlt in Resolve: nur S02 weicht ab, S03 wird trotzdem mit seinem eigenen Item verglichen
+    assert T.zoom_abweichungen(plan, {0: 1.0, 100: 1.25}) == [{"shot": 2, "soll": 1.3, "ist": None}]
+    assert T.zoom_abweichungen(plan, {0: None, 50: 1.3, 100: 1.25}) == [{"shot": 1, "soll": 1.0, "ist": None}]
+    assert T.zoom_abweichungen([], {0: 1.0}) == []
+
+
 def test_brennweitenfolge_zoom_nicht_moeglich():
     f = T.brennweitenfolge([_shot("S11", 0, 50, 50.0, 50.0), _shot("S12", 50, 100, 52.0, 52.0)],
                            {**CFG, "digitalzoom_max": 1.2})

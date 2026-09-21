@@ -574,12 +574,11 @@ def bauen(p: dict) -> dict:
         v3_rb.append({"start": int(x.GetStart()) - start, "dauer": int(x.GetDuration()), "left": int(x.GetLeftOffset()),
                       "src": [RA._safe(x.GetSourceStartFrame, None), RA._safe(x.GetSourceEndFrame, None)], "speed": sp.get("Percentage")})
     out["v3"] = v3_rb
-    # Readback Zoom (Spec 2026-09-21): ZoomX je V3-Item gegen den Plan (1.0 = kein digitaler Zoom)
-    v3_zoom = [RA._safe(x.GetProperty, None, "ZoomX")
-               for x in sorted(tl.GetItemListInTrack("video", 3) or [], key=lambda y: y.GetStart())]
-    out["zoom_abweichungen"] = [{"shot": m["shot"], "soll": m["zoom"], "ist": z}
-                                for m, z in zip(sorted(p["v3_meta"], key=lambda v: v["rec_in_f"]), v3_zoom)
-                                if z is None or abs(float(z) - m["zoom"]) > 1e-3]
+    # Readback Zoom (Spec 2026-09-21): ZoomX je V3-Item gegen den Plan (1.0 = kein digitaler Zoom), gepaart über den
+    # Record-In wie in 3a (fehlt ein Item, verrutscht so kein Vergleich) → Liste {shot, soll, ist}
+    zoom_ist = {int(x.GetStart()) - start: RA._safe(x.GetProperty, None, "ZoomX")
+                for x in (tl.GetItemListInTrack("video", 3) or [])}
+    out["zoom_abweichungen"] = TM.zoom_abweichungen(p["v3_meta"], zoom_ist)
     ausserhalb = []
     for m, x in zip(sorted(p["v3_meta"], key=lambda z: z["rec_in_f"]), v3_rb):
         s0, s1 = x["src"]

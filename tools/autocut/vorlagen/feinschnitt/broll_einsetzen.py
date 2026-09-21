@@ -103,13 +103,15 @@ def pruefen(shots: dict, tl: dict) -> tuple[list[dict], list[str]]:
                        "rec_in_f": rec, "rec_out_f": rec + n, "left_offset_f": left, "dauer_f": n,
                        "src_in_f": int(round(left * faktor)), "src_out_f": int(round((left + n) * faktor)),
                        "auswahl_f": [s["left_offset_f"], s["left_offset_f"] + s["dauer_f"]]})
-        # genutzter Quellbereich in s (Tempo 100 %) → Brennweite am Schnitt und schnelle Zooms
+        # genutzter Quellbereich in s (Tempo 100 %) → Brennweite am Schnitt (KB am Quell-In/-Out, auch in
+        # broll_einsatz.json) und schnelle Zooms
         tele_rec = TM.finden(TELE, s["datei"])
         bereich = TM.genutzter_quellbereich_s(zeilen[-1]["src_in_f"], n, s["clip_fps"], False, FPS)
         zeilen[-1]["zoom_hinweise"] = TM.zoom_hinweise(f"S{nr:02d}", tele_rec, *bereich, cfg=TCFG)
+        zeilen[-1]["kb_anfang"] = TM.kb_am(tele_rec, bereich[0], seite="anfang")
+        zeilen[-1]["kb_ende"] = TM.kb_am(tele_rec, bereich[1], seite="ende")
         folge.append({"id": f"S{nr:02d}", "rec_in": rec, "rec_out": rec + n, "zoom_erzwungen": rest[0] if rest else None,
-                      "kb_anfang": TM.kb_am(tele_rec, bereich[0], seite="anfang"),
-                      "kb_ende": TM.kb_am(tele_rec, bereich[1], seite="ende")})
+                      "kb_anfang": zeilen[-1]["kb_anfang"], "kb_ende": zeilen[-1]["kb_ende"]})
         prev = rec + n
     for z, e in zip(zeilen, TM.brennweitenfolge(folge, TCFG)):
         z["zoom"], z["zoom_hinweis"] = e["zoom"], e["hinweis"]
@@ -123,8 +125,10 @@ def bericht(zeilen: list[dict], tl: dict) -> None:
     gesamt = sum(z["dauer_f"] for z in zeilen)
     print(f"{len(zeilen)} Shots, {gesamt / FPS:.1f} s B-Roll = {100 * gesamt / ende:.0f} % der Timeline ({tc(ende)})")
     for z in zeilen:
+        # Brennweite am Quell-In → -Out des genutzten Bereichs wie in 6d („KB –" = unbekannt)
+        kb = "KB –" if z.get("kb_anfang") is None else f"KB {z['kb_anfang']:g} → {z['kb_ende']:g} mm".replace(".", ",")
         print(f"  #{z['beat']:<3} {tc(z['rec_in_f'])}–{tc(z['rec_out_f'])}  S{z['shot']:02d} {z['clip']} "
-              f"{z['left_offset_f'] / FPS:7.2f}–{(z['left_offset_f'] + z['dauer_f']) / FPS:7.2f}s  {z['inhalt']}"
+              f"{z['left_offset_f'] / FPS:7.2f}–{(z['left_offset_f'] + z['dauer_f']) / FPS:7.2f}s  {z['inhalt']}  {kb}"
               + (f"  Zoom {z['zoom']:g}×".replace(".", ",") if z.get("zoom", 1.0) != 1.0 else ""))
     # ohne telemetrie.json eine Zeile; sonst alte oder mit anderen Schwellen gemessene Datensätze der genutzten Clips
     hinweise = (TM.telemetrie_hinweise([TM.finden(TELE, z["datei"]) for z in zeilen], TCFG) if TELE
@@ -180,9 +184,8 @@ def bauen(zeilen: list[dict], build: dict) -> dict:
                     "left_offset_f": int(it.GetLeftOffset()), "zoom": RA._safe(it.GetProperty, None, "ZoomX")})
     soll = sorted((z["datei"], z["rec_in_f"], z["dauer_f"], z["left_offset_f"]) for z in zeilen)
     ist_t = sorted((i["datei"], i["rec_in_f"], i["dauer_f"], i["left_offset_f"]) for i in ist)
-    zoom_ist = {i["rec_in_f"]: i["zoom"] for i in ist}
-    zoom_abweichungen = [z["shot"] for z in zeilen if zoom_ist.get(z["rec_in_f"]) is None
-                         or abs(float(zoom_ist[z["rec_in_f"]]) - z["zoom"]) > 1e-3]
+    zoom_ist = {i["rec_in_f"]: i["zoom"] for i in ist}   # über den Record-In gepaart wie in 6d → Liste {shot, soll, ist}
+    zoom_abweichungen = TM.zoom_abweichungen(zeilen, zoom_ist)
     ausserhalb = [z for z in zeilen if not (z["auswahl_f"][0] <= z["left_offset_f"]
                                              and z["left_offset_f"] + z["dauer_f"] <= z["auswahl_f"][1])]
     spuren = {k: len(ziel.GetItemListInTrack(k[0], k[1]) or []) for k in (("video", 1), ("video", 2), ("video", 3), ("audio", 1))}
