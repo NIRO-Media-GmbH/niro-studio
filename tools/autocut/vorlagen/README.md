@@ -60,7 +60,10 @@ Resolve. Resolve-Regeln: `tools/resolve/WORKFLOW-Resolve.md`.
 
 - **`feinschnitt_bauen.py` (`fb`)** liefert `lade`, `plan`, `bericht`, `grafik_elemente`, `tc`, `AC`, `PROJEKT`,
   `ENDE`, `GRAFIK`, `MUSIK_PLAN`, `PUNCH_IN`, `ALPHA_JSON`, `DECKEND_AB`. Nutzer: Musik, SFX, Gesichts-Check,
-  Color, Begradigen, Werkzeuge. Namen nicht ändern.
+  Color, Begradigen, Werkzeuge. Namen nicht ändern. `BROLL` hat eine optionale 7. Spalte `stabil` (True/False);
+  ohne sie kommt der Vorschlag aus `_intern/autocut/telemetrie.json` (`autocut_telemetrie.py` vorher laufen
+  lassen): Stativ/Gimbal bleiben unstabilisiert, Handkamera mit `wackeln` > `telemetrie.ruhig_max_px` wird
+  stabilisiert. Der Probelauf druckt je Shot Vorschlag und Grund; `roll_grad` > 2° erscheint als „schief".
 - **`color/grading_anwenden.py`**: `cdl_fuer`, `resolve_cdl`, `LUT_REL` und die Tabelle `GRUPPEN` braucht auch
   `begradigen/pruefung_resolve.py`.
 - **`color/skripte/colorlib.py`** wird genutzt von `begradigen/linien_messen.py` und den Color-Skripten.

@@ -54,6 +54,8 @@ STUDIO = next(p for p in Path(__file__).resolve().parents if (p / "tools" / "aut
 sys.path.insert(0, str(STUDIO / "tools" / "autocut" / "src"))
 from niro_autocut import resolve_api as RA  # noqa: E402
 from niro_autocut.timeline_model import Item, MarkerSpec  # noqa: E402
+from niro_autocut import telemetrie as TM  # noqa: E402
+from niro_autocut.charge import load_config  # noqa: E402
 
 RA.TRACK_INDEX["A3"] = 3  # dritte Tonspur für Musik-Überblendungen (nur in diesem Skript)
 
@@ -61,6 +63,8 @@ CH = Path(__file__).resolve().parent.parent
 AC = CH / "_intern" / "autocut"
 MUSIK = CH / "Material" / "Musik"
 FPS = 25  # Standard (15.09.): Timeline 25 fps — musik/mischung_pruefen.py und weitere Vorlagen rechnen fest mit 25
+TELE = TM.laden(AC)  # _intern/autocut/telemetrie.json (autocut_telemetrie.py); leer = Standard stabilisieren
+TCFG = load_config(CH)["telemetrie"]
 
 # ── ANPASSEN je Charge ─────────────────────────────
 PROJEKT = "<Resolve-Projekt>"  # Name des in dieser Session freigegebenen Resolve-Projekts (Abgleich vor jedem Schreiben)
@@ -90,10 +94,14 @@ A_ABSCHNITTE: list[tuple[int, int]] = [
     # (258, 345),
 ]
 
-# --- V3: B-Roll (Shot aus broll_auswahl.json, Versatz im Shot [Timeline-Frames bei 100 %], Länge, Record-In, Beat, 50 %) --
-# Versatz + genutzte Länge (bei 50 % die halbe Länge) müssen in der Auswahl des Users liegen — kürzen ja, nie verlängern.
-BROLL: list[tuple[int, int, int, int, str, bool]] = [
-    # (10, 27, 54, 345, "4", True),   # Shot 10 ab Frame 27 seiner Auswahl, 54 Frames lang, Record 345, Beat #4, 50 %
+# --- V3: B-Roll (Shot aus broll_auswahl.json, Versatz im Shot [Timeline-Frames bei 100 %], Länge, Record-In, Beat,
+# 50 %[, stabil]) -- Versatz + genutzte Länge (bei 50 % die halbe Länge) müssen in der Auswahl des Users liegen —
+# kürzen ja, nie verlängern.
+# 7. Spalte optional: True/False erzwingt Stabilize() bzw. lässt es aus; weggelassen = Vorschlag aus telemetrie.json
+# (hand und wackeln > telemetrie.ruhig_max_px → stabilisieren; stativ/gimbal → nicht; ohne Telemetrie → stabilisieren).
+BROLL: list[tuple] = [
+    # (10, 27, 54, 345, "4", True),          # Shot 10 ab Frame 27 seiner Auswahl, 54 Frames lang, Record 345, Beat #4, 50 %
+    # (11, 0, 40, 400, "5", False, False),   # … und ausdrücklich nicht stabilisieren
 ]
 
 # --- Musik (Spur, Datei, Quell-In [Frames], Record-In, Record-Out, Pegel dB, Fade-In, Fade-Out) ---------------------
@@ -346,7 +354,9 @@ def plan(tl: dict, shots: dict) -> tuple[dict, list[str]]:
         v2.append(Item("V2", it["clip"], s, s + b - a, a, b, True, it["beat_nr"], "oton", True))
     # V3 B-Roll
     v3, v3_meta = [], []
-    for nr, off, n, rec, beat, langsam in sorted(BROLL, key=lambda x: x[3]):
+    for eintrag in sorted(BROLL, key=lambda x: x[3]):
+        nr, off, n, rec, beat, langsam, *rest = eintrag
+        stabil_hand = rest[0] if rest else None
         s = shots.get(nr)
         if s is None:
             fehler.append(f"S{nr:02d}: Shot fehlt in broll_auswahl.json")
@@ -359,10 +369,19 @@ def plan(tl: dict, shots: dict) -> tuple[dict, list[str]]:
             fehler.append(f"S{nr:02d}: Versatz {off} + genutzt {genutzt} > Auswahl {s['dauer_f']} — verlängert!")
         src_in = int(round((s["left_offset_f"] + off) * faktor))
         src_out = src_in + int(round(n * faktor))  # angehängt bei 100 %; SetSpeed 50 halbiert den Quellbereich
+        quelle_genutzt = int(round(n if langsam else n * faktor))
+        tele_rec = TM.finden(TELE, s["datei"])
+        vorschlag, grund = TM.stabil_vorschlag(src_in / s["clip_fps"], (src_in + quelle_genutzt) / s["clip_fps"],
+                                               tele_rec, TCFG, path=s["datei"])
+        stabil = vorschlag if stabil_hand is None else bool(stabil_hand)
+        if stabil_hand is not None and stabil != vorschlag:
+            grund += " — von Hand überstimmt"
         v3.append(Item("V3", s["datei"], src_in, src_out, rec, rec + n, True, beat, "broll", True))
+        auswahl_50p = [int(round(s["left_offset_f"] * faktor)), int(round((s["left_offset_f"] + s["dauer_f"]) * faktor))]
         v3_meta.append({"shot": nr, "clip": s["clip"], "rec_in_f": rec, "dauer_f": n, "langsam": langsam, "src_in_f": src_in,
-                        "quelle_genutzt_50p": int(round(n if langsam else n * faktor)),
-                        "auswahl_50p": [int(round(s["left_offset_f"] * faktor)), int(round((s["left_offset_f"] + s["dauer_f"]) * faktor))]})
+                        "quelle_genutzt_50p": quelle_genutzt, "auswahl_50p": auswahl_50p,
+                        "stabil": stabil, "stabil_grund": grund,
+                        "roll_grad": (tele_rec or {}).get("roll_grad")})
     for a, b in zip(v3, v3[1:]):
         if b.rec_in_f < a.rec_out_f:
             fehler.append(f"V3 überlappt bei {b.rec_in_f}")
@@ -402,6 +421,11 @@ def bericht(p: dict) -> None:
         print("  Bild gehalten:", zeile)
     frei = sum(b - a for a, b in p["luecken"])
     print(f"Ohne Bild auf V1–V3: {len(p['luecken'])} Lücken / {frei} Frames — davon ohne deckende Grafik: {len(p['schwarz'])}")
+    print(f"Stabilisierung ({len(TELE)} Clips in telemetrie.json):")
+    for m in p["v3_meta"]:
+        roll = m.get("roll_grad")
+        schief = f"  schief {abs(roll):.1f}°".replace(".", ",") if roll is not None and abs(roll) > 2.0 else ""
+        print(f"  S{m['shot']:02d} {'stabilisieren' if m['stabil'] else 'lassen       '}  {m['stabil_grund']}{schief}")
 
 
 def bauen(p: dict) -> dict:
@@ -447,9 +471,14 @@ def bauen(p: dict) -> dict:
                 # Standard (15.09.): Zeitlupe 50 %, Timeline-Dauer bleibt, der genutzte Quellbereich halbiert sich
                 speed_ok += int(bool(RA._safe(x.SetSpeed, False, {"Percentage": 50.0, "RippleTimeline": False})))
         out["speed_gesetzt"] = speed_ok
-        # Stabilisieren nach dem Tempo (Analyse über den tatsächlich genutzten Quellbereich) — Standard (15.09.)
+        # Stabilisieren nach dem Tempo (Analyse über den tatsächlich genutzten Quellbereich) — nur wo der Plan es
+        # vorsieht (Telemetrie)
         for n_, m in enumerate(p["v3_meta"], 1):
             t0, shot = dt.datetime.now(), f"S{m['shot']:02d}"
+            if not m["stabil"]:
+                stab[shot] = None
+                print(f"  Stabilisierung {n_}/{len(p['v3_meta'])} {shot}: übersprungen ({m['stabil_grund']})", flush=True)
+                continue
             stab[shot] = bool(RA._safe(v3_items[m["rec_in_f"]].Stabilize, False))
             print(f"  Stabilisiert {n_}/{len(p['v3_meta'])} {shot}: {stab[shot]} ({(dt.datetime.now() - t0).total_seconds():.1f} s)", flush=True)
         out["stabilisiert"] = stab

@@ -463,7 +463,11 @@ oder einen Zwischenstand.
    - **A1–A5** vor dem ersten Anhängen anlegen (nachträglich angelegte Tonspuren sind stumm).
    - **V1** FX3 mit Bildverlängerungen, J-Cuts und Punch-in.
    - **V2** a7 durchgehend, nur die A-Abschnitte aktiv.
-   - **V3** B-Roll: bei 100 % anhängen → `RetimeProcess` Nearest → `SetSpeed` 50 % → `Stabilize()`.
+   - **V3** B-Roll: bei 100 % anhängen → `RetimeProcess` Nearest → `SetSpeed` 50 % → `Stabilize()` nur für Shots mit
+     `stabil` (Vorschlag aus `telemetrie.json`, Spalte 7 in `BROLL` überstimmt; Dateien mit `_stabilized` im Namen —
+     Avata-Exporte — nie). Der Stabilisierungs-Modus bleibt Sache des DRT-Roundtrips der Charge (User-Standard
+     Translation, Smooth 0,25; `drt_stabilisierung.py` in WTN/Wurst & Liebe/Assenheimer, noch kein gemeinsames
+     Werkzeug) — `Stabilize()` allein nimmt Perspective.
    - **V4** Grafik je Element, auf sichtbare Frames getrimmt.
    - **A1** Ton mit True Peak −3 je Clip und Voice Isolation 50.
    - **A2/A3** Musik mit Überblendungen (`SetFades` in Frames).
