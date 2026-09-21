@@ -19,6 +19,7 @@ from PIL import Image, ImageDraw
 
 from .broll_index import API_ATTEMPTS, CACHE_DIR, RETRY_ERRORS, _font, _image_block, _make_client
 from .charge import TOOL_ROOT, AutoCutError
+from .telemetrie import abschnitt_werte, finden, laden as telemetrie_laden
 
 PROMPT_FILE = TOOL_ROOT / "prompts" / "index-sections.md"
 EINSTELLUNG5 = ["Totale", "Halbtotale", "Halbnah", "Nah", "Detail"]
@@ -131,16 +132,84 @@ def hamming(a: str, b: str) -> int:
 
 # --- Claude -----------------------------------------------------------------------
 
-def section_meta_text(rec: dict) -> str:
+def telemetrie_text(tele: dict | None, abschnitte: list[dict]) -> str:
+    """Kontextzeile für den Abschnittsbogen aus der gemessenen Kamera-Telemetrie; leer ohne Daten."""
+    if not tele or tele.get("quelle") in (None, "keine"):
+        return ""
+    teile = []
+    if tele.get("kb_mm"):
+        teile.append(f"KB {tele['kb_mm']:g} mm = {tele.get('brennweitenklasse')}")
+    if tele.get("pitch_grad") is not None:
+        teile.append(f"Pitch {tele['pitch_grad']:g}° = {tele.get('perspektive_hoehe')}")
+    if tele.get("haltung"):
+        teile.append(f"Haltung {tele['haltung']}")
+    arten = [abschnitt_werte(tele, float(a.get("von_s", 0)), float(a.get("bis_s", 0)))["bewegungsart"]
+             for a in abschnitte]
+    if any(arten):
+        teile.append("Bewegungsart je Abschnitt: " + ", ".join(f"A{i} {x or '?'}" for i, x in enumerate(arten, 1)))
+    if not teile:
+        return ""
+    praefix = "Kamera-Telemetrie (gemessen; brennweite und perspektive_hoehe setzt das Schnittprogramm daraus fest): "
+    return praefix + " · ".join(teile)
+
+
+def section_meta_text(rec: dict, tele: dict | None = None) -> str:
     lines = [f"Clip: {rec.get('datei') or Path(str(rec.get('path', ''))).name}",
              f"Motiv-Ordner: {rec.get('ordner') or '(keiner)'} · Standort: {rec.get('standort') or '(unbekannt)'}",
-             f"Kamerabewegung laut Erst-Index: {rec.get('kamerabewegung') or '?'}", ""]
+             f"Kamerabewegung laut Erst-Index: {rec.get('kamerabewegung') or '?'}"]
+    t = telemetrie_text(tele, rec.get("abschnitte") or [])
+    if t:
+        lines.append(t)
+    lines.append("")
     for i, a in enumerate(rec.get("abschnitte") or [], 1):
         lines.append(f"Abschnitt {i} = Zeile A{i}: {a.get('von_s')}–{a.get('bis_s')} s — {a.get('beschreibung') or ''}")
     n = len(rec.get("abschnitte") or [])
     lines += ["", f"Antworte mit GENAU {n} Einträgen in abschnitte (nr 1 bis {n}, Reihenfolge wie oben) — auch wenn Abschnitte "
                   f"gleich aussehen, dann dieselben Werte wiederholen. Ein einzelner Eintrag für mehrere Abschnitte ist falsch."]
     return "\n".join(lines)
+
+
+def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) -> tuple[dict, bool]:
+    """Metadatenklassen in die Abschnitte: brennweite/perspektive_hoehe überschreiben (Quelle in felder_quelle),
+    bewegungsart/haltung ergänzen. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert."""
+    if not tele or tele.get("quelle") in (None, "keine"):
+        return rec, False
+    quelle: dict[str, str] = {}
+    neu = []
+    geaendert = False
+    for a in rec.get("abschnitte") or []:
+        b = dict(a)
+        if tele.get("brennweitenklasse") and "brennweite" in b:
+            quelle["brennweite"] = str(tele["quelle"])
+            geaendert |= b.get("brennweite") != tele["brennweitenklasse"]
+            b["brennweite"] = tele["brennweitenklasse"]
+        if tele.get("perspektive_hoehe") and "perspektive_hoehe" in b:
+            quelle["perspektive_hoehe"] = str(tele["quelle"])
+            geaendert |= b.get("perspektive_hoehe") != tele["perspektive_hoehe"]
+            b["perspektive_hoehe"] = tele["perspektive_hoehe"]
+        w = abschnitt_werte(tele, float(b.get("von_s", 0)), float(b.get("bis_s", 0)), fenster_s)
+        for k in ("bewegungsart", "haltung"):
+            if w.get(k) is not None:
+                geaendert |= b.get(k) != w[k]
+                b[k] = w[k]
+        neu.append(b)
+    out = {**rec, "abschnitte": neu}
+    if quelle:
+        geaendert |= rec.get("felder_quelle") != quelle
+        out["felder_quelle"] = quelle
+    return out, geaendert
+
+
+def _cache_schreiben(charge, rec: dict) -> None:
+    """Clip-Datensatz atomar in den Cache (ohne ``_``-Schlüssel)."""
+    cache_dir = Path(charge.autocut) / CACHE_DIR
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_file = cache_dir / f"{rec['fingerprint']}.json"
+    charge.assert_writable(cache_file)
+    persist = {k: v for k, v in rec.items() if not k.startswith("_")}
+    part = cache_file.with_name(cache_file.name + ".part")
+    part.write_text(json.dumps(persist, ensure_ascii=False, indent=1), encoding="utf-8")
+    os.replace(part, cache_file)
 
 
 def validate_sections(data: dict, n: int) -> list[str]:
@@ -243,7 +312,8 @@ def needs_sections(rec: dict, max_sections: int = 5) -> bool:
     return not abs_ or any(any(k not in a for k in FIELDS) or not a.get("setup_hash") for a in abs_)
 
 
-def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str, force: bool = False, describe=describe_sections) -> dict:
+def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str, force: bool = False,
+                        describe=describe_sections, telemetrie: dict | None = None) -> dict:
     """Einen Clip nachindexieren: Cache-Treffer (``_cache`` True) oder Bogen → Claude → dHash → Cache-Datei mergen.
 
     Abschnitte ohne Frame im Fenster ``[von_s, bis_s]`` bekommen den nächstgelegenen Frame als Ersatz
@@ -252,9 +322,13 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
     """
     scfg = cfg["index_sections"]
     icfg = cfg["index"]
+    fenster_s = float((cfg.get("telemetrie") or {}).get("fenster_s", 2.0))
     max_sections = int(scfg.get("max_sections", 5))
     if not force and not needs_sections(rec, max_sections):
-        return {**rec, "_cache": True}
+        neu, geaendert = telemetrie_anwenden(rec, telemetrie, fenster_s)
+        if geaendert:
+            _cache_schreiben(charge, neu)
+        return {**neu, "_cache": True}
     abs_ = rec.get("abschnitte") or []
     if not abs_:
         raise AutoCutError("Clip ohne Abschnitte im Erst-Index — Nachlauf nicht möglich.")
@@ -269,7 +343,7 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
                           portrait=str(rec.get("orientierung") or "") == "9:16")
     call_cfg = {"model": icfg["model"], "effort": scfg.get("effort", icfg.get("effort", "medium")),
                 "max_tokens": scfg.get("max_tokens", 2500)}
-    meta_text = section_meta_text({**rec, "abschnitte": abs_})
+    meta_text = section_meta_text({**rec, "abschnitte": abs_}, telemetrie)
     usage = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0}
     reparaturen = 0
     data = normalize_sections(describe(client, sheet, meta_text, call_cfg, system_prompt))
@@ -301,14 +375,8 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
     out = {**rec, "abschnitte": merged, "abschnittsbogen": str(sheet), "warnungen": warnungen,
            "nachlauf": {"modell": call_cfg["model"], "effort": call_cfg["effort"], "usage": usage, "reparaturen": reparaturen,
                         "indiziert_am": _dt.datetime.now().isoformat(timespec="seconds")}}
-    cache_dir = Path(charge.autocut) / CACHE_DIR
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    cache_file = cache_dir / f"{fp}.json"
-    charge.assert_writable(cache_file)
-    persist = {k: v for k, v in out.items() if not k.startswith("_")}
-    part = cache_file.with_name(cache_file.name + ".part")
-    part.write_text(json.dumps(persist, ensure_ascii=False, indent=1), encoding="utf-8")
-    os.replace(part, cache_file)
+    out, _ = telemetrie_anwenden(out, telemetrie, fenster_s)
+    _cache_schreiben(charge, out)
     return {**out, "_cache": False}
 
 
@@ -336,9 +404,15 @@ def index_sections(charge, index: dict, cfg: dict, limit: int | None = None, par
     hits = 0
     reparaturen = 0
     usage_sum = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0}
+    tele = telemetrie_laden(Path(charge.autocut))
+    mit_tele = 0
     ex = ThreadPoolExecutor(max_workers=max(1, int(parallel)))
     try:
-        futs = {ex.submit(index_sections_clip, charge, c, client, cfg, prompt, force): c for c in todo}
+        futs = {}
+        for c in todo:
+            t = finden(tele, str(c["path"]))
+            mit_tele += int(t is not None)
+            futs[ex.submit(index_sections_clip, charge, c, client, cfg, prompt, force, telemetrie=t)] = c
         for i, fut in enumerate(as_completed(futs), 1):
             c = futs[fut]
             name = Path(str(c["path"])).name
@@ -365,9 +439,10 @@ def index_sections(charge, index: dict, cfg: dict, limit: int | None = None, par
         raise
     ex.shutdown(wait=True)
     new_clips = [results.get(str(c["path"]), c) for c in clips]
-    out = {**index, "clips": new_clips, "nachlauf": {"erstellt_am": _dt.datetime.now().isoformat(timespec="seconds"),
-                                                     "anzahl": len(results), "cache_treffer": hits, "usage_summe": usage_sum,
-                                                     "reparaturen": reparaturen, "fehler": errors}}
+    nachlauf = {"erstellt_am": _dt.datetime.now().isoformat(timespec="seconds"), "anzahl": len(results),
+                "cache_treffer": hits, "usage_summe": usage_sum, "reparaturen": reparaturen, "fehler": errors,
+                "mit_telemetrie": mit_tele}
+    out = {**index, "clips": new_clips, "nachlauf": nachlauf}
     charge.write_json("broll_index.json", out)
     return {"anzahl": len(results), "cache_treffer": hits, "fehler": errors, "usage_summe": usage_sum,
-            "reparaturen": reparaturen, "uebersprungen": len(clips) - len(todo)}
+            "reparaturen": reparaturen, "uebersprungen": len(clips) - len(todo), "mit_telemetrie": mit_tele}

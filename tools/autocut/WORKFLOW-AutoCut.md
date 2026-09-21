@@ -274,6 +274,12 @@ Abweichend davon:
    Fehlerliste nach; der Protokoll-Eintrag nennt die Zahl der Nachfragen. Exit 1 = einzelne Clips
    fehlgeschlagen (Lauf wiederholen; Cache hält Fertiges).
 
+Liegt `telemetrie.json` vor (`autocut_telemetrie.py`), bekommt der Abschnittsbogen eine Kontextzeile mit
+KB-Brennweite, Pitch, Haltung und Bewegungsart je Abschnitt; nach der Antwort setzt der Code `brennweite`
+und `perspektive_hoehe` aus den Metadaten fest (`felder_quelle` im Datensatz) und ergänzt je Abschnitt
+`bewegungsart` und `haltung`. Cache-Treffer bekommen die Felder ohne API-Aufruf. Ohne Telemetrie bleibt
+alles wie bisher; `--dry-run` zeigt die Zahl.
+
 ## Ablauf Stufe 3 — „B-Roll" (v2)
 
 Voraussetzung: Stufe 1 gebaut (`timeline.json`, `build.json`), Stufe 2 vollständig (`broll_index.json`)

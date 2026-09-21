@@ -307,7 +307,7 @@ def test_index_sections_counts_repairs_over_all_clips(tmp_path, monkeypatch):
     monkeypatch.setattr(S, "_make_client", lambda cfg: object())
     monkeypatch.setattr(S, "load_system_prompt", lambda: "prompt")
 
-    def fake_clip(charge, c, client, cfg, prompt, force):
+    def fake_clip(charge, c, client, cfg, prompt, force, telemetrie=None):
         n_rep = 1 if c["datei"] == "FX3_2.MP4" else 0
         return {**c, "abschnitte": [{**a, **_GOOD_ITEM, "setup_hash": "0" * 16} for a in c["abschnitte"]],
                 "nachlauf": {"usage": dict(_USAGE), "reparaturen": n_rep}, "_cache": False}
@@ -317,3 +317,100 @@ def test_index_sections_counts_repairs_over_all_clips(tmp_path, monkeypatch):
     assert out["anzahl"] == 2 and out["fehler"] == [] and out["reparaturen"] == 1
     written = json.loads((ch.autocut / "broll_index.json").read_text())
     assert written["nachlauf"]["reparaturen"] == 1
+
+
+# --- Telemetrie (Task 8) -----------------------------------------------------------------------------------------
+
+TELE = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd", "kb_mm": 71.6, "brennweitenklasse": "tele",
+        "pitch_grad": -12.0, "perspektive_hoehe": "Aufsicht", "haltung": "gimbal", "wackeln": 0.05, "fehler": None,
+        "fenster": [[0.0, 0.05, 1.0, "schwenk_links"], [1.0, 0.05, 1.0, "schwenk_links"], [2.0, 0.05, 1.0, "schwenk_links"],
+                    [3.0, 0.05, 1.0, "schwenk_links"], [4.0, 0.02, 0.1, "statisch"], [5.0, 0.02, 0.1, "statisch"],
+                    [6.0, 0.02, 0.1, "statisch"]]}
+_CFG_T = {"index": {"model": "claude-opus-5"},
+          "index_sections": {"tile_px": 480, "per_section": 2, "max_sections": 5, "effort": "medium", "max_tokens": 2500},
+          "telemetrie": {"fenster_s": 2.0}}
+
+
+def test_telemetrie_text_und_anwenden():
+    rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "brennweite": "normal", "perspektive_hoehe": "Augenhöhe"},
+                          {"von_s": 4, "bis_s": 8, "brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]}
+    text = S.telemetrie_text(TELE, rec["abschnitte"])
+    assert "KB 71.6 mm = tele" in text and "Pitch -12° = Aufsicht" in text and "Haltung gimbal" in text
+    assert "A1 schwenk_links, A2 statisch" in text
+    assert S.telemetrie_text(None, rec["abschnitte"]) == "" and S.telemetrie_text({"quelle": "keine"}, []) == ""
+    neu, geaendert = S.telemetrie_anwenden(rec, TELE)
+    assert geaendert and neu["felder_quelle"] == {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"}
+    assert [a["brennweite"] for a in neu["abschnitte"]] == ["tele", "tele"]
+    assert [a["perspektive_hoehe"] for a in neu["abschnitte"]] == ["Aufsicht", "Aufsicht"]
+    assert [a["bewegungsart"] for a in neu["abschnitte"]] == ["schwenk_links", "statisch"]
+    assert neu["abschnitte"][0]["haltung"] == "gimbal"
+    assert S.telemetrie_anwenden(rec, None) == (rec, False)
+    wieder, geaendert2 = S.telemetrie_anwenden(neu, TELE)
+    assert not geaendert2 and wieder == neu
+    assert "brennweite" not in S.telemetrie_anwenden({"abschnitte": [{"von_s": 0, "bis_s": 2}]}, TELE)[0]["abschnitte"][0]
+
+
+def test_index_sections_clip_wendet_telemetrie_bei_cache_treffer_an(tmp_path):
+    ch = _Ch(tmp_path)
+    (ch.autocut / "broll_index").mkdir()
+    rec = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "datei": "FX3_1.MP4", "fingerprint": "abcdefabcdef0000",
+           "orientierung": "16:9",
+           "abschnitte": [{"von_s": 0, "bis_s": 4, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": True,
+                           "einstellung": "Halbtotale", "perspektive_hoehe": "Augenhöhe", "perspektive_ansicht": "seitlich",
+                           "brennweite": "normal", "bewegungsrichtung": "keine", "hauptmotiv": "Flur",
+                           "setup_hash": "0123456789abcdef"}]}
+    (ch.autocut / "broll_index" / "abcdefabcdef0000.json").write_text(json.dumps(rec), encoding="utf-8")
+
+    def kein_api(*a, **k):
+        raise AssertionError("kein API-Aufruf bei Cache-Treffer")
+
+    out = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=kein_api, telemetrie=TELE)
+    assert out["_cache"] is True and out["abschnitte"][0]["brennweite"] == "tele"
+    assert out["felder_quelle"]["brennweite"] == "rtmd"
+    cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
+    assert cached["abschnitte"][0]["perspektive_hoehe"] == "Aufsicht"
+    assert cached["abschnitte"][0]["bewegungsart"] == "schwenk_links"
+    ohne = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=kein_api)
+    assert ohne["_cache"] is True and ohne["abschnitte"][0]["brennweite"] == "normal"
+
+
+def test_index_sections_clip_api_mit_telemetrie(tmp_path):
+    _frames(tmp_path)
+    ch = _Ch(tmp_path)
+    (ch.autocut / "broll_index").mkdir()
+    rec = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "datei": "FX3_1.MP4", "fingerprint": "abcdefabcdef0000",
+           "orientierung": "16:9",
+           "abschnitte": [{"von_s": 0, "bis_s": 4, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": True}]}
+
+    def fake_describe(client, sheet, meta_text, cfg, prompt):
+        assert "Kamera-Telemetrie" in meta_text and "KB 71.6 mm = tele" in meta_text
+        return {"abschnitte": [{"nr": 1, "einstellung": "Halbtotale", "perspektive_hoehe": "Augenhöhe",
+                                "perspektive_ansicht": "seitlich", "brennweite": "normal", "bewegungsrichtung": "keine",
+                                "hauptmotiv": "Flur"}],
+                "_usage": {"input": 1, "output": 1, "cache_read": 0, "cache_write": 0}}
+
+    out = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=fake_describe, telemetrie=TELE)
+    a = out["abschnitte"][0]
+    assert a["brennweite"] == "tele" and a["perspektive_hoehe"] == "Aufsicht"
+    assert a["bewegungsart"] == "schwenk_links" and a["haltung"] == "gimbal"
+    assert out["felder_quelle"] == {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"}
+    cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
+    assert cached["felder_quelle"]["brennweite"] == "rtmd" and "_cache" not in cached
+
+
+def test_index_sections_zaehlt_telemetrie(tmp_path, monkeypatch):
+    ch, rec = _rec2(tmp_path)
+    (ch.autocut / "telemetrie.json").write_text(json.dumps([{**TELE, "path": rec["path"]}]), encoding="utf-8")
+    monkeypatch.setattr(S, "_make_client", lambda cfg: object())
+    monkeypatch.setattr(S, "load_system_prompt", lambda: "prompt")
+    gesehen = {}
+
+    def fake_clip(charge, c, client, cfg, prompt, force, telemetrie=None):
+        gesehen[c["datei"]] = telemetrie
+        return {**c, "abschnitte": [{**a, **_GOOD_ITEM, "setup_hash": "0" * 16} for a in c["abschnitte"]],
+                "nachlauf": {"usage": dict(_USAGE), "reparaturen": 0}, "_cache": False}
+
+    monkeypatch.setattr(S, "index_sections_clip", fake_clip)
+    out = S.index_sections(ch, {"clips": [rec]}, _CFG2, parallel=1)
+    assert out["mit_telemetrie"] == 1 and gesehen[rec["datei"]]["clip"] == "FX3_1"
+    assert json.loads((ch.autocut / "broll_index.json").read_text())["nachlauf"]["mit_telemetrie"] == 1

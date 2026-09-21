@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from niro_autocut.charge import AutoCutError, Charge, append_protokoll  # noqa: E402
 from niro_autocut.index_sections import estimate_sections_cost, index_sections, needs_sections  # noqa: E402
+from niro_autocut.telemetrie import finden, laden as telemetrie_laden  # noqa: E402
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -39,6 +40,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Charge: {ch.root}\nModell: {ch.config['index']['model']} (effort {scfg.get('effort', 'medium')}), Kacheln {scfg['tile_px']} px, "
               f"{scfg['per_section']} je Abschnitt\nGesamt {len(clips)} Clips, dieser Lauf {len(todo)}, per API {len(offen)}.\n"
               f"Kosten: {estimate_sections_cost(offen, int(scfg['tile_px']), int(scfg['per_section']), max_sections)}\n")
+        tele = telemetrie_laden(ch.autocut)
+        mit_tele = sum(1 for c in todo if finden(tele, str(c["path"])))
+        hinweis = ("" if mit_tele else " — erst scripts/autocut_telemetrie.py ausführen, dann kommen Brennweite "
+                   "und Perspektive Höhe aus den Metadaten.")
+        print(f"Telemetrie: {mit_tele} von {len(todo)} Clips" + hinweis + "\n")
         if args.dry_run:
             print("Probelauf — nichts angefragt, nichts geschrieben.")
             return 0
@@ -49,6 +55,8 @@ def main(argv: list[str] | None = None) -> int:
                   f"{out.get('reparaturen', 0)} Nachfragen wegen Schema-Verstoß)"
                   + (f", Testlauf --limit {args.limit}" if args.limit else ""),
                   f"Token Eingabe {u['input']} / Ausgabe {u['output']} / Cache gelesen {u['cache_read']}",
+                  f"Telemetrie genutzt: {out['mit_telemetrie']} Clips (brennweite/perspektive_hoehe aus Metadaten, "
+                  f"bewegungsart/haltung je Abschnitt)",
                   f"Datei: {ch.autocut / 'broll_index.json'}"] + [f"Fehler: {f}" for f in out["fehler"][:10]]
         append_protokoll(ch, "Index-Nachlauf", zeilen)
         print("\n".join(zeilen))
