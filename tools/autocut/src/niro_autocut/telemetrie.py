@@ -266,12 +266,15 @@ def kb_je_frame(kb_mm: list[float], kb_index: list[int] | None, fps: float, samp
 
 
 def zoom_tempo(kb25: np.ndarray, ziel_fps: float = ZIEL_FPS) -> np.ndarray:
-    """Tempo der Brennweite je Zielframe in % pro s: Änderung von ln(KB) je Sekunde, gemittelt über ZOOM_GLAETTUNG_S."""
+    """Tempo der Brennweite je Zielframe in % pro s: Änderung von ln(KB) je Sekunde, gemittelt über ZOOM_GLAETTUNG_S.
+    Eine Reihe kürzer als das Gleitmittel (unter 0,2 s, Clip mit wenigen Frames) hat Tempo 0 — also keine Zoomfahrt
+    (``np.convolve(mode="same")`` gäbe dort mehr Werte zurück, als die Reihe hat)."""
     kb25 = np.asarray(kb25, np.float64)
-    if len(kb25) < 2:
+    breite = int(round(ZOOM_GLAETTUNG_S * ziel_fps))
+    if len(kb25) < max(2, breite):
         return np.zeros(len(kb25), np.float64)
     v = np.gradient(np.log(np.maximum(kb25, 0.1))) * ziel_fps * 100.0
-    return _tiefpass(v[:, None], int(round(ZOOM_GLAETTUNG_S * ziel_fps)))[:, 0]
+    return _tiefpass(v[:, None], breite)[:, 0]
 
 
 def zoom_bereiche(v: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list[tuple[int, int]]:

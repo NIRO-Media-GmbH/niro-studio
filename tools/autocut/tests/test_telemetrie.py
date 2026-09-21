@@ -802,6 +802,18 @@ def test_zoom_messen():
     assert len(m["zooms"]) == 1 and m["zooms"][0]["urteil"] == "schnell" and m["kb_verlauf"][-1][1] == 70.0
 
 
+def test_kurze_clips_ohne_zoomfahrten_und_ohne_fehler():
+    """M2 (Final Review 21.09.2026): 6 Samples bei 50p = 3 Frames im 25-fps-Raster, kürzer als das 0,2-s-Gleitmittel
+    (5 Frames) — keine Zoomfahrten, kein IndexError; der Verlauf bleibt."""
+    kurz = [50.0, 50.0, 55.0, 60.0, 60.0, 60.0]                         # 25-fps-Raster: 50 / 55 / 60 mm
+    m = T.zoom_messen(kurz, list(range(6)), 50.0, 6, CFG)
+    assert m["zooms"] == [] and m["kb_verlauf"] == [[0.0, 50.0], [0.08, 60.0]]
+    for n in range(0, 5):                                               # 0–4 Frames: kürzer als das Gleitmittel
+        assert len(T.zoom_tempo(np.linspace(50.0, 60.0, n))) == n
+        assert T.zoomfahrten(np.linspace(50.0, 60.0, n), CFG) == []
+    assert T.zoomfahrten(np.array([50.0, 50.0, 60.0, 60.0, 60.0, 60.0]), CFG) != []   # ab 5 Frames wie bisher
+
+
 def test_ruhige_fenster_ohne_schnelle_zooms():
     zooms = [{"von_s": 2.4, "bis_s": 3.4, "urteil": "schnell"}, {"von_s": 6.0, "bis_s": 9.0, "urteil": "langsam"}]
     # Fenster [t, t + 2): 1, 2 und 3 schneiden den schnellen Zoom, 6 nur den langsamen
