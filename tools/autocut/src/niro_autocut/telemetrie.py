@@ -233,3 +233,231 @@ def kennzahlen(dxy: np.ndarray, cfg: dict, kb_mm: float | None,
             "fenster": [[f["t_s"], f["wackeln"], f["bewegung"], f["bewegungsart"], _schaerfe(f)] for f in fen],
             "ruhige_fenster": [f["t_s"] for f in fen if f["wackeln"] <= float(cfg["ruhig_max_px"])],
             "schaerfe_p10": round(float(np.percentile(rel, 10)), 2) if rel is not None else None}
+
+
+# --- Clip-Messung ---------------------------------------------------------------------------------------------------------
+
+def _leer(path: Path, kamera: str, modell: str | None) -> dict:
+    return {"path": str(path), "clip": path.stem, "kamera": kamera, "modell": modell, "dauer_s": None, "fps": None,
+            "quelle": "keine", "imu_hz": None, "samples": 0, "brennweite_mm": None, "kb_mm": None, "kb_min": None,
+            "kb_max": None, "zoomfahrt": False, "fokus_m": None, "brennweitenklasse": None, "pitch_grad": None,
+            "roll_grad": None, "lage_grund": None, "perspektive_hoehe": None, "haltung": None, "hf_anteil": None,
+            "bewegungsart": None, "wackeln": None, "bewegung": None, "fenster": [], "ruhige_fenster": [],
+            "schaerfe_p10": None, "fehler": None}
+
+
+def _frames(p: Path, cfg: dict) -> np.ndarray:
+    breite = int(cfg["optisch_breite"])
+    return graustufen(p, ZIEL_FPS, breite=breite, hoehe=int(round(breite * 9 / 16)))
+
+
+def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerfe: bool = False) -> dict:
+    """Ein Clip: rtmd-Weg (Gyro über KB-Brennweite in px), sonst optischer Weg, sonst ``quelle: keine``; Fehler im Datensatz.
+    ``schaerfe=True`` dekodiert auch bei rtmd-Clips die Frames für die Schärfe (optischer Weg hat sie ohnehin)."""
+    p = Path(path)
+    modell = sidecar_modell(p)
+    kamera = kamera_erkennen(p, modell)
+    out = _leer(p, kamera, modell)
+    try:
+        info = ffprobe(p)
+        out["dauer_s"], out["fps"] = round(float(info.duration_s), 2), float(info.fps)
+        daten = None
+        buf = datenspur_lesen(p)
+        if buf:
+            daten = auswerten(samples(buf))
+        kb = None
+        if daten is not None:
+            out["samples"] = daten.samples
+            if daten.kb_mm:
+                kb = float(np.median(daten.kb_mm))
+                out["kb_mm"], out["kb_min"], out["kb_max"] = (round(kb, 1), round(min(daten.kb_mm), 1),
+                                                              round(max(daten.kb_mm), 1))
+                out["zoomfahrt"] = bool(out["kb_max"] / max(out["kb_min"], 0.1) > 1.3)
+                out["brennweitenklasse"] = brennweitenklasse(kb, cfg["brennweite_klassen_kb"])
+            if daten.brennweite_mm:
+                out["brennweite_mm"] = round(float(np.median(daten.brennweite_mm)), 1)
+            if daten.fokus_m:
+                out["fokus_m"] = round(float(np.median(daten.fokus_m)), 2)
+            if len(daten.acc):
+                l = lage(daten.acc, vorzeichen_pitch=float(cfg["vorzeichen"].get("pitch", 1)))
+                out["pitch_grad"], out["roll_grad"], out["lage_grund"] = l["pitch_grad"], l["roll_grad"], l["grund"]
+                out["perspektive_hoehe"] = perspektive_hoehe(l["pitch_grad"], cfg["pitch_klassen_grad"])
+        gyro_ok = (daten is not None and len(daten.gyro) > 0 and daten.proben_je_sample > 0 and kb is not None
+                   and kamera not in (cfg.get("optisch_fuer") or []))
+        if gyro_ok:
+            out["imu_hz"] = float(daten.imu_hz or daten.proben_je_sample * info.fps)
+            rate = gyro_je_frame(daten.gyro, daten.proben_je_sample, info.fps)
+            faktor = float((cfg.get("px_faktor") or {}).get(kamera, 1.0))
+            dxy = verschiebung_aus_rate(rate, kb, cfg) * faktor
+            s = schaerfe_frames(_frames(p, cfg)) if schaerfe else None
+            out.update(quelle="rtmd", **kennzahlen(dxy, cfg, kb, s))
+        elif not ohne_optisch:
+            frames = _frames(p, cfg)
+            out.update(quelle="optisch", **kennzahlen(verschiebungen(frames), cfg, kb, schaerfe_frames(frames)))
+    except AutoCutError as e:
+        out["fehler"] = str(e)
+    return out
+
+
+def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_optisch: bool = False,
+                   schaerfe: bool = False) -> tuple[dict, bool]:
+    """Datensatz aus ``_intern/autocut/telemetrie/<fingerprint>.json`` oder neu messen (atomar geschrieben)."""
+    fp = fingerprint(path)
+    cache = Path(ch.autocut) / CACHE_DIR / f"{fp}.json"
+    if cache.exists() and not force:
+        rec = json.loads(cache.read_text(encoding="utf-8"))
+        veraltet = (rec.get("quelle") == "keine" and not ohne_optisch) or (schaerfe and rec.get("schaerfe_p10") is None)
+        if not veraltet:
+            return rec, True
+    rec = clip_messen(path, cfg, ohne_optisch, schaerfe)
+    rec["fingerprint"] = fp
+    rec["gemessen_am"] = _dt.datetime.now().isoformat(timespec="seconds")
+    ch.assert_writable(cache)
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    part = cache.with_name(cache.name + ".part")
+    part.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    os.replace(part, cache)
+    return rec, False
+
+
+# --- Clip-Quellen und Charge-Lauf ------------------------------------------------------------------------------------------
+
+def _videos(root: Path) -> list[dict]:
+    """Videodateien unter ``root`` (rekursiv, ohne Proxy-Ordner und versteckte Dateien); ``ordner`` relativ zur Wurzel."""
+    out = []
+    for f in sorted(root.rglob("*")):
+        if not f.is_file() or f.suffix.lower() not in VIDEO_EXTS or f.name.startswith("."):
+            continue
+        if any(part == "Proxy" or part.startswith(".") for part in f.relative_to(root).parts[:-1]):
+            continue
+        out.append({"path": str(f), "ordner": "/".join(f.relative_to(root).parts[:-1])})
+    return out
+
+
+def clips_finden(ch, ordner: list[str] | None = None) -> list[dict]:
+    """Clip-Liste: --ordner → broll_index.json → inventar.json → B-Roll-Wurzeln des Transkript-Index → media.json."""
+    if ordner:
+        clips = []
+        for o in ordner:
+            root = Path(o).expanduser()
+            if not root.is_dir():
+                raise AutoCutError(f"Ordner nicht gefunden: {root}\nIst das NAS gemountet?")
+            clips += _videos(root)
+        return clips
+    ac = Path(ch.autocut)
+    index = ch.read_json("broll_index.json")
+    if index and index.get("clips"):
+        return [{"path": str(c["path"]), "ordner": c.get("ordner") or ""} for c in index["clips"]]
+    inventar = ch.read_json("inventar.json")
+    if inventar:
+        return [{"path": str(c["path"]), "ordner": c.get("ordner") or ""} for c in inventar]
+    if (Path(ch.intern) / "transcripts_index.json").exists():
+        from .broll_index import discover_broll
+        clips = discover_broll(ch.load_index())
+        if clips:
+            return [{"path": c["path"], "ordner": c.get("ordner") or ""} for c in clips]
+    media = ch.read_json("media.json")
+    if media and media.get("clips"):
+        return [{"path": p, "ordner": Path(p).parent.name} for p in media["clips"]]
+    raise AutoCutError(f"Keine Clips gefunden: weder --ordner noch broll_index.json, inventar.json, Transkript-Index oder "
+                       f"media.json unter {ac}.")
+
+
+def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None, force: bool = False,
+                      ohne_optisch: bool = False, parallel: int | None = None, melden=print, schaerfe: bool = False) -> dict:
+    """Alle Clips messen (Cache je Clip, parallel), ``telemetrie.json`` (Liste) schreiben; Fehler je Clip sammeln."""
+    todo = clips[:limit] if limit else clips
+    fehlend = [c["path"] for c in todo if not Path(c["path"]).is_file()]
+    if todo and len(fehlend) == len(todo):
+        raise AutoCutError(f"Keine der {len(todo)} Dateien erreichbar (z. B. {fehlend[0]}) — ist das NAS gemountet?")
+    ergebnisse: dict[str, dict] = {}
+    fehler: list[str] = []
+    treffer = gemessen = 0
+    ex = ThreadPoolExecutor(max_workers=max(1, int(parallel or cfg.get("parallel", 2))))
+    try:
+        futs = {ex.submit(clip_mit_cache, ch, c["path"], cfg, force, ohne_optisch, schaerfe): c for c in todo}
+        for i, fut in enumerate(as_completed(futs), 1):
+            c = futs[fut]
+            name = Path(c["path"]).name
+            try:
+                rec, aus_cache = fut.result()
+            except AutoCutError as e:
+                fehler.append(f"{name}: {e}")
+                melden(f"[{i}/{len(todo)}] FEHLER {name}: {e}", flush=True)
+                continue
+            rec["ordner"] = c.get("ordner") or ""
+            if rec.get("fehler"):
+                fehler.append(f"{name}: {rec['fehler']}")
+            treffer += int(aus_cache)
+            gemessen += int(not aus_cache)
+            ergebnisse[c["path"]] = rec
+            melden(f"[{i}/{len(todo)}] {'Cache' if aus_cache else rec['quelle']:<7} {name}: {rec.get('haltung') or '-'} / "
+                   f"{rec.get('bewegungsart') or '-'} / wackeln "
+                   f"{rec['wackeln'] if rec.get('wackeln') is not None else '-'}", flush=True)
+    except KeyboardInterrupt:
+        ex.shutdown(wait=False, cancel_futures=True)
+        raise
+    ex.shutdown(wait=True)
+    liste = [ergebnisse[c["path"]] for c in todo if c["path"] in ergebnisse]
+    ch.write_json("telemetrie.json", liste)
+    return {"clips": liste, "fehler": fehler, "cache_treffer": treffer, "gemessen": gemessen}
+
+
+def laden(autocut_dir: str | Path) -> list[dict]:
+    """``telemetrie.json`` als Liste; leer, wenn es sie nicht gibt."""
+    p = Path(autocut_dir) / "telemetrie.json"
+    if not p.exists():
+        return []
+    data = json.loads(p.read_text(encoding="utf-8"))
+    return data if isinstance(data, list) else list(data.get("clips") or [])
+
+
+def finden(tele: list[dict], path: str | Path) -> dict | None:
+    """Datensatz zum Pfad: exakt, sonst über den Dateinamen (nur wenn eindeutig — Material kann NAS → SSD gewandert sein)."""
+    s = str(path)
+    for r in tele:
+        if r.get("path") == s:
+            return r
+    name = Path(s).name
+    treffer = [r for r in tele if Path(str(r.get("path", ""))).name == name]
+    return treffer[0] if len(treffer) == 1 else None
+
+
+# --- Helfer für Stufe 2b und 6d ------------------------------------------------------------------------------
+
+def _fenster_im_bereich(rec: dict, von_s: float, bis_s: float, fenster_s: float) -> list[list]:
+    """Fenster, deren Mitte im Bereich liegt; gibt es keine (Bereich kürzer als ein Fenster), alle überlappenden."""
+    alle = rec.get("fenster") or []
+    mitte = [f for f in alle if von_s <= f[0] + fenster_s / 2 <= bis_s]
+    return mitte or [f for f in alle if f[0] < bis_s and f[0] + fenster_s > von_s]
+
+
+def abschnitt_werte(rec: dict | None, von_s: float, bis_s: float, fenster_s: float = 2.0) -> dict:
+    """``bewegungsart`` (Mehrheit der Fenster im Bereich) und ``haltung`` des Clips für einen Abschnitt; None ohne Daten."""
+    if not rec or not rec.get("fenster"):
+        return {"bewegungsart": None, "haltung": (rec or {}).get("haltung")}
+    fen = _fenster_im_bereich(rec, von_s, bis_s, fenster_s)
+    return {"bewegungsart": mehrheit([f[3] for f in fen]) if fen else None, "haltung": rec.get("haltung")}
+
+
+def stabil_vorschlag(von_s: float, bis_s: float, rec: dict | None, cfg: dict,
+                     path: str | Path | None = None) -> tuple[bool, str]:
+    """6d: stabilisieren? Datei ``_stabilized`` (Avata-Export, Regel 18.09.) → nie; hand mit wackeln > ruhig_max_px → ja;
+    stativ/gimbal → nein; ohne Telemetrie → ja (bisheriger Standard). ``wackeln`` = Mittel der Fenster im
+    genutzten Quellbereich."""
+    name = Path(str(path or (rec or {}).get("path") or "")).name.lower()
+    if "_stabilized" in name:
+        return False, "bereits stabilisiert (Dateiname _stabilized)"
+    if not rec or rec.get("quelle") in (None, "keine") or rec.get("fehler"):
+        return True, "keine Telemetrie → Standard stabilisieren"
+    fen = _fenster_im_bereich(rec, von_s, bis_s, float(cfg["fenster_s"]))
+    wk = float(np.mean([f[1] for f in fen])) if fen else float(rec.get("wackeln") or 0.0)
+    grenze = float(cfg["ruhig_max_px"])
+    h = rec.get("haltung")
+    if h == "stativ":
+        return False, f"Stativ (wackeln {wk:.2f} px)".replace(".", ",")
+    if h == "gimbal":
+        return False, f"Gimbal (wackeln {wk:.2f} px)".replace(".", ",")
+    if wk > grenze:
+        return True, f"Hand, wackeln {wk:.2f} px > {grenze:.2f}".replace(".", ",")
+    return False, f"Hand, aber ruhig (wackeln {wk:.2f} px ≤ {grenze:.2f})".replace(".", ",")

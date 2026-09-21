@@ -1,12 +1,20 @@
 """telemetrie.py — Kennzahlen (synthetische Verläufe), später Clip-Messung, Cache, Charge-Lauf, 2b/6d-Helfer (Task 4)."""
 from __future__ import annotations
 
+import json
 import math
+import shutil
+import struct
+import subprocess
+from pathlib import Path
 
 import numpy as np
 import pytest
 
+from niro_autocut import rtmd as R
 from niro_autocut import telemetrie as T
+from niro_autocut.charge import Charge, load_config
+from niro_autocut.media import MediaInfo
 
 CFG = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_max_px": 0.15, "stativ_max_grad_s": 0.3,
        "stativ_max_px": 0.02, "schwenk_min_grad_s": 3.0, "schwenk_min_px": 1.0, "hf_grenze_hz": 3.0,
@@ -132,3 +140,172 @@ def test_kennzahlen_gesamt():
     assert mit["fenster"][0][4] == round(float(np.percentile(np.linspace(1.0, 10.0, 101)[:50], 10)) / 9.1, 2)
     unruhig = T.kennzahlen(_sinus(6.0, 1.0), CFG, None)
     assert unruhig["haltung"] == "hand" and unruhig["ruhige_fenster"] == [] and unruhig["hf_anteil"] > 0.9
+
+
+def _info(path: str, fps: float = 25.0, dauer: float = 4.0) -> MediaInfo:
+    return MediaInfo(path=path, duration_s=dauer, fps=fps, width=3840, height=2160, rotation=0, nb_frames=int(dauer * fps),
+                     timecode=None, has_audio=True, sample_rate=48000, channels=2)
+
+
+def _rtmd_puffer(frames: int = 100, proben: int = 80, gyro_y: float = 0.0, acc=(0.0, 1.15, 0.0),
+                 kb: bytes = bytes.fromhex("c2cc")) -> bytes:
+    """Synthetische Datenspur: je Frame ein Sample mit konstantem Gyro (°/s um y) und Schwerkraftvektor."""
+    def imu(v):
+        out = struct.pack(">II", proben, 6)
+        for _ in range(proben):
+            out += struct.pack(">hhh", *v)
+        return out
+    g = imu((0, int(round(gyro_y * 65.5)), 0))
+    a = imu(tuple(int(round(x * 8192)) for x in acc))
+    tags = {R.TAG_GYRO: g, R.TAG_GYRO_SKALA: struct.pack(">f", 65.5), R.TAG_ACC: a,
+            R.TAG_ACC_SKALA: struct.pack(">f", 8192.0),
+            R.TAG_IMU_HZ: struct.pack(">I", 2000), R.TAG_KB_MM: kb, R.TAG_BRENNWEITE_MM: bytes.fromhex("c2a5"),
+            R.TAG_FOKUS_M: bytes.fromhex("e62e")}
+    return R.paket_bauen(tags) * frames
+
+
+def test_defaults_haben_telemetrie_block():
+    cfg = load_config(Path("/nirgendwo"))["telemetrie"]
+    for k in ("fenster_s", "ruhig_max_px", "achsen", "vorzeichen", "px_faktor", "optisch_fuer", "optisch_breite",
+              "parallel"):
+        assert k in cfg
+
+
+def test_clip_messen_rtmd_weg(monkeypatch, tmp_path):
+    clip = tmp_path / "FX3_0001.MP4"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=100, gyro_y=10.0))
+    rng = np.random.default_rng(9)
+    bild = (rng.random((270, 480)) * 255).astype(np.uint8)
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.tile(bild, (101, 1, 1)))
+    rec = T.clip_messen(clip, CFG)
+    assert rec["quelle"] == "rtmd" and rec["kamera"] == "FX3" and rec["imu_hz"] == 2000.0 and rec["samples"] == 100
+    assert rec["schaerfe_p10"] is None and rec["fenster"][0][4] is None    # rtmd ohne --schaerfe: keine Dekodierung
+    mit = T.clip_messen(clip, CFG, schaerfe=True)
+    assert mit["quelle"] == "rtmd" and mit["schaerfe_p10"] == 1.0 and mit["fenster"][0][4] == 1.0
+    assert rec["kb_mm"] == 71.6 and rec["brennweite_mm"] == 67.7 and rec["fokus_m"] == 15.82 and rec["zoomfahrt"] is False
+    assert rec["brennweitenklasse"] == "tele" and rec["pitch_grad"] == 0.0 and rec["perspektive_hoehe"] == "Augenhöhe"
+    assert rec["bewegungsart"] == "schwenk_rechts"          # Gyro-y +10 °/s → dx negativ (vorzeichen −1) → Inhalt nach links
+    assert rec["haltung"] == "gimbal" and rec["wackeln"] == 0.0 and rec["bewegung"] > 3
+    # 10 °/s bei 71,6 mm KB ≈ 6,7 px dx, Mittel über dx/dy ≈ 3,3
+    assert len(rec["fenster"]) == 4 and rec["ruhige_fenster"] == [0.0, 1.0, 2.0, 3.0] and rec["fehler"] is None
+
+
+def test_clip_messen_faellt_ohne_datenspur_auf_optisch(monkeypatch, tmp_path):
+    clip = tmp_path / "DJI_0504.MOV"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: b"")
+    rng = np.random.default_rng(10)
+    bild = (rng.random((270, 480)) * 255).astype(np.uint8)
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.tile(bild, (30, 1, 1)))
+    rec = T.clip_messen(clip, CFG)
+    assert rec["quelle"] == "optisch" and rec["kamera"] == "DJI" and rec["kb_mm"] is None and rec["haltung"] == "stativ"
+    assert rec["schaerfe_p10"] == 1.0 and rec["fenster"][0][4] == 1.0                     # optisch: Schärfe kostenlos dabei
+    ohne = T.clip_messen(clip, CFG, ohne_optisch=True)
+    assert ohne["quelle"] == "keine" and ohne["fenster"] == [] and ohne["schaerfe_p10"] is None
+
+
+def test_clip_messen_optisch_fuer_kamera_behaelt_brennweite(monkeypatch, tmp_path):
+    clip = tmp_path / "a7MK4_1.MP4"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p), fps=50.0))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=200, proben=40, gyro_y=10.0))
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.zeros((30, hoehe, breite), np.uint8))
+    rec = T.clip_messen(clip, {**CFG, "optisch_fuer": ["a7IV"]})
+    assert (rec["quelle"] == "optisch" and rec["kb_mm"] == 71.6 and rec["brennweitenklasse"] == "tele"
+           and rec["haltung"] == "stativ")
+
+
+def test_clip_messen_fehler_wird_datensatz(monkeypatch, tmp_path):
+    clip = tmp_path / "FX3_0002.MP4"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(T, "ffprobe", lambda p: (_ for _ in ()).throw(T.AutoCutError("ffprobe kaputt")))
+    rec = T.clip_messen(clip, CFG)
+    assert rec["quelle"] == "keine" and "ffprobe kaputt" in rec["fehler"] and rec["clip"] == "FX3_0002"
+
+
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg fehlt")
+def test_telemetrie_charge_mit_inventar_und_cache(basis_charge, tmp_path):
+    clip = tmp_path / "nas" / "DJI_0001.mp4"
+    clip.parent.mkdir(parents=True)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=640x360:rate=25:duration=3",
+                    "-pix_fmt", "yuv420p", str(clip)], check=True)
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    (ac / "inventar.json").write_text(
+        json.dumps([{"ordner": "Mavic", "name": clip.name, "path": str(clip)}]), encoding="utf-8")
+    ch = Charge.open_basis(basis_charge)
+    cfg = load_config(basis_charge)["telemetrie"]
+    clips = T.clips_finden(ch)
+    assert clips == [{"path": str(clip), "ordner": "Mavic"}]
+    out = T.telemetrie_charge(ch, clips, cfg, melden=lambda *a, **k: None)
+    assert out["gemessen"] == 1 and out["cache_treffer"] == 0 and out["fehler"] == []
+    tele = T.laden(ac)
+    assert len(tele) == 1 and tele[0]["quelle"] == "optisch" and tele[0]["clip"] == "DJI_0001" and tele[0]["fingerprint"]
+    assert len(list((ac / "telemetrie").glob("*.json"))) == 1
+    assert 0 <= tele[0]["wackeln"] < 5 and len(tele[0]["fenster"]) == 2                # testsrc: 3 s → Fenster bei 0 und 1 s
+    again = T.telemetrie_charge(ch, clips, cfg, melden=lambda *a, **k: None)
+    assert again["cache_treffer"] == 1 and again["gemessen"] == 0
+    neu = T.telemetrie_charge(ch, clips, cfg, force=True, melden=lambda *a, **k: None)
+    assert neu["gemessen"] == 1
+
+
+def test_clips_finden_reihenfolge_und_ordner(basis_charge, tmp_path):
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    with pytest.raises(T.AutoCutError):
+        T.clips_finden(ch)
+    d = tmp_path / "B-Roll" / "Flur"
+    d.mkdir(parents=True)
+    (d / "FX3_0003.MP4").write_bytes(b"x")
+    (d / "Proxy").mkdir()
+    (d / "Proxy" / "FX3_0003.mov").write_bytes(b"x")
+    (d / ".versteckt.mp4").write_bytes(b"x")
+    assert T.clips_finden(ch, [str(tmp_path / "B-Roll")]) == [{"path": str(d / "FX3_0003.MP4"), "ordner": "Flur"}]
+    (ac / "broll_index.json").write_text(
+        json.dumps({"clips": [{"path": "/nas/x/FX3_9.MP4", "ordner": "Allgemein"}]}), encoding="utf-8")
+    (ac / "inventar.json").write_text(json.dumps([{"path": "/nas/y/FX3_1.MP4", "ordner": "FX3"}]), encoding="utf-8")
+    assert T.clips_finden(ch)[0]["path"] == "/nas/x/FX3_9.MP4"          # broll_index vor inventar
+    (ac / "broll_index.json").unlink()
+    assert T.clips_finden(ch)[0]["path"] == "/nas/y/FX3_1.MP4"
+
+
+def test_finden_und_abschnitt_werte():
+    tele = [{"path": "/nas/a/FX3_1.MP4", "clip": "FX3_1", "haltung": "hand",
+             "fenster": [[0.0, 0.3, 1.0, "schwenk_links"], [1.0, 0.3, 1.0, "schwenk_links"], [2.0, 0.05, 0.1, "statisch"]]},
+            {"path": "/nas/b/FX3_2.MP4", "clip": "FX3_2"}, {"path": "/nas/c/FX3_2.MP4", "clip": "FX3_2"}]
+    assert T.finden(tele, "/nas/a/FX3_1.MP4")["clip"] == "FX3_1"
+    assert T.finden(tele, "/ssd/a/FX3_1.MP4")["clip"] == "FX3_1"          # gleicher Dateiname, eindeutig
+    assert T.finden(tele, "/ssd/FX3_2.MP4") is None                       # mehrdeutig
+    assert T.finden(tele, "/nas/FX3_3.MP4") is None
+    assert T.abschnitt_werte(tele[0], 0.0, 2.0) == {"bewegungsart": "schwenk_links", "haltung": "hand"}
+    assert T.abschnitt_werte(tele[0], 2.5, 4.0) == {"bewegungsart": "statisch", "haltung": "hand"}
+    assert T.abschnitt_werte(tele[1], 0.0, 1.0) == {"bewegungsart": None, "haltung": None}
+
+
+@pytest.mark.parametrize("rec,von,bis,erwartet,grund", [
+    (None, 0, 2, True, "keine Telemetrie"),
+    ({"quelle": "keine", "fehler": None}, 0, 2, True, "keine Telemetrie"),
+    ({"quelle": "rtmd", "fehler": None, "haltung": "stativ", "wackeln": 0.0,
+      "fenster": [[0.0, 0.0, 0.0, "statisch"]]}, 0, 2, False, "Stativ"),
+    ({"quelle": "rtmd", "fehler": None, "haltung": "gimbal", "wackeln": 0.05,
+      "fenster": [[0.0, 0.05, 1.0, "fahrt"]]}, 0, 2, False, "Gimbal"),
+    ({"quelle": "rtmd", "fehler": None, "haltung": "hand", "wackeln": 0.4,
+      "fenster": [[0.0, 0.4, 1.0, "fahrt"], [1.0, 0.1, 1.0, "fahrt"]]}, 0.0, 1.0, True, "Hand, wackeln 0,40"),
+    ({"quelle": "rtmd", "fehler": None, "haltung": "hand", "wackeln": 0.4,
+      "fenster": [[0.0, 0.4, 1.0, "fahrt"], [1.0, 0.1, 1.0, "fahrt"]]}, 2.5, 3.0, False, "Hand, aber ruhig"),
+    ({"quelle": "optisch", "fehler": None, "haltung": "hand", "wackeln": 0.9, "fenster": [],
+      "path": "/nas/Avata/DJI_0005_D_stabilized.mov"}, 0, 2, False, "bereits stabilisiert"),
+])
+def test_stabil_vorschlag(rec, von, bis, erwartet, grund):
+    stabil, text = T.stabil_vorschlag(von, bis, rec, CFG)
+    assert stabil is erwartet and grund in text
+
+
+def test_stabil_vorschlag_stabilized_ohne_telemetrie():
+    stabil, text = T.stabil_vorschlag(0, 2, None, CFG, path="/ssd/Avata/DJI_0006_D_stabilized.mov")
+    assert stabil is False and "bereits stabilisiert" in text
+    assert T.stabil_vorschlag(0, 2, None, CFG, path="/ssd/FX3/FX3_0001.MP4")[0] is True
