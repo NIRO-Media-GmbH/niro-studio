@@ -39,7 +39,7 @@ Resolve. Resolve-Regeln: `tools/resolve/WORKFLOW-Resolve.md`.
 | `find_tc.py`, `plan_rows.py` | Wortgenaue In/Out je Phrase aus dem Scribe-Cache; Plan-Zeilen mit Dauer und Sprecherfolge → `plan_rows.json` |
 | `cutlist_aus_plan.py` | Cutlist mit einem Cut je „+"-Bereich, `hart_in`/`hart_out`, Sperren (ersetzt den Draft bei Innenschnitten) |
 | `broll_auswahl.py` | Auswahl-Timeline des Users nur lesen, Kontaktbögen aus dem echten In/Out (3a) |
-| `broll_einsetzen.py` | Auswahl-Shots auf V3 der roh-Timeline, Marker, Readback (3a) |
+| `broll_einsetzen.py` | Auswahl-Shots auf V3 der roh-Timeline, Marker, Brennweitenregel mit digitalem Zoom (7. Spalte `zoom`), Readback (3a) |
 | `audio_normalisieren.py` | A1 True Peak −3 dBTP je Clip + Voice Isolation, ebur128-Gegenmessung (6a) |
 | `grafik_review.py`, `grafik_einsetzen.py` | Remotion-Standbilder über dem echten Bild; Alpha-Render als ein Clip auf V4 (6b) |
 | `musik_analyse.py`, `musik/sprung_berechnen.py`, `musik/mischung_pruefen.py` | Tempo/Abschnitte, beat-genaue Sprünge, Offline-Mischung nach BS.1770 (6c) |

@@ -1,4 +1,5 @@
-"""6d-Vorlage: kompiliert, nutzt stabil_vorschlag, dokumentiert die 7. BROLL-Spalte, Stabilize nur für ausgewählte Shots."""
+"""Vorlagen 6d und 3a: kompilieren, nutzen die Telemetrie-Helfer (stabil_vorschlag, Brennweitenregel), Spalten stabil/zoom,
+Stabilize und Zoom nur für ausgewählte Shots; Planfunktionen mit Telemetrie-Datensätzen ohne Resolve."""
 from __future__ import annotations
 
 import importlib.util
@@ -8,6 +9,7 @@ from pathlib import Path
 import pytest
 
 VORLAGE = Path(__file__).resolve().parents[1] / "vorlagen" / "feinschnitt" / "feinschnitt_bauen.py"
+VORLAGE_3A = VORLAGE.with_name("broll_einsetzen.py")
 README = VORLAGE.parents[1] / "README.md"
 
 
@@ -140,3 +142,51 @@ def test_6d_vorlage_setzt_zoom_beim_bau():
     assert 'RA._safe(x.SetProperty, False, k, float(m["zoom"]))' in text and 'for k in ("ZoomX", "ZoomY")' in text
     assert 'RA._safe(x.GetProperty, None, "ZoomX")' in text and 'out["zoom_abweichungen"]' in text
     assert "8. Spalte optional" in text
+
+
+def _3a_pruefen(monkeypatch, plan: list[tuple], tele: list[dict]):
+    spec = importlib.util.spec_from_file_location("broll_einsetzen_vorlage", VORLAGE_3A)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    monkeypatch.setattr(mod, "TELE", tele)
+    monkeypatch.setattr(mod, "TCFG", {**mod.TCFG, "brennweite_gleich_max": 0.2, "digitalzoom_faktor": 1.25,
+                                      "digitalzoom_max": 1.5})
+    monkeypatch.setattr(mod, "PLAN", plan)
+    tl = {"items": [{"rec_out_f": 200}], "beats": [{"nr": "1"}]}
+    zeilen, fehler = mod.pruefen(SHOTS, tl)
+    return mod, tl, zeilen, fehler
+
+
+def test_3a_pruefen_brennweitenregel_bei_100_prozent(monkeypatch, capsys):
+    """Wie 6d, aber Tempo 100 %: S02 nutzt die Quelle 2,8–4,4 s (140 + 80 Frames bei 50p) — dort liegt der schnelle
+    Zoom 3,7–4,2 s von B (Hinweis). Am Schnitt 50/52 mm → Zoom 1,25× auf S02."""
+    mod, tl, zeilen, fehler = _3a_pruefen(monkeypatch, [(1, 0, 40, 0, "1", "A"), (2, 20, 40, 40, "1", "B")],
+                                          [TELE_A, TELE_B])
+    assert fehler == [] and [z["zoom"] for z in zeilen] == [1.0, 1.25]
+    assert zeilen[0]["zoom_hinweise"] == ["S01: schneller Zoom 0,4–0,9 s (35 → 50 mm, 72 %/s)"]
+    assert zeilen[1]["zoom_hinweise"] == ["S02: schneller Zoom 3,7–4,2 s (52 → 70 mm, 59 %/s)"]
+    assert zeilen[1]["zoom_hinweis"] == "S02: 50 → 52 mm am Schnitt, Zoom 1,25× auf S02"
+    mod.bericht(zeilen, tl)
+    out = capsys.readouterr().out
+    assert "Zoom 1,25×" in out and "Hinweis: S02: schneller Zoom 3,7–4,2 s (52 → 70 mm, 59 %/s)" in out
+
+
+def test_3a_pruefen_spalte_zoom_und_ohne_telemetrie(monkeypatch, capsys):
+    _, _, zeilen, fehler = _3a_pruefen(monkeypatch, [(1, 0, 40, 0, "1", "A"), (2, 20, 40, 40, "1", "B", 1.0)],
+                                       [TELE_A, TELE_B])
+    assert fehler == [] and [z["zoom"] for z in zeilen] == [1.3, 1.0]
+    _, _, _, fehler2 = _3a_pruefen(monkeypatch, [(1, 0, 40, 0, "1", "A", 1.6), (2, 20, 40, 40, "1", "B")],
+                                   [TELE_A, TELE_B])
+    assert fehler2 == ["S01: Spalte zoom 1,6× außerhalb 1,0–1,5× (telemetrie.digitalzoom_max)"]
+    mod, tl, zeilen3, fehler3 = _3a_pruefen(monkeypatch, [(1, 0, 40, 0, "1", "A"), (2, 20, 40, 40, "1", "B")], [])
+    assert fehler3 == [] and [z["zoom"] for z in zeilen3] == [1.0, 1.0]
+    mod.bericht(zeilen3, tl)
+    assert "Hinweis: keine Telemetrie — Brennweitenregel nicht geprüft" in capsys.readouterr().out
+
+
+def test_3a_vorlage_setzt_zoom_beim_bau():
+    py_compile.compile(str(VORLAGE_3A), doraise=True)
+    text = VORLAGE_3A.read_text(encoding="utf-8")
+    assert "TM.brennweitenfolge(folge, TCFG)" in text and "TM.genutzter_quellbereich_s(" in text
+    assert 'SetProperty, False, k, float(z["zoom"]))' in text and 'for k in ("ZoomX", "ZoomY")' in text
+    assert 'RA._safe(it.GetProperty, None, "ZoomX")' in text and '"zoom_abweichungen": zoom_abweichungen' in text

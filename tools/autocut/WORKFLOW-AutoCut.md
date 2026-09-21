@@ -38,7 +38,7 @@ Original-Skripte in `_intern/`, Ablauf und Zahlen in `Protokoll.md`).
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe |
 | „Feinschnitt" | 6 | neue Timeline „AutoCut <Video> <Datum> Feinschnitt": A/B-Wechsel, B-Roll-Tempo und Stabilisierung, Grafik V4, Ton, Musik, SFX; danach Grading, Begradigen, Kopfposition. Die Bausteine 6a–6i sind einzeln aufrufbar, z. B. „AutoCut: … Grading" (Vorlagen) |
 | „Kanten" | – | Kantenprüfung am Export einer AutoCut-Timeline (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) mit Schnittbildern; Resolve nur lesend |
-| „Telemetrie" | – | Gyro/Beschleunigung/Brennweite je Clip aus der Sony-rtmd-Spur (optischer Rückfall) → `telemetrie.json` + Bericht: wackeln, ruhige Fenster, Haltung, Bewegungsart, Brennweite in mm, Zoomfahrten, Perspektivklasse; Grundlage für Sichtung, 2b, 6d |
+| „Telemetrie" | – | Gyro/Beschleunigung/Brennweite je Clip aus der Sony-rtmd-Spur (optischer Rückfall) → `telemetrie.json` + Bericht: wackeln, ruhige Fenster, Haltung, Bewegungsart, Brennweite in mm, Zoomfahrten, Perspektivklasse; Grundlage für Sichtung, 2b, 3a, 6d |
 | „Replay" | – | Timeline nach Dropbox Replay hochladen: Vorschau, Upload nur nach OK im Chat, danach im Chrome in `Autocut/<Kunde>/<Projekt>` einsortieren |
 | „Kommentare" | – | Replay-Kommentare selbstständig aus dem Replay-Ordner des Projekts holen, Eindeutiges in einer neuen Timeline-Version umsetzen, Handarbeit und Rückfragen melden |
 
@@ -325,17 +325,23 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
      bzw. gelb „klären …".
    - Sprechende Personen im B-Roll zuordnen.
 4. **Plan** (Claude, in `broll_einsetzen.py` → `PLAN`, `MARKER`, `BIN`) — je Eintrag: Shot-Nr. der Auswahl,
-   Versatz im Shot, Länge, Record-In (Frames), Beat, Inhalt. Regeln:
+   Versatz im Shot, Länge, Record-In (Frames), Beat, Inhalt, optional Zoom (7. Spalte). Regeln:
    - Verteilung nach Wortzeiten und „Bild-Vorschlag" des Plans.
    - **Gesicht bleibt** bei Kaltstart, Bauchbinden, Beweis-Aussagen und CTAs.
    - B-Roll deckt Titel, Innenschnitte und passende Motive.
    - Wer im B-Roll spricht, liegt nicht unter seinem eigenen O-Ton (Lippen).
-   - Kein Einstellungs-Doppel in Folge.
+   - Kein Einstellungs-Doppel in Folge und nie zweimal dieselbe KB-Brennweite direkt hintereinander (unter 20 %
+     Abstand, `telemetrie.json`) — gibt das Material nichts anderes her, setzt der Bau einen digitalen Zoom (1,25×,
+     höchstens 1,5×; Spalte 7 `zoom` legt ihn fest, 1.0 = keiner).
+   - Schnelle Zoomfahrten meiden; langsame, gleichmäßige Zooms wie die Drehteller-Closeups (Wurst & Liebe) passen.
    - Jeder Shot höchstens einmal, nie über die Grenzen der Auswahl hinaus.
 5. **Probelauf** — `broll_einsetzen.py` ohne Flag. Er prüft Auswahl-Grenzen, Doppelnutzung und Überlappung und
    gibt die Tabelle aus. Die Frame-Umrechnung ist für 50p-Clips in 25p gemessen; andere Bildraten vorher prüfen.
+   Mit `telemetrie.json` zeigt er je Shot den digitalen Zoom und Hinweise (schneller Zoom im genutzten Bereich,
+   gesetzter Zoom, Zoom nicht möglich), ohne sie „keine Telemetrie — Brennweitenregel nicht geprüft".
 6. **Vorlegen, dann bauen** — nach Freigabe `broll_einsetzen.py --bauen`:
-   - V3 der roh-Timeline (muss leer sein) in einem Append, dazu Marker.
+   - V3 der roh-Timeline (muss leer sein) in einem Append, dazu Marker. Shots mit digitalem Zoom bekommen
+     `ZoomX`/`ZoomY` (Readback `zoom_gesetzt`, `zoom_abweichungen` in `broll_einsatz.json`).
    - Readback: identisch, 0 außerhalb der Auswahl.
    - Timeline und Bin des Users zurück → `_intern/autocut/broll_einsatz.json`.
    - Rohschnitt-Bericht um „B-Roll" (Tabelle aller Shots) ergänzen, Protokoll-Eintrag.
@@ -702,7 +708,7 @@ tilt_auf/ab, fahrt, gemischt — `schwenk_links` = Kamera dreht nach links), `wa
 `ruhige_fenster` (wackeln ≤ `telemetrie.ruhig_max_px`). `ruhige_fenster` sind Fenster-Startzeiten in s (Fensterlänge `fenster_s`
 im Datensatz); das letzte Fenster kann kürzer sein. Schwellen und Kamerafaktoren in `defaults.yaml` unter `telemetrie:`.
 Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b (Perspektive aus Metadaten, Brennweite in mm und Zoom je Abschnitt,
-`bewegungsart`/`haltung` je Abschnitt) und 6d (Stabilisieren nur bei Bedarf, Brennweitenregel). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
+`bewegungsart`/`haltung` je Abschnitt), 3a (Brennweitenregel) und 6d (Stabilisieren nur bei Bedarf, Brennweitenregel). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
 Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
 
 **Zoomfahrten (seit 21.09.2026, Spec `docs/superpowers/specs/2026-09-21-autocut-zoom-brennweite-design.md`):** aus der
