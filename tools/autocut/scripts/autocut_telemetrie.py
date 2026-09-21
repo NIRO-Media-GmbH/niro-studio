@@ -18,7 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from niro_autocut.charge import AutoCutError, Charge, append_protokoll  # noqa: E402
-from niro_autocut.telemetrie import clips_finden, telemetrie_charge  # noqa: E402
+from niro_autocut.telemetrie import clips_eindeutig, clips_finden, laden, telemetrie_charge  # noqa: E402
 from niro_autocut.telemetrie_bericht import bericht_md  # noqa: E402
 
 
@@ -41,9 +41,10 @@ def main(argv: list[str] | None = None) -> int:
         ch = Charge.open_basis(args.charge)
         cfg = ch.config["telemetrie"]
         clips = clips_finden(ch, args.ordner)
-        todo = clips[:args.limit] if args.limit else clips
-        print(f"Charge: {ch.root}\n{len(clips)} Clips" + (f", dieser Lauf {len(todo)}" if args.limit else "")
-              + f" · Ordner: {', '.join(sorted({c['ordner'] or '(Wurzel)' for c in clips})[:8])}\n")
+        eindeutig = clips_eindeutig(clips)
+        todo = eindeutig[:args.limit] if args.limit else eindeutig
+        print(f"Charge: {ch.root}\n{len(eindeutig)} Clips" + (f", dieser Lauf {len(todo)}" if args.limit else "")
+              + f" · Ordner: {', '.join(sorted({c['ordner'] or '(Wurzel)' for c in eindeutig})[:8])}\n")
         if args.dry_run:
             print("Probelauf — nichts gemessen, nichts geschrieben.")
             return 0
@@ -55,16 +56,19 @@ def main(argv: list[str] | None = None) -> int:
                              [f"{erg['anzahl']} Clips, Datei {ch.autocut / 'telemetrie_kalibrierung.json'}"]
                              + [f"{k}: {v['empfehlung']}" for k, v in erg["kameras"].items()])
             return 0
-        out = telemetrie_charge(ch, todo, cfg, limit=None, force=args.force, ohne_optisch=args.ohne_optisch,
+        # volle Liste + limit: telemetrie_charge dedupliziert, schneidet und ergänzt telemetrie.json (Teil-Lauf kürzt nicht)
+        out = telemetrie_charge(ch, clips, cfg, limit=args.limit, force=args.force, ohne_optisch=args.ohne_optisch,
                                 parallel=args.parallel, schaerfe=args.schaerfe)
-        md = bericht_md(out["clips"], f"{ch.kunde} / {ch.projekt} / {ch.root.name}", ch.read_json("broll_index.json"))
+        # Bericht aus der ganzen telemetrie.json, nicht nur aus diesem (Teil-)Lauf
+        md = bericht_md(laden(ch.autocut), f"{ch.kunde} / {ch.projekt} / {ch.root.name}", ch.read_json("broll_index.json"))
         ziel = ch.ergebnisse / "telemetrie.md"
         ch.assert_writable(ziel)
         ziel.parent.mkdir(parents=True, exist_ok=True)
         ziel.write_text(md, encoding="utf-8")
         zeilen = [f"Telemetrie: {len(out['clips'])} Clips "
                   f"({out['gemessen']} gemessen, {out['cache_treffer']} Cache-Treffer, "
-                  f"{len(out['fehler'])} Fehler)" + (f", Testlauf --limit {args.limit}" if args.limit else ""),
+                  f"{len(out['fehler'])} Fehler; telemetrie.json gesamt {out['gesamt']})"
+                  + (f", Testlauf --limit {args.limit}" if args.limit else ""),
                   f"Dateien: {ch.autocut / 'telemetrie.json'}, {ziel}"] + [f"Fehler: {f}" for f in out["fehler"][:10]]
         append_protokoll(ch, "Telemetrie", zeilen)
         print("\n" + "\n".join(zeilen))

@@ -681,7 +681,8 @@ Meldung an den User:
 
 `autocut_telemetrie.py "<Charge>" [--ordner <Pfad> …] [--limit N] [--force] [--ohne-optisch] [--dry-run]` liest je Clip die
 Sony-rtmd-Datenspur (FX3, a7 IV: Gyro und Beschleunigung mit 2000 Hz, KB-Brennweite, Fokus) und schreibt
-`_intern/autocut/telemetrie.json` (Liste je Clip) plus `Ergebnisse/Rohschnitt/telemetrie.md`. Clips ohne Datenspur (Mavic)
+`_intern/autocut/telemetrie.json` (Liste je Clip) plus `Ergebnisse/Rohschnitt/telemetrie.md`; Teil-Läufe (`--limit`, andere
+`--ordner`) ergänzen `telemetrie.json` (bisherige Einträge bleiben), der Bericht umfasst die ganze Datei. Clips ohne Datenspur (Mavic)
 werden optisch gemessen (Phasenkorrelation 480×270 @25 fps). Beide Wege liefern dieselbe Größe: Verschiebung des Bildinhalts
 je 25-fps-Frame in px @480 — `wackeln` (Zittern) und `bewegung` wie `jitter`/`bewegung` in `ruhe.py`.
 Clip-Quelle: `--ordner`, sonst `broll_index.json`, `inventar.json`, B-Roll-Wurzeln des Transkript-Index, `media.json`.

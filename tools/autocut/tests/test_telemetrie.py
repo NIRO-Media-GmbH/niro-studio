@@ -591,3 +591,63 @@ def test_laden_kaputte_telemetrie_json_liefert_leer(tmp_path):
     datei.unlink()
     datei.mkdir()                                                                  # OSError beim Lesen
     assert T.laden(tmp_path) == []
+
+
+# --- Final Review (21.09.2026): Teil-Läufe kürzen telemetrie.json nicht (I3) --------------------------------------------
+
+def _fake_messung(monkeypatch, calls: list[str] | None = None) -> None:
+    """clip_mit_cache ersetzt: Datensatz „neu gemessen" mit Fingerprint aus dem Dateinamen."""
+    def fake(ch_, path, cfg, force=False, ohne_optisch=False, schaerfe=False):
+        if calls is not None:
+            calls.append(str(path))
+        rec = T._leer(Path(path), "FX3", None)
+        rec.update(quelle="optisch", fingerprint="fp-" + Path(path).stem, neu=True)
+        return rec, False
+
+    monkeypatch.setattr(T, "clip_mit_cache", fake)
+
+
+def test_telemetrie_charge_teillauf_ergaenzt_telemetrie_json(monkeypatch, basis_charge, tmp_path):
+    """I3: --limit 2 nach einem Volllauf darf telemetrie.json nicht auf 2 Einträge kürzen. Reihenfolge: Clip-Liste des
+    Laufs (dedupliziert), dann die übrigen alten Einträge in alter Reihenfolge; Rückgabe clips = nur dieser Lauf."""
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    p = {n: tmp_path / f"FX3_{n}.MP4" for n in "ABCD"}
+    for f in p.values():
+        f.write_bytes(b"x")
+    alt = [{"path": "/nas/alt/FX3_X.MP4", "clip": "FX3_X", "quelle": "rtmd", "fingerprint": "fp-X"},
+           {"path": str(p["C"]), "clip": "FX3_C", "quelle": "rtmd", "fingerprint": "fp-C"},
+           {"path": str(p["A"]), "clip": "FX3_A", "quelle": "rtmd", "fingerprint": "fp-A-alt"}]
+    (ac / "telemetrie.json").write_text(json.dumps(alt), encoding="utf-8")
+    calls: list[str] = []
+    _fake_messung(monkeypatch, calls)
+    clips = [{"path": str(p[n]), "ordner": o} for n, o in (("A", "x"), ("A", "y"), ("B", "x"), ("C", "x"), ("D", "x"))]
+    out = T.telemetrie_charge(ch, clips, CFG, limit=2, melden=lambda *a, **k: None)
+    assert sorted(calls) == sorted([str(p["A"]), str(p["B"])])                   # dedupliziert vor limit, parallel
+    assert [r["clip"] for r in out["clips"]] == ["FX3_A", "FX3_B"] and out["gemessen"] == 2
+    tele = T.laden(ac)
+    assert [r["clip"] for r in tele] == ["FX3_A", "FX3_B", "FX3_C", "FX3_X"]      # D: nie gemessen, kein alter Eintrag
+    assert tele[0].get("neu") is True and tele[0]["ordner"] == "x"                 # A: Ergebnis dieses Laufs
+    assert tele[2].get("neu") is None and tele[2]["quelle"] == "rtmd"             # C: alter Eintrag bleibt
+    assert out["gesamt"] == 4
+
+
+def test_telemetrie_charge_ersetzt_alten_pfad_mit_gleichem_fingerprint(monkeypatch, basis_charge, tmp_path):
+    """I3/T4: nach einem Umzug NAS → SSD (gleicher Fingerprint) bleibt der alte NAS-Eintrag nicht zusätzlich stehen —
+    sonst zählte der Bericht (aus der ganzen telemetrie.json) den Clip doppelt und finden wäre per Dateiname mehrdeutig."""
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    ssd = tmp_path / "ssd" / "DJI_0001.MOV"
+    ssd.parent.mkdir(parents=True)
+    ssd.write_bytes(b"x")
+    alt = [{"path": "/nas/Mavic/DJI_0001.MOV", "clip": "DJI_0001", "quelle": "optisch", "fingerprint": "fp-DJI_0001"},
+           {"path": "/nas/Mavic/DJI_0002.MOV", "clip": "DJI_0002", "quelle": "optisch", "fingerprint": "fp-DJI_0002"},
+           {"path": "/nas/Mavic/kaputt.MOV", "clip": "kaputt", "quelle": "keine", "fehler": "Datei nicht gefunden"}]
+    (ac / "telemetrie.json").write_text(json.dumps(alt), encoding="utf-8")
+    _fake_messung(monkeypatch)
+    out = T.telemetrie_charge(ch, [{"path": str(ssd), "ordner": "Mavic"}], CFG, melden=lambda *a, **k: None)
+    tele = T.laden(ac)
+    assert [r["path"] for r in tele] == [str(ssd), "/nas/Mavic/DJI_0002.MOV", "/nas/Mavic/kaputt.MOV"]
+    assert out["gesamt"] == 3 and len(out["clips"]) == 1

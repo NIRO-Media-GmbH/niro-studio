@@ -63,3 +63,57 @@ def test_fehler_ohne_charge_und_ohne_clips(basis_charge, tmp_path, capsys):
     (basis_charge / "_intern" / "autocut").mkdir(parents=True)
     assert skript.main([str(basis_charge)]) == 1
     assert "Keine Clips" in capsys.readouterr().err
+
+
+# --- Final Review (21.09.2026): volle Clip-Liste an telemetrie_charge, Bericht aus der ganzen telemetrie.json (I3) -------
+
+def _charge_mit_inventar(basis_charge: Path) -> Path:
+    """Charge mit inventar.json (ein Pfad doppelt) und einer telemetrie.json aus einem früheren Volllauf."""
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    inventar = [{"ordner": "FX3", "path": "/nas/FX3/FX3_1.MP4"}, {"ordner": "FX3b", "path": "/nas/FX3/FX3_1.MP4"},
+                {"ordner": "FX30", "path": "/nas/FX30/C0001.MP4"}]
+    (ac / "inventar.json").write_text(json.dumps(inventar), encoding="utf-8")
+    alt = [{"path": "/nas/FX3/FX3_1.MP4", "clip": "FX3_1", "kamera": "FX3", "quelle": "rtmd", "wackeln": 0.1,
+            "fenster": [], "ruhige_fenster": [], "fehler": None},
+           {"path": "/nas/FX30/C0001.MP4", "clip": "C0001", "kamera": "Sony ILME-FX30", "quelle": "rtmd", "wackeln": 0.2,
+            "fenster": [], "ruhige_fenster": [], "fehler": None}]
+    (ac / "telemetrie.json").write_text(json.dumps(alt), encoding="utf-8")
+    return ac
+
+
+def test_cli_uebergibt_volle_liste_und_baut_bericht_aus_ganzer_telemetrie_json(basis_charge, monkeypatch, capsys):
+    ac = _charge_mit_inventar(basis_charge)
+    skript = _lade()
+    gesehen: dict = {}
+
+    def fake(ch, clips, cfg, limit=None, **kw):
+        gesehen.update(clips=list(clips), limit=limit)
+        return {"clips": [json.loads((ac / "telemetrie.json").read_text(encoding="utf-8"))[0]], "fehler": [],
+                "cache_treffer": 0, "gemessen": 1, "gesamt": 2}
+
+    monkeypatch.setattr(skript, "telemetrie_charge", fake)
+    assert skript.main([str(basis_charge), "--limit", "1"]) == 0
+    assert len(gesehen["clips"]) == 3 and gesehen["limit"] == 1          # nicht vorher geschnitten, Dublette inklusive
+    out = capsys.readouterr().out
+    assert "2 Clips, dieser Lauf 1" in out                                # eindeutige Pfade
+    md = (basis_charge / "Ergebnisse" / "Rohschnitt" / "telemetrie.md").read_text(encoding="utf-8")
+    assert "2 Clips" in md and "FX3_1" in md and "C0001" in md             # ganze telemetrie.json, nicht nur der Teil-Lauf
+
+
+def test_cli_kalibrieren_bekommt_deduplizierte_liste(basis_charge, monkeypatch):
+    _charge_mit_inventar(basis_charge)
+    skript = _lade()
+    from niro_autocut import telemetrie_kalibrierung as K
+    gesehen: dict = {}
+
+    def fake(ch, clips, cfg, parallel=None, **kw):
+        gesehen["clips"] = [c["path"] for c in clips]
+        return {"anzahl": len(clips), "kameras": {}, "empfehlung": {}, "fehler": []}
+
+    monkeypatch.setattr(K, "kalibrieren", fake)
+    monkeypatch.setattr(K, "tabelle", lambda erg: "Tabelle")
+    assert skript.main([str(basis_charge), "--kalibrieren"]) == 0
+    assert gesehen["clips"] == ["/nas/FX3/FX3_1.MP4", "/nas/FX30/C0001.MP4"]
+    assert skript.main([str(basis_charge), "--kalibrieren", "--limit", "1"]) == 0
+    assert gesehen["clips"] == ["/nas/FX3/FX3_1.MP4"]

@@ -388,17 +388,50 @@ def clips_finden(ch, ordner: list[str] | None = None) -> list[dict]:
                        f"media.json unter {ac}.")
 
 
-def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None, force: bool = False,
-                      ohne_optisch: bool = False, parallel: int | None = None, melden=print, schaerfe: bool = False) -> dict:
-    """Alle Clips messen (Cache je Clip, parallel), ``telemetrie.json`` (Liste) schreiben; Fehler je Clip sammeln,
-    bricht dabei nie ab (KeyboardInterrupt ausgenommen). Doppelte Pfade werden vor ``limit`` entfernt (erster
-    Eintrag gewinnt, samt ``ordner``)."""
+def clips_eindeutig(clips: list[dict]) -> list[dict]:
+    """Clip-Liste ohne doppelte Pfade (erster Eintrag gewinnt, samt ``ordner``); Reihenfolge bleibt."""
     gesehen: set[str] = set()
     eindeutig: list[dict] = []
     for c in clips:
         if c["path"] not in gesehen:
             gesehen.add(c["path"])
             eindeutig.append(c)
+    return eindeutig
+
+
+def _zusammenfuehren(clips: list[dict], ergebnisse: dict[str, dict], alt: list[dict]) -> list[dict]:
+    """``telemetrie.json`` nach einem (Teil-)Lauf: zuerst die Clip-Liste des Laufs in ihrer Reihenfolge (Ergebnis dieses
+    Laufs, sonst der bisherige Eintrag), danach die übrigen bisherigen Einträge in alter Reihenfolge — ohne Dubletten nach
+    Pfad und ohne bisherige Einträge, deren Fingerprint schon vorkommt (Clip umgezogen, z. B. NAS → SSD)."""
+    alt_je_pfad: dict[str, dict] = {}
+    for r in alt:
+        alt_je_pfad.setdefault(str(r.get("path")), r)
+    out: list[dict] = []
+    for c in clips:
+        if c["path"] in ergebnisse:
+            out.append(ergebnisse[c["path"]])
+        elif c["path"] in alt_je_pfad:
+            out.append(alt_je_pfad[c["path"]])
+    pfade = {str(r.get("path")) for r in out}
+    fingerprints = {r["fingerprint"] for r in out if r.get("fingerprint")}
+    for r in alt:
+        p, fp = str(r.get("path")), r.get("fingerprint")
+        if p in pfade or (fp and fp in fingerprints):
+            continue
+        out.append(r)
+        pfade.add(p)
+        if fp:
+            fingerprints.add(fp)
+    return out
+
+
+def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None, force: bool = False,
+                      ohne_optisch: bool = False, parallel: int | None = None, melden=print, schaerfe: bool = False) -> dict:
+    """Clips messen (Cache je Clip, parallel) und ``telemetrie.json`` (Liste) schreiben; Fehler je Clip sammeln, bricht
+    dabei nie ab (KeyboardInterrupt ausgenommen). Doppelte Pfade werden vor ``limit`` entfernt (erster Eintrag gewinnt,
+    samt ``ordner``). Ein Teil-Lauf (``limit``, andere ``--ordner``) ergänzt ``telemetrie.json``, statt sie zu kürzen
+    (siehe ``_zusammenfuehren``); ``clips`` der Rückgabe = nur dieser Lauf, ``gesamt`` = Einträge in ``telemetrie.json``."""
+    eindeutig = clips_eindeutig(clips)
     todo = eindeutig[:limit] if limit else eindeutig
     fehlend = [c["path"] for c in todo if not Path(c["path"]).is_file()]
     if todo and len(fehlend) == len(todo):
@@ -443,8 +476,9 @@ def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None
         raise
     ex.shutdown(wait=True)
     liste = [ergebnisse[c["path"]] for c in todo if c["path"] in ergebnisse]
-    ch.write_json("telemetrie.json", liste)
-    return {"clips": liste, "fehler": fehler, "cache_treffer": treffer, "gemessen": gemessen}
+    gesamt = _zusammenfuehren(eindeutig, ergebnisse, laden(ch.autocut))
+    ch.write_json("telemetrie.json", gesamt)
+    return {"clips": liste, "fehler": fehler, "cache_treffer": treffer, "gemessen": gemessen, "gesamt": len(gesamt)}
 
 
 def laden(autocut_dir: str | Path) -> list[dict]:
