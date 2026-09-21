@@ -4,7 +4,8 @@ Aufruf: tools/autocut/venv/bin/python _intern/gesichtscheck/gesichtscheck.py
 Vorher einmal bauen (das Skript ruft die Binärdatei _intern/gesichtscheck/faces auf):
   swiftc -O _intern/gesichtscheck/faces.swift -o _intern/gesichtscheck/faces
 Für jedes 2. Frame, in dem die Grafikebene sichtbar (Alpha-Mittel > 0,3 von 255), aber nicht deckend ist (Alpha-Minimum
-< fb.DECKEND_AB): oberstes Bild laut Feinschnitt-Plan (V3 B-Roll > V2 a7 > V1 FX3, mit Tempo und Punch-in) aus den Proxys holen,
+< fb.DECKEND_AB): oberstes Bild laut Feinschnitt-Plan (V3 B-Roll > V2 a7 > V1 FX3, mit Tempo, Punch-in und dem digitalen Zoom
+der Brennweitenregel — V3 mit Zoom z > 1 als Ausschnitt iw/z × ih/z auf die Bildmitte wie beim Bau) aus den Proxys holen,
 Gesichter per Apple Vision (faces.swift, Konfidenz ≥ 0,5) finden und gegen die Alpha-Maske (> 50 %) der Grafik prüfen.
 Gesichtsbox +BOX_SEITLICH seitlich, +BOX_KINN unten (Kinn); auf V1/V2 vorher mit dem Resolve-Transform des Items umgerechnet
 (Begradigung, Kopfposition, Punch-in). Kritisch: Maske in der Box oder Abstand < KRITISCH_PX px (540p) = 60 px (1080p).
@@ -16,7 +17,8 @@ Proxys <Ordner des Originals>/Proxy/<Clip>.mov, begradigen/parameter_berechnen.p
 optional begradigen/parameter.json (je Clip „resolve"/„resolve_punch_in") und begradigen/kopf_final.json (v1/v2: start → neu;
 hat Vorrang). Werkzeuge: ffmpeg, ImageMagick (magick), faces.
 Ausgaben in _intern/gesichtscheck/: bild/f_<Frame>.jpg + bild/index.json (Cache; ein Frame wird neu geholt, wenn dort eine andere
-Quelle oben liegt), alpha/a_<von>_<bis>.npy (Cache der Masken, wird NICHT invalidiert — nach neuem Grafik-Render alpha/ leeren),
+Quelle oder ein anderer Zoom oben liegt), alpha/a_<von>_<bis>.npy (Cache der Masken, wird NICHT invalidiert — nach neuem
+Grafik-Render alpha/ leeren),
 bericht.json (pruef_frames, gesichter, kritisch; abstand_px_540p negativ = Anzahl überdeckter Maskenpixel in der Box),
 kritisch_<Frame>.jpg (je zusammenhängendem Fenster das schlimmste Frame mit Box; alte Bilder bleiben liegen).
 Nur lesen: nichts in Resolve. Grenzen: B-Roll-Boxen ohne Stabilisierungs-Zoom (Proxy ungestabilisiert), nur jedes 2. Frame.
@@ -56,20 +58,37 @@ def proxy(pfad: str) -> str:
     return str(q if q.exists() else p)
 
 
+def bild_filter(zoom: float | None, breite: int = W, hoehe: int = H) -> str:
+    """ffmpeg-Filter für ein Prüfbild: digitaler Zoom z > 1 der Brennweitenregel (ZoomX/ZoomY auf die Bildmitte, Pan/Tilt 0)
+    als mittiger Ausschnitt crop=iw/z:ih/z vor dem Skalieren — wie beim Bau; ohne Zoom nur scale."""
+    z = float(zoom or 1.0)
+    return (f"crop=iw/{z:g}:ih/{z:g}," if z > 1.0 + 1e-9 else "") + f"scale={breite}:{hoehe}"
+
+
 def oberstes_bild(p: dict, f: int):
-    """(Spur, Datei, Quellsekunde, Punch-in?) des sichtbaren Bilds unter der Grafik."""
+    """(Spur, Datei, Quellsekunde, Punch-in?, Record-In des Items, digitaler Zoom) des sichtbaren Bilds unter der Grafik;
+    Zoom nur auf V3 (v3_meta aus fb.plan), V1/V2 laufen über box_transformieren (1.0)."""
     for m, it in zip(sorted(p["v3_meta"], key=lambda z: z["rec_in_f"]), sorted(p["V3"], key=lambda i: i.rec_in_f)):
         if it.rec_in_f <= f < it.rec_out_f:
             # Quellbilder je Timeline-Frame (Standard 50p-Quelle in 25p: 100 % = 2, „langsam" 50 % = 1)
             schritt = QUELL_FPS_BROLL / fb.FPS * (0.5 if m["langsam"] else 1.0)
-            return "V3", it.clip, (it.src_in_f + schritt * (f - it.rec_in_f)) / QUELL_FPS_BROLL, False, it.rec_in_f
+            return ("V3", it.clip, (it.src_in_f + schritt * (f - it.rec_in_f)) / QUELL_FPS_BROLL, False, it.rec_in_f,
+                    float(m.get("zoom") or 1.0))
     for spur in ("V2", "V1"):
         for it in p[spur]:
             if it.rec_in_f <= f < it.rec_out_f:
                 punch = spur == "V1" and it.beat_nr == fb.PUNCH_IN["beat"] and it.rec_in_f == sorted(
                     [i for i in p["V1"] if i.beat_nr == fb.PUNCH_IN["beat"]], key=lambda i: i.rec_in_f)[fb.PUNCH_IN["index"]].rec_in_f
-                return spur, it.clip, (it.src_in_f + f - it.rec_in_f) / fb.FPS, punch, it.rec_in_f
+                return spur, it.clip, (it.src_in_f + f - it.rec_in_f) / fb.FPS, punch, it.rec_in_f, 1.0
     return None
+
+
+def signatur(lage) -> str | None:
+    """Cache-Signatur eines Prüfbilds: Datei@Quellsekunde, mit digitalem Zoom „×z" (ohne Zoom wie bisher)."""
+    if lage is None:
+        return None
+    _, datei, t, _, _, zoom = lage
+    return f"{datei}@{t:.3f}" + (f"×{zoom:g}" if zoom != 1.0 else "")
 
 
 def main() -> None:
@@ -86,10 +105,10 @@ def main() -> None:
     bg.mkdir(exist_ok=True)
     am.mkdir(exist_ok=True)
     lagen = {f: oberstes_bild(p, f) for f in frames}
-    # Cache nur gültig, solange an dem Frame dieselbe Quelle oben liegt (Plan-Änderungen invalidieren)
+    # Cache nur gültig, solange an dem Frame dieselbe Quelle mit demselben Zoom oben liegt (Plan-Änderungen invalidieren)
     idx_pfad = bg / "index.json"
     alt = json.loads(idx_pfad.read_text()) if idx_pfad.exists() else {}
-    neu = {str(f): None if lagen[f] is None else f"{lagen[f][1]}@{lagen[f][2]:.3f}" for f in frames}
+    neu = {str(f): signatur(lagen[f]) for f in frames}
     for k, sig in neu.items():
         if alt.get(k) != sig and (bg / f"f_{int(k):05d}.jpg").exists():
             (bg / f"f_{int(k):05d}.jpg").unlink()
@@ -105,9 +124,9 @@ def main() -> None:
         ziel = bg / f"f_{f:05d}.jpg"
         if ziel.exists() or lagen[f] is None:
             return
-        spur, datei, t, _, _ = lagen[f]
+        spur, datei, t, _, _, zoom = lagen[f]
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{t:.3f}", "-i", proxy(datei), "-frames:v", "1",
-                        "-vf", f"scale={W}:{H}", "-q:v", "3", str(ziel)], check=True)
+                        "-vf", bild_filter(zoom), "-q:v", "3", str(ziel)], check=True)
 
     # Grafik-Alpha: zusammenhängende Läufe je ein ffmpeg-Aufruf
     laeufe, s0, prev = [], None, None
@@ -188,7 +207,7 @@ def main() -> None:
             continue
         m = masken[f]
         dist = distance_transform_edt(~m) if m.any() else None
-        spur, datei, t, punch, item_start = lagen[f]
+        spur, datei, t, punch, item_start, _ = lagen[f]
         for x0, y0, x1, y1, c in gesichter.get(f, []):
             if c < 0.5:
                 continue

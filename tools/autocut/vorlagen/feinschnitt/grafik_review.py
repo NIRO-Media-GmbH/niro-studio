@@ -6,6 +6,8 @@ Legt je Timeline-Frame das Remotion-Standbild (_intern/sichtung/grafik-review/st
 Liegt V2 oben, entsteht zusätzlich die FX3-Variante (der Cutter kann den Winkel wechseln).
 Eingaben: _intern/autocut/timeline.json (V1/V2 laut roh-Plan, nicht der Live-Stand in Resolve) und
           _intern/autocut/broll_einsatz.json (V3, entsteht erst mit broll_einsetzen.py --bauen). Liest Resolve nicht.
+          V3 mit digitalem Zoom der Brennweitenregel (plan → zoom, z > 1) wird wie beim Bau als Ausschnitt iw/z × ih/z
+          auf die Bildmitte gezeigt (ältere broll_einsatz.json ohne zoom: 1,0).
 Standbilder vorher rendern (Remotion-Frame = Timeline-Frame, Grafik liegt ab Frame 0):
           cd tools/motion && npx tsx scripts/stills-multi.ts <COMP> "<Charge>/_intern/sichtung/grafik-review/stills" <frame,frame,...>
           [--public-dir=…] — Ergebnis muss 1920×1080 sein (4K-Komposition: Standard --scale=0.5, 1080p: --scale=1).
@@ -37,16 +39,23 @@ def proxy(pfad: str) -> str:
     return str(q if q.exists() else p)
 
 
-def schichten(frame: int, tl: dict, broll: dict) -> list[tuple[str, str, float]]:
-    """[(Spur, Datei, Quellsekunde)] von oben nach unten."""
+def bild_filter(zoom: float | None, breite: int = 1920, hoehe: int = 1080) -> str:
+    """ffmpeg-Filter für das Hintergrundbild: digitaler Zoom z > 1 der Brennweitenregel (ZoomX/ZoomY auf die Bildmitte)
+    als mittiger Ausschnitt crop=iw/z:ih/z vor dem Skalieren — wie beim Bau; ohne Zoom nur scale."""
+    z = float(zoom or 1.0)
+    return (f"crop=iw/{z:g}:ih/{z:g}," if z > 1.0 + 1e-9 else "") + f"scale={breite}:{hoehe}"
+
+
+def schichten(frame: int, tl: dict, broll: dict) -> list[tuple[str, str, float, float]]:
+    """[(Spur, Datei, Quellsekunde, digitaler Zoom)] von oben nach unten; Zoom nur auf V3 (plan → zoom), sonst 1,0."""
     out = []
     for z in broll["plan"]:
         if z["rec_in_f"] <= frame < z["rec_out_f"]:
-            out.append(("V3", z["datei"], (z["left_offset_f"] + frame - z["rec_in_f"]) / FPS))
+            out.append(("V3", z["datei"], (z["left_offset_f"] + frame - z["rec_in_f"]) / FPS, float(z.get("zoom") or 1.0)))
     for spur in ("V2", "V1"):
         for it in tl["items"]:
             if it["track"] == spur and it["rec_in_f"] <= frame < it["rec_out_f"]:
-                out.append((spur, it["clip"], (it["src_in_f"] + frame - it["rec_in_f"]) / FPS))
+                out.append((spur, it["clip"], (it["src_in_f"] + frame - it["rec_in_f"]) / FPS, 1.0))
     return out
 
 
@@ -60,10 +69,10 @@ def main() -> None:
         still = REV / "stills" / f"{COMP}_{f}.png"
         lagen = schichten(f, tl, broll)
         varianten = lagen[:1] + ([l for l in lagen if l[0] == "V1"][:1] if lagen and lagen[0][0] == "V2" else [])
-        for spur, datei, t in varianten:
+        for spur, datei, t, zoom in varianten:
             bg = REV / "bg" / f"{f}_{spur}.jpg"
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{t:.3f}", "-i", proxy(datei), "-frames:v", "1",
-                            "-vf", "scale=1920:1080", "-q:v", "3", str(bg)], check=True)
+                            "-vf", bild_filter(zoom), "-q:v", "3", str(bg)], check=True)
             out = REV / f"review_{f}_{spur}.jpg"
             label = f"{f} ({int(f // FPS // 60):02d}:{int(f // FPS % 60):02d}:{int(f % FPS):02d}) {spur} {Path(datei).stem}"
             subprocess.run(["magick", str(bg), str(still), "-composite", "-font", "/System/Library/Fonts/Supplemental/Arial.ttf",

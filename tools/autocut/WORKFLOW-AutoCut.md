@@ -429,7 +429,8 @@ oder einen Zwischenstand.
    - `npx tsx scripts/stills-multi.ts <CompId> <Ordner> <frame,…>` in `tools/motion`. `grafik_review.py` braucht
      Standbilder in 1920×1080: bei einer 4K-Komposition der Standard `--scale=0.5`, bei 1080p `--scale=1`.
    - Dann `grafik_review.py <frame,…>` → Standbild über dem Bild, das dort in der Timeline zu sehen ist (V3 vor V2
-     vor V1, bei Interviews beide Kamerawinkel) → `_intern/sichtung/grafik-review/`.
+     vor V1, bei Interviews beide Kamerawinkel; V3 mit dem digitalen Zoom aus `broll_einsatz.json` als Ausschnitt auf
+     die Bildmitte wie beim Bau) → `_intern/sichtung/grafik-review/`.
    - Befunde (Kinn verdeckt, Kicker zu klein) in der Komposition beheben und neu rendern.
 3. **Optional als Zwischenstand** auf die roh-Timeline: `grafik_einsetzen.py <Render.mov> --bauen`.
    - V4 „Grafik" muss leer sein. Der Render kommt als ein Clip ab Frame 0, Alpha „Straight" → `grafik_einsatz.json`.
@@ -513,8 +514,9 @@ oder einen Zwischenstand.
 
 **Prüfung:**
 - Geprüft wird jedes 2. Frame, in dem die Grafik sichtbar, aber nicht deckend ist.
-- Das oberste Bild laut Plan (V3 vor V2 vor V1, mit Tempo, Punch-in und den Resolve-Transformen der Items) kommt
-  aus den Proxys.
+- Das oberste Bild laut Plan (V3 vor V2 vor V1, mit Tempo, Punch-in und den Resolve-Transformen der Items; V3 mit dem
+  digitalen Zoom der Brennweitenregel als Ausschnitt `iw/z × ih/z` auf die Bildmitte wie beim Bau) kommt aus den
+  Proxys; der Zoom gehört zur Cache-Signatur der Prüfbilder.
 - Gesichter werden per Vision gefunden, Box + 8 % seitlich und + 12 % am Kinn, und gegen die Alpha-Maske (> 50 %)
   geprüft.
 - **Kritisch:** Maske in der Box oder Abstand < 60 px @1080p.

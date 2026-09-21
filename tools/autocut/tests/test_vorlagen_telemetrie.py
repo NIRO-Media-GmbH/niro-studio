@@ -1,5 +1,6 @@
 """Vorlagen 6d und 3a: kompilieren, nutzen die Telemetrie-Helfer (stabil_vorschlag, Brennweitenregel), Spalten stabil/zoom,
-Stabilize und Zoom nur für ausgewählte Shots; Planfunktionen mit Telemetrie-Datensätzen ohne Resolve."""
+Stabilize und Zoom nur für ausgewählte Shots; Planfunktionen mit Telemetrie-Datensätzen ohne Resolve. Gesichts-Check (6e)
+und Grafik-Review (6b) zeigen V3 mit dem digitalen Zoom."""
 from __future__ import annotations
 
 import importlib.util
@@ -13,6 +14,8 @@ from niro_autocut.charge import load_config
 
 VORLAGE = Path(__file__).resolve().parents[1] / "vorlagen" / "feinschnitt" / "feinschnitt_bauen.py"
 VORLAGE_3A = VORLAGE.with_name("broll_einsetzen.py")
+GESICHTSCHECK = VORLAGE.parent / "gesichtscheck" / "gesichtscheck.py"
+GRAFIK_REVIEW = VORLAGE.with_name("grafik_review.py")
 README = VORLAGE.parents[1] / "README.md"
 
 
@@ -240,3 +243,54 @@ def test_3a_vorlage_setzt_zoom_beim_bau():
     assert 'SetProperty, False, k, float(z["zoom"]))' in text and 'for k in ("ZoomX", "ZoomY")' in text
     assert 'RA._safe(it.GetProperty, None, "ZoomX")' in text and '"zoom_abweichungen": zoom_abweichungen' in text
     assert "zoom_abweichungen = TM.zoom_abweichungen(zeilen, zoom_ist)" in text      # M3: wie 6d, Liste {shot, soll, ist}
+
+
+# --- Final Review (21.09.2026) I3: Gesichts-Check und Grafik-Review mit dem digitalen Zoom ------------------------------
+
+def _modul(monkeypatch, pfad: Path, name: str):
+    """Vorlage als Modul laden (der Gesichts-Check lädt fb, das RA.TRACK_INDEX["A3"] setzt — auf einer Kopie)."""
+    from niro_autocut import resolve_api as RA
+    monkeypatch.setattr(RA, "TRACK_INDEX", dict(RA.TRACK_INDEX))
+    spec = importlib.util.spec_from_file_location(name, pfad)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+@pytest.mark.parametrize("pfad,breite,hoehe", [(GESICHTSCHECK, 960, 540), (GRAFIK_REVIEW, 1920, 1080)])
+def test_pruefbild_filter_mit_digitalem_zoom(monkeypatch, pfad, breite, hoehe):
+    """I3: ZoomX/ZoomY auf die Bildmitte wie beim Bau = Ausschnitt iw/z × ih/z (crop mittig) vor dem Skalieren."""
+    mod = _modul(monkeypatch, pfad, f"{pfad.stem}_vorlage")
+    assert mod.bild_filter(1.25) == f"crop=iw/1.25:ih/1.25,scale={breite}:{hoehe}"
+    assert mod.bild_filter(1.266) == f"crop=iw/1.266:ih/1.266,scale={breite}:{hoehe}"
+    assert mod.bild_filter(1.0) == mod.bild_filter(None) == f"scale={breite}:{hoehe}"
+
+
+def test_gesichtscheck_holt_v3_mit_zoom(monkeypatch):
+    """I3: das oberste Bild trägt den Zoom aus fb.plan (v3_meta); er gehört in die Cache-Signatur und in den Filter."""
+    from niro_autocut.timeline_model import Item
+    gc = _modul(monkeypatch, GESICHTSCHECK, "gesichtscheck_vorlage")
+    p = {"v3_meta": [{"rec_in_f": 0, "langsam": False, "zoom": 1.25}, {"rec_in_f": 50, "langsam": True, "zoom": 1.0}],
+         "V3": [Item("V3", "/ssd/A.MP4", 100, 200, 0, 50, True, "1", "broll", True),
+                Item("V3", "/ssd/B.MP4", 0, 100, 50, 100, True, "1", "broll", True)],
+         "V2": [], "V1": []}
+    a, b = gc.oberstes_bild(p, 10), gc.oberstes_bild(p, 60)
+    assert a == ("V3", "/ssd/A.MP4", 2.4, False, 0, 1.25)          # (100 + 2 · 10) / 50 s, Zoom 1,25
+    assert b == ("V3", "/ssd/B.MP4", 0.2, False, 50, 1.0)          # 50 %: (0 + 1 · 10) / 50 s
+    assert gc.signatur(a) == "/ssd/A.MP4@2.400×1.25" and gc.signatur(b) == "/ssd/B.MP4@0.200"
+    assert gc.signatur(None) is None
+    text = GESICHTSCHECK.read_text(encoding="utf-8")
+    assert '"-vf", bild_filter(zoom)' in text and "signatur(lagen[f])" in text
+
+
+def test_grafik_review_legt_die_grafik_ueber_den_gezoomten_ausschnitt():
+    """I3: V3 aus broll_einsatz.json mit Spalte zoom des Plans (ältere Dateien ohne zoom: 1,0)."""
+    spec = importlib.util.spec_from_file_location("grafik_review_vorlage", GRAFIK_REVIEW)
+    gr = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gr)
+    broll = {"plan": [{"rec_in_f": 0, "rec_out_f": 50, "datei": "/ssd/A.MP4", "left_offset_f": 25, "zoom": 1.25},
+                      {"rec_in_f": 50, "rec_out_f": 100, "datei": "/ssd/B.MP4", "left_offset_f": 0}]}
+    tl = {"items": [{"track": "V1", "clip": "/ssd/FX3.MP4", "src_in_f": 0, "rec_in_f": 0, "rec_out_f": 100}]}
+    assert gr.schichten(10, tl, broll) == [("V3", "/ssd/A.MP4", 1.4, 1.25), ("V1", "/ssd/FX3.MP4", 0.4, 1.0)]
+    assert gr.schichten(60, tl, broll)[0] == ("V3", "/ssd/B.MP4", 0.4, 1.0)
+    assert '"-vf", bild_filter(zoom)' in GRAFIK_REVIEW.read_text(encoding="utf-8")
