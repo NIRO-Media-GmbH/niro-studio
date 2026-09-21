@@ -469,6 +469,15 @@ def abschnitt_werte(rec: dict | None, von_s: float, bis_s: float, fenster_s: flo
     return {"bewegungsart": mehrheit([f[3] for f in fen]) if fen else None, "haltung": rec.get("haltung")}
 
 
+def genutzter_quellbereich_s(src_in_f: int, n_f: int, clip_fps: float, langsam: bool,
+                             ziel_fps: float = ZIEL_FPS) -> tuple[float, float]:
+    """Start und Ende (s) des Quellbereichs, den n_f Timeline-Frames (bei ziel_fps) ab Quellframe src_in_f bei
+    100 % bzw. 50 % Tempo (langsam) nutzen; Ende = src_in_f + n_f · clip_fps / ziel_fps · (0,5 bei langsam,
+    sonst 1,0) Quellframes, beide Werte durch clip_fps geteilt (6d: Quellbereich für stabil_vorschlag)."""
+    ende_f = src_in_f + n_f * clip_fps / ziel_fps * (0.5 if langsam else 1.0)
+    return src_in_f / clip_fps, ende_f / clip_fps
+
+
 def stabil_vorschlag(von_s: float, bis_s: float, rec: dict | None, cfg: dict,
                      path: str | Path | None = None) -> tuple[bool, str]:
     """6d: stabilisieren? Datei ``_stabilized`` (Avata-Export, Regel 18.09.) → nie; hand mit wackeln > ruhig_max_px → ja;

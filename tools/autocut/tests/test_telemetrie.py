@@ -311,6 +311,22 @@ def test_stabil_vorschlag_stabilized_ohne_telemetrie():
     assert T.stabil_vorschlag(0, 2, None, CFG, path="/ssd/FX3/FX3_0001.MP4")[0] is True
 
 
+# --- Fix-Runde 1 (Task 9): genutzter_quellbereich_s skaliert den Quellbereich bei 50 % korrekt mit clip_fps ---------
+
+@pytest.mark.parametrize("clip_fps,langsam,erwartet", [
+    (25.0, False, (4.0, 6.0)),                  # 25p/100 %: Quelldauer = Timeline-Dauer (2,0 s)
+    (50.0, False, (2.0, 4.0)),                  # 50p/100 %: Quelldauer bleibt 2,0 s (fps-unabhängig)
+    (50.0, True, (2.0, 3.0)),                   # 50p/50 %: halbe Quelldauer (1,0 s)
+    (60.0, True, (100 / 60, 160 / 60)),          # 60p/50 %: 1,0 s, aber mit faktor 2,4 skaliert
+    (100.0, True, (1.0, 2.0)),                  # 100p/50 %: 1,0 s
+])
+def test_genutzter_quellbereich_s(clip_fps, langsam, erwartet):
+    """Quellbereich (s), den n_f=50 Timeline-Frames ab src_in_f=100 bei 100 %/50 % Tempo nutzen — vorher wurde bei
+    50 % nicht mit clip_fps skaliert (zu kurzer Bereich bei allem außer 50p, Review-Befund Task 9)."""
+    von, bis = T.genutzter_quellbereich_s(100, 50, clip_fps, langsam)
+    assert von == pytest.approx(erwartet[0]) and bis == pytest.approx(erwartet[1])
+
+
 # --- Fix-Runde 1: Cache-Robustheit (F2), Dubletten (F3), Fehler brechen den Lauf nie ab (F4) --------------------------
 
 def test_clip_mit_cache_kaputte_datei_wird_neu_gemessen(monkeypatch, basis_charge, tmp_path):

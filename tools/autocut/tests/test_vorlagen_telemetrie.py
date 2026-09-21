@@ -13,6 +13,7 @@ def test_vorlage_kompiliert_und_nutzt_telemetrie():
     text = VORLAGE.read_text(encoding="utf-8")
     assert "from niro_autocut import telemetrie as TM" in text
     assert "TM.stabil_vorschlag(" in text and "TM.finden(" in text and "TM.laden(" in text
+    assert "TM.genutzter_quellbereich_s(" in text             # Quellbereich korrekt skaliert (Fix-Runde 1)
     assert "stabil_hand" in text and '"stabil_grund"' in text
     assert 'if not m["stabil"]' in text                      # Stabilize() nur für ausgewählte Shots
 

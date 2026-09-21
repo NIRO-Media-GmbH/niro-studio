@@ -371,8 +371,8 @@ def plan(tl: dict, shots: dict) -> tuple[dict, list[str]]:
         src_out = src_in + int(round(n * faktor))  # angehängt bei 100 %; SetSpeed 50 halbiert den Quellbereich
         quelle_genutzt = int(round(n if langsam else n * faktor))
         tele_rec = TM.finden(TELE, s["datei"])
-        vorschlag, grund = TM.stabil_vorschlag(src_in / s["clip_fps"], (src_in + quelle_genutzt) / s["clip_fps"],
-                                               tele_rec, TCFG, path=s["datei"])
+        bereich = TM.genutzter_quellbereich_s(src_in, n, s["clip_fps"], langsam, FPS)
+        vorschlag, grund = TM.stabil_vorschlag(*bereich, tele_rec, TCFG, path=s["datei"])
         stabil = vorschlag if stabil_hand is None else bool(stabil_hand)
         if stabil_hand is not None and stabil != vorschlag:
             grund += " — von Hand überstimmt"
