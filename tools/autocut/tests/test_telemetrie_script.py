@@ -5,6 +5,7 @@ import importlib.util
 import json
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -117,3 +118,56 @@ def test_cli_kalibrieren_bekommt_deduplizierte_liste(basis_charge, monkeypatch):
     assert gesehen["clips"] == ["/nas/FX3/FX3_1.MP4", "/nas/FX30/C0001.MP4"]
     assert skript.main([str(basis_charge), "--kalibrieren", "--limit", "1"]) == 0
     assert gesehen["clips"] == ["/nas/FX3/FX3_1.MP4"]
+
+
+# --- Final Review (21.09.2026): gezielter ImportError (T5), Kalibrier-Fehler (M7), Kamera ohne Kalibrierung (M8) --------
+
+def test_kalibrieren_ohne_modul_meldet_kalibrierung_nicht_verfuegbar(basis_charge, monkeypatch, capsys):
+    _charge_mit_inventar(basis_charge)
+    skript = _lade()
+    monkeypatch.setitem(sys.modules, "niro_autocut.telemetrie_kalibrierung", None)      # Import schlägt fehl
+    assert skript.main([str(basis_charge), "--kalibrieren"]) == 1
+    assert "Kalibrierung noch nicht verfügbar" in capsys.readouterr().err
+
+
+def test_andere_importfehler_laufen_nicht_unter_der_kalibrier_meldung(basis_charge, monkeypatch):
+    """T5: nur der Import von telemetrie_kalibrierung hinter --kalibrieren wird als „noch nicht verfügbar" gemeldet."""
+    _charge_mit_inventar(basis_charge)
+    skript = _lade()
+
+    def kaputt(*a, **k):
+        raise ImportError("numpy fehlt")
+
+    monkeypatch.setattr(skript, "telemetrie_charge", kaputt)
+    with pytest.raises(ImportError, match="numpy fehlt"):
+        skript.main([str(basis_charge)])
+
+
+def test_kalibrieren_meldet_fehler_und_endet_mit_exit_1(basis_charge, monkeypatch, capsys):
+    """M7: wie der Messlauf — Fehler-Zusammenfassung (erste 10) am Ende, Fehlerzahl im Protokoll, Exit 1."""
+    _charge_mit_inventar(basis_charge)
+    skript = _lade()
+    from niro_autocut import telemetrie_kalibrierung as K
+    fehler = [f"FX3_{i}.MP4: ValueError: Datenspur unlesbar" for i in range(12)]
+    monkeypatch.setattr(K, "kalibrieren", lambda ch, clips, cfg, parallel=None, **kw: {
+        "anzahl": 0, "kameras": {}, "empfehlung": {}, "fehler": fehler})
+    monkeypatch.setattr(K, "tabelle", lambda erg: "Tabelle")
+    assert skript.main([str(basis_charge), "--kalibrieren"]) == 1
+    out = capsys.readouterr().out
+    assert "Fehler: FX3_0.MP4: ValueError: Datenspur unlesbar" in out and "FX3_9.MP4" in out
+    assert "FX3_10.MP4" not in out                                                        # nur die ersten 10
+    protokoll = (basis_charge / "Protokoll.md").read_text(encoding="utf-8")
+    assert "Telemetrie-Kalibrierung" in protokoll and "12 Fehler" in protokoll
+
+
+def test_cli_bericht_nennt_kamera_ohne_kalibrierung(basis_charge, monkeypatch):
+    """M8: die CLI übergibt telemetrie.px_faktor; rtmd-Kameras ohne Eintrag stehen als Hinweis unter dem Kopf."""
+    _charge_mit_inventar(basis_charge)
+    skript = _lade()
+    monkeypatch.setattr(skript, "telemetrie_charge", lambda ch, clips, cfg, limit=None, **kw: {
+        "clips": [], "fehler": [], "cache_treffer": 0, "gemessen": 0, "gesamt": 2})
+    assert skript.main([str(basis_charge)]) == 0
+    md = (basis_charge / "Ergebnisse" / "Rohschnitt" / "telemetrie.md").read_text(encoding="utf-8")
+    zeile = next(z for z in md.splitlines() if "ohne Kalibrierung" in z)
+    assert "Sony ILME-FX30" in zeile and "px_faktor 1,0 angenommen" in zeile and "FX3 (" not in zeile
+    assert md.index(zeile) < md.index("## Verteilung je Kamera")

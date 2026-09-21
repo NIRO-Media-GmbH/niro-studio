@@ -81,3 +81,15 @@ def test_vergleich_index_nutzt_claudes_originalwerte():
     assert v["brennweite"]["n"] == 1 and v["brennweite"]["gleich"] == 0
     assert v["brennweite"]["kreuz"][("tele", "normal")] == 1
     assert v["perspektive_hoehe"]["n"] == 1 and v["perspektive_hoehe"]["kreuz"][("Aufsicht", "Augenhöhe")] == 1
+
+
+def test_bericht_nennt_kameras_ohne_kalibrierung():
+    """M8 (Spec „Kamera unbekannt → Hinweis im Bericht"): rtmd-Kameras, die nicht in px_faktor stehen, laufen mit
+    px_faktor 1,0 — der Bericht nennt sie unter dem Kopf; ohne px_faktor-Angabe kein Hinweis (bisherige Aufrufe)."""
+    md = B.bericht_md(TELE, "T", px_faktor={"FX3": 0.6})
+    zeile = next(z for z in md.splitlines() if "ohne Kalibrierung" in z)
+    assert "a7IV (1 Clip)" in zeile and "px_faktor 1,0 angenommen" in zeile
+    assert "FX3" not in zeile and "DJI" not in zeile                                  # kalibriert bzw. optisch
+    assert md.index(zeile) < md.index("## Verteilung je Kamera")
+    assert "ohne Kalibrierung" not in B.bericht_md(TELE, "T")
+    assert "ohne Kalibrierung" not in B.bericht_md(TELE, "T", px_faktor={"FX3": 0.6, "a7IV": 0.69})

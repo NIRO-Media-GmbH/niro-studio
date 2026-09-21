@@ -49,18 +49,26 @@ def main(argv: list[str] | None = None) -> int:
             print("Probelauf — nichts gemessen, nichts geschrieben.")
             return 0
         if args.kalibrieren:
-            from niro_autocut.telemetrie_kalibrierung import kalibrieren, tabelle
+            try:
+                from niro_autocut.telemetrie_kalibrierung import kalibrieren, tabelle
+            except ImportError as e:            # nur dieser Import — andere ImportErrors laufen nicht unter der Meldung
+                print(f"FEHLER: {e} — Kalibrierung noch nicht verfügbar.", file=sys.stderr)
+                return 1
             erg = kalibrieren(ch, todo, cfg, parallel=args.parallel)
             print(tabelle(erg))
-            append_protokoll(ch, "Telemetrie-Kalibrierung",
-                             [f"{erg['anzahl']} Clips, Datei {ch.autocut / 'telemetrie_kalibrierung.json'}"]
-                             + [f"{k}: {v['empfehlung']}" for k, v in erg["kameras"].items()])
-            return 0
+            zeilen = ([f"Kalibrierung: {erg['anzahl']} Clips gemessen, {len(erg['fehler'])} Fehler, "
+                       f"Datei {ch.autocut / 'telemetrie_kalibrierung.json'}"]
+                      + [f"{k}: {v['empfehlung']}" for k, v in erg["kameras"].items()]
+                      + [f"Fehler: {f}" for f in erg["fehler"][:10]])
+            append_protokoll(ch, "Telemetrie-Kalibrierung", zeilen)
+            print("\n" + "\n".join(zeilen))
+            return 1 if erg["fehler"] else 0
         # volle Liste + limit: telemetrie_charge dedupliziert, schneidet und ergänzt telemetrie.json (Teil-Lauf kürzt nicht)
         out = telemetrie_charge(ch, clips, cfg, limit=args.limit, force=args.force, ohne_optisch=args.ohne_optisch,
                                 parallel=args.parallel, schaerfe=args.schaerfe)
-        # Bericht aus der ganzen telemetrie.json, nicht nur aus diesem (Teil-)Lauf
-        md = bericht_md(laden(ch.autocut), f"{ch.kunde} / {ch.projekt} / {ch.root.name}", ch.read_json("broll_index.json"))
+        # Bericht aus der ganzen telemetrie.json, nicht nur aus diesem (Teil-)Lauf; Hinweis auf Kameras ohne px_faktor
+        md = bericht_md(laden(ch.autocut), f"{ch.kunde} / {ch.projekt} / {ch.root.name}", ch.read_json("broll_index.json"),
+                        px_faktor=cfg.get("px_faktor") or {})
         ziel = ch.ergebnisse / "telemetrie.md"
         ch.assert_writable(ziel)
         ziel.parent.mkdir(parents=True, exist_ok=True)
@@ -78,9 +86,6 @@ def main(argv: list[str] | None = None) -> int:
         return 130
     except AutoCutError as e:
         print(f"FEHLER: {e}", file=sys.stderr)
-        return 1
-    except ImportError as e:
-        print(f"FEHLER: {e} — Kalibrierung noch nicht verfügbar.", file=sys.stderr)
         return 1
 
 

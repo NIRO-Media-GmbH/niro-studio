@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import datetime as _dt
 from collections import Counter
-from pathlib import Path
 
 from .telemetrie import BEWEGUNGSARTEN, HALTUNGEN, finden
 
@@ -103,15 +102,29 @@ def _kreuz(titel: str, v: dict, links: str, rechts: str) -> list[str]:
     return z + [""]
 
 
-def bericht_md(tele: list[dict], titel: str, index: dict | None = None) -> str:
+def _ohne_kalibrierung(tele: list[dict], px_faktor: dict | None) -> list[str]:
+    """Hinweis auf rtmd-Kameras ohne Eintrag in ``telemetrie.px_faktor`` (Spec: Kamera unbekannt → px_faktor 1,0)."""
+    if px_faktor is None:
+        return []
+    n = Counter(r.get("kamera") or "unbekannt" for r in tele
+                if r.get("quelle") == "rtmd" and (r.get("kamera") or "unbekannt") not in px_faktor)
+    if not n:
+        return []
+    kameras = ", ".join(f"{_md(k)} ({c} Clip{'s' if c != 1 else ''})" for k, c in sorted(n.items()))
+    return [f"Hinweis: {kameras} ohne Kalibrierung, px_faktor 1,0 angenommen — Kalibrierung mit "
+            f"``autocut_telemetrie.py --kalibrieren``, Wert unter ``telemetrie.px_faktor``.", ""]
+
+
+def bericht_md(tele: list[dict], titel: str, index: dict | None = None, px_faktor: dict | None = None) -> str:
+    """Markdown-Bericht; ``px_faktor`` (``telemetrie.px_faktor``) → Hinweis auf rtmd-Kameras ohne Kalibrierung."""
     q = Counter(r.get("quelle") for r in tele)
     fehler = [r for r in tele if r.get("fehler") or r.get("quelle") in (None, "keine")]
     zeilen = [f"# Kamera-Telemetrie — {titel}", "",
               f"Stand: {_dt.datetime.now().strftime('%Y-%m-%d %H:%M')} · {len(tele)} Clips "
               f"(rtmd {q['rtmd']}, optisch {q['optisch']}, keine {q['keine']}, "
               f"Fehler {sum(1 for r in tele if r.get('fehler'))}). Werte in px @480 je 25-fps-Frame; "
-              f"Quelle ``_intern/autocut/telemetrie.json``.", "",
-              "## Verteilung je Kamera", ""]
+              f"Quelle ``_intern/autocut/telemetrie.json``.", ""]
+    zeilen += _ohne_kalibrierung(tele, px_faktor) + ["## Verteilung je Kamera", ""]
     zeilen += _verteilung(tele) + ["", f"## Unruhigste Clips (bis {TOP}, nach wackeln)", ""] + _unruhigste(tele) + [""]
     unscharf = [(f[4], r.get("clip"), r.get("kamera"), f[0]) for r in tele
                 for f in (r.get("fenster") or []) if len(f) > 4 and f[4] is not None]
