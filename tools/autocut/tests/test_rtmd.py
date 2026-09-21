@@ -97,3 +97,22 @@ def test_echte_datenspur(name, fps, proben):
     betrag = np.linalg.norm(d.acc, axis=1)
     assert 0.8 < np.median(betrag) < 1.3          # a7 IV ≈ 1,0 g, FX3 ≈ 1,15 g
     assert 10 < np.median(d.kb_mm) < 600
+
+
+def test_samples_behaelt_nur_ausgewertete_tags():
+    """Final Review M2: ein echtes Sample trägt 148–161 Tags; behalten werden nur die, die auswerten() liest — sonst hält
+    ein langer Interview-Clip (Rückfall media.json) mehrere GB. Ein Sample ohne ausgewertete Tags zählt weiter als Sample
+    (samples = Videoframes); tags=None liefert zur Diagnose alle Tags (z. B. 0xE437/0xE43A)."""
+    voll = R.paket_bauen({R.TAG_KB_MM: bytes.fromhex("c2cc"), 0x1234: b"\x00" * 64, 0xE437: struct.pack(">i", -3609),
+                          0xE43A: bytes.fromhex("0420")})
+    fremd = R.paket_bauen({0x1234: b"\x00" * 8})
+    s = R.samples(voll + fremd)
+    assert len(s) == 2 and s[0] == {R.TAG_KB_MM: bytes.fromhex("c2cc")} and s[1] == {}
+    assert R.auswerten(s).samples == 2 and R.auswerten(s).kb_mm == [71.6]
+    alle = R.samples(voll + fremd, tags=None)
+    assert set(alle[0]) == {R.TAG_KB_MM, 0x1234, 0xE437, 0xE43A} and alle[1] == {0x1234: b"\x00" * 8}
+    assert R.TAGS_AUSWERTUNG == {R.TAG_GYRO, R.TAG_GYRO_SKALA, R.TAG_ACC, R.TAG_ACC_SKALA, R.TAG_IMU_HZ, R.TAG_KB_MM,
+                                 R.TAG_BRENNWEITE_MM, R.TAG_FOKUS_M}
+    echt = FIXTURES / "rtmd_fx3_25p.bin"
+    if echt.exists():
+        assert all(set(x) <= R.TAGS_AUSWERTUNG for x in R.samples(echt.read_bytes()))

@@ -27,6 +27,10 @@ TAG_FOKUS_M, TAG_KB_MM, TAG_BRENNWEITE_MM = 0x8001, 0x8004, 0x8005
 TAG_IMU_HZ = 0xE435
 TAG_GYRO, TAG_GYRO_SKALA = 0xE43B, 0xE439
 TAG_ACC, TAG_ACC_SKALA = 0xE44B, 0xE449
+# Tags, die ``auswerten`` liest — ``samples`` behält nur diese (ein Sample trägt 148–161 Tags, ≈ 7–8 KB Werte; bei langen
+# Interview-Clips wären das mehrere GB). ``samples(buf, tags=None)`` liefert zur Diagnose alle (z. B. 0xE437/0xE43A).
+TAGS_AUSWERTUNG = frozenset({TAG_GYRO, TAG_GYRO_SKALA, TAG_ACC, TAG_ACC_SKALA, TAG_IMU_HZ, TAG_KB_MM, TAG_BRENNWEITE_MM,
+                             TAG_FOKUS_M})
 MODELLE = {"ILME-FX3": "FX3", "ILCE-7M4": "a7IV"}
 KEINE_DATENSPUR = (b"matches no streams", b"does not contain any stream")
 
@@ -73,8 +77,10 @@ def distanz(v: int) -> float:
     return (v & 0x0FFF) * 10.0 ** e
 
 
-def samples(buf: bytes) -> list[dict[int, bytes]]:
-    """Alle rtmd-Samples: je Sample ein Dict Tag → Wert (erster Treffer je Tag über alle KLV-Sätze des Samples)."""
+def samples(buf: bytes, tags: frozenset[int] | set[int] | None = TAGS_AUSWERTUNG) -> list[dict[int, bytes]]:
+    """Alle rtmd-Samples: je Sample ein Dict Tag → Wert (erster Treffer je Tag über alle KLV-Sätze des Samples), nur für
+    ``tags`` (Standard: die von ``auswerten`` gelesenen; None = alle). Jedes Sample mit mindestens einem Tag zählt, auch
+    wenn keiner davon behalten wird (Samples = Videoframes)."""
     out: list[dict[int, bytes]] = []
     i = 0
     while i + 28 < len(buf):
@@ -84,17 +90,19 @@ def samples(buf: bytes) -> list[dict[int, bytes]]:
                 break
             i = nxt
             continue
-        j, tags = i + 28, {}
+        j, werte, gefunden = i + 28, {}, False
         while j + 17 < len(buf) and buf[j:j + 4] == UL:
             ln, k = ber(buf, j + 16)
             ende = min(k + ln, len(buf))
             while k + 4 <= ende:
                 t, l = struct.unpack(">HH", buf[k:k + 4])
-                tags.setdefault(t, buf[k + 4:k + 4 + l])
+                gefunden = True
+                if (tags is None or t in tags) and t not in werte:
+                    werte[t] = buf[k + 4:k + 4 + l]
                 k += 4 + l
             j = ende
-        if tags:
-            out.append(tags)
+        if gefunden:
+            out.append(werte)
         i = max(j, i + 28)
     return out
 
