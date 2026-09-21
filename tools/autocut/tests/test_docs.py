@@ -80,7 +80,7 @@ def test_claude_md_has_resolve_trigger_after_autocut_and_rules():
     assert lines[i - 1].startswith("| „AutoCut:"), "Resolve-Zeile muss direkt nach der AutoCut-Zeile stehen"
     assert lines[i].count("|") == 4 and "`tools/resolve/WORKFLOW-Resolve.md`" in lines[i]
     text = "\n".join(lines)
-    for needle in ("## Resolve-Regeln", "Cloud-Projektbibliothek", "Export/", ".mcp.json", "neun Funktionen", "bei Abweichung nichts schreiben"):
+    for needle in ("## Resolve-Regeln", "Cloud-Projektbibliothek", "Export/", ".mcp.json", "zehn Funktionen", "bei Abweichung nichts schreiben"):
         assert needle in text, f"CLAUDE.md: „{needle}“ fehlt"
 
 
