@@ -1,0 +1,5 @@
+# NIRO Thumbnail — gebaute und erzeugte Dateien nie versionieren
+bin/
+__pycache__/
+*.py[cod]
+.pytest_cache/

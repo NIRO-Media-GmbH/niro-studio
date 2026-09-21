@@ -1,6 +1,6 @@
 # NIRO Studio
 
-Master-Werkzeug von NIRO Media: neun Funktionen, ein Projektsystem, eine Session.
+Master-Werkzeug von NIRO Media: zehn Funktionen, ein Projektsystem, eine Session.
 
 ## Projektstruktur
 
@@ -19,7 +19,8 @@ Chargen-Ebene existiert immer, auch bei nur einer Charge.
     │   ├── Sortierung/        Zuordnungspläne Footage
     │   ├── Renders/           fertige Animationen
     │   ├── Export/            Renders aus Resolve (Review-Kopien, Lieferungen)
-    │   └── Fotos/             entwickelte RAW-Fotos (+ web/)
+    │   ├── Fotos/             entwickelte RAW-Fotos (+ web/)
+    │   └── Thumbnails/        saubere Standbilder je Video (nur auf Wunsch)
     └── _intern/            was die Tools brauchen (cache, work, Logs, Manifeste)
 
 Rohes Drehmaterial bleibt auf externen SSDs; hier liegen nur Arbeits- und
@@ -60,6 +61,7 @@ Stand vom NAS), nach der Arbeit mit dem Protokoll-Eintrag dasselbe (Stand aufs N
 | „Resolve: <Aufgabe>" | Ad-hoc-Arbeit im offenen Resolve-Projekt über den nativen MCP (lesen, prüfen, rendern, importieren) | `tools/resolve/WORKFLOW-Resolve.md` |
 | „Tagesbericht" / „Tagesbericht: gestern" / „Tagesbericht: <JJJJ-MM-TT>" | Tagesstände beider Macs (Git, Chargen, Sitzungen, Gedächtnis) → `berichte/<Tag>/Tagesbericht.md`: Gemacht, neue Funktionen, Empfehlung für main (nur Empfehlung, kein Merge), Probleme, Offenes | `tools/tagesbericht/WORKFLOW-Tagesbericht.md` |
 | „Review: <Kunde>/<Projekt>[/<Video>]" · „fertig" nach einem Review | Lokales Review-Werkzeug (http://localhost:4711, Ablage auf dem NAS, beide Macs): Kommentare holen, umsetzen, V+1 mit Antworten ablegen. **Jeder fertige Review-Stand** (Rohschnitt, Feinschnitt, Entwurf, Export, Animation als Komposit) wird sofort abgelegt und der Link im Chat genannt — nach jedem AutoCut-Bau in Resolve per `autocut_review.py` (rendert selbst), sonst per `review.py hinzufuegen`; Dropbox Replay nur noch für Kundenrunden | `tools/review/WORKFLOW-Review.md` |
+| „Thumbnail: <Kunde>/<Projekt>[/<Charge>]" — **nur auf ausdrücklichen Wunsch**, nie automatisch | Saubere Standbilder ohne Grafik, Untertitel, Effekte aus der Resolve-Timeline (eigene Kopie ohne Overlays, danach gelöscht): 3 Vorschläge je Video (Person, nächstbestes, Thema), Apple-Vision-Bewertung + Blick auf den Kontaktbogen, JPG 1080×1920 + 4K nach `<Exportordner>/<Video>/Thumbnails/` und `Ergebnisse/Thumbnails/` | `tools/thumbnail/WORKFLOW-Thumbnail.md` |
 
 Beim Trigger die jeweilige Workflow-Datei lesen und ihr folgen.
 Projektpfad-Konvention überall: `projects/<Kunde>/<Projekt>/<Charge>/` (relativ
@@ -110,5 +112,7 @@ die Charge wird dann automatisch gefunden.
   `de.niro.review` auf Port 4711 (`installieren` einmal je Mac; nach `git pull` mit Änderungen an `tools/review`
   `launchctl kickstart -k gui/$(id -u)/de.niro.review`); Ablage `<NAS>/08_Claude Tools/NIRO Studio/review/`, Cache
   `~/Library/Caches/NIRO Review`; Review-Kopien max. 1920 px lange Kante.
+- **Thumbnail (thumbnail):** `tools/autocut/venv/bin/python tools/thumbnail/thumbnail.py vorschlagen|ablegen`; der
+  Vision-Bewerter wird beim ersten Lauf per `swiftc` nach `tools/thumbnail/bin/` gebaut (je Mac, nicht versioniert).
 - **Neues Projekt:** Ordner nach Bedarf anlegen, z. B.
   `mkdir -p "projects/<Kunde>/<Projekt>/<Charge>/Material/Audio"`.
