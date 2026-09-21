@@ -23,6 +23,7 @@ Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md` (inkl. Na
 - Standardwerte unter `telemetrie:` in `defaults.yaml`, je Charge in `_intern/autocut/config.yaml` überschreibbar (`load_config`).
 - Commits: Nur die Dateien der jeweiligen Task stagen (`git add <Pfade>`), nie `git add -A` — im Arbeitsbaum liegen fremde offene Änderungen (tools/motion, tools/resolve). Commit-Text deutsch, Präfix `feat(autocut):`/`test(autocut):`/`docs(autocut):`, Abschluss `Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>`.
 - `tests/test_docs.py::test_every_existing_script_is_documented` verlangt, dass jedes `scripts/*.py` in WORKFLOW, README oder SETUP steht — Doku gehört zur Task, die das Skript anlegt.
+- **Zweiter Mac (Tagesstand MacBook 19.09.):** unkommittierte Änderungen in `tools/autocut/defaults.yaml` (`proxy_pflicht`), `cutlist.py`, `resolve_probe.py`, `test_cutlist.py` sowie ein Worktree `claude/festive-mccarthy-4e4efb` mit `media.py`, `resolve_api.py`, `sync.py`, `timeline_model.py`. Dieser Plan ändert keine dieser Dateien (nur Imports aus `media.py`); `defaults.yaml` wird nur am Ende ergänzt.
 
 ---
 
@@ -948,7 +949,7 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 
 **Files:**
 - Modify: `tools/autocut/src/niro_autocut/telemetrie.py` (anhängen)
-- Modify: `tools/autocut/defaults.yaml` (Block `telemetrie:` vor `path_map:` einfügen)
+- Modify: `tools/autocut/defaults.yaml` (Block `telemetrie:` **am Dateiende nach `replay:` anhängen** — das MacBook hat unkommittierte Änderungen vor `path_map:` (`proxy_pflicht`, Tagesstand 19.09.); Anhängen vermeidet den Konflikt)
 - Test: `tools/autocut/tests/test_telemetrie.py` (anhängen)
 
 **Interfaces:**
@@ -1123,7 +1124,7 @@ def test_stabil_vorschlag(rec, von, bis, erwartet, grund):
 Run: `cd "/Users/jansantos/NIRO Studio/tools/autocut" && venv/bin/python -m pytest tests/test_telemetrie.py -q`
 Expected: die neuen Tests scheitern mit `AttributeError: module 'niro_autocut.telemetrie' has no attribute 'clip_messen'` bzw. `KeyError: 'telemetrie'` beim Defaults-Test.
 
-- [ ] **Step 3: `defaults.yaml` — Block einfügen (vor `path_map:`)**
+- [ ] **Step 3: `defaults.yaml` — Block am Dateiende anhängen (nach `replay:`)**
 
 ```yaml
 telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/Beschleunigung/Brennweite aus der Sony-rtmd-Spur,
