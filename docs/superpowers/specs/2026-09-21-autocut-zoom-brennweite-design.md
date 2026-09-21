@@ -81,7 +81,9 @@ Betroffen: `vorlagen/feinschnitt/broll_einsetzen.py` (Stufe 3a, `PLAN`) und `vor
 
 **Schneller Zoom:** je Shot der tatsächlich genutzte Quellbereich (6d über `genutzter_quellbereich_s`, bei 50 % entsprechend
 kürzer; 3a bei 100 %) → `zooms_im_bereich(…, nur_schnelle=True)`. Treffer = Hinweiszeile
-„S07: schneller Zoom 2,4–3,1 s (24 → 70 mm, 85 %/s)"; kein Fehler, der Bau läuft.
+„S07: schneller Zoom 2,4–3,1 s (24 → 70 mm, 85 %/s)"; kein Fehler, der Bau läuft. Bei Zeitlupe (6d, 50 %) zählt das
+**sichtbare** Tempo (halb so hoch): ein Zoom, der nur wegen des Tempos schnell war, fällt weg, wenn er sichtbar unter der
+Schwelle bleibt; ruckartige bleiben (Nachtrag 21.09., folgt aus „so, wie es im Schnitt aussieht").
 
 **Gleiche Brennweite:** Shots nach Record-In sortiert; ein Paar A → B wird nur geprüft, wenn B direkt an A anschließt
 (Record-Out A = Record-In B) und beide eine bekannte Brennweite haben. Verglichen wird die scheinbare Brennweite am Schnitt:
