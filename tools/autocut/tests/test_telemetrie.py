@@ -19,7 +19,7 @@ from niro_autocut.media import MediaInfo
 
 CFG = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_max_px": 0.15, "stativ_max_grad_s": 0.3,
        "stativ_max_px": 0.02, "schwenk_min_grad_s": 3.0, "schwenk_min_px": 1.0, "hf_grenze_hz": 3.0,
-       "hand_hf_anteil_min": 0.35, "brennweite_klassen_kb": [30, 60], "pitch_klassen_grad": [-60, -8, 8],
+       "hand_hf_anteil_min": 0.35, "pitch_klassen_grad": [-60, -8, 8],
        "achsen": {"schwenk": 1, "tilt": 0}, "vorzeichen": {"schwenk": -1, "tilt": 1, "pitch": 1},
        "px_faktor": {"FX3": 1.0, "a7IV": 1.0}, "optisch_fuer": [], "optisch_breite": 480, "parallel": 2,
        "zoom_min_proz": 3.0, "zoom_rausch_proz_s": 1.0, "zoom_schnell_proz_s": 20.0, "zoom_ruck_max": 0.6,
@@ -126,8 +126,7 @@ def test_lage_pitch_roll_und_gate():
 
 
 def test_klassen():
-    brennweiten = [T.brennweitenklasse(k, [30, 60]) for k in (24, 30, 50, 60, 71.6, 283.8)]
-    assert brennweiten == ["weit", "normal", "normal", "normal", "tele", "tele"]
+    assert not hasattr(T, "brennweitenklasse")                 # Brennweitenklassen entfallen (Spec 2026-09-21)
     perspektiven = [T.perspektive_hoehe(p, [-60, -8, 8]) for p in (-90, -60, -12, -8, 0, 7.9, 8, 20)]
     assert perspektiven == (["Vogelperspektive", "Vogelperspektive", "Aufsicht", "Aufsicht", "Augenhöhe",
                              "Augenhöhe", "Untersicht", "Untersicht"])
@@ -197,7 +196,7 @@ def test_clip_messen_rtmd_weg(monkeypatch, tmp_path):
     mit = T.clip_messen(clip, CFG, schaerfe=True)
     assert mit["quelle"] == "rtmd" and mit["schaerfe_p10"] == 1.0 and mit["fenster"][0][4] == 1.0
     assert rec["kb_mm"] == 71.6 and rec["brennweite_mm"] == 67.7 and rec["fokus_m"] == 15.82 and rec["zoomfahrt"] is False
-    assert rec["brennweitenklasse"] == "tele" and rec["pitch_grad"] == 0.0 and rec["perspektive_hoehe"] == "Augenhöhe"
+    assert "brennweitenklasse" not in rec and rec["pitch_grad"] == 0.0 and rec["perspektive_hoehe"] == "Augenhöhe"
     # Rechnet mit der Test-CFG (Vorzeichen Schwenk −1, Stand vor der Kalibrierung): Gyro-y +10 °/s → dx negativ →
     # schwenk_rechts. Ausgeliefert ist +1 (defaults.yaml) → schwenk_links: test_ausgelieferte_konvention_aus_defaults_yaml
     assert rec["bewegungsart"] == "schwenk_rechts"
@@ -228,7 +227,7 @@ def test_clip_messen_optisch_fuer_kamera_behaelt_brennweite(monkeypatch, tmp_pat
     monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=200, proben=40, gyro_y=10.0))
     monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.zeros((30, hoehe, breite), np.uint8))
     rec = T.clip_messen(clip, {**CFG, "optisch_fuer": ["a7IV"]})
-    assert (rec["quelle"] == "optisch" and rec["kb_mm"] == 71.6 and rec["brennweitenklasse"] == "tele"
+    assert (rec["quelle"] == "optisch" and rec["kb_mm"] == 71.6 and rec["kb_verlauf"] == [[0.0, 71.6]]
            and rec["haltung"] == "stativ")
 
 
@@ -898,6 +897,7 @@ def test_zoom_hinweise():
 def test_defaults_haben_brennweitenregel():
     cfg = load_config(Path("/nirgendwo"))["telemetrie"]
     assert cfg["brennweite_gleich_max"] == 0.20 and cfg["digitalzoom_faktor"] == 1.25 and cfg["digitalzoom_max"] == 1.5
+    assert "brennweite_klassen_kb" not in cfg
 
 
 @pytest.mark.parametrize("a,b,abstand,gleich", [

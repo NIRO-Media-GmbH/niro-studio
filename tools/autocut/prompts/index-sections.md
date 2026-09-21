@@ -18,7 +18,7 @@ Diese Klassifikation ist ein zweiter, schlanker Durchgang nach dem Erst-Index: D
 1. Nur Sichtbares. Motiv-Ordner und Erst-Beschreibung sind Hinweise, keine Belege.
 2. Zwei Abschnitte desselben Clips dürfen dieselben Werte haben, wenn das Bild gleich bleibt — erfinde keine Unterschiede.
 3. Bei Unsicherheit zwischen zwei Einstellungen die nähere wählen; bei Unsicherheit der Brennweite „normal".
-4. Steht eine Zeile „Kamera-Telemetrie (gemessen …)" im Hintergrund, sind KB-Brennweite und Pitch gemessen — brennweite und perspektive_hoehe trotzdem nach Schema ausfüllen (das Schnittprogramm ersetzt sie durch die Messwerte); die Bewegungsart der Kamera hilft, Motivbewegung von Kamerabewegung zu trennen.
+4. Steht eine Zeile „Kamera-Telemetrie (gemessen …)" im Hintergrund, sind KB-Brennweite und Pitch gemessen — perspektive_hoehe trotzdem nach Schema ausfüllen (das Schnittprogramm ersetzt sie durch den Messwert); brennweite bleibt deine Einschätzung, die gemessenen mm helfen dabei; die Bewegungsart der Kamera hilft, Motivbewegung von Kamerabewegung zu trennen.
 5. Werte exakt aus den Listen, deutsche Schreibweise wie angegeben, keine Zusätze.
 
 ## Typische Fehler

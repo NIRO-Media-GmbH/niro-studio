@@ -20,7 +20,7 @@ from PIL import Image, ImageDraw
 
 from .broll_index import API_ATTEMPTS, CACHE_DIR, RETRY_ERRORS, _font, _image_block, _make_client
 from .charge import TOOL_ROOT, AutoCutError
-from .telemetrie import abschnitt_werte, finden, laden as telemetrie_laden
+from .telemetrie import abschnitt_brennweite, abschnitt_werte, brennweite_text, finden, laden as telemetrie_laden
 
 PROMPT_FILE = TOOL_ROOT / "prompts" / "index-sections.md"
 EINSTELLUNG5 = ["Totale", "Halbtotale", "Halbnah", "Nah", "Detail"]
@@ -142,8 +142,9 @@ def telemetrie_text(tele: dict | None, abschnitte: list[dict], fenster_s: float 
     if not tele or tele.get("quelle") in (None, "keine"):
         return ""
     teile = []
-    if tele.get("kb_mm"):
-        teile.append(f"KB {tele['kb_mm']:g} mm = {tele.get('brennweitenklasse')}")
+    kb = brennweite_text(tele)
+    if kb:
+        teile.append(kb)
     if tele.get("pitch_grad") is not None:
         teile.append(f"Pitch {tele['pitch_grad']:g}° = {tele.get('perspektive_hoehe')}")
     if tele.get("haltung"):
@@ -154,7 +155,7 @@ def telemetrie_text(tele: dict | None, abschnitte: list[dict], fenster_s: float 
         teile.append("Bewegungsart je Abschnitt: " + ", ".join(f"A{i} {x or '?'}" for i, x in enumerate(arten, 1)))
     if not teile:
         return ""
-    praefix = "Kamera-Telemetrie (gemessen; brennweite und perspektive_hoehe setzt das Schnittprogramm daraus fest): "
+    praefix = "Kamera-Telemetrie (gemessen; perspektive_hoehe setzt das Schnittprogramm daraus fest): "
     return praefix + " · ".join(teile)
 
 
@@ -174,23 +175,24 @@ def section_meta_text(rec: dict, tele: dict | None = None, fenster_s: float = 2.
     return "\n".join(lines)
 
 
-_TELE_FELDER = (("brennweite", "brennweitenklasse"), ("perspektive_hoehe", "perspektive_hoehe"))
+_TELE_FELDER = (("perspektive_hoehe", "perspektive_hoehe"),)   # Claudes Klasse ``brennweite`` bleibt (Spec 2026-09-21)
 
 
 def _tele_felder(tele: dict | None) -> dict[str, str]:
-    """Abschnittsfeld → Metadatenklasse, die ``telemetrie_anwenden`` setzt (Brennweite, Pitch); leer ohne Telemetrie."""
+    """Abschnittsfeld → Metadatenklasse, die ``telemetrie_anwenden`` setzt (Pitch); leer ohne Telemetrie."""
     if not tele or tele.get("quelle") in (None, "keine"):
         return {}
     return {feld: tele[k] for feld, k in _TELE_FELDER if tele.get(k)}
 
 
 def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) -> tuple[dict, bool]:
-    """Metadatenklassen in die Abschnitte: brennweite/perspektive_hoehe überschreiben (``felder_quelle`` je Feld „rtmd":
-    Brennweite und Pitch stammen immer aus den Metadaten, auch wenn die Bewegung optisch gemessen wurde),
-    bewegungsart/haltung ergänzen. Claudes Originalwert je überschriebenem Feld bleibt im Abschnitt unter ``claude``:
-    stammt das Feld laut ``felder_quelle`` schon aus der Telemetrie, bleibt ein vorhandenes ``claude[feld]`` stehen
-    (der aktuelle Wert ist dann der Telemetrie-Wert), sonst ist der aktuelle Wert Claudes und wird gesichert.
-    Idempotent. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert."""
+    """Metadaten in die Abschnitte: perspektive_hoehe überschreiben (``felder_quelle`` „rtmd": der Pitch stammt immer
+    aus den Metadaten, auch wenn die Bewegung optisch gemessen wurde), ``brennweite_mm``/``zoom`` (Brennweite in mm und
+    schnellste Zoomfahrt im Abschnitt, nur mit ``kb_verlauf``) sowie bewegungsart/haltung ergänzen. Claudes Klasse
+    ``brennweite`` bleibt unangetastet (Spec 2026-09-21). Claudes Originalwert je überschriebenem Feld bleibt im
+    Abschnitt unter ``claude``: stammt das Feld laut ``felder_quelle`` schon aus der Telemetrie, bleibt ein vorhandenes
+    ``claude[feld]`` stehen (der aktuelle Wert ist dann der Telemetrie-Wert), sonst ist der aktuelle Wert Claudes und
+    wird gesichert. Idempotent. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert."""
     if not tele or tele.get("quelle") in (None, "keine"):
         return rec, False
     felder = _tele_felder(tele)
@@ -212,8 +214,9 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) ->
         if claude:
             geaendert |= b.get("claude") != claude
             b["claude"] = claude
-        w = abschnitt_werte(tele, float(b.get("von_s", 0)), float(b.get("bis_s", 0)), fenster_s)
-        for k in ("bewegungsart", "haltung"):
+        von, bis = float(b.get("von_s", 0)), float(b.get("bis_s", 0))
+        w = {**abschnitt_werte(tele, von, bis, fenster_s), **abschnitt_brennweite(tele, von, bis)}
+        for k in ("bewegungsart", "haltung", "brennweite_mm", "zoom"):
             if w.get(k) is not None:
                 geaendert |= b.get(k) != w[k]
                 b[k] = w[k]
@@ -390,8 +393,8 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
     if probs:
         raise AutoCutError(f"Antwort verletzt das Schema (auch nach {reparaturen} Nachfrage): " + "; ".join(probs[:6]))
     warnungen = list(rec.get("warnungen") or [])
-    # brennweite/perspektive_hoehe kommen hier frisch aus der Modellantwort: ``claude`` daraus neu setzen (ein altes gilt
-    # nicht mehr) — für die Felder, die die Telemetrie jetzt überschreibt oder felder_quelle aus einem früheren Lauf führt
+    # perspektive_hoehe kommt hier frisch aus der Modellantwort: ``claude`` daraus neu setzen (ein altes gilt nicht
+    # mehr) — für die Felder, die die Telemetrie jetzt überschreibt oder felder_quelle aus einem früheren Lauf führt
     ueberschrieben = [f for f, _ in _TELE_FELDER if f in _tele_felder(telemetrie) or f in (rec.get("felder_quelle") or {})]
     merged = []
     for i, (a, s, g) in enumerate(zip(rec.get("abschnitte") or [], data["abschnitte"], groups), 1):

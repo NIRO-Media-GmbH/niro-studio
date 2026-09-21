@@ -321,7 +321,8 @@ def test_index_sections_counts_repairs_over_all_clips(tmp_path, monkeypatch):
 
 # --- Telemetrie (Task 8) -----------------------------------------------------------------------------------------
 
-TELE = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd", "kb_mm": 71.6, "brennweitenklasse": "tele",
+TELE = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd", "kb_mm": 71.6,
+        "kb_verlauf": [[0.0, 71.6]], "zooms": [],
         "pitch_grad": -12.0, "perspektive_hoehe": "Aufsicht", "haltung": "gimbal", "wackeln": 0.05, "fehler": None,
         "fenster": [[0.0, 0.05, 1.0, "schwenk_links"], [1.0, 0.05, 1.0, "schwenk_links"], [2.0, 0.05, 1.0, "schwenk_links"],
                     [3.0, 0.05, 1.0, "schwenk_links"], [4.0, 0.02, 0.1, "statisch"], [5.0, 0.02, 0.1, "statisch"],
@@ -335,19 +336,22 @@ def test_telemetrie_text_und_anwenden():
     rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "brennweite": "normal", "perspektive_hoehe": "Augenhöhe"},
                           {"von_s": 4, "bis_s": 8, "brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]}
     text = S.telemetrie_text(TELE, rec["abschnitte"])
-    assert "KB 71.6 mm = tele" in text and "Pitch -12° = Aufsicht" in text and "Haltung gimbal" in text
-    assert "A1 schwenk_links, A2 statisch" in text
+    assert "KB 71,6 mm" in text and "= tele" not in text and "Pitch -12° = Aufsicht" in text and "Haltung gimbal" in text
+    assert "A1 schwenk_links, A2 statisch" in text and "brennweite und" not in text
     assert S.telemetrie_text(None, rec["abschnitte"]) == "" and S.telemetrie_text({"quelle": "keine"}, []) == ""
     neu, geaendert = S.telemetrie_anwenden(rec, TELE)
-    assert geaendert and neu["felder_quelle"] == {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"}
-    assert [a["brennweite"] for a in neu["abschnitte"]] == ["tele", "tele"]
+    assert geaendert and neu["felder_quelle"] == {"perspektive_hoehe": "rtmd"}
+    assert [a["brennweite"] for a in neu["abschnitte"]] == ["normal", "tele"]              # Claudes Klasse bleibt
+    assert [a["brennweite_mm"] for a in neu["abschnitte"]] == [71.6, 71.6]
+    assert [a["zoom"] for a in neu["abschnitte"]] == ["keiner", "keiner"]
     assert [a["perspektive_hoehe"] for a in neu["abschnitte"]] == ["Aufsicht", "Aufsicht"]
     assert [a["bewegungsart"] for a in neu["abschnitte"]] == ["schwenk_links", "statisch"]
     assert neu["abschnitte"][0]["haltung"] == "gimbal"
     assert S.telemetrie_anwenden(rec, None) == (rec, False)
     wieder, geaendert2 = S.telemetrie_anwenden(neu, TELE)
     assert not geaendert2 and wieder == neu
-    assert "brennweite" not in S.telemetrie_anwenden({"abschnitte": [{"von_s": 0, "bis_s": 2}]}, TELE)[0]["abschnitte"][0]
+    ohne_feld = S.telemetrie_anwenden({"abschnitte": [{"von_s": 0, "bis_s": 2}]}, TELE)[0]["abschnitte"][0]
+    assert "brennweite" not in ohne_feld and "perspektive_hoehe" not in ohne_feld and ohne_feld["brennweite_mm"] == 71.6
 
 
 def test_index_sections_clip_wendet_telemetrie_bei_cache_treffer_an(tmp_path):
@@ -365,11 +369,11 @@ def test_index_sections_clip_wendet_telemetrie_bei_cache_treffer_an(tmp_path):
         raise AssertionError("kein API-Aufruf bei Cache-Treffer")
 
     out = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=kein_api, telemetrie=TELE)
-    assert out["_cache"] is True and out["abschnitte"][0]["brennweite"] == "tele"
-    assert out["felder_quelle"]["brennweite"] == "rtmd"
+    assert out["_cache"] is True and out["abschnitte"][0]["brennweite"] == "normal"         # Claudes Klasse bleibt
+    assert out["felder_quelle"] == {"perspektive_hoehe": "rtmd"} and out["abschnitte"][0]["brennweite_mm"] == 71.6
     cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
-    assert cached["abschnitte"][0]["perspektive_hoehe"] == "Aufsicht"
-    assert cached["abschnitte"][0]["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}   # I2
+    assert cached["abschnitte"][0]["perspektive_hoehe"] == "Aufsicht" and cached["abschnitte"][0]["zoom"] == "keiner"
+    assert cached["abschnitte"][0]["claude"] == {"perspektive_hoehe": "Augenhöhe"}                          # I2
     assert cached["abschnitte"][0]["bewegungsart"] == "schwenk_links"
     ohne = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=kein_api)
     assert ohne["_cache"] is True and ohne["abschnitte"][0]["brennweite"] == "normal"
@@ -384,7 +388,7 @@ def test_index_sections_clip_api_mit_telemetrie(tmp_path):
            "abschnitte": [{"von_s": 0, "bis_s": 4, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": True}]}
 
     def fake_describe(client, sheet, meta_text, cfg, prompt):
-        assert "Kamera-Telemetrie" in meta_text and "KB 71.6 mm = tele" in meta_text
+        assert "Kamera-Telemetrie" in meta_text and "KB 71,6 mm" in meta_text
         return {"abschnitte": [{"nr": 1, "einstellung": "Halbtotale", "perspektive_hoehe": "Augenhöhe",
                                 "perspektive_ansicht": "seitlich", "brennweite": "normal", "bewegungsrichtung": "keine",
                                 "hauptmotiv": "Flur"}],
@@ -392,12 +396,12 @@ def test_index_sections_clip_api_mit_telemetrie(tmp_path):
 
     out = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=fake_describe, telemetrie=TELE)
     a = out["abschnitte"][0]
-    assert a["brennweite"] == "tele" and a["perspektive_hoehe"] == "Aufsicht"
-    assert a["bewegungsart"] == "schwenk_links" and a["haltung"] == "gimbal"
-    assert a["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}          # I2: Claudes Antwort
-    assert out["felder_quelle"] == {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"}
+    assert a["brennweite"] == "normal" and a["perspektive_hoehe"] == "Aufsicht" and a["brennweite_mm"] == 71.6
+    assert a["bewegungsart"] == "schwenk_links" and a["haltung"] == "gimbal" and a["zoom"] == "keiner"
+    assert a["claude"] == {"perspektive_hoehe": "Augenhöhe"}                                   # I2: Claudes Antwort
+    assert out["felder_quelle"] == {"perspektive_hoehe": "rtmd"}
     cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
-    assert cached["felder_quelle"]["brennweite"] == "rtmd" and "_cache" not in cached
+    assert cached["felder_quelle"] == {"perspektive_hoehe": "rtmd"} and "_cache" not in cached
 
 
 def test_index_sections_zaehlt_telemetrie(tmp_path, monkeypatch):
@@ -421,7 +425,7 @@ def test_index_sections_zaehlt_telemetrie(tmp_path, monkeypatch):
 # --- Fix-Runde 1: fenster_s muss bis in die Kontextzeile durchgereicht werden (Task-8-Review) --------------------
 
 _TELE_FENSTER = {"path": "/nas/B-Roll/Flur/FX3_9.MP4", "clip": "FX3_9", "quelle": "rtmd", "kb_mm": 50.0,
-                 "brennweitenklasse": "normal", "pitch_grad": 0.0, "perspektive_hoehe": "Augenhöhe",
+                 "pitch_grad": 0.0, "perspektive_hoehe": "Augenhöhe",
                  "haltung": "gimbal", "wackeln": 0.02, "fehler": None,
                  "fenster": [[0.0, 0.02, 0.1, "statisch"], [1.0, 0.02, 0.1, "statisch"],
                              [2.0, 0.05, 1.0, "schwenk_links"], [3.0, 0.05, 1.0, "schwenk_links"],
@@ -481,29 +485,30 @@ def test_telemetrie_anwenden_sichert_claudes_originalwerte():
                           {"von_s": 4, "bis_s": 8, "brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]}
     neu, geaendert = S.telemetrie_anwenden(rec, TELE)
     assert geaendert and [a["claude"] for a in neu["abschnitte"]] == [
-        {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}, {"brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]
+        {"perspektive_hoehe": "Augenhöhe"}, {"perspektive_hoehe": "Aufsicht"}]           # nur noch Perspektive
     wieder, geaendert2 = S.telemetrie_anwenden(neu, TELE)
     assert not geaendert2 and wieder == neu
     ohne_pitch, _ = S.telemetrie_anwenden(rec, {**TELE, "pitch_grad": None, "perspektive_hoehe": None})
-    assert ohne_pitch["abschnitte"][0]["claude"] == {"brennweite": "normal"}         # nur überschriebene Felder
+    assert "claude" not in ohne_pitch["abschnitte"][0]                                   # nichts überschrieben
     assert ohne_pitch["abschnitte"][0]["perspektive_hoehe"] == "Augenhöhe"
     # Altbestand (vor dem Fix angewendet): felder_quelle gesetzt, kein claude → der Telemetrie-Wert ist nicht Claudes
-    alt = {"felder_quelle": {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"},
+    alt = {"felder_quelle": {"perspektive_hoehe": "rtmd"},
            "abschnitte": [{"von_s": 0, "bis_s": 4, "brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]}
     assert "claude" not in S.telemetrie_anwenden(alt, TELE)[0]["abschnitte"][0]
     assert "claude" not in S.telemetrie_anwenden(rec, None)[0]["abschnitte"][0]
 
 
 def test_telemetrie_anwenden_felder_quelle_immer_metadaten():
-    """M3: Brennweite und Pitch kommen immer aus den Metadaten, auch wenn die Bewegung optisch gemessen wurde."""
+    """M3: Pitch und Brennweite in mm kommen immer aus den Metadaten, auch wenn die Bewegung optisch gemessen wurde."""
     rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}]}
     neu, _ = S.telemetrie_anwenden(rec, {**TELE, "quelle": "optisch"})
-    assert neu["felder_quelle"] == {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"}
+    assert neu["felder_quelle"] == {"perspektive_hoehe": "rtmd"} and neu["abschnitte"][0]["brennweite_mm"] == 71.6
 
 
 def test_index_sections_clip_api_setzt_claude_aus_der_antwort(tmp_path):
-    """I2: im API-Pfad kommen brennweite/perspektive_hoehe frisch aus der Modellantwort — claude wird daraus neu gesetzt,
-    auch wenn der Datensatz schon felder_quelle und ein altes claude trägt (Neulauf mit --force)."""
+    """I2: im API-Pfad kommt perspektive_hoehe frisch aus der Modellantwort — claude wird daraus neu gesetzt, auch wenn
+    der Datensatz schon felder_quelle und ein altes claude trägt (Neulauf mit --force; hier noch mit der Brennweite
+    aus der Zeit vor der Umstellung: sie verschwindet aus claude und felder_quelle, Claudes frische Klasse bleibt)."""
     _frames(tmp_path)
     ch = _Ch(tmp_path)
     (ch.autocut / "broll_index").mkdir()
@@ -518,14 +523,14 @@ def test_index_sections_clip_api_setzt_claude_aus_der_antwort(tmp_path):
 
     out = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", force=True, describe=fake_describe, telemetrie=TELE)
     a = out["abschnitte"][0]
-    assert a["brennweite"] == "tele" and a["perspektive_hoehe"] == "Aufsicht"
-    assert a["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}
+    assert a["brennweite"] == "normal" and a["perspektive_hoehe"] == "Aufsicht"
+    assert a["claude"] == {"perspektive_hoehe": "Augenhöhe"} and out["felder_quelle"] == {"perspektive_hoehe": "rtmd"}
     cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
-    assert cached["abschnitte"][0]["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}
+    assert cached["abschnitte"][0]["claude"] == {"perspektive_hoehe": "Augenhöhe"}
     # Neulauf ohne Telemetrie, felder_quelle noch vom früheren Lauf: Claudes frische Werte bleiben in claude stehen
     ohne = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", force=True, describe=fake_describe)
     b = ohne["abschnitte"][0]
-    assert b["brennweite"] == "normal" and b["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}
+    assert b["brennweite"] == "normal" and b["claude"] == {"perspektive_hoehe": "Augenhöhe"}
 
 
 def test_cache_schreiben_eindeutiger_part_name_je_schreiber(tmp_path, monkeypatch):
@@ -585,3 +590,21 @@ def test_cli_dry_run_zaehlt_nur_telemetrie_mit_daten(charge_dir, capsys):
                                         encoding="utf-8")
     assert skript.main([str(charge_dir), "--dry-run"]) == 0
     assert "Telemetrie: 1 von 2 Clips" in capsys.readouterr().out
+
+
+# --- Zoomfahrten und Brennweite in mm (Spec 2026-09-21, Abschnitt 3) ------------------------------------------------
+
+def test_telemetrie_anwenden_brennweite_mm_und_zoom_je_abschnitt():
+    tele = {**TELE, "kb_mm": 50.0, "kb_verlauf": [[0.0, 24.0], [2.0, 24.0], [3.0, 70.0], [8.0, 70.0]],
+            "zooms": [{"von_s": 2.0, "bis_s": 3.0, "von_mm": 24.0, "bis_mm": 70.0, "tempo_max": 107.0,
+                       "tempo_mittel": 90.0, "ruck": 0.1, "ruckartig": False, "urteil": "schnell"}]}
+    rec = {"abschnitte": [{"von_s": 0, "bis_s": 2}, {"von_s": 2, "bis_s": 4}, {"von_s": 4, "bis_s": 8}]}
+    neu, _ = S.telemetrie_anwenden(rec, tele)
+    # 2–4 s: 2,0 … 2,9 s steigend, 3,0 … 4,0 s = 70 mm → Median 70; der Zoom 2–3 s schneidet nur diesen Abschnitt
+    assert [a["brennweite_mm"] for a in neu["abschnitte"]] == [24.0, 70.0, 70.0]
+    assert [a["zoom"] for a in neu["abschnitte"]] == ["keiner", "schnell", "keiner"]
+    assert "KB 24–70 mm, schneller Zoom" in S.telemetrie_text(tele, rec["abschnitte"])
+    alt = {k: v for k, v in TELE.items() if k not in ("kb_verlauf", "zooms")}          # Datensatz von vor der Umstellung
+    ohne, _ = S.telemetrie_anwenden(rec, alt)
+    assert all("brennweite_mm" not in a and "zoom" not in a for a in ohne["abschnitte"])
+    assert "KB 71,6 mm" in S.telemetrie_text(alt, rec["abschnitte"])

@@ -189,15 +189,6 @@ def lage(acc: np.ndarray, toleranz: float = 0.10, vorzeichen_pitch: float = 1.0)
     return {"pitch_grad": round(pitch + 0.0, 1), "roll_grad": round(roll + 0.0, 1), "grund": None}
 
 
-def brennweitenklasse(kb_mm: float, grenzen: list | tuple) -> str:
-    """weit unter grenzen[0], tele über grenzen[1], dazwischen normal (Grenzen zählen zu normal)."""
-    if kb_mm < grenzen[0]:
-        return "weit"
-    if kb_mm > grenzen[1]:
-        return "tele"
-    return "normal"
-
-
 def perspektive_hoehe(pitch_grad: float | None, grenzen: list | tuple) -> str | None:
     """Vogelperspektive ≤ grenzen[0], Aufsicht ≤ grenzen[1], Untersicht ≥ grenzen[2], sonst Augenhöhe; None ohne Pitch."""
     if pitch_grad is None:
@@ -380,8 +371,8 @@ def config_hash(cfg: dict) -> str:
 def _leer(path: Path, kamera: str, modell: str | None) -> dict:
     return {"path": str(path), "clip": path.stem, "kamera": kamera, "modell": modell, "dauer_s": None, "fps": None,
             "quelle": "keine", "imu_hz": None, "samples": 0, "brennweite_mm": None, "kb_mm": None, "kb_min": None,
-            "kb_max": None, "kb_verlauf": [], "zooms": [], "zoomfahrt": False, "fokus_m": None,
-            "brennweitenklasse": None, "pitch_grad": None, "roll_grad": None, "lage_grund": None,
+            "kb_max": None, "kb_verlauf": [], "zooms": [], "zoomfahrt": False, "fokus_m": None, "pitch_grad": None,
+            "roll_grad": None, "lage_grund": None,
             "perspektive_hoehe": None, "haltung": None, "hf_anteil": None, "bewegungsart": None, "wackeln": None,
             "bewegung": None, "fenster_s": None, "fenster": [], "ruhige_fenster": [], "schaerfe_p10": None,
             "config_hash": None, "fehler": None}
@@ -416,7 +407,6 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
                                                               round(max(daten.kb_mm), 1))
                 out.update(zoom_messen(daten.kb_mm, daten.kb_index, float(info.fps), daten.samples, cfg))
                 out["zoomfahrt"] = bool(out["zooms"])
-                out["brennweitenklasse"] = brennweitenklasse(kb, cfg["brennweite_klassen_kb"])
             if daten.brennweite_mm:
                 out["brennweite_mm"] = round(float(np.median(daten.brennweite_mm)), 1)
             if daten.fokus_m:

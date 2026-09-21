@@ -43,8 +43,8 @@ def main(argv: list[str] | None = None) -> int:
         tele = telemetrie_laden(ch.autocut)
         # nur Datensätze mit Daten zählen (quelle „keine": keine Datenspur und nicht optisch gemessen)
         mit_tele = sum(1 for c in todo if (finden(tele, str(c["path"])) or {}).get("quelle") not in (None, "keine"))
-        hinweis = ("" if mit_tele else " — erst scripts/autocut_telemetrie.py ausführen, dann kommen Brennweite "
-                   "und Perspektive Höhe aus den Metadaten.")
+        hinweis = ("" if mit_tele else " — erst scripts/autocut_telemetrie.py ausführen, dann kommen Perspektive Höhe "
+                   "sowie Brennweite in mm und Zoom je Abschnitt aus den Metadaten.")
         print(f"Telemetrie: {mit_tele} von {len(todo)} Clips" + hinweis + "\n")
         if args.dry_run:
             print("Probelauf — nichts angefragt, nichts geschrieben.")
@@ -56,8 +56,8 @@ def main(argv: list[str] | None = None) -> int:
                   f"{out.get('reparaturen', 0)} Nachfragen wegen Schema-Verstoß)"
                   + (f", Testlauf --limit {args.limit}" if args.limit else ""),
                   f"Token Eingabe {u['input']} / Ausgabe {u['output']} / Cache gelesen {u['cache_read']}",
-                  f"Telemetrie genutzt: {out['mit_telemetrie']} Clips (brennweite/perspektive_hoehe aus Metadaten, "
-                  f"bewegungsart/haltung je Abschnitt)",
+                  f"Telemetrie genutzt: {out['mit_telemetrie']} Clips (perspektive_hoehe aus Metadaten, "
+                  f"brennweite_mm/zoom/bewegungsart/haltung je Abschnitt)",
                   f"Datei: {ch.autocut / 'broll_index.json'}"] + [f"Fehler: {f}" for f in out["fehler"][:10]]
         append_protokoll(ch, "Index-Nachlauf", zeilen)
         print("\n".join(zeilen))

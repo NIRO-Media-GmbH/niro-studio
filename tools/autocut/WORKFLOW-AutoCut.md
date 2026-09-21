@@ -38,7 +38,7 @@ Original-Skripte in `_intern/`, Ablauf und Zahlen in `Protokoll.md`).
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe |
 | „Feinschnitt" | 6 | neue Timeline „AutoCut <Video> <Datum> Feinschnitt": A/B-Wechsel, B-Roll-Tempo und Stabilisierung, Grafik V4, Ton, Musik, SFX; danach Grading, Begradigen, Kopfposition. Die Bausteine 6a–6i sind einzeln aufrufbar, z. B. „AutoCut: … Grading" (Vorlagen) |
 | „Kanten" | – | Kantenprüfung am Export einer AutoCut-Timeline (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) mit Schnittbildern; Resolve nur lesend |
-| „Telemetrie" | – | Gyro/Beschleunigung/Brennweite je Clip aus der Sony-rtmd-Spur (optischer Rückfall) → `telemetrie.json` + Bericht: wackeln, ruhige Fenster, Haltung, Bewegungsart, Brennweiten-/Perspektivklasse; Grundlage für Sichtung, 2b, 6d |
+| „Telemetrie" | – | Gyro/Beschleunigung/Brennweite je Clip aus der Sony-rtmd-Spur (optischer Rückfall) → `telemetrie.json` + Bericht: wackeln, ruhige Fenster, Haltung, Bewegungsart, Brennweite in mm, Zoomfahrten, Perspektivklasse; Grundlage für Sichtung, 2b, 6d |
 | „Replay" | – | Timeline nach Dropbox Replay hochladen: Vorschau, Upload nur nach OK im Chat, danach im Chrome in `Autocut/<Kunde>/<Projekt>` einsortieren |
 | „Kommentare" | – | Replay-Kommentare selbstständig aus dem Replay-Ordner des Projekts holen, Eindeutiges in einer neuen Timeline-Version umsetzen, Handarbeit und Rückfragen melden |
 
@@ -275,12 +275,13 @@ Abweichend davon:
    Fehlerliste nach; der Protokoll-Eintrag nennt die Zahl der Nachfragen. Exit 1 = einzelne Clips
    fehlgeschlagen (Lauf wiederholen; Cache hält Fertiges).
 
-Liegt `telemetrie.json` vor (`autocut_telemetrie.py`), bekommt der Abschnittsbogen eine Kontextzeile mit
-KB-Brennweite, Pitch, Haltung und Bewegungsart je Abschnitt; nach der Antwort setzt der Code `brennweite`
-und `perspektive_hoehe` aus den Metadaten fest (`felder_quelle` im Datensatz) und ergänzt je Abschnitt
-`bewegungsart` und `haltung`. `claude` je Abschnitt hält Claudes Originalwerte der überschriebenen Felder; der
-Bericht `telemetrie.md` vergleicht dagegen. Cache-Treffer bekommen die Felder ohne API-Aufruf. Ohne Telemetrie bleibt
-alles wie bisher; `--dry-run` zeigt die Zahl.
+Liegt `telemetrie.json` vor (`autocut_telemetrie.py`), bekommt der Abschnittsbogen eine Kontextzeile mit der
+KB-Brennweite in mm („KB 71,6 mm", bei Zoomfahrten „KB 24–70 mm, langsamer Zoom"), Pitch, Haltung und Bewegungsart je
+Abschnitt; nach der Antwort setzt der Code `perspektive_hoehe` aus den Metadaten fest (`felder_quelle` im Datensatz)
+und ergänzt je Abschnitt `brennweite_mm` (Median im Abschnitt), `zoom` (keiner/langsam/schnell), `bewegungsart` und
+`haltung`. Claudes Klasse `brennweite` bleibt unangetastet (seit 21.09.2026, Spec Zoomfahrten). `claude` je Abschnitt
+hält Claudes Originalwert der überschriebenen Perspektive; der Bericht `telemetrie.md` vergleicht dagegen. Cache-Treffer
+bekommen die Felder ohne API-Aufruf. Ohne Telemetrie bleibt alles wie bisher; `--dry-run` zeigt die Zahl.
 
 ## Ablauf Stufe 3 — „B-Roll" (v2)
 
@@ -690,12 +691,12 @@ Clip-Quelle: `--ordner`, sonst `broll_index.json`, `inventar.json`, B-Roll-Wurze
 Cache je Clip unter `_intern/autocut/telemetrie/<fingerprint>.json`; Lesen der Datenspur kostet die ganze Datei (≈ 300 MB/s
 übers NAS). Nach einer Änderung unter `telemetrie:` (`defaults.yaml` oder Chargen-`config.yaml`) misst der nächste Lauf die
 betroffenen Clips neu (der Cache trägt je Clip einen Config-Hash, ohne `parallel`); `--force` misst alles neu.
-Felder je Clip: `quelle` (rtmd/optisch/keine), `kamera`, `kb_mm`/`brennweitenklasse` (weit < 30, tele > 60),
+Felder je Clip: `quelle` (rtmd/optisch/keine), `kamera`, `kb_mm` (Median; Verlauf und Zoomfahrten unten),
 `pitch_grad`/`perspektive_hoehe`, `roll_grad`, `haltung` (stativ/gimbal/hand), `bewegungsart` (statisch, schwenk_links/rechts,
 tilt_auf/ab, fahrt, gemischt — `schwenk_links` = Kamera dreht nach links), `wackeln`, `bewegung`, `fenster` (2 s, Schritt 1 s),
 `ruhige_fenster` (wackeln ≤ `telemetrie.ruhig_max_px`). `ruhige_fenster` sind Fenster-Startzeiten in s (Fensterlänge `fenster_s`
 im Datensatz); das letzte Fenster kann kürzer sein. Schwellen und Kamerafaktoren in `defaults.yaml` unter `telemetrie:`.
-Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b (Brennweite/Perspektive aus Metadaten,
+Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b (Perspektive aus Metadaten, Brennweite in mm und Zoom je Abschnitt,
 `bewegungsart`/`haltung` je Abschnitt) und 6d (Stabilisieren nur bei Bedarf). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
 Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
 
@@ -717,7 +718,7 @@ dämpfen), Spearman 0,76/0,71 → beide belastbar, `optisch_fuer` leer. Der opti
 überein (r 0,97, Verhältnis 1,00; `ruhe.py` rechnete ohne Fenster). `hand_hf_anteil_min` 0,15 = Mitte zwischen P75 der FX3-Gimbal-Clips
 (0,107) und P25 der a7-IV-Handclips (0,191). MEK (463 Clips) gegen den Stufe-2b-Index: Perspektive Höhe 76 % gleich (Pitch-Vorzeichen
 bestätigt), Brennweite nur 47 % — Claude nennt bis etwa 75 mm KB „normal", und Zoomfahrten (157 Clips) bekommen die Klasse des
-Clip-Medians; Grenzen [30, 60] vorerst unverändert (offen, Spec-Nachtrag „Kalibrierung").
+Clip-Medians. Die Klassen entfallen seit 21.09.2026 (Spec Zoomfahrten): Stufe 2b trägt `brennweite_mm` und `zoom`.
 
 ## Kantenprüfung — „Kanten" (seit 16.09.2026)
 

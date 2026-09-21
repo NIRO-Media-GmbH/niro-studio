@@ -112,7 +112,6 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   hf_grenze_hz: 3.0         # Grenze zwischen Gimbal-/Fahrt-Bewegung und Hand-Zittern
   hand_hf_anteil_min: 0.15  # Leistungsanteil ab hf_grenze_hz, ab dem „hand" statt „gimbal"; Kalibrierung 21.09.2026
                             # Hochzeitszauber: Mitte P75 FX3-Gimbal 0,107 / P25 a7-IV-Hand 0,191
-  brennweite_klassen_kb: [30, 60]    # KB-Brennweite: < 30 weit, > 60 tele, sonst normal
   pitch_klassen_grad: [-60, -8, 8]   # Pitch: ≤ −60 Vogelperspektive, ≤ −8 Aufsicht, ≥ 8 Untersicht, sonst Augenhöhe
   achsen: {schwenk: 1, tilt: 0}                    # Gyro-Spalten (x links, y oben, z vorwärts): Schwenk um y, Tilt um x
   vorzeichen: {schwenk: 1, tilt: -1, pitch: 1}     # Kalibrierung 21.09.2026, Hochzeitszauber 301 FX3/54 a7 IV: Gyro-y ↔ dx
