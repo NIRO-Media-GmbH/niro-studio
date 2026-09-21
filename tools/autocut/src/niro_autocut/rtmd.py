@@ -2,10 +2,10 @@
 
 Aufbau der Datenspur (gemessen 21.09.2026, Spec-Nachtrag): ein rtmd-Sample je Videoframe, 19 456 Bytes, Header
 ``00 1c 01 00`` + 24 Bytes, dann KLV-Sätze (16-Byte-Key ab ``06 0e 2b 34``, BER-Länge, lokale Tags ``>HH`` Tag/Länge + Wert),
-Rest Füllung. IMU-Block (0xE43B Gyro, 0xE44B Beschleunigung): n (u32), groesse (u32), n × groesse Bytes, je Probe int16 x/y/z;
-Skalen 0xE439/0xE449 (float32, LSB je °/s bzw. je g); 0xE435 = IMU-Rate (u32, 2000). Distanzen (0x8001 Fokus, 0x8004 KB,
-0x8005 Brennweite) im RDD-18-Format, 0xFFFF = unbekannt. Achsen: x links, y oben, z vorwärts.
-Alles nur lesend; ``datenspur_lesen`` liest die ganze Datei (≈ 300 MB/s übers NAS).
+Rest Füllung. IMU-Block (0xE43B Gyro, 0xE44B Beschleunigung): n (u32), groesse (u32),
+n × groesse Bytes, je Probe int16 x/y/z; Skalen 0xE439/0xE449 (float32, LSB je °/s bzw. je g); 0xE435 = IMU-Rate (u32, 2000).
+Distanzen (0x8001 Fokus, 0x8004 KB, 0x8005 Brennweite) im RDD-18-Format, 0xFFFF = unbekannt.
+Achsen: x links, y oben, z vorwärts. Alles nur lesend; ``datenspur_lesen`` liest die ganze Datei (≈ 300 MB/s übers NAS).
 """
 from __future__ import annotations
 
@@ -150,7 +150,7 @@ def sidecar_modell(path: str | Path) -> str | None:
 
 
 def kamera_erkennen(path: str | Path, modell: str | None = None) -> str:
-    """Kamera-Kürzel: Sidecar-Modell zuerst, dann Dateinamen-Präfix (FX3_, a7MK4_, DJI_), sonst „unbekannt"."""
+    """Kamera-Kürzel: Sidecar-Modell zuerst, dann Dateinamen-Präfix (FX3_, beliebiger a7-Präfix, DJI_), sonst „unbekannt"."""
     if modell:
         if modell in MODELLE:
             return MODELLE[modell]
