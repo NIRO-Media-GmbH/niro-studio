@@ -96,8 +96,9 @@ replay:                     # Review in Dropbox Replay (Spec 2026-09-16; Live-Te
   sync_warten_s: 60             # kommentare: bei 0 Kommentaren alle 30 s nachlesen, bis zu so lange
   vollbild_min: [1900, 1000]    # unbenanntes Resolve-Fenster ab dieser Größe = Vollbild-Wiedergabe (fenster.swift)
   marker_farben: {umgesetzt: Green, handarbeit: Lemon, rueckfrage: Rose}   # Session-Arbeit: Marker auf der neuen Version
-telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/Beschleunigung/Brennweite aus der Sony-rtmd-Spur,
-                            # optischer Rückfall (Phasenkorrelation) für Clips ohne Datenspur. Beide Wege: px @480 je 25-fps-Frame.
+telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/Beschleunigung/Brennweite aus der
+                            # Sony-rtmd-Spur, optischer Rückfall (Phasenkorrelation) für Clips ohne Datenspur.
+                            # Beide Wege: px @480 je 25-fps-Frame.
   fenster_s: 2.0            # Fensterlänge für ruhige Fenster und Bewegungsart
   schritt_s: 1.0
   tiefpass_s: 0.5           # gleitendes Mittel vor der Richtungsentscheidung
@@ -107,11 +108,13 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   schwenk_min_grad_s: 3.0   # dominante Drehung ab hier Schwenk/Tilt
   schwenk_min_px: 1.0
   hf_grenze_hz: 3.0         # Grenze zwischen Gimbal-/Fahrt-Bewegung und Hand-Zittern
-  hand_hf_anteil_min: 0.35  # Leistungsanteil ab hf_grenze_hz, ab dem „hand" statt „gimbal" (Kalibrierung: Hochzeitszauber, MEK)
+  hand_hf_anteil_min: 0.35  # Leistungsanteil ab hf_grenze_hz, ab dem „hand" statt „gimbal" (Kalibrierung:
+                            # Hochzeitszauber, MEK)
   brennweite_klassen_kb: [30, 60]    # KB-Brennweite: < 30 weit, > 60 tele, sonst normal
   pitch_klassen_grad: [-60, -8, 8]   # Pitch: ≤ −60 Vogelperspektive, ≤ −8 Aufsicht, ≥ 8 Untersicht, sonst Augenhöhe
   achsen: {schwenk: 1, tilt: 0}                    # Gyro-Spalten (x links, y oben, z vorwärts): Schwenk um y, Tilt um x
-  vorzeichen: {schwenk: -1, tilt: 1, pitch: 1}     # Kalibrierung; Stichprobe 21.09.: Gyro-y ↔ dx negativ (Inhalt wandert entgegen)
+  vorzeichen: {schwenk: -1, tilt: 1, pitch: 1}     # Kalibrierung; Stichprobe 21.09.: Gyro-y ↔ dx negativ
+                                                   # (Inhalt wandert entgegen)
   px_faktor: {FX3: 1.0, a7IV: 1.0}                 # IBIS-Dämpfung je Kamera (Kalibrierung: Gyro-px ↔ optisch-px)
   optisch_fuer: []          # Kameras, deren Gyro-Wert nicht belastbar ist (Rangkorrelation < 0,7) → optischer Weg
   optisch_breite: 480       # Bildbreite der Messung (Höhe 9:16-passend 270)

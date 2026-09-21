@@ -1,4 +1,4 @@
-"""telemetrie.py — Kennzahlen (synthetische Verläufe), später Clip-Messung, Cache, Charge-Lauf, 2b/6d-Helfer (Task 4)."""
+"""telemetrie.py — Kennzahlen (synthetische Verläufe), Clip-Messung, Cache, Charge-Lauf, 2b/6d-Helfer (Task 4)."""
 from __future__ import annotations
 
 import json
@@ -309,3 +309,111 @@ def test_stabil_vorschlag_stabilized_ohne_telemetrie():
     stabil, text = T.stabil_vorschlag(0, 2, None, CFG, path="/ssd/Avata/DJI_0006_D_stabilized.mov")
     assert stabil is False and "bereits stabilisiert" in text
     assert T.stabil_vorschlag(0, 2, None, CFG, path="/ssd/FX3/FX3_0001.MP4")[0] is True
+
+
+# --- Fix-Runde 1: Cache-Robustheit (F2), Dubletten (F3), Fehler brechen den Lauf nie ab (F4) --------------------------
+
+def test_clip_mit_cache_kaputte_datei_wird_neu_gemessen(monkeypatch, basis_charge, tmp_path):
+    """F2a: eine unlesbare/kaputte Cache-Datei ist ein Cache-Fehlschlag — neu messen statt abbrechen."""
+    ac = basis_charge / "_intern" / "autocut"
+    (ac / T.CACHE_DIR).mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    clip = tmp_path / "FX3_0020.MP4"
+    clip.write_bytes(b"x")
+    cache = ac / T.CACHE_DIR / f"{T.fingerprint(clip)}.json"
+    cache.write_text("{kaputt", encoding="utf-8")
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: b"")
+    rng = np.random.default_rng(11)
+    bild = (rng.random((270, 480)) * 255).astype(np.uint8)
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.tile(bild, (30, 1, 1)))
+    rec, aus_cache = T.clip_mit_cache(ch, clip, CFG)
+    assert aus_cache is False and rec["quelle"] == "optisch" and rec["fehler"] is None
+    neu = json.loads(cache.read_text(encoding="utf-8"))
+    assert isinstance(neu, dict) and neu["quelle"] == "optisch"
+    assert list(cache.parent.glob("*.part")) == []
+
+
+def test_clip_mit_cache_datensatz_mit_fehler_wird_neu_gemessen(monkeypatch, basis_charge, tmp_path):
+    """F2b: ein gecachter Datensatz mit fehler gilt als veraltet — neu messen statt den alten Fehler zurückgeben."""
+    ac = basis_charge / "_intern" / "autocut"
+    (ac / T.CACHE_DIR).mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    clip = tmp_path / "FX3_0021.MP4"
+    clip.write_bytes(b"x")
+    fp = T.fingerprint(clip)
+    cache = ac / T.CACHE_DIR / f"{fp}.json"
+    cache.write_text(json.dumps({"path": str(clip), "quelle": "optisch", "fehler": "NAS-Aussetzer",
+                                 "fingerprint": fp, "schaerfe_p10": None}), encoding="utf-8")
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: b"")
+    rng = np.random.default_rng(12)
+    bild = (rng.random((270, 480)) * 255).astype(np.uint8)
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.tile(bild, (30, 1, 1)))
+    rec, aus_cache = T.clip_mit_cache(ch, clip, CFG)
+    assert aus_cache is False and rec["fehler"] is None and rec["quelle"] == "optisch"
+
+
+def test_telemetrie_charge_dedupliziert_pfade_vor_limit(basis_charge, tmp_path, monkeypatch):
+    """F3: doppelte Pfade werden vor limit entfernt (erster Eintrag gewinnt, samt ordner)."""
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    a = tmp_path / "FX3_A.MP4"
+    a.write_bytes(b"x")
+    b = tmp_path / "FX3_B.MP4"
+    b.write_bytes(b"x")
+    calls: list[str] = []
+
+    def fake(ch_, path, cfg, force=False, ohne_optisch=False, schaerfe=False):
+        calls.append(str(path))
+        return T._leer(Path(path), "FX3", None), False
+
+    monkeypatch.setattr(T, "clip_mit_cache", fake)
+    clips = [{"path": str(a), "ordner": "Erster"}, {"path": str(a), "ordner": "Zweiter"}, {"path": str(b), "ordner": "B"}]
+    out = T.telemetrie_charge(ch, clips, CFG, melden=lambda *a, **k: None)
+    assert set(calls) == {str(a), str(b)} and len(calls) == 2
+    assert out["gemessen"] == 2 and len(out["clips"]) == 2
+    rec_a = next(c for c in out["clips"] if c["path"] == str(a))
+    assert rec_a["ordner"] == "Erster"
+
+    calls.clear()
+    out2 = T.telemetrie_charge(ch, clips, CFG, limit=1, melden=lambda *a, **k: None)
+    assert calls == [str(a)] and out2["gemessen"] == 1 and len(out2["clips"]) == 1
+    assert out2["clips"][0]["path"] == str(a)
+
+
+def test_telemetrie_charge_haelt_bei_unerwarteten_fehlern_durch(monkeypatch, basis_charge, tmp_path):
+    """F4: ein Nicht-AutoCutError (z. B. ValueError) und ein fehlender Pfad brechen den Lauf nicht ab — beide
+    bekommen einen Fehler-Eintrag in telemetrie.json, der gültige Clip daneben wird normal gemessen."""
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    gut = tmp_path / "FX3_0030.MP4"
+    gut.write_bytes(b"x")
+    kaputt = tmp_path / "FX3_0031.MP4"
+    kaputt.write_bytes(b"x")
+    fehlt = tmp_path / "FX3_0032.MP4"
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: b"")
+    rng = np.random.default_rng(13)
+    bild = (rng.random((270, 480)) * 255).astype(np.uint8)
+
+    def graustufen_fake(p, fps, breite, hoehe):
+        if Path(p).name == kaputt.name:
+            raise ValueError("Datenspur unlesbar")
+        return np.tile(bild, (30, 1, 1))
+
+    monkeypatch.setattr(T, "graustufen", graustufen_fake)
+    clips = [{"path": str(gut), "ordner": "x"}, {"path": str(kaputt), "ordner": "x"}, {"path": str(fehlt), "ordner": "x"}]
+    out = T.telemetrie_charge(ch, clips, CFG, melden=lambda *a, **k: None)
+    assert len(out["clips"]) == 3 and len(out["fehler"]) == 2
+    tele = T.laden(ac)
+    assert len(tele) == 3
+    rec_gut = next(r for r in tele if r["path"] == str(gut))
+    assert rec_gut["fehler"] is None and rec_gut["quelle"] == "optisch"
+    rec_kaputt = next(r for r in tele if r["path"] == str(kaputt))
+    assert rec_kaputt["fehler"] and "ValueError" in rec_kaputt["fehler"] and rec_kaputt["kamera"] == "FX3"
+    rec_fehlt = next(r for r in tele if r["path"] == str(fehlt))
+    assert rec_fehlt["fehler"] and "nicht gefunden" in rec_fehlt["fehler"]
+    assert any("ValueError" in f for f in out["fehler"]) and any("nicht gefunden" in f for f in out["fehler"])

@@ -14,6 +14,7 @@ import datetime as _dt
 import json
 import math
 import os
+import threading
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -301,20 +302,29 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
 
 def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_optisch: bool = False,
                    schaerfe: bool = False) -> tuple[dict, bool]:
-    """Datensatz aus ``_intern/autocut/telemetrie/<fingerprint>.json`` oder neu messen (atomar geschrieben)."""
+    """Datensatz aus ``_intern/autocut/telemetrie/<fingerprint>.json`` oder neu messen (atomar geschrieben).
+    Eine kaputte/unlesbare Cache-Datei sowie ein gecachter Datensatz mit ``fehler`` gelten als Cache-Fehlschlag
+    (neu messen, Datei überschreiben) statt den Lauf abzubrechen oder einen veralteten Fehler zurückzugeben."""
     fp = fingerprint(path)
     cache = Path(ch.autocut) / CACHE_DIR / f"{fp}.json"
     if cache.exists() and not force:
-        rec = json.loads(cache.read_text(encoding="utf-8"))
-        veraltet = (rec.get("quelle") == "keine" and not ohne_optisch) or (schaerfe and rec.get("schaerfe_p10") is None)
-        if not veraltet:
-            return rec, True
+        try:
+            rec = json.loads(cache.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+            rec = None
+        if isinstance(rec, dict):
+            veraltet = (rec.get("fehler") or (rec.get("quelle") == "keine" and not ohne_optisch)
+                       or (schaerfe and rec.get("schaerfe_p10") is None))
+            if not veraltet:
+                return rec, True
     rec = clip_messen(path, cfg, ohne_optisch, schaerfe)
     rec["fingerprint"] = fp
     rec["gemessen_am"] = _dt.datetime.now().isoformat(timespec="seconds")
     ch.assert_writable(cache)
     cache.parent.mkdir(parents=True, exist_ok=True)
-    part = cache.with_name(cache.name + ".part")
+    # je Schreiber ein eindeutiger .part-Name (pid + Thread-Id): zwei Schreiber mit gleichem Fingerprint
+    # (Dublette in der Clip-Liste oder zwei Pfade mit gleichem Name/Größe/mtime) kollidieren sonst im selben .part.
+    part = cache.with_name(f"{cache.name}.{os.getpid()}-{threading.get_ident()}.part")
     part.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
     os.replace(part, cache)
     return rec, False
@@ -365,8 +375,16 @@ def clips_finden(ch, ordner: list[str] | None = None) -> list[dict]:
 
 def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None, force: bool = False,
                       ohne_optisch: bool = False, parallel: int | None = None, melden=print, schaerfe: bool = False) -> dict:
-    """Alle Clips messen (Cache je Clip, parallel), ``telemetrie.json`` (Liste) schreiben; Fehler je Clip sammeln."""
-    todo = clips[:limit] if limit else clips
+    """Alle Clips messen (Cache je Clip, parallel), ``telemetrie.json`` (Liste) schreiben; Fehler je Clip sammeln,
+    bricht dabei nie ab (KeyboardInterrupt ausgenommen). Doppelte Pfade werden vor ``limit`` entfernt (erster
+    Eintrag gewinnt, samt ``ordner``)."""
+    gesehen: set[str] = set()
+    eindeutig: list[dict] = []
+    for c in clips:
+        if c["path"] not in gesehen:
+            gesehen.add(c["path"])
+            eindeutig.append(c)
+    todo = eindeutig[:limit] if limit else eindeutig
     fehlend = [c["path"] for c in todo if not Path(c["path"]).is_file()]
     if todo and len(fehlend) == len(todo):
         raise AutoCutError(f"Keine der {len(todo)} Dateien erreichbar (z. B. {fehlend[0]}) — ist das NAS gemountet?")
@@ -381,9 +399,17 @@ def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None
             name = Path(c["path"]).name
             try:
                 rec, aus_cache = fut.result()
-            except AutoCutError as e:
-                fehler.append(f"{name}: {e}")
-                melden(f"[{i}/{len(todo)}] FEHLER {name}: {e}", flush=True)
+            except Exception as e:
+                # Jede Ausnahme eines einzelnen Clips (AutoCutError wie z. B. fingerprint → „Datei nicht gefunden",
+                # aber auch JSON-/OSError/struct-/ValueError aus einer ungewöhnlichen Datenspur …) bricht den Lauf
+                # nicht ab: Eintrag mit fehler in die Ergebnisliste, nicht in den Cache geschrieben.
+                meldung = str(e) if isinstance(e, AutoCutError) else f"{type(e).__name__}: {e}"
+                fehler.append(f"{name}: {meldung}")
+                melden(f"[{i}/{len(todo)}] FEHLER {name}: {meldung}", flush=True)
+                p = Path(c["path"])
+                rec = _leer(p, kamera_erkennen(p, sidecar_modell(p)), sidecar_modell(p))
+                rec["fehler"], rec["ordner"] = meldung, c.get("ordner") or ""
+                ergebnisse[c["path"]] = rec
                 continue
             rec["ordner"] = c.get("ordner") or ""
             if rec.get("fehler"):
