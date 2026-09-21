@@ -99,6 +99,7 @@ A_ABSCHNITTE: list[tuple[int, int]] = [
 # kürzen ja, nie verlängern.
 # 7. Spalte optional: True/False erzwingt Stabilize() bzw. lässt es aus; weggelassen = Vorschlag aus telemetrie.json
 # (hand und wackeln > telemetrie.ruhig_max_px → stabilisieren; stativ/gimbal → nicht; ohne Telemetrie → stabilisieren).
+# True bei einer _stabilized-Datei (Avata-Export) ist ein Plan-Fehler: Avata nie in Resolve stabilisieren.
 BROLL: list[tuple] = [
     # (10, 27, 54, 345, "4", True),          # Shot 10 ab Frame 27 seiner Auswahl, 54 Frames lang, Record 345, Beat #4, 50 %
     # (11, 0, 40, 400, "5", False, False),   # … und ausdrücklich nicht stabilisieren
@@ -376,6 +377,8 @@ def plan(tl: dict, shots: dict) -> tuple[dict, list[str]]:
         stabil = vorschlag if stabil_hand is None else bool(stabil_hand)
         if stabil_hand is not None and stabil != vorschlag:
             grund += " — von Hand überstimmt"
+        if stabil and "_stabilized" in Path(str(s["datei"])).name.lower():  # User-Regel 18.09.: Avata nur als _stabilized
+            fehler.append(f"S{nr:02d}: Spalte 7 True bei _stabilized-Datei — Avata nie in Resolve stabilisieren")
         v3.append(Item("V3", s["datei"], src_in, src_out, rec, rec + n, True, beat, "broll", True))
         auswahl_50p = [int(round(s["left_offset_f"] * faktor)), int(round((s["left_offset_f"] + s["dauer_f"]) * faktor))]
         v3_meta.append({"shot": nr, "clip": s["clip"], "rec_in_f": rec, "dauer_f": n, "langsam": langsam, "src_in_f": src_in,
