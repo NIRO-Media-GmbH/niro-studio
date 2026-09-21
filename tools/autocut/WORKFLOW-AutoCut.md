@@ -721,7 +721,9 @@ oder Stocken unter `zoom_stocken_anteil` der Spitze). Fenster, die eine schnelle
 `ruhige_fenster`. Ohne rtmd-Brennweite (Mavic, Avata) bleiben `kb_verlauf` und `zooms` leer (Brennweite unbekannt).
 Der Bericht `telemetrie.md` zeigt die KB-Brennweite je Kamera in mm und listet die schnellen Fahrten; der Vergleich mit
 dem B-Roll-Index umfasst nur noch Perspektive Höhe und Haltung.
-Startwerte bis zur Kalibrierung: 20 %/s, `ruck` 0,6, Stocken 0,2.
+Kalibriert 21.09.2026 (Wurst & Liebe, MEK; 10 Beispiele 14–55 %/s in NIRO Review „Zoom-Beispiele“, alle vom User
+„ok“, Grenze vom User „grob ab 100“): schnell ab 100 %/s Spitze; `ruck` zählt erst über 1,0, Stocken ist aus (0,0) —
+gleichmäßige Drehteller-Zooms (28–39 %/s) langsam, Umzooms zwischen zwei Einstellungen (123–194 %/s) schnell.
 
 **Kalibrierwerte (21.09.2026):** Hochzeitszauber, 301 FX3- und 54 a7-IV-Clips, Gyro gegen optischen Weg auf denselben Frames:
 Schwenk um Gyro-y (+), Tilt um Gyro-x (−) bei beiden Kameras (FX3 r 0,65/−0,83); `px_faktor` FX3 0,60, a7 IV 0,69 (IBIS/Gimbal

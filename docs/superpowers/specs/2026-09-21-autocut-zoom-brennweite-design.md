@@ -1,6 +1,7 @@
 # AutoCut — Zoomfahrten und Brennweitenwechsel (Spec)
 
-Datum: 2026-09-21 · Status: Abschnitte 1–3 im Chat vom User freigegeben (21.09.). Folgeschritt der Kamera-Telemetrie
+Datum: 2026-09-21 · Status: umgesetzt (Plan `docs/superpowers/plans/2026-09-21-autocut-zoom-brennweite.md`), kalibriert
+(Nachtrag unten). Folgeschritt der Kamera-Telemetrie
 (`docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`, umgesetzt und auf main seit 21.09.).
 
 ## Anlass
@@ -182,3 +183,53 @@ unverändert, Kurzbeschreibung Telemetrie um Zoomfahrten ergänzen.
 
 Optische Zoom-Erkennung für Drohnen; automatisches Umsortieren der Shots (bleibt Claudes redaktionelle Entscheidung im
 Plan); automatisches Kürzen schneller Zooms (User: nur Hinweis); Pan-Nachführung beim digitalen Zoom (Zoom auf die Mitte).
+
+## Nachtrag 21.09.2026 — Kalibrierung Zoom
+
+**Datenbasis:** Telemetrie-Läufe mit dem Code dieses Plans über die B-Roll von Wurst & Liebe (2026-08 Dreh 05.08,
+„00 - B-Roll", nur rtmd: 324 Clips, 499 Zoomfahrten in 121 Clips) und MEK (2026-06 Ads und Imagefilm Dreh, 463 Clips,
+444 Zoomfahrten in 178 Clips), je 0 Fehler. Spitzentempo P10/25/50/75/90: W&L 21/38/90/175/264 %/s, MEK
+21/41/82/153/241 %/s — die meisten Fahrten sind Umzooms zwischen zwei Einstellungen. Mit den Startwerten galten 473 von
+499 (95 %) bzw. 418 von 444 (94 %) als schnell; nach der Kalibrierung sind es 242 (48 %) und 191 (43 %), ruckartig bleiben
+24 bzw. 5.
+
+**Beispiele** (Kalibrier-Charge `projects/NIRO/Werkzeug-Kalibrierung/2026-09 Zoomfahrten`, `zoom_beispiele.py`, NIRO Review
+„Zoom-Beispiele" V1, 38 s):
+
+| Nr | Charge | Clip | von–bis s | mm → mm | Spitze %/s | ruck | Auswahlgrund | Urteil User | Urteil neu |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | W&L | a7MK4_20260805_0091 | 8,2–12,2 | 146,6 → 283,8 | 30 | 0,27 | Tempo um 30 | ok | langsam |
+| 2 | W&L | a7MK4_20260805_0080 | 10,4–16,0 | 116,7 → 283,8 | 28 | 0,24 | Drehteller | ok | langsam |
+| 3 | MEK | a7MK4_20260624_9900 | 13,2–14,6 | 158,7 → 178,7 | 14 | 0,23 | Tempo um 15 | ok | langsam |
+| 4 | W&L | a7MK4_20260805_0090 | 14,8–20,9 | 110,4 → 283,8 | 30 | 0,30 | Drehteller | ok | langsam |
+| 5 | MEK | a7MK4_20260624_9933 | 7,9–11,6 | 234,9 → 184,5 | 18 | 0,74 | ruckartig | ok | langsam |
+| 6 | W&L | FX3_0716 | 36,0–37,9 | 36,7 → 64,8 | 55 | 0,47 | Tempo um 55 | ok | langsam |
+| 7 | MEK | FX3_9664 | 98,4–100,8 | 39,3 → 51 | 20 | 0,40 | Tempo um 20 | ok | langsam |
+| 8 | MEK | a7MK4_20260624_9855 | 10,1–11,1 | 117,7 → 141,9 | 40 | 0,49 | Tempo um 40 | ok | langsam |
+| 9 | MEK | a7MK4_20260624_9831 | 13,6–14,4 | 189,2 → 169,2 | 25 | 0,25 | Tempo um 25 | ok | langsam |
+| 10 | W&L | a7MK4_20260805_0070 | 72,0–74,2 | 241,2 → 283,8 | 21 | 0,77 | ruckartig | ok | langsam |
+
+**Urteil (Chat 21.09.):** alle 10 „ok" — „sie wackeln zwar, aber das testen wir ja gerade nicht" (Wackeln misst `wackeln`,
+nicht die Zoom-Regel). Wo „zu schnell" beginnt, zeigte die Stichprobe damit nicht; auf Rückfrage (zweite Runde mit
+60–200 %/s, vorsichtig ab 60 oder grob ab 100) entschied der User **„grob: ab 100 %/s"**.
+
+**Rechnung** (`zoom_kalibrieren.py`, Raster Tempo 15–100 × ruck 0,4–1,0 × Stocken 0/0,1/0,15/0,2; Fälle: 10 Urteile plus
+Referenz „schnell" = schnellster Drehteller-Rück-Zoom a7MK4_20260805_0698, 283,8 → 110,4 mm, 194 %/s). Fehler je Tempo
+(bestes ruck/Stocken): 15: 9 · 20: 7 · 25: 6 · 30: 4 · 35: 2 · 40–55: 1 · 60–100: 0. Bei 100 %/s fehlerfrei nur mit
+Stocken 0 und ruck ≥ 0,8 — die Stocken-Regel markierte die „ok"-Fahrten 5 und 10 (und den ersten Drehteller-Zoom von
+0085) als schnell.
+
+**Gesetzt:** `zoom_schnell_proz_s` 100 (User), `zoom_ruck_max` 1,0 (Skript-Empfehlung 0,8 bei gleicher Fehlerzahl; 1,0
+für Abstand zu den ruckartigen „ok"-Beispielen 0,74/0,77, passend zu „grob"), `zoom_stocken_anteil` 0,0 = Regel aus.
+
+**Gegenproben:** gleichmäßige Drehteller-Zooms 28–39 %/s langsam; Rück-Zooms 0697/0698/0699/0700 (123–194 %/s) schnell;
+0085-Rück-Zoom 99 %/s und 0087 89 %/s knapp unter der Grenze → langsam (Entscheidung „grob"). Die im Plan vorgesehene
+MEK-Gegenprobe a7MK4_20260624_9885 (109 → 169 mm) hat nur 50 %/s Spitze → langsam; sie taugt bei dieser Grenze nicht als
+„schnell"-Referenz, der Regressionstest nimmt stattdessen den Rück-Zoom 0698.
+
+**Fixture/Test:** `tools/autocut/tests/fixtures/kb_zoom_kalibrierung.json` (Drehteller 0090 „langsam", Rück-Zoom 0698
+„schnell", KB-Reihen aus der rtmd-Spur), `test_kalibrierung_zoom_an_echten_reihen` — mit den Startwerten 20/0,6/0,2 wäre
+die Drehteller-Referenz „schnell".
+
+**Offen:** Der Bereich 55–100 %/s ist nicht durch Urteile belegt (User: „grob"). Melden die Hinweise zu wenig, die Grenze
+später senken; eine zweite Stichprobe mit 60–200 %/s ist mit `zoom_beispiele.py` schnell gemacht.

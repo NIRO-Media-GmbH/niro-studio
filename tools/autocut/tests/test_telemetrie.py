@@ -993,3 +993,17 @@ def test_brennweitenfolge_zoom_nicht_moeglich():
                            {**CFG, "digitalzoom_max": 1.2})
     assert _zooms(f) == [1.0, 1.0]
     assert f[1]["hinweis"] == "S12: gleiche Brennweite wie S11 (50/52 mm), Zoom nicht möglich (1,2×-Grenze)"
+
+
+# --- Kalibrierung Zoomfahrten (Task 10): echte KB-Reihen gegen die ausgelieferten Schwellen --------------------------------
+
+def test_kalibrierung_zoom_an_echten_reihen():
+    """W&L-Drehteller-Referenz (vom User „ok") bleibt langsam, der schnellste Drehteller-Rück-Zoom (Umzoom zwischen zwei
+    Einstellungen, 194 %/s) ist schnell — mit den Schwellen aus defaults.yaml (Kalibrierung 21.09.2026, schnell ab
+    100 %/s). Fixture: KB-Reihen aus der rtmd-Spur (zoom_kalibrieren.py der Kalibrier-Charge NIRO/Werkzeug-Kalibrierung)."""
+    daten = json.loads((Path(__file__).parent / "fixtures" / "kb_zoom_kalibrierung.json").read_text(encoding="utf-8"))
+    cfg = load_config(Path("/nirgendwo"))["telemetrie"]
+    for fall in daten.values():
+        kb25 = T.kb_je_frame(fall["kb_mm"], fall["kb_index"], fall["fps"], fall["samples"])
+        treffer = [z for z in T.zoomfahrten(kb25, cfg) if z["von_s"] < fall["bis_s"] and z["bis_s"] > fall["von_s"]]
+        assert treffer and all(z["urteil"] == fall["erwartet"] for z in treffer), (fall["clip"], treffer)

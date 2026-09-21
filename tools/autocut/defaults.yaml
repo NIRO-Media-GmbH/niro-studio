@@ -124,9 +124,12 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   # Zoomfahrten (Spec 2026-09-21): KB-Brennweite je Frame aus der rtmd-Spur, Tempo = Änderung von ln(KB) in % pro s
   zoom_min_proz: 3.0        # Mindeständerung der Brennweite für eine Zoomfahrt (%); Fokus-Atmen bleibt darunter
   zoom_rausch_proz_s: 1.0   # Rauschgrenze des Tempos: Frames mit |v| darüber gehören zu einer Fahrt
-  zoom_schnell_proz_s: 20.0 # Spitzentempo, ab dem eine Zoomfahrt schnell ist (% pro s) — Startwert bis zur Kalibrierung
-  zoom_ruck_max: 0.6        # Ungleichmäßigkeit (Variationskoeffizient von |v|), ab der eine Fahrt ruckartig = schnell ist
-  zoom_stocken_anteil: 0.2  # Stocken: |v| fällt mitten in der Fahrt unter diesen Anteil der Spitze und steigt wieder
+  zoom_schnell_proz_s: 100.0 # Spitzentempo, ab dem eine Zoomfahrt schnell ist (% pro s); Kalibrierung 21.09.2026:
+                             # W&L + MEK, alle 10 Beispiele (14–55 %/s) vom User „ok", Grenze vom User „grob ab 100"
+  zoom_ruck_max: 1.0        # Ungleichmäßigkeit (Variationskoeffizient von |v|), ab der eine Fahrt ruckartig = schnell ist;
+                            # 21.09.: ruckartige Beispiele (0,74/0,77) waren „ok" → nur noch Extremfälle
+  zoom_stocken_anteil: 0.0  # Stocken (|v| fällt mitten in der Fahrt unter diesen Anteil der Spitze): 0,0 = aus (21.09.:
+                            # Fahrten mit Stocken, auch Drehteller 0085, vom User „ok")
   zoom_verlauf_hz: 5        # Auflösung von kb_verlauf (Werte je Sekunde)
   # Brennweitenfolge B-Roll (Spec 2026-09-21): nie zweimal dieselbe Brennweite direkt hintereinander, sonst digitaler Zoom
   brennweite_gleich_max: 0.20   # Abstand größere/kleinere KB-Brennweite − 1: darunter gilt die Brennweite als gleich
