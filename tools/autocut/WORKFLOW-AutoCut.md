@@ -715,16 +715,23 @@ Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
 **Zoomfahrten (seit 21.09.2026, Spec `docs/superpowers/specs/2026-09-21-autocut-zoom-brennweite-design.md`):** aus der
 KB-Brennweite je rtmd-Sample (0x8004, mit Crop und Klarbild-Zoom): Median über 0,2 s, 25-fps-Raster, Tempo = Änderung von
 ln(KB) in % pro s. Je Clip `kb_verlauf` ([t_s, kb_mm] mit 5 Hz; bei gleichbleibender Brennweite ein Eintrag) und `zooms`
-(`von_s`/`bis_s`, `von_mm`/`bis_mm`, `tempo_max`/`tempo_mittel`, `ruck`, `ruckartig`, `urteil` langsam/schnell);
-`zoomfahrt` = mindestens eine Fahrt. Eine Fahrt ändert die Brennweite um mindestens `zoom_min_proz` (3 %), Pausen unter
-0,3 s gehören dazu (Stop-and-go). Schnell = Spitze über `zoom_schnell_proz_s` oder ruckartig (`ruck` über `zoom_ruck_max`
-oder Stocken unter `zoom_stocken_anteil` der Spitze). Fenster, die eine schnelle Fahrt schneiden, zählen nicht zu den
-`ruhige_fenster`. Ohne rtmd-Brennweite (Mavic, Avata) bleiben `kb_verlauf` und `zooms` leer (Brennweite unbekannt).
-Der Bericht `telemetrie.md` zeigt die KB-Brennweite je Kamera in mm und listet die schnellen Fahrten; der Vergleich mit
-dem B-Roll-Index umfasst nur noch Perspektive Höhe und Haltung.
+(`von_s`/`bis_s`, `von_mm`/`bis_mm`, `tempo_max`/`tempo_mittel`, `ruck`, `ruckartig`, `sprung_proz`, `urteil`
+langsam/schnell); `zoomfahrt` = mindestens eine Fahrt. Eine Fahrt ändert die Brennweite um mindestens `zoom_min_proz`
+(3 %), Pausen unter 0,3 s gehören dazu (Stop-and-go). Schnell = Spitze über `zoom_schnell_proz_s`, ruckartig (`ruck` über
+`zoom_ruck_max` oder Stocken unter `zoom_stocken_anteil` der Spitze) oder Sprung (`sprung_proz` = größte Änderung von
+ln(KB) in 0,12 s, vor dem Gleitmittel des Tempos, ab `zoom_sprung_proz`). Fenster, die eine schnelle Fahrt schneiden,
+zählen nicht zu den `ruhige_fenster`. Ohne rtmd-Brennweite (Mavic, Avata) bleiben `kb_verlauf` und `zooms` leer
+(Brennweite unbekannt). Der Bericht `telemetrie.md` zeigt die KB-Brennweite je Kamera in mm und listet die schnellen
+Fahrten; der Vergleich mit dem B-Roll-Index umfasst nur noch Perspektive Höhe und Haltung.
 Kalibriert 21.09.2026 (Wurst & Liebe, MEK; 10 Beispiele 14–55 %/s in NIRO Review „Zoom-Beispiele“, alle vom User
 „ok“, Grenze vom User „grob ab 100“): schnell ab 100 %/s Spitze; `ruck` zählt erst über 1,0, Stocken ist aus (0,0) —
-gleichmäßige Drehteller-Zooms (28–39 %/s) langsam, Umzooms zwischen zwei Einstellungen (123–194 %/s) schnell.
+gleichmäßige Drehteller-Zooms (28–39 %/s) langsam, Umzooms zwischen zwei Einstellungen (123–194 %/s) schnell. Dazu das
+Sprung-Kriterium (Final Review 21.09.): ändert sich die Brennweite in 0,12 s um mindestens `zoom_sprung_proz` (10 %), ist
+die Fahrt schnell — der stufige Klarbild-Zoom der a7 IV (50 → 60 mm in 2 Frames) bliebe sonst mit geglätteten 91 %/s
+unter der Grenze. Die 10 Beispiele liegen bei 2,5–7,2 %; gleichmäßige Fahrten ab ≈ 83 %/s zählen damit ebenfalls als
+schnell (Drehteller-Rück-Zooms 0085 mit 99 %/s, 0087 mit 89 %/s). Bei Zeitlupe (6d) zählt der sichtbare Sprung wie das
+sichtbare Tempo; der Hinweis nennt den Sprung („…, 91 %/s, Sprung 18 %“), wenn er und nicht das Tempo den Zoom schnell
+macht.
 
 **Kalibrierwerte (21.09.2026):** Hochzeitszauber, 301 FX3- und 54 a7-IV-Clips, Gyro gegen optischen Weg auf denselben Frames:
 Schwenk um Gyro-y (+), Tilt um Gyro-x (−) bei beiden Kameras (FX3 r 0,65/−0,83); `px_faktor` FX3 0,60, a7 IV 0,69 (IBIS/Gimbal

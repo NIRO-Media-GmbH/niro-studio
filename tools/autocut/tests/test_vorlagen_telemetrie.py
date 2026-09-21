@@ -171,6 +171,17 @@ def test_3a_pruefen_brennweitenregel_bei_100_prozent(monkeypatch, capsys):
     assert "Zoom 1,25×" in out and "Hinweis: S02: schneller Zoom 3,7–4,2 s (52 → 70 mm, 59 %/s)" in out
 
 
+def test_3a_hinweis_nennt_den_sprung(monkeypatch):
+    """I1: ein Zoom, der nur wegen des Sprungs schnell ist (91 %/s unter 100, Sprung 18,2 %), nennt im 3a-Hinweis den
+    Sprung — die Vorlage gibt die Telemetrie-Config an zoom_hinweise weiter."""
+    sprung = {**_zoom(3.7, 4.2, 52.0, 70.0, 91.2), "sprung_proz": 18.2}
+    tele_b = {**TELE_B, "zooms": [TELE_B["zooms"][0], sprung]}
+    _, _, zeilen, fehler = _3a_pruefen(monkeypatch, [(1, 0, 40, 0, "1", "A"), (2, 20, 40, 40, "1", "B")],
+                                       [TELE_A, tele_b])
+    assert fehler == []
+    assert zeilen[1]["zoom_hinweise"] == ["S02: schneller Zoom 3,7–4,2 s (52 → 70 mm, 91 %/s, Sprung 18 %)"]
+
+
 def test_3a_pruefen_spalte_zoom_und_ohne_telemetrie(monkeypatch, capsys):
     _, _, zeilen, fehler = _3a_pruefen(monkeypatch, [(1, 0, 40, 0, "1", "A"), (2, 20, 40, 40, "1", "B", 1.0)],
                                        [TELE_A, TELE_B])

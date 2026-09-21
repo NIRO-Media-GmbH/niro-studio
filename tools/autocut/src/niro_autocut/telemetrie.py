@@ -238,6 +238,7 @@ ZOOM_GLAETTUNG_S = 0.2        # gleitendes Mittel des Tempos
 ZOOM_LUECKE_S = 0.3           # Bereiche mit kürzerem Abstand sind eine Fahrt (Stop-and-go)
 ZOOM_KERN_RAND = 0.10         # Anteil je am Anfang und Ende einer Fahrt, der für ruck nicht zählt
 ZOOM_RUCK_SCHRITT_S = 0.2     # Schrittweite der Mittelwerte von |v| für ruck
+ZOOM_SPRUNG_S = 0.12          # Fenster des Sprung-Kriteriums (3 Frames bei 25 fps): stufiger Klarbild-Zoom der a7 IV
 URTEILE_ZOOM = ["langsam", "schnell"]
 
 
@@ -308,11 +309,27 @@ def zoom_ruck(betrag: np.ndarray, stocken_anteil: float, ziel_fps: float = ZIEL_
     return ruck, bool(stockt)
 
 
+def zoom_sprung(kb25: np.ndarray, ziel_fps: float = ZIEL_FPS) -> float:
+    """Größte Änderung von ln(KB) innerhalb von ZOOM_SPRUNG_S in % (Spanne max − min in jedem Fenster aus
+    ZOOM_SPRUNG_S · ziel_fps + 1 aufeinanderfolgenden Frames) auf der median-gefilterten Reihe je Zielframe, also vor dem
+    Gleitmittel des Tempos, das die Spitze eines Sprungs auf Δln / 0,2 s kappt. Reihe bis zu einem Fenster lang: ihre
+    ganze Spanne; 0,0 unter zwei Werten. Gleichmäßig v % pro s ergibt v · 0,12."""
+    ln = np.log(np.maximum(np.asarray(kb25, np.float64), 0.1))
+    if len(ln) < 2:
+        return 0.0
+    k = max(1, int(round(ZOOM_SPRUNG_S * ziel_fps)))
+    if len(ln) <= k + 1:
+        return float(ln.max() - ln.min()) * 100.0
+    fenster_ = np.lib.stride_tricks.sliding_window_view(ln, k + 1)
+    return float((fenster_.max(axis=1) - fenster_.min(axis=1)).max()) * 100.0
+
+
 def zoomfahrten(kb25: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list[dict]:
     """Zoomfahrten einer Brennweitenreihe je Zielframe: Bereiche aus ``zoom_bereiche`` mit mindestens ``zoom_min_proz``
     Änderung (größte / kleinste Brennweite im Bereich − 1). Je Fahrt Zeiten (s), Brennweiten am Anfang/Ende (mm), Tempo
-    (% pro s), ruck, ruckartig (ruck > ``zoom_ruck_max`` oder Stocken) und Urteil: schnell, wenn tempo_max >
-    ``zoom_schnell_proz_s`` oder ruckartig, sonst langsam."""
+    (% pro s), ruck, ruckartig (ruck > ``zoom_ruck_max`` oder Stocken), ``sprung_proz`` (``zoom_sprung`` im Bereich) und
+    Urteil: schnell, wenn tempo_max > ``zoom_schnell_proz_s``, ruckartig oder sprung_proz ≥ ``zoom_sprung_proz``
+    (Verlauf mit Sprüngen, Spec „Fehler und Randfälle"), sonst langsam."""
     kb25 = np.asarray(kb25, np.float64)
     v = zoom_tempo(kb25, ziel_fps)
     out = []
@@ -324,11 +341,14 @@ def zoomfahrten(kb25: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list
         ruck, stockt = zoom_ruck(betrag, float(cfg["zoom_stocken_anteil"]), ziel_fps)
         ruckartig = ruck > float(cfg["zoom_ruck_max"]) or stockt
         tempo_max = float(betrag.max())
-        schnell = tempo_max > float(cfg["zoom_schnell_proz_s"]) or ruckartig
+        sprung = zoom_sprung(teil, ziel_fps)
+        schnell = (tempo_max > float(cfg["zoom_schnell_proz_s"]) or ruckartig
+                   or sprung >= float(cfg["zoom_sprung_proz"]))
         out.append({"von_s": round(a / ziel_fps, 2), "bis_s": round(b / ziel_fps, 2),
                     "von_mm": round(float(kb25[a]), 1), "bis_mm": round(float(kb25[b - 1]), 1),
                     "tempo_max": round(tempo_max, 1), "tempo_mittel": round(float(betrag.mean()), 1),
-                    "ruck": round(ruck, 2), "ruckartig": ruckartig, "urteil": "schnell" if schnell else "langsam"})
+                    "ruck": round(ruck, 2), "ruckartig": ruckartig, "sprung_proz": round(sprung, 1),
+                    "urteil": "schnell" if schnell else "langsam"})
     return out
 
 
@@ -767,18 +787,25 @@ def zoom_hinweise(sid: str, rec: dict | None, von_s: float, bis_s: float,
     z. B. „S07: schneller Zoom 2,4–3,1 s (24 → 70 mm, 85 %/s)" — nur Hinweis, gebaut wird
     trotzdem. Bei Zeitlupe (``tempo_faktor`` < 1) zählt das sichtbare Tempo: ein Zoom, der nur
     wegen des Tempos schnell war, entfällt, wenn er sichtbar höchstens ``zoom_schnell_proz_s``
-    erreicht; ruckartige bleiben; ohne ``cfg`` bleibt jeder Hinweis."""
+    erreicht und sein sichtbarer Sprung (``sprung_proz`` × Tempo, Näherung) unter
+    ``zoom_sprung_proz`` bleibt; ruckartige bleiben; ohne ``cfg`` bleibt jeder Hinweis. Mit ``cfg``
+    nennt der Hinweis den Sprung („…, 91 %/s, Sprung 18 %"), wenn er und nicht das Tempo den Zoom
+    schnell macht."""
     schwelle = float((cfg or {}).get("zoom_schnell_proz_s", 0.0))
+    sprung_grenze = (cfg or {}).get("zoom_sprung_proz")
     out = []
     for z in zooms_im_bereich(rec, von_s, bis_s):
         tempo = float(z["tempo_max"]) * tempo_faktor
-        if tempo_faktor < 1.0 and not z.get("ruckartig") and cfg is not None and tempo <= schwelle:
+        sprung = float(z.get("sprung_proz") or 0.0) * tempo_faktor
+        springt = sprung_grenze is not None and sprung >= float(sprung_grenze)
+        if tempo_faktor < 1.0 and not z.get("ruckartig") and cfg is not None and tempo <= schwelle and not springt:
             continue
         sichtbar = f" sichtbar bei {tempo_faktor * 100:.0f} %" if tempo_faktor != 1.0 else ""
         ruck = ", ruckartig" if z.get("ruckartig") else ""
+        sprung_text = f", Sprung {sprung:.0f} %" if springt and tempo <= schwelle else ""
         out.append(f"{sid}: schneller Zoom {_zahl(z['von_s'])}–{_zahl(z['bis_s'])} s "
                    f"({_zahl(z['von_mm'])} → {_zahl(z['bis_mm'])} mm, {tempo:.0f} %/s"
-                   f"{sichtbar}{ruck})")
+                   f"{sichtbar}{ruck}{sprung_text})")
     return out
 
 

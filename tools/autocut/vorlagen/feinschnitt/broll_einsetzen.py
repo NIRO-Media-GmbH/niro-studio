@@ -106,7 +106,7 @@ def pruefen(shots: dict, tl: dict) -> tuple[list[dict], list[str]]:
         # genutzter Quellbereich in s (Tempo 100 %) → Brennweite am Schnitt und schnelle Zooms
         tele_rec = TM.finden(TELE, s["datei"])
         bereich = TM.genutzter_quellbereich_s(zeilen[-1]["src_in_f"], n, s["clip_fps"], False, FPS)
-        zeilen[-1]["zoom_hinweise"] = TM.zoom_hinweise(f"S{nr:02d}", tele_rec, *bereich)
+        zeilen[-1]["zoom_hinweise"] = TM.zoom_hinweise(f"S{nr:02d}", tele_rec, *bereich, cfg=TCFG)
         folge.append({"id": f"S{nr:02d}", "rec_in": rec, "rec_out": rec + n, "zoom_erzwungen": rest[0] if rest else None,
                       "kb_anfang": TM.kb_am(tele_rec, bereich[0], seite="anfang"),
                       "kb_ende": TM.kb_am(tele_rec, bereich[1], seite="ende")})
