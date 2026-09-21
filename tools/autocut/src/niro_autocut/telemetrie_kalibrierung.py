@@ -41,7 +41,7 @@ def clip_kalibrieren(path: str | Path, cfg: dict, von_s: float, dauer_s: float =
     i0 = int(round(von_s * info.fps))
     i1 = int(round((von_s + dauer_s) * info.fps))
     gyro = d.gyro[i0 * d.proben_je_sample:i1 * d.proben_je_sample]
-    rate = gyro_je_frame(gyro, d.proben_je_sample, info.fps)
+    rate = gyro_je_frame(gyro, d.proben_je_sample, info.fps, imu_hz=d.imu_hz)
     opt = verschiebungen(graustufen(p, ZIEL_FPS, von_s, dauer_s, int(cfg["optisch_breite"]),
                                     int(round(int(cfg["optisch_breite"]) * 9 / 16))))
     m = min(len(rate) - 1, len(opt))

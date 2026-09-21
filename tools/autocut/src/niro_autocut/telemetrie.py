@@ -11,6 +11,7 @@ Bewegungsart: ``schwenk_links`` = Kamera dreht nach links = Bildinhalt wandert n
 from __future__ import annotations
 
 import datetime as _dt
+import hashlib
 import json
 import math
 import os
@@ -41,11 +42,13 @@ def f_px(kb_mm: float, breite: int = 480) -> float:
     return breite * float(kb_mm) / 36.0
 
 
-def gyro_je_frame(werte: np.ndarray, proben_je_sample: int, fps: float, ziel_fps: float = ZIEL_FPS) -> np.ndarray:
-    """IMU-Proben (n, k) → Mittel je Zielframe (m, k); Proben je Zielframe = proben_je_sample · fps / ziel_fps."""
-    if len(werte) == 0 or proben_je_sample <= 0:
+def gyro_je_frame(werte: np.ndarray, proben_je_sample: int, fps: float, ziel_fps: float = ZIEL_FPS,
+                  imu_hz: float | None = None) -> np.ndarray:
+    """IMU-Proben (n, k) → Mittel je Zielframe (m, k); Proben je Zielframe = imu_hz / ziel_fps (IMU-Rate aus Tag 0xE435),
+    ohne Rate proben_je_sample · fps / ziel_fps (driftet bei 59,94p/119,88p: dort schwankt die Probenzahl je Sample)."""
+    if len(werte) == 0 or (not imu_hz and proben_je_sample <= 0):
         return np.zeros((0, werte.shape[1] if werte.ndim == 2 else 3), np.float64)
-    je = max(1, int(round(proben_je_sample * fps / ziel_fps)))
+    je = max(1, int(round(imu_hz / ziel_fps if imu_hz else proben_je_sample * fps / ziel_fps)))
     m = len(werte) // je
     return werte[: m * je].reshape(m, je, -1).mean(axis=1)
 
@@ -211,6 +214,7 @@ def perspektive_hoehe(pitch_grad: float | None, grenzen: list | tuple) -> str | 
 def kennzahlen(dxy: np.ndarray, cfg: dict, kb_mm: float | None,
                schaerfe: np.ndarray | None = None) -> dict:
     """wackeln, bewegung, haltung, bewegungsart (Mehrheit der Fenster), fenster, ruhige_fenster aus einer Verschiebungsreihe;
+    ``fenster_s`` = Fensterlänge, mit der ``fenster`` gebaut wurde (Auswertung später mit derselben Länge);
     ``schaerfe`` je Frame (optional) wird relativ zum 90. Perzentil des Clips als p10 je Fenster und je Clip ausgegeben."""
     min_px, stativ_px = schwellen_px(kb_mm, cfg)
     wk, bw = wackeln_bewegung(dxy)
@@ -230,7 +234,7 @@ def kennzahlen(dxy: np.ndarray, cfg: dict, kb_mm: float | None,
 
     return {"wackeln": round(wk, 3), "bewegung": round(bw, 3), "haltung": haltung(dxy, stativ_px, cfg),
             "hf_anteil": round(hf_anteil(dxy, ZIEL_FPS, float(cfg["hf_grenze_hz"])), 3),
-            "bewegungsart": mehrheit([f["bewegungsart"] for f in fen]),
+            "bewegungsart": mehrheit([f["bewegungsart"] for f in fen]), "fenster_s": float(cfg["fenster_s"]),
             "fenster": [[f["t_s"], f["wackeln"], f["bewegung"], f["bewegungsart"], _schaerfe(f)] for f in fen],
             "ruhige_fenster": [f["t_s"] for f in fen if f["wackeln"] <= float(cfg["ruhig_max_px"])],
             "schaerfe_p10": round(float(np.percentile(rel, 10)), 2) if rel is not None else None}
@@ -238,13 +242,20 @@ def kennzahlen(dxy: np.ndarray, cfg: dict, kb_mm: float | None,
 
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------
 
+def config_hash(cfg: dict) -> str:
+    """Kurzer Hash (12 Hex-Zeichen, sha1) der ``telemetrie:``-Config ohne ``parallel`` — Haltung, Bewegungsart, Klassen,
+    wackeln × px_faktor, ruhige Fenster und Fensterlänge hängen an ihr; ein Cache-Datensatz mit anderem Hash ist veraltet."""
+    text = json.dumps({k: v for k, v in cfg.items() if k != "parallel"}, sort_keys=True, default=str)
+    return hashlib.sha1(text.encode("utf-8")).hexdigest()[:12]
+
+
 def _leer(path: Path, kamera: str, modell: str | None) -> dict:
     return {"path": str(path), "clip": path.stem, "kamera": kamera, "modell": modell, "dauer_s": None, "fps": None,
             "quelle": "keine", "imu_hz": None, "samples": 0, "brennweite_mm": None, "kb_mm": None, "kb_min": None,
             "kb_max": None, "zoomfahrt": False, "fokus_m": None, "brennweitenklasse": None, "pitch_grad": None,
             "roll_grad": None, "lage_grund": None, "perspektive_hoehe": None, "haltung": None, "hf_anteil": None,
-            "bewegungsart": None, "wackeln": None, "bewegung": None, "fenster": [], "ruhige_fenster": [],
-            "schaerfe_p10": None, "fehler": None}
+            "bewegungsart": None, "wackeln": None, "bewegung": None, "fenster_s": None, "fenster": [],
+            "ruhige_fenster": [], "schaerfe_p10": None, "config_hash": None, "fehler": None}
 
 
 def _frames(p: Path, cfg: dict) -> np.ndarray:
@@ -259,6 +270,7 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
     modell = sidecar_modell(p)
     kamera = kamera_erkennen(p, modell)
     out = _leer(p, kamera, modell)
+    out["config_hash"] = config_hash(cfg)
     try:
         info = ffprobe(p)
         out["dauer_s"], out["fps"] = round(float(info.duration_s), 2), float(info.fps)
@@ -287,7 +299,7 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
                    and kamera not in (cfg.get("optisch_fuer") or []))
         if gyro_ok:
             out["imu_hz"] = float(daten.imu_hz or daten.proben_je_sample * info.fps)
-            rate = gyro_je_frame(daten.gyro, daten.proben_je_sample, info.fps)
+            rate = gyro_je_frame(daten.gyro, daten.proben_je_sample, info.fps, imu_hz=daten.imu_hz)
             faktor = float((cfg.get("px_faktor") or {}).get(kamera, 1.0))
             dxy = verschiebung_aus_rate(rate, kb, cfg) * faktor
             s = schaerfe_frames(_frames(p, cfg)) if schaerfe else None
@@ -303,8 +315,10 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
 def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_optisch: bool = False,
                    schaerfe: bool = False) -> tuple[dict, bool]:
     """Datensatz aus ``_intern/autocut/telemetrie/<fingerprint>.json`` oder neu messen (atomar geschrieben).
-    Eine kaputte/unlesbare Cache-Datei sowie ein gecachter Datensatz mit ``fehler`` gelten als Cache-Fehlschlag
-    (neu messen, Datei überschreiben) statt den Lauf abzubrechen oder einen veralteten Fehler zurückzugeben."""
+    Eine kaputte/unlesbare Cache-Datei sowie ein gecachter Datensatz mit ``fehler`` oder mit fehlendem/anderem
+    ``config_hash`` (Config unter ``telemetrie:`` geändert) gelten als Cache-Fehlschlag (neu messen, Datei überschreiben)
+    statt den Lauf abzubrechen oder veraltete Werte zurückzugeben. Ein Cache-Treffer trägt Pfad und Clip-Namen des
+    Aufrufs (der Fingerprint hängt nicht am Pfad — Material kann NAS → SSD gewandert sein)."""
     fp = fingerprint(path)
     cache = Path(ch.autocut) / CACHE_DIR / f"{fp}.json"
     if cache.exists() and not force:
@@ -314,8 +328,9 @@ def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_op
             rec = None
         if isinstance(rec, dict):
             veraltet = (rec.get("fehler") or (rec.get("quelle") == "keine" and not ohne_optisch)
-                       or (schaerfe and rec.get("schaerfe_p10") is None))
+                       or (schaerfe and rec.get("schaerfe_p10") is None) or rec.get("config_hash") != config_hash(cfg))
             if not veraltet:
+                rec["path"], rec["clip"] = str(path), Path(path).stem
                 return rec, True
     rec = clip_messen(path, cfg, ohne_optisch, schaerfe)
     rec["fingerprint"] = fp
@@ -433,12 +448,18 @@ def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None
 
 
 def laden(autocut_dir: str | Path) -> list[dict]:
-    """``telemetrie.json`` als Liste; leer, wenn es sie nicht gibt."""
+    """``telemetrie.json`` als Liste von Datensätzen; leer, wenn es sie nicht gibt oder sie kaputt/unlesbar ist —
+    Telemetrie ist überall optional, ohne Daten gelten die bisherigen Standards (6d-Vorlage lädt sie beim Import)."""
     p = Path(autocut_dir) / "telemetrie.json"
     if not p.exists():
         return []
-    data = json.loads(p.read_text(encoding="utf-8"))
-    return data if isinstance(data, list) else list(data.get("clips") or [])
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+        return []
+    if isinstance(data, dict):
+        data = data.get("clips")
+    return [r for r in data if isinstance(r, dict)] if isinstance(data, list) else []
 
 
 def finden(tele: list[dict], path: str | Path) -> dict | None:
@@ -455,7 +476,9 @@ def finden(tele: list[dict], path: str | Path) -> dict | None:
 # --- Helfer für Stufe 2b und 6d ------------------------------------------------------------------------------
 
 def _fenster_im_bereich(rec: dict, von_s: float, bis_s: float, fenster_s: float) -> list[list]:
-    """Fenster, deren Mitte im Bereich liegt; gibt es keine (Bereich kürzer als ein Fenster), alle überlappenden."""
+    """Fenster, deren Mitte im Bereich liegt; gibt es keine (Bereich kürzer als ein Fenster), alle überlappenden.
+    Fensterlänge = ``fenster_s`` des Datensatzes (mit ihr wurden die Fenster gebaut), sonst der übergebene Wert."""
+    fenster_s = float(rec.get("fenster_s") or fenster_s)
     alle = rec.get("fenster") or []
     mitte = [f for f in alle if von_s <= f[0] + fenster_s / 2 <= bis_s]
     return mitte or [f for f in alle if f[0] < bis_s and f[0] + fenster_s > von_s]

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import shutil
 import struct
 import subprocess
@@ -466,3 +467,127 @@ def test_telemetrie_charge_uebersteht_sidecar_modell_fehler_im_fallback(monkeypa
     rec_kaputt = next(r for r in tele if r["path"] == str(kaputt))
     assert rec_kaputt["fehler"] and "PermissionError" in rec_kaputt["fehler"] and rec_kaputt["kamera"] == "FX3"
     assert any("PermissionError" in f for f in out["fehler"])
+
+
+# --- Final Review (21.09.2026): Config-Hash im Cache (I1), Pfad bei Cache-Treffer (T4), IMU-Rate (M1), laden (M9) --------
+
+def _optisch_fakes(monkeypatch, seed: int = 20) -> None:
+    """ffprobe/Datenspur/Frames für einen optischen Clip ohne Datenspur (30 gleiche Zufallsbilder → stativ)."""
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: b"")
+    bild = (np.random.default_rng(seed).random((270, 480)) * 255).astype(np.uint8)
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.tile(bild, (30, 1, 1)))
+
+
+def test_config_hash_ohne_parallel():
+    h = T.config_hash(CFG)
+    assert len(h) == 12 and all(c in "0123456789abcdef" for c in h)
+    assert T.config_hash({**CFG, "parallel": 8}) == h                          # parallel ändert keinen Messwert
+    assert T.config_hash(dict(reversed(list(CFG.items())))) == h                # Reihenfolge der Schlüssel egal
+    assert T.config_hash({**CFG, "ruhig_max_px": 0.2}) != h
+    assert T.config_hash({**CFG, "px_faktor": {"FX3": 0.6, "a7IV": 1.0}}) != h
+    leer = T._leer(Path("/nas/FX3_1.MP4"), "FX3", None)
+    assert "config_hash" in leer and leer["config_hash"] is None and "fenster_s" in leer and leer["fenster_s"] is None
+
+
+def test_clip_mit_cache_misst_nach_config_aenderung_neu(monkeypatch, basis_charge, tmp_path):
+    """I1: haltung, bewegungsart, Klassen, wackeln × px_faktor, ruhige_fenster und Fensterlänge hängen an der Config zum
+    Messzeitpunkt — ein gecachter Datensatz mit fehlendem oder anderem config_hash gilt als veraltet."""
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    clip = tmp_path / "DJI_0060.MOV"
+    clip.write_bytes(b"x")
+    _optisch_fakes(monkeypatch)
+    rec, aus_cache = T.clip_mit_cache(ch, clip, CFG)
+    assert aus_cache is False and rec["config_hash"] == T.config_hash(CFG) and rec["fenster_s"] == 2.0
+    assert T.clip_mit_cache(ch, clip, {**CFG, "parallel": 4})[1] is True        # nur parallel geändert: Cache-Treffer
+    cfg3 = {**CFG, "fenster_s": 3.0}
+    neu, aus_cache = T.clip_mit_cache(ch, clip, cfg3)
+    assert aus_cache is False and neu["fenster_s"] == 3.0 and neu["config_hash"] == T.config_hash(cfg3)
+    assert T.clip_mit_cache(ch, clip, cfg3)[1] is True
+    cache = ac / T.CACHE_DIR / f"{T.fingerprint(clip)}.json"
+    alt = json.loads(cache.read_text(encoding="utf-8"))
+    del alt["config_hash"]                                                         # Datensatz von vor dem Fix
+    cache.write_text(json.dumps(alt), encoding="utf-8")
+    assert T.clip_mit_cache(ch, clip, cfg3)[1] is False
+
+
+def test_fensterlaenge_kommt_aus_dem_datensatz():
+    """I1: Fenster, die mit fenster_s 6,0 gebaut wurden, werden auch mit 6,0 ausgewertet — nicht mit dem übergebenen
+    Wert der aktuellen Config (2,0). Abschnitt 2–4 s: mit 2,0 zählen die Fenster ab 1/2/3 s, mit 6,0 die ab 0/1 s."""
+    rec = {"quelle": "rtmd", "fehler": None, "haltung": "hand", "wackeln": 0.3, "fenster_s": 6.0,
+           "fenster": [[0.0, 0.02, 0.1, "statisch"], [1.0, 0.02, 0.1, "statisch"], [2.0, 0.4, 1.0, "schwenk_links"],
+                       [3.0, 0.4, 1.0, "schwenk_links"], [4.0, 0.4, 1.0, "schwenk_links"], [5.0, 0.4, 1.0, "schwenk_links"]]}
+    assert T.abschnitt_werte(rec, 2.0, 4.0, 2.0)["bewegungsart"] == "statisch"
+    stabil, grund = T.stabil_vorschlag(2.0, 4.0, rec, CFG)                        # CFG fenster_s 2,0
+    assert stabil is False and "Hand, aber ruhig" in grund
+    ohne = {k: v for k, v in rec.items() if k != "fenster_s"}                     # Altbestand: übergebener Wert gilt
+    assert T.abschnitt_werte(ohne, 2.0, 4.0, 2.0)["bewegungsart"] == "schwenk_links"
+    assert T.stabil_vorschlag(2.0, 4.0, ohne, CFG)[0] is True
+
+
+def test_clip_mit_cache_treffer_traegt_den_aktuellen_pfad(monkeypatch, basis_charge, tmp_path):
+    """T4: nach einem Umzug NAS → SSD (gleicher Fingerprint: Name, Größe, mtime) trägt der Cache-Treffer den neuen Pfad —
+    sonst schriebe telemetrie.json alte Pfade, und der Dateinamen-Rückfall in finden versagt bei DJI_0001 u. ä."""
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    nas, ssd = tmp_path / "nas" / "Mavic" / "DJI_0001.MOV", tmp_path / "ssd" / "Mavic" / "DJI_0001.MOV"
+    for p in (nas, ssd):
+        p.parent.mkdir(parents=True)
+        p.write_bytes(b"x")
+    st = nas.stat()
+    os.utime(ssd, ns=(st.st_atime_ns, st.st_mtime_ns))
+    assert T.fingerprint(nas) == T.fingerprint(ssd)
+    _optisch_fakes(monkeypatch)
+    assert T.clip_mit_cache(ch, nas, CFG)[0]["path"] == str(nas)
+    rec, aus_cache = T.clip_mit_cache(ch, ssd, CFG)
+    assert aus_cache is True and rec["path"] == str(ssd) and rec["clip"] == "DJI_0001"
+
+
+def test_gyro_je_frame_mit_imu_rate_5994p():
+    """M1: bei 59,94p liefert die Kamera 33–34 Proben je Sample; round(33 · 59,94 / 25) = 79 driftet. Mit der IMU-Rate
+    aus Tag 0xE435 (2000 Hz) sind es genau 80 Proben je 25-fps-Frame."""
+    g = np.vstack([np.tile([[1.0, 2.0, 3.0]], (80, 1)), np.tile([[2.0, 4.0, 6.0]], (80, 1))])
+    m = T.gyro_je_frame(g, 33, 59.94, imu_hz=2000.0)
+    assert m.shape == (2, 3) and np.allclose(m[0], [1, 2, 3]) and np.allclose(m[1], [2, 4, 6])
+    assert not np.allclose(T.gyro_je_frame(g, 33, 59.94)[1], [2, 4, 6])           # ohne Rate: 79 je Frame
+    assert T.gyro_je_frame(g, 80, 25.0).shape == (2, 3)                           # bisheriger Aufruf unverändert
+
+
+def test_clip_messen_und_kalibrierung_geben_die_imu_rate_weiter(monkeypatch, tmp_path):
+    """M1: beide Aufrufer übergeben imu_hz aus der Datenspur an gyro_je_frame."""
+    from niro_autocut import telemetrie_kalibrierung as K
+    clip = tmp_path / "FX3_0061.MP4"
+    clip.write_bytes(b"x")
+    gesehen: list = []
+
+    def spion(werte, proben_je_sample, fps, ziel_fps=T.ZIEL_FPS, imu_hz=None):
+        gesehen.append(imu_hz)
+        return np.zeros((len(werte) // 80, 3))                                    # 25p-Puffer: 80 Proben je Frame
+
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=100, gyro_y=10.0))
+    monkeypatch.setattr(T, "gyro_je_frame", spion)
+    assert T.clip_messen(clip, CFG)["quelle"] == "rtmd"
+    monkeypatch.setattr(K, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(K, "datenspur_lesen", lambda p: _rtmd_puffer(frames=100, gyro_y=10.0))
+    monkeypatch.setattr(K, "graustufen", lambda p, fps, von, dauer, breite, hoehe: np.zeros((101, hoehe, breite), np.uint8))
+    monkeypatch.setattr(K, "gyro_je_frame", spion)
+    assert K.clip_kalibrieren(clip, CFG, 0.0) is not None
+    assert gesehen == [2000.0, 2000.0]
+
+
+def test_laden_kaputte_telemetrie_json_liefert_leer(tmp_path):
+    """M9: Telemetrie ist überall optional — eine kaputte telemetrie.json darf weder die 6d-Vorlage beim Import noch
+    Stufe 2b abbrechen; ohne Daten gelten die bisherigen Standards."""
+    datei = tmp_path / "telemetrie.json"
+    for inhalt in (b"{kaputt", b"\xff\xfe\x00", b"42", b'"text"'):
+        datei.write_bytes(inhalt)
+        assert T.laden(tmp_path) == []
+    datei.write_text(json.dumps([{"path": "/nas/a.MP4"}, 3, None]), encoding="utf-8")
+    assert T.laden(tmp_path) == [{"path": "/nas/a.MP4"}]                           # nur Datensätze (dicts)
+    datei.unlink()
+    datei.mkdir()                                                                  # OSError beim Lesen
+    assert T.laden(tmp_path) == []
