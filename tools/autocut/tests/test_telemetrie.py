@@ -44,7 +44,8 @@ def test_verschiebung_aus_rate_achsen_und_vorzeichen():
 def test_wackeln_bewegung_wie_ruhe_py():
     dxy = np.array([[0, 0], [1, 0], [0, 0], [1, 0]], float)
     wk, bw = T.wackeln_bewegung(dxy)
-    assert wk == 0.5 and bw == 0.25            # Mittel über beide Spalten: |Δdx| = 1,1,1 / |Δdy| = 0 → 0,5; |dx| Mittel 0,5, |dy| 0 → 0,25
+    # Mittel über beide Spalten: |Δdx| = 1,1,1 / |Δdy| = 0 → 0,5; |dx| Mittel 0,5, |dy| 0 → 0,25
+    assert wk == 0.5 and bw == 0.25
     assert T.wackeln_bewegung(np.zeros((1, 2))) == (0.0, 0.0)
 
 
@@ -88,7 +89,8 @@ def test_haltung():
 def test_fenster_und_mehrheit():
     fen = T.fenster(np.tile([[2.0, 0.0]], (100, 1)), CFG, 1.0, 0.02)
     assert [f["t_s"] for f in fen] == [0.0, 1.0, 2.0, 3.0] and all(f["bewegungsart"] == "schwenk_links" for f in fen)
-    assert [f["t_s"] for f in T.fenster(np.zeros((74, 2)), CFG, 1.0, 0.02)] == [0.0, 1.0]     # 3-s-Clip optisch: 74 Verschiebungen
+    # 3-s-Clip optisch: 74 Verschiebungen
+    assert [f["t_s"] for f in T.fenster(np.zeros((74, 2)), CFG, 1.0, 0.02)] == [0.0, 1.0]
     assert fen[0]["wackeln"] == 0.0 and fen[0]["bewegung"] == 1.0
     kurz = T.fenster(np.zeros((20, 2)), CFG, 1.0, 0.02)
     assert len(kurz) == 1 and kurz[0]["t_s"] == 0.0
@@ -112,9 +114,11 @@ def test_lage_pitch_roll_und_gate():
 
 
 def test_klassen():
-    assert [T.brennweitenklasse(k, [30, 60]) for k in (24, 30, 50, 60, 71.6, 283.8)] == ["weit", "normal", "normal", "normal", "tele", "tele"]
-    assert [T.perspektive_hoehe(p, [-60, -8, 8]) for p in (-90, -60, -12, -8, 0, 7.9, 8, 20)] == \
-        ["Vogelperspektive", "Vogelperspektive", "Aufsicht", "Aufsicht", "Augenhöhe", "Augenhöhe", "Untersicht", "Untersicht"]
+    brennweiten = [T.brennweitenklasse(k, [30, 60]) for k in (24, 30, 50, 60, 71.6, 283.8)]
+    assert brennweiten == ["weit", "normal", "normal", "normal", "tele", "tele"]
+    perspektiven = [T.perspektive_hoehe(p, [-60, -8, 8]) for p in (-90, -60, -12, -8, 0, 7.9, 8, 20)]
+    assert perspektiven == (["Vogelperspektive", "Vogelperspektive", "Aufsicht", "Aufsicht", "Augenhöhe",
+                             "Augenhöhe", "Untersicht", "Untersicht"])
     assert T.perspektive_hoehe(None, [-60, -8, 8]) is None
 
 

@@ -86,7 +86,7 @@ def hf_anteil(dxy: np.ndarray, fps: float = ZIEL_FPS, grenze_hz: float = 3.0) ->
 
 
 def schwellen_px(kb_mm: float | None, cfg: dict) -> tuple[float, float]:
-    """(min_px für Schwenk/Tilt, stativ_px): aus °/s über f_px, wenn die KB-Brennweite bekannt ist, sonst px-Standardwerte."""
+    """(min_px für Schwenk/Tilt, stativ_px): aus °/s über f_px, wenn Brennweite bekannt, sonst px-Werte."""
     if kb_mm:
         k = math.pi / 180.0 * f_px(kb_mm, int(cfg["optisch_breite"])) / ZIEL_FPS
         return float(cfg["schwenk_min_grad_s"]) * k, float(cfg["stativ_max_grad_s"]) * k
@@ -102,12 +102,17 @@ def _tiefpass(x: np.ndarray, breite: int) -> np.ndarray:
     return np.stack([np.convolve(x[:, c], k, mode="same") / norm for c in range(x.shape[1])], axis=1)
 
 
+def _ist_stativ(dxy: np.ndarray, stativ_px: float) -> bool:
+    """Stativ (keine Bewegung): Zittern und Bewegung beide unter Schwelle."""
+    wk, bw = wackeln_bewegung(dxy)
+    return wk < stativ_px and bw < stativ_px
+
+
 def bewegungsart(dxy: np.ndarray, cfg: dict, min_px: float, stativ_px: float) -> str:
-    """Bewegungsart eines Fensters: statisch, Schwenk/Tilt mit Richtung, gemischt (Richtungswechsel oder beide Achsen), fahrt."""
+    """Bewegungsart eines Fensters: statisch, Schwenk/Tilt, gemischt oder fahrt."""
     if len(dxy) == 0:
         return "statisch"
-    wk, bw = wackeln_bewegung(dxy)
-    if wk < stativ_px and bw < stativ_px:
+    if _ist_stativ(dxy, stativ_px):
         return "statisch"
     glatt = _tiefpass(dxy, int(round(float(cfg["tiefpass_s"]) * ZIEL_FPS)))
     h = len(glatt) // 2
@@ -128,16 +133,15 @@ def bewegungsart(dxy: np.ndarray, cfg: dict, min_px: float, stativ_px: float) ->
 
 
 def haltung(dxy: np.ndarray, stativ_px: float, cfg: dict) -> str:
-    """stativ (keine Bewegung), hand (viel Energie über hf_grenze_hz) oder gimbal (Bewegung fast nur darunter)."""
-    wk, bw = wackeln_bewegung(dxy)
-    if wk < stativ_px and bw < stativ_px:
+    """stativ (keine Bewegung), hand (viel Energie über Grenzfrequenz) oder gimbal (nur darunter)."""
+    if _ist_stativ(dxy, stativ_px):
         return "stativ"
     anteil = hf_anteil(dxy, ZIEL_FPS, float(cfg["hf_grenze_hz"]))
     return "hand" if anteil >= float(cfg["hand_hf_anteil_min"]) else "gimbal"
 
 
 def fenster(dxy: np.ndarray, cfg: dict, min_px: float, stativ_px: float) -> list[dict]:
-    """Fenster von ``fenster_s`` mit Schritt ``schritt_s``; das letzte darf halb so lang sein; kurze Clips: ein Fenster (ab 2 Frames)."""
+    """Fenster von ``fenster_s`` mit Schritt ``schritt_s``; letztes halb so lang; ab 2 Frames."""
     n = len(dxy)
     w = max(2, int(round(float(cfg["fenster_s"]) * ZIEL_FPS)))
     s = max(1, int(round(float(cfg["schritt_s"]) * ZIEL_FPS)))
@@ -171,8 +175,10 @@ def lage(acc: np.ndarray, toleranz: float = 0.10, vorzeichen_pitch: float = 1.0)
         return {"pitch_grad": None, "roll_grad": None, "grund": "Beschleunigung null"}
     ruhig = np.abs(betrag - med) <= toleranz * med
     if float(ruhig.mean()) < 0.5:
+        anteil = 100 * (1 - float(ruhig.mean()))
         return {"pitch_grad": None, "roll_grad": None,
-                "grund": f"Beschleunigung schwankt ({100 * (1 - float(ruhig.mean())):.0f} % der Proben außerhalb ±{toleranz * 100:.0f} %)"}
+                "grund": f"Beschleunigung schwankt ({anteil:.0f} % außerhalb "
+                         f"±{toleranz * 100:.0f} %)"}
     a = np.median(acc[ruhig], axis=0)          # x links, y oben, z vorwärts
     pitch = vorzeichen_pitch * math.degrees(math.atan2(a[2], math.hypot(a[0], a[1])))
     roll = math.degrees(math.atan2(a[0], a[1]))
