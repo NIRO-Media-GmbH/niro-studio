@@ -406,8 +406,11 @@ def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None
                 meldung = str(e) if isinstance(e, AutoCutError) else f"{type(e).__name__}: {e}"
                 fehler.append(f"{name}: {meldung}")
                 melden(f"[{i}/{len(todo)}] FEHLER {name}: {meldung}", flush=True)
+                # kamera nur aus dem Dateinamen (kamera_erkennen ohne modell) — sidecar_modell liest eine Datei
+                # und darf hier nicht erneut aufgerufen werden: ein OSError darin (Rechte-Fehler auf dem
+                # Sidecar-XML) würde sonst ungefangen aus diesem except-Zweig entkommen und den Lauf abbrechen.
                 p = Path(c["path"])
-                rec = _leer(p, kamera_erkennen(p, sidecar_modell(p)), sidecar_modell(p))
+                rec = _leer(p, kamera_erkennen(p), None)
                 rec["fehler"], rec["ordner"] = meldung, c.get("ordner") or ""
                 ergebnisse[c["path"]] = rec
                 continue

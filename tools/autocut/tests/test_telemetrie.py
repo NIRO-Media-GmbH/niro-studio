@@ -417,3 +417,36 @@ def test_telemetrie_charge_haelt_bei_unerwarteten_fehlern_durch(monkeypatch, bas
     rec_fehlt = next(r for r in tele if r["path"] == str(fehlt))
     assert rec_fehlt["fehler"] and "nicht gefunden" in rec_fehlt["fehler"]
     assert any("ValueError" in f for f in out["fehler"]) and any("nicht gefunden" in f for f in out["fehler"])
+
+
+def test_telemetrie_charge_uebersteht_sidecar_modell_fehler_im_fallback(monkeypatch, basis_charge, tmp_path):
+    """Fix-Runde 2: der Fallback-Datensatz im except-Handler darf sidecar_modell nicht erneut aufrufen — ein
+    OSError dort (Rechte-Fehler auf dem Sidecar-XML) darf den Lauf nicht abbrechen (genau der F4-Fehler)."""
+    ac = basis_charge / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    ch = Charge.open_basis(basis_charge)
+    gut = tmp_path / "FX3_0040.MP4"
+    gut.write_bytes(b"x")
+    kaputt = tmp_path / "FX3_0041.MP4"
+    kaputt.write_bytes(b"x")
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: b"")
+    rng = np.random.default_rng(14)
+    bild = (rng.random((270, 480)) * 255).astype(np.uint8)
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.tile(bild, (30, 1, 1)))
+
+    def sidecar_fake(p):
+        if Path(p).name == kaputt.name:
+            raise PermissionError("Keine Rechte auf FX3_0041M01.XML")
+        return None
+
+    monkeypatch.setattr(T, "sidecar_modell", sidecar_fake)
+    clips = [{"path": str(gut), "ordner": "x"}, {"path": str(kaputt), "ordner": "x"}]
+    out = T.telemetrie_charge(ch, clips, CFG, melden=lambda *a, **k: None)
+    assert len(out["clips"]) == 2 and len(out["fehler"]) == 1
+    tele = T.laden(ac)
+    rec_gut = next(r for r in tele if r["path"] == str(gut))
+    assert rec_gut["fehler"] is None and rec_gut["quelle"] == "optisch"
+    rec_kaputt = next(r for r in tele if r["path"] == str(kaputt))
+    assert rec_kaputt["fehler"] and "PermissionError" in rec_kaputt["fehler"] and rec_kaputt["kamera"] == "FX3"
+    assert any("PermissionError" in f for f in out["fehler"])
