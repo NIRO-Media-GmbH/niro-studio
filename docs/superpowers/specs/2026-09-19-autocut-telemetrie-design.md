@@ -1,6 +1,6 @@
 # AutoCut — Kamera-Telemetrie je Clip (Spec)
 
-Datum: 2026-09-19 · Status: Entwurf, Abschnitte 1–3 im Chat vom User freigegeben; Spec-Review durch den User ausstehend.
+Datum: 2026-09-19 · Status: Abschnitte 1–3 im Chat vom User freigegeben (19.09.), Nachtrag mit Messwerten vom 21.09.
 Erster Baustein aus der GitHub-Recherche (`tools/autocut/docs/referenz/2026-09-19-github-recherche.md`, Punkt 1).
 
 ## Anlass
@@ -46,8 +46,8 @@ Gyro-Wert taugt dort zur Rangfolge, die absolute Schwelle braucht einen Kamerafa
 
 ### Messweg 1 — rtmd
 
-`ffmpeg -v error -i <Clip> -map 0:d:0 -c copy -f data -` liest nur die Datenspur (ffmpeg überspringt die Video-Samples per
-Index; I/O-Aufwand wird im ersten Lauf gemessen und im WORKFLOW notiert). Parser aus `lage_messen.py`: Sample-Header
+`ffmpeg -v error -i <Clip> -map 0:d:0 -c copy -f data -` liefert nur die Datenspur, liest dafür aber die ganze Datei
+(gemessen 21.09.: ≈ 300 MB/s übers NAS, also die Lesezeit der Datei ohne Dekodierung; siehe Nachtrag). Parser aus `lage_messen.py`: Sample-Header
 `00 1c 01 00`, KLV-Sätze (UL `060e2b34`, BER-Länge), lokale Tags:
 
 | Tag | Inhalt |
@@ -193,3 +193,17 @@ Stufe 2b, 6d und dem Aftermovie-Sonderfall; README (Stufen-Tabelle, Aufbau, Schn
 
 Stufe-3-Layout mit `kamerabewegung`/`haltung`; Gyroflow-Vorstabilisierung (Punkt 11); Umbau von `lage_messen.py` auf das
 Modul; Avata-Gyro über `telemetry-parser`; Stufe 2 (Erst-Index) mit Telemetrie-Kontext.
+
+## Nachtrag 21.09.2026 — Messwerte an Hochzeitszauber-Clips (FX3_0330 25p, a7MK4_20260913_2128 50p)
+
+| Punkt | Befund |
+|---|---|
+| Datenspur | Stream 2 „Timed Metadata Media Handler", ein Sample je Videoframe, ≈ 19,5 KB je Sample (≈ 170 Tags). Lesen = ganze Datei: 537 MB in 1,7 s, 202 MB in 0,7 s (≈ 300 MB/s NAS); Hochzeitszauber komplett ≈ 6 min. |
+| IMU-Rate | Tag 0xE435 = 2000 → **2000 Hz** in beiden Kameras: 80 Gyro-/Acc-Proben je 25p-Frame, 40 je 50p-Frame (Blockheader n, groesse 6). |
+| Gyro-Einheit | Skala (0xE439) = 65,5 LSB → **°/s** (±500-°/s-MEMS-Bereich). Gimbal-FX3 im Stand: RMS 0,3–0,45 °/s; a7-Hand mit Bewegung: RMS bis 9,9, Spitze 82 °/s. |
+| Beschleunigung | Skala 8192 LSB/g. a7 IV Betrag 1,007 g, **FX3 konstant 1,154 g** → die 1-g-Prüfung für Pitch/Roll gilt relativ zum Clip-Median (±10 %), nicht absolut. |
+| Brennweite | 0x8004 (KB) berücksichtigt den Crop: a7 IV in 4K50p (Super-35) 180 mm → 283,8 mm KB; FX3 67,7 → 71,6 mm. Fokus 0x8001 in m. |
+| Sidecar | `<Clip>M01.XML` liegt neben jeder Sony-Datei: `<Device manufacturer="Sony" modelName="ILME-FX3"/>`, Objektiv als `modelName`. |
+| Achsen | Stichprobe a7-Clip, Gyro je 25-fps-Frame gegen numpy-Phasenkorrelation (480×270): Gyro-y ↔ dx r = −0,91 (Schwenk: Bildinhalt wandert entgegen), Gyro-x ↔ dx r = +0,86 (im Clip korrelierte Achsen). Zeitachsen decken sich exakt (72 ↔ 72). Bei > ≈ 60 px/Frame sättigt die Phasenkorrelation → Kalibrierregression nur auf Fenstern mit |dx|,|dy| < 40 px, robust (Median-Steigung). |
+| Weitere Tags | 0xE437 (int32, −3609/−3562) und 0xE43A (0x0420) neben den IMU-Blöcken — vermutlich Zeitversatz/Intervall in µs; für diese Stufe nicht nötig, im Parser mitloggen. |
+| Umgebung | Homebrew hatte x265 auf 4.3 gehoben, ffmpeg 8.0.1_4 startete nicht mehr; `brew reinstall ffmpeg` installierte **ffmpeg 9.0.2** — AutoCut-Tests danach laufen lassen. |
