@@ -680,19 +680,21 @@ Meldung an den User:
 
 ## Telemetrie — „Telemetrie" (seit 21.09.2026)
 
-`autocut_telemetrie.py "<Charge>" [--ordner <Pfad> …] [--limit N] [--force] [--ohne-optisch] [--dry-run]` liest je Clip die
-Sony-rtmd-Datenspur (FX3, a7 IV: Gyro und Beschleunigung mit 2000 Hz, KB-Brennweite, Fokus) und schreibt
-`_intern/autocut/telemetrie.json` (Liste je Clip) plus `Ergebnisse/Rohschnitt/telemetrie.md`; Teil-Läufe (`--limit`, andere
-`--ordner`) ergänzen `telemetrie.json` (bisherige Einträge bleiben), der Bericht umfasst die ganze Datei. Clips ohne Datenspur (Mavic)
-werden optisch gemessen (Phasenkorrelation 480×270 @25 fps). Beide Wege liefern dieselbe Größe: Verschiebung des Bildinhalts
-je 25-fps-Frame in px @480 — `wackeln` (Zittern) und `bewegung` wie `jitter`/`bewegung` in `ruhe.py`.
+`autocut_telemetrie.py "<Charge>" [--ordner <Pfad> …] [--limit N] [--force] [--ohne-optisch] [--schaerfe] [--parallel N]
+[--dry-run]` liest je Clip die Sony-rtmd-Datenspur (FX3, a7 IV: Gyro und Beschleunigung mit 2000 Hz, KB-Brennweite, Fokus) und
+schreibt `_intern/autocut/telemetrie.json` (Liste je Clip) plus `Ergebnisse/Rohschnitt/telemetrie.md`; Teil-Läufe (`--limit`,
+andere `--ordner`) ergänzen `telemetrie.json` (bisherige Einträge bleiben), der Bericht umfasst die ganze Datei. Clips ohne
+Datenspur (Mavic) werden optisch gemessen (Phasenkorrelation 480×270 @25 fps). Beide Wege liefern dieselbe Größe: Verschiebung
+des Bildinhalts je 25-fps-Frame in px @480 — `wackeln` (Zittern) und `bewegung` wie `jitter`/`bewegung` in `ruhe.py`.
 Clip-Quelle: `--ordner`, sonst `broll_index.json`, `inventar.json`, B-Roll-Wurzeln des Transkript-Index, `media.json`.
 Cache je Clip unter `_intern/autocut/telemetrie/<fingerprint>.json`; Lesen der Datenspur kostet die ganze Datei (≈ 300 MB/s
 übers NAS). Nach einer Änderung unter `telemetrie:` (`defaults.yaml` oder Chargen-`config.yaml`) misst der nächste Lauf die
-betroffenen Clips neu (der Cache trägt je Clip einen Config-Hash, ohne `parallel`); `--force` misst alles neu. Felder je Clip: `quelle` (rtmd/optisch/keine), `kamera`, `kb_mm`/`brennweitenklasse` (weit < 30, tele > 60),
+betroffenen Clips neu (der Cache trägt je Clip einen Config-Hash, ohne `parallel`); `--force` misst alles neu.
+Felder je Clip: `quelle` (rtmd/optisch/keine), `kamera`, `kb_mm`/`brennweitenklasse` (weit < 30, tele > 60),
 `pitch_grad`/`perspektive_hoehe`, `roll_grad`, `haltung` (stativ/gimbal/hand), `bewegungsart` (statisch, schwenk_links/rechts,
 tilt_auf/ab, fahrt, gemischt — `schwenk_links` = Kamera dreht nach links), `wackeln`, `bewegung`, `fenster` (2 s, Schritt 1 s),
-`ruhige_fenster` (wackeln ≤ `telemetrie.ruhig_max_px`). Schwellen und Kamerafaktoren in `defaults.yaml` unter `telemetrie:`.
+`ruhige_fenster` (wackeln ≤ `telemetrie.ruhig_max_px`). `ruhige_fenster` sind Fenster-Startzeiten in s (Fensterlänge `fenster_s`
+im Datensatz); das letzte Fenster kann kürzer sein. Schwellen und Kamerafaktoren in `defaults.yaml` unter `telemetrie:`.
 Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b (Brennweite/Perspektive aus Metadaten,
 `bewegungsart`/`haltung` je Abschnitt) und 6d (Stabilisieren nur bei Bedarf). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
 Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
@@ -1042,9 +1044,10 @@ mit Freigabe; V1 Bild mit Tempo, V2 Text, A1 Musik, A2 VO, A3 Atmo, Marker). Ref
   Tabelle mit Belegen (`Ergebnisse/Schnittplan/aussteller.md`); Stände ohne lesbaren Namen kommen als „Rundgang" (je 1 Shot,
   Karte „… und viele mehr"), Namen holt der Kunde nach.
 - **Szene = Aussteller, ≥ 3 Shots** (Totale 4 Beats + zwei Details je 2), nur bei zwei brauchbaren Clips Ausnahme; **Ruhe-Regel:**
-  Quell-Ins nur in gemessenen ruhigen 2-s-Fenstern (`autocut_telemetrie.py "<Charge>"` (Abschnitt „Telemetrie": `ruhige_fenster`,
-  `wackeln`, `haltung`, `bewegungsart` je Clip in `_intern/autocut/telemetrie.json`; Hochzeitszauber lief noch mit
-  `_intern/skripte/ruhe.py`/`ruhe_fenster.py`, optisch)), Rest stabilisieren (`stabil.py` im Entwurf, `Stabilize()` in Resolve). Nur
-  Musik, keine Sprache; mehr Länge über eine Musikschleife von 8 Takten (Sprung exakt auf dem Takt) statt über schnellere Schnitte.
+  Quell-Ins nur in gemessenen ruhigen 2-s-Fenstern: `autocut_telemetrie.py "<Charge>"`, ohne `_intern/autocut/inventar.json`
+  mit `--ordner <Footage-Ordner>` (Abschnitt „Telemetrie": `ruhige_fenster`, `wackeln`, `haltung`, `bewegungsart` je Clip in
+  `_intern/autocut/telemetrie.json`; Hochzeitszauber lief noch mit `_intern/skripte/ruhe.py`/`ruhe_fenster.py`, optisch). Rest
+  stabilisieren (`stabil.py` im Entwurf, `Stabilize()` in Resolve). Nur Musik, keine Sprache; mehr Länge über eine
+  Musikschleife von 8 Takten (Sprung exakt auf dem Takt) statt über schnellere Schnitte.
 - **Resolve-Bau:** `AppendToTimeline.endFrame` exklusiv, ein Marker je Frame (zusammenführen), Aspekt-Zoom für Mavic/Avata,
   Readback muss 0 Lücken/Abweichungen zeigen; Stereo Fixer entfällt ohne Sprach-/SFX-Spur.

@@ -106,6 +106,8 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   stativ_max_grad_s: 0.3    # darunter Stativ/statisch (Gyro-Weg; über f_px in px je Frame umgerechnet)
   stativ_max_px: 0.02       # … optischer Weg ohne Brennweite
   schwenk_min_grad_s: 3.0   # dominante Drehung ab hier Schwenk/Tilt
+                            # Beide °/s-Schwellen gelten für die sichtbare Bewegung nach px_faktor, am Gyro also
+                            # Wert / px_faktor: FX3 (0,60) ≈ 0,5 °/s Stativ, 5 °/s Schwenk; a7 IV (0,69) ≈ 0,43 / 4,3 °/s
   schwenk_min_px: 1.0
   hf_grenze_hz: 3.0         # Grenze zwischen Gimbal-/Fahrt-Bewegung und Hand-Zittern
   hand_hf_anteil_min: 0.15  # Leistungsanteil ab hf_grenze_hz, ab dem „hand" statt „gimbal"; Kalibrierung 21.09.2026
