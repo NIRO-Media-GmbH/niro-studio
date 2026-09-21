@@ -84,7 +84,9 @@ perspektive_hoehe         Vogelperspektive | Aufsicht | Untersicht | Augenhöhe 
 haltung                   stativ | gimbal | hand
 bewegungsart              statisch | schwenk_links | schwenk_rechts | tilt_auf | tilt_ab | fahrt | gemischt
 wackeln, bewegung         px @480 je Frame (25 fps), wie jitter/bewegung in ruhe.py
-fenster                   [[t_s, wackeln, bewegung, bewegungsart], …]   2-s-Fenster, Schritt 1 s
+schaerfe_p10              relative Schärfe (10. Perzentil der Frames, 1,0 = so scharf wie das schärfste Zehntel des Clips);
+                          optischer Weg immer, rtmd-Weg nur mit --schaerfe (braucht Dekodierung); sonst null
+fenster                   [[t_s, wackeln, bewegung, bewegungsart, schaerfe], …]   2-s-Fenster, Schritt 1 s; schaerfe = p10 im Fenster oder null
 ruhige_fenster            [t_s, …]   Fenster mit wackeln ≤ ruhig_max_px (nach Kamerafaktor)
 fehler                    nur wenn etwas nicht lesbar war
 ```
@@ -157,7 +159,10 @@ Beide Messwege auf demselben Material und demselben Zeitbereich je Clip (Hochzei
    stabilisieren; `stativ`/`gimbal` → nicht; keine Telemetrie → stabilisieren (bisheriger Standard). Tabelle im Probelauf (Shot, Haltung, wackeln, Vorschlag), Übernahme in `feinschnitt.json`
    (`stabilisiert`, `stabil_grund`); die ANPASSEN-Tabelle `BROLL` bekommt eine optionale Spalte `stabil`, mit der Claude
    den Vorschlag überstimmt. `roll_grad` > 2° → Warnung „schief". `Stabilize()` läuft nur für die ausgewählten Shots.
-   Reine Funktion `stabil_vorschlag(shot, telemetrie, cfg)` im Modul, damit sie testbar ist.
+   Reine Funktion `stabil_vorschlag(shot, telemetrie, cfg)` im Modul, damit sie testbar ist. Dateien mit `_stabilized` im Namen
+   (Avata-Exporte, Regel des Users vom 18.09.) werden nie stabilisiert. Den Stabilisierungs-**Modus** (User-Standard Translation,
+   Smooth 0,25) setzt weiterhin der DRT-Roundtrip der Chargen (`drt_stabilisierung.py`, WTN/Wurst & Liebe/Assenheimer) — die
+   Vorlage entscheidet nur, ob `Stabilize()` läuft.
 
 ## Fehler
 
@@ -209,3 +214,20 @@ Modul; Avata-Gyro über `telemetry-parser`; Stufe 2 (Erst-Index) mit Telemetrie-
 | Achsen | Stichprobe a7-Clip, Gyro je 25-fps-Frame gegen numpy-Phasenkorrelation (480×270): Gyro-y ↔ dx r = −0,91 (Schwenk: Bildinhalt wandert entgegen), Gyro-x ↔ dx r = +0,86 (im Clip korrelierte Achsen). Zeitachsen decken sich exakt (72 ↔ 72). Bei > ≈ 60 px/Frame sättigt die Phasenkorrelation → Kalibrierregression nur auf Fenstern mit |dx|,|dy| < 40 px, robust (Median-Steigung). |
 | Weitere Tags | 0xE437 (int32, −3609/−3562) und 0xE43A (0x0420) neben den IMU-Blöcken — vermutlich Zeitversatz/Intervall in µs; für diese Stufe nicht nötig, im Parser mitloggen. |
 | Umgebung | Homebrew hatte x265 auf 4.3 gehoben, ffmpeg 8.0.1_4 startete nicht mehr; `brew reinstall ffmpeg` installierte **ffmpeg 9.0.2** — AutoCut-Tests danach laufen lassen. |
+
+## Nachtrag 21.09.2026 — Abgleich mit dem MacBook-Stand (Tagesstände 18./19.09.)
+
+Auf dem zweiten Mac entstanden je Charge Skripte, die Teile dieses Specs vorwegnehmen: `broll_qualitaet.py` (Wurst & Liebe:
+Schärfe und Verwacklung je B-Roll-Einsatz, optisch), `katalog_*.json` (Assenheimer: Jitter, Schärfe je Clip),
+`drt_stabilisierung.py`/`translation_ads.py` (Stabilisierungs-Modus Translation per DRT-Roundtrip), `avata_entstabilisieren.py`
+(Avata nur `…_stabilized.mov`, nie Resolve-Stabilizer). Daraus zwei Ergänzungen:
+
+| Ergänzung | Entscheidung |
+|---|---|
+| Schärfe | `schaerfe` je Fenster und `schaerfe_p10` je Clip: mittlere quadrierte Laplace-Antwort nach Glättung (σ 1), geteilt durch die Bildvarianz (kontrastunabhängig, S-Log ist flach), relativ zum 90. Perzentil des Clips — Verfahren aus `broll_qualitaet.py`. Beim optischen Weg kostenlos, beim rtmd-Weg nur mit `--schaerfe` (Dekodierung 480×270). Keine Schwelle in dieser Stufe; der Bericht listet die unschärfsten Fenster. |
+| `_stabilized` | `stabil_vorschlag` liefert für Dateien mit `_stabilized` im Namen immer „nicht stabilisieren". |
+| Modus | Der Modus (Translation, Smooth 0,25) bleibt Sache des DRT-Roundtrips; Kandidat für ein eigenes gemeinsames Werkzeug (liegt in drei Chargen). |
+
+Nicht Teil dieses Specs, aber durch den MacBook-Stand belegt: Musik als gemeinsames Werkzeug (`musik_scan.json` mit 267 Titeln,
+`musik_struktur.py` mit Drops/Breaks → beat_this, all-in-one, CLAP), DRT-Stabilisierung als Modul, 9:16-Reframe-Vorschlag aus der
+Gesichtslage (`pan_korrektur.py`, `gesicht_check.py`).

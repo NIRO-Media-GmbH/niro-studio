@@ -386,6 +386,7 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
   - `graustufen(path, fps=25.0, von_s=None, dauer_s=None, breite=480, hoehe=270) -> np.ndarray` (n, hoehe, breite) uint8
   - `phasenkorrelation(a, b) -> tuple[float, float]` — Verschiebung des Bildinhalts von a nach b; dx > 0 nach rechts, dy > 0 nach unten
   - `verschiebungen(frames) -> np.ndarray` (n−1, 2) float64
+  - `schaerfe(frames, sigma=1.0) -> np.ndarray` (n,) — mittlere quadrierte Laplace-Antwort nach Glättung ÷ Bildvarianz (Verfahren aus `broll_qualitaet.py`, MacBook 17.09.)
 
 - [ ] **Step 1: Failing Tests schreiben**
 
@@ -441,6 +442,15 @@ def test_verschiebungen_reihe():
     assert O.verschiebungen(frames[:1]).shape == (0, 2)
 
 
+def test_schaerfe_scharf_vor_unscharf():
+    from scipy import ndimage
+    rng = np.random.default_rng(4)
+    scharf = (rng.random((270, 480)) * 255).astype(np.uint8)
+    unscharf = ndimage.gaussian_filter(scharf, 3).astype(np.uint8)
+    s = O.schaerfe(np.stack([scharf, unscharf, np.full((270, 480), 128, np.uint8)]))
+    assert s.shape == (3,) and s[0] > 3 * s[1] > 0 and s[2] == 0.0
+
+
 @pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg fehlt")
 def test_graustufen_dekodiert_testsrc(tmp_path):
     clip = tmp_path / "test.mp4"
@@ -472,6 +482,7 @@ import subprocess
 from pathlib import Path
 
 import numpy as np
+from scipy import ndimage
 
 from .charge import AutoCutError
 from .media import _which
@@ -534,12 +545,25 @@ def verschiebungen(frames: np.ndarray) -> np.ndarray:
     if len(frames) < 2:
         return np.zeros((0, 2), np.float64)
     return np.array([phasenkorrelation(frames[i], frames[i + 1]) for i in range(len(frames) - 1)], np.float64)
+
+
+def schaerfe(frames: np.ndarray, sigma: float = 1.0) -> np.ndarray:
+    """Schärfe je Frame: mittlere quadrierte Laplace-Antwort nach Glättung (σ), geteilt durch die Bildvarianz (kontrastunabhängig,
+    S-Log ist flach); 0 bei flachem Bild. Verfahren aus ``broll_qualitaet.py`` (Wurst & Liebe, 17.09.2026)."""
+    out = np.zeros(len(frames), np.float64)
+    for i, f in enumerate(frames):
+        g = ndimage.gaussian_filter(f.astype(np.float32), sigma)
+        var = float(g.var())
+        if var <= 1e-6:
+            continue
+        out[i] = float((ndimage.laplace(g) ** 2).mean()) / var
+    return out
 ```
 
 - [ ] **Step 4: Tests laufen lassen**
 
 Run: `cd "/Users/jansantos/NIRO Studio/tools/autocut" && venv/bin/python -m pytest tests/test_telemetrie_optisch.py -q`
-Expected: `4 passed`
+Expected: `5 passed`
 
 - [ ] **Step 5: Commit**
 
@@ -573,7 +597,7 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
   - `mehrheit(werte, anteil=0.6) -> str`
   - `lage(acc, toleranz=0.10, vorzeichen_pitch=1.0) -> dict` (`pitch_grad`, `roll_grad`, `grund`)
   - `brennweitenklasse(kb_mm, grenzen) -> str`, `perspektive_hoehe(pitch_grad, grenzen) -> str | None`
-  - `kennzahlen(dxy, cfg, kb_mm) -> dict` (`wackeln`, `bewegung`, `haltung`, `hf_anteil`, `bewegungsart`, `fenster`, `ruhige_fenster`)
+  - `kennzahlen(dxy, cfg, kb_mm, schaerfe=None) -> dict` (`wackeln`, `bewegung`, `haltung`, `hf_anteil`, `bewegungsart`, `fenster` mit 5 Elementen `[t_s, wackeln, bewegung, bewegungsart, schaerfe]`, `ruhige_fenster`, `schaerfe_p10`)
 
 - [ ] **Step 1: Failing Tests schreiben**
 
@@ -702,8 +726,11 @@ def test_klassen():
 def test_kennzahlen_gesamt():
     k = T.kennzahlen(np.tile([[2.0, 0.0]], (100, 1)), CFG, 36.0)
     assert k["wackeln"] == 0.0 and k["bewegung"] == 1.0 and k["haltung"] == "gimbal" and k["bewegungsart"] == "schwenk_links"
-    assert k["fenster"][0] == [0.0, 0.0, 1.0, "schwenk_links"] and k["ruhige_fenster"] == [0.0, 1.0, 2.0, 3.0]
-    assert k["hf_anteil"] == 0.0
+    assert k["fenster"][0] == [0.0, 0.0, 1.0, "schwenk_links", None] and k["ruhige_fenster"] == [0.0, 1.0, 2.0, 3.0]
+    assert k["hf_anteil"] == 0.0 and k["schaerfe_p10"] is None
+    mit = T.kennzahlen(np.zeros((100, 2)), CFG, None, schaerfe=np.linspace(1.0, 10.0, 101))   # optisch: n+1 Frames
+    assert mit["schaerfe_p10"] == 0.21 and mit["fenster"][0][4] < mit["fenster"][-1][4] <= 1.1
+    assert mit["fenster"][0][4] == round(float(np.percentile(np.linspace(1.0, 10.0, 101)[:50], 10)) / 9.1, 2)
     unruhig = T.kennzahlen(_sinus(6.0, 1.0), CFG, None)
     assert unruhig["haltung"] == "hand" and unruhig["ruhige_fenster"] == [] and unruhig["hf_anteil"] > 0.9
 ```
@@ -743,6 +770,7 @@ from .charge import AutoCutError
 from .media import ffprobe, fingerprint
 from .rtmd import auswerten, datenspur_lesen, kamera_erkennen, samples, sidecar_modell
 from .telemetrie_optisch import graustufen, verschiebungen
+from .telemetrie_optisch import schaerfe as schaerfe_frames
 
 ZIEL_FPS = 25.0
 BEWEGUNGSARTEN = ["statisch", "schwenk_links", "schwenk_rechts", "tilt_auf", "tilt_ab", "fahrt", "gemischt"]
@@ -918,16 +946,31 @@ def perspektive_hoehe(pitch_grad: float | None, grenzen: list | tuple) -> str | 
     return "Augenhöhe"
 
 
-def kennzahlen(dxy: np.ndarray, cfg: dict, kb_mm: float | None) -> dict:
-    """wackeln, bewegung, haltung, bewegungsart (Mehrheit der Fenster), fenster, ruhige_fenster aus einer Verschiebungsreihe."""
+def kennzahlen(dxy: np.ndarray, cfg: dict, kb_mm: float | None, schaerfe: np.ndarray | None = None) -> dict:
+    """wackeln, bewegung, haltung, bewegungsart (Mehrheit der Fenster), fenster, ruhige_fenster aus einer Verschiebungsreihe;
+    ``schaerfe`` je Frame (optional) wird relativ zum 90. Perzentil des Clips als p10 je Fenster und je Clip ausgegeben."""
     min_px, stativ_px = schwellen_px(kb_mm, cfg)
     wk, bw = wackeln_bewegung(dxy)
     fen = fenster(dxy, cfg, min_px, stativ_px)
+    rel = None
+    if schaerfe is not None and len(schaerfe):
+        p90 = float(np.percentile(schaerfe, 90))
+        rel = np.asarray(schaerfe, np.float64) / p90 if p90 > 0 else None
+    w = max(2, int(round(float(cfg["fenster_s"]) * ZIEL_FPS)))
+
+    def _schaerfe(f: dict):
+        if rel is None:
+            return None
+        st = int(round(f["t_s"] * ZIEL_FPS))
+        teil = rel[st:st + w]
+        return round(float(np.percentile(teil, 10)), 2) if len(teil) else None
+
     return {"wackeln": round(wk, 3), "bewegung": round(bw, 3), "haltung": haltung(dxy, stativ_px, cfg),
             "hf_anteil": round(hf_anteil(dxy, ZIEL_FPS, float(cfg["hf_grenze_hz"])), 3),
             "bewegungsart": mehrheit([f["bewegungsart"] for f in fen]),
-            "fenster": [[f["t_s"], f["wackeln"], f["bewegung"], f["bewegungsart"]] for f in fen],
-            "ruhige_fenster": [f["t_s"] for f in fen if f["wackeln"] <= float(cfg["ruhig_max_px"])]}
+            "fenster": [[f["t_s"], f["wackeln"], f["bewegung"], f["bewegungsart"], _schaerfe(f)] for f in fen],
+            "ruhige_fenster": [f["t_s"] for f in fen if f["wackeln"] <= float(cfg["ruhig_max_px"])],
+            "schaerfe_p10": round(float(np.percentile(rel, 10)), 2) if rel is not None else None}
 ```
 
 - [ ] **Step 4: Tests laufen lassen**
@@ -955,13 +998,13 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 **Interfaces:**
 - Consumes: Task 1 (`datenspur_lesen`, `samples`, `auswerten`, `sidecar_modell`, `kamera_erkennen`), Task 2 (`graustufen`, `verschiebungen`), Task 3, `media.ffprobe`/`media.fingerprint`, `Charge.open_basis` (`ch.autocut`, `ch.intern`, `ch.assert_writable`, `ch.write_json`, `ch.read_json`, `ch.load_index`, `ch.config`)
 - Produces:
-  - `clip_messen(path, cfg, ohne_optisch=False) -> dict` (Datensatz nach Spec-Datenmodell)
-  - `clip_mit_cache(ch, path, cfg, force=False, ohne_optisch=False) -> tuple[dict, bool]` (Datensatz, Cache-Treffer)
+  - `clip_messen(path, cfg, ohne_optisch=False, schaerfe=False) -> dict` (Datensatz nach Spec-Datenmodell; `schaerfe=True` dekodiert auch bei rtmd-Clips für die Schärfe)
+  - `clip_mit_cache(ch, path, cfg, force=False, ohne_optisch=False, schaerfe=False) -> tuple[dict, bool]` (Datensatz, Cache-Treffer; ein Cache-Eintrag ohne `schaerfe_p10` gilt bei `schaerfe=True` als veraltet)
   - `clips_finden(ch, ordner=None) -> list[dict]` (`{"path", "ordner"}`)
-  - `telemetrie_charge(ch, clips, cfg, limit=None, force=False, ohne_optisch=False, parallel=None, melden=print) -> dict` (`clips`, `fehler`, `cache_treffer`, `gemessen`); schreibt `telemetrie.json` (Liste)
+  - `telemetrie_charge(ch, clips, cfg, limit=None, force=False, ohne_optisch=False, parallel=None, melden=print, schaerfe=False) -> dict` (`clips`, `fehler`, `cache_treffer`, `gemessen`); schreibt `telemetrie.json` (Liste)
   - `laden(autocut_dir) -> list[dict]`, `finden(tele, path) -> dict | None`
   - `abschnitt_werte(rec, von_s, bis_s, fenster_s=2.0) -> dict` (`bewegungsart`, `haltung`)
-  - `stabil_vorschlag(von_s, bis_s, rec, cfg) -> tuple[bool, str]`
+  - `stabil_vorschlag(von_s, bis_s, rec, cfg, path=None) -> tuple[bool, str]` (Dateiname mit `_stabilized` → nie stabilisieren; `path` für Shots ohne Telemetrie)
 
 - [ ] **Step 1: Failing Tests anhängen**
 
@@ -1009,8 +1052,14 @@ def test_clip_messen_rtmd_weg(monkeypatch, tmp_path):
     clip.write_bytes(b"x")
     monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
     monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=100, gyro_y=10.0))
+    rng = np.random.default_rng(9)
+    bild = (rng.random((270, 480)) * 255).astype(np.uint8)
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.tile(bild, (101, 1, 1)))
     rec = T.clip_messen(clip, CFG)
     assert rec["quelle"] == "rtmd" and rec["kamera"] == "FX3" and rec["imu_hz"] == 2000.0 and rec["samples"] == 100
+    assert rec["schaerfe_p10"] is None and rec["fenster"][0][4] is None                  # rtmd ohne --schaerfe: keine Dekodierung
+    mit = T.clip_messen(clip, CFG, schaerfe=True)
+    assert mit["quelle"] == "rtmd" and mit["schaerfe_p10"] == 1.0 and mit["fenster"][0][4] == 1.0
     assert rec["kb_mm"] == 71.6 and rec["brennweite_mm"] == 67.7 and rec["fokus_m"] == 15.82 and rec["zoomfahrt"] is False
     assert rec["brennweitenklasse"] == "tele" and rec["pitch_grad"] == 0.0 and rec["perspektive_hoehe"] == "Augenhöhe"
     assert rec["bewegungsart"] == "schwenk_rechts"          # Gyro-y +10 °/s → dx negativ (vorzeichen −1) → Inhalt nach links
@@ -1023,11 +1072,14 @@ def test_clip_messen_faellt_ohne_datenspur_auf_optisch(monkeypatch, tmp_path):
     clip.write_bytes(b"x")
     monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
     monkeypatch.setattr(T, "datenspur_lesen", lambda p: b"")
-    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.zeros((30, hoehe, breite), np.uint8))
+    rng = np.random.default_rng(10)
+    bild = (rng.random((270, 480)) * 255).astype(np.uint8)
+    monkeypatch.setattr(T, "graustufen", lambda p, fps, breite, hoehe: np.tile(bild, (30, 1, 1)))
     rec = T.clip_messen(clip, CFG)
     assert rec["quelle"] == "optisch" and rec["kamera"] == "DJI" and rec["kb_mm"] is None and rec["haltung"] == "stativ"
+    assert rec["schaerfe_p10"] == 1.0 and rec["fenster"][0][4] == 1.0                     # optisch: Schärfe kostenlos dabei
     ohne = T.clip_messen(clip, CFG, ohne_optisch=True)
-    assert ohne["quelle"] == "keine" and ohne["fenster"] == []
+    assert ohne["quelle"] == "keine" and ohne["fenster"] == [] and ohne["schaerfe_p10"] is None
 
 
 def test_clip_messen_optisch_fuer_kamera_behaelt_brennweite(monkeypatch, tmp_path):
@@ -1113,10 +1165,17 @@ def test_finden_und_abschnitt_werte():
     ({"quelle": "rtmd", "fehler": None, "haltung": "gimbal", "wackeln": 0.05, "fenster": [[0.0, 0.05, 1.0, "fahrt"]]}, 0, 2, False, "Gimbal"),
     ({"quelle": "rtmd", "fehler": None, "haltung": "hand", "wackeln": 0.4, "fenster": [[0.0, 0.4, 1.0, "fahrt"], [1.0, 0.1, 1.0, "fahrt"]]}, 0.0, 1.0, True, "Hand, wackeln 0,40"),
     ({"quelle": "rtmd", "fehler": None, "haltung": "hand", "wackeln": 0.4, "fenster": [[0.0, 0.4, 1.0, "fahrt"], [1.0, 0.1, 1.0, "fahrt"]]}, 2.5, 3.0, False, "Hand, aber ruhig"),
+    ({"quelle": "optisch", "fehler": None, "haltung": "hand", "wackeln": 0.9, "fenster": [], "path": "/nas/Avata/DJI_0005_D_stabilized.mov"}, 0, 2, False, "bereits stabilisiert"),
 ])
 def test_stabil_vorschlag(rec, von, bis, erwartet, grund):
     stabil, text = T.stabil_vorschlag(von, bis, rec, CFG)
     assert stabil is erwartet and grund in text
+
+
+def test_stabil_vorschlag_stabilized_ohne_telemetrie():
+    stabil, text = T.stabil_vorschlag(0, 2, None, CFG, path="/ssd/Avata/DJI_0006_D_stabilized.mov")
+    assert stabil is False and "bereits stabilisiert" in text
+    assert T.stabil_vorschlag(0, 2, None, CFG, path="/ssd/FX3/FX3_0001.MP4")[0] is True
 ```
 
 - [ ] **Step 2: Tests laufen lassen — Fehlschlag erwartet**
@@ -1161,11 +1220,18 @@ def _leer(path: Path, kamera: str, modell: str | None) -> dict:
             "quelle": "keine", "imu_hz": None, "samples": 0, "brennweite_mm": None, "kb_mm": None, "kb_min": None,
             "kb_max": None, "zoomfahrt": False, "fokus_m": None, "brennweitenklasse": None, "pitch_grad": None,
             "roll_grad": None, "lage_grund": None, "perspektive_hoehe": None, "haltung": None, "hf_anteil": None,
-            "bewegungsart": None, "wackeln": None, "bewegung": None, "fenster": [], "ruhige_fenster": [], "fehler": None}
+            "bewegungsart": None, "wackeln": None, "bewegung": None, "fenster": [], "ruhige_fenster": [],
+            "schaerfe_p10": None, "fehler": None}
 
 
-def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False) -> dict:
-    """Ein Clip: rtmd-Weg (Gyro über KB-Brennweite in px), sonst optischer Weg, sonst ``quelle: keine``; Fehler im Datensatz."""
+def _frames(p: Path, cfg: dict) -> np.ndarray:
+    breite = int(cfg["optisch_breite"])
+    return graustufen(p, ZIEL_FPS, breite=breite, hoehe=int(round(breite * 9 / 16)))
+
+
+def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerfe: bool = False) -> dict:
+    """Ein Clip: rtmd-Weg (Gyro über KB-Brennweite in px), sonst optischer Weg, sonst ``quelle: keine``; Fehler im Datensatz.
+    ``schaerfe=True`` dekodiert auch bei rtmd-Clips die Frames für die Schärfe (optischer Weg hat sie ohnehin)."""
     p = Path(path)
     modell = sidecar_modell(p)
     kamera = kamera_erkennen(p, modell)
@@ -1200,25 +1266,27 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False) -> dict
             rate = gyro_je_frame(daten.gyro, daten.proben_je_sample, info.fps)
             faktor = float((cfg.get("px_faktor") or {}).get(kamera, 1.0))
             dxy = verschiebung_aus_rate(rate, kb, cfg) * faktor
-            out.update(quelle="rtmd", **kennzahlen(dxy, cfg, kb))
+            s = schaerfe_frames(_frames(p, cfg)) if schaerfe else None
+            out.update(quelle="rtmd", **kennzahlen(dxy, cfg, kb, s))
         elif not ohne_optisch:
-            breite = int(cfg["optisch_breite"])
-            frames = graustufen(p, ZIEL_FPS, breite=breite, hoehe=int(round(breite * 9 / 16)))
-            out.update(quelle="optisch", **kennzahlen(verschiebungen(frames), cfg, kb))
+            frames = _frames(p, cfg)
+            out.update(quelle="optisch", **kennzahlen(verschiebungen(frames), cfg, kb, schaerfe_frames(frames)))
     except AutoCutError as e:
         out["fehler"] = str(e)
     return out
 
 
-def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_optisch: bool = False) -> tuple[dict, bool]:
+def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_optisch: bool = False,
+                   schaerfe: bool = False) -> tuple[dict, bool]:
     """Datensatz aus ``_intern/autocut/telemetrie/<fingerprint>.json`` oder neu messen (atomar geschrieben)."""
     fp = fingerprint(path)
     cache = Path(ch.autocut) / CACHE_DIR / f"{fp}.json"
     if cache.exists() and not force:
         rec = json.loads(cache.read_text(encoding="utf-8"))
-        if rec.get("quelle") != "keine" or ohne_optisch:
+        veraltet = (rec.get("quelle") == "keine" and not ohne_optisch) or (schaerfe and rec.get("schaerfe_p10") is None)
+        if not veraltet:
             return rec, True
-    rec = clip_messen(path, cfg, ohne_optisch)
+    rec = clip_messen(path, cfg, ohne_optisch, schaerfe)
     rec["fingerprint"] = fp
     rec["gemessen_am"] = _dt.datetime.now().isoformat(timespec="seconds")
     ch.assert_writable(cache)
@@ -1273,7 +1341,7 @@ def clips_finden(ch, ordner: list[str] | None = None) -> list[dict]:
 
 
 def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None, force: bool = False,
-                      ohne_optisch: bool = False, parallel: int | None = None, melden=print) -> dict:
+                      ohne_optisch: bool = False, parallel: int | None = None, melden=print, schaerfe: bool = False) -> dict:
     """Alle Clips messen (Cache je Clip, parallel), ``telemetrie.json`` (Liste) schreiben; Fehler je Clip sammeln."""
     todo = clips[:limit] if limit else clips
     fehlend = [c["path"] for c in todo if not Path(c["path"]).is_file()]
@@ -1284,7 +1352,7 @@ def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None
     treffer = gemessen = 0
     ex = ThreadPoolExecutor(max_workers=max(1, int(parallel or cfg.get("parallel", 2))))
     try:
-        futs = {ex.submit(clip_mit_cache, ch, c["path"], cfg, force, ohne_optisch): c for c in todo}
+        futs = {ex.submit(clip_mit_cache, ch, c["path"], cfg, force, ohne_optisch, schaerfe): c for c in todo}
         for i, fut in enumerate(as_completed(futs), 1):
             c = futs[fut]
             name = Path(c["path"]).name
@@ -1348,9 +1416,12 @@ def abschnitt_werte(rec: dict | None, von_s: float, bis_s: float, fenster_s: flo
     return {"bewegungsart": mehrheit([f[3] for f in fen]) if fen else None, "haltung": rec.get("haltung")}
 
 
-def stabil_vorschlag(von_s: float, bis_s: float, rec: dict | None, cfg: dict) -> tuple[bool, str]:
-    """6d: stabilisieren? hand mit wackeln > ruhig_max_px → ja; stativ/gimbal → nein; ohne Telemetrie → ja (bisheriger Standard).
-    ``wackeln`` = Mittel der Fenster im genutzten Quellbereich, sonst der Clip-Wert."""
+def stabil_vorschlag(von_s: float, bis_s: float, rec: dict | None, cfg: dict, path: str | Path | None = None) -> tuple[bool, str]:
+    """6d: stabilisieren? Datei ``_stabilized`` (Avata-Export, Regel 18.09.) → nie; hand mit wackeln > ruhig_max_px → ja;
+    stativ/gimbal → nein; ohne Telemetrie → ja (bisheriger Standard). ``wackeln`` = Mittel der Fenster im genutzten Quellbereich."""
+    name = Path(str(path or (rec or {}).get("path") or "")).name.lower()
+    if "_stabilized" in name:
+        return False, "bereits stabilisiert (Dateiname _stabilized)"
     if not rec or rec.get("quelle") in (None, "keine") or rec.get("fehler"):
         return True, "keine Telemetrie → Standard stabilisieren"
     fen = _fenster_im_bereich(rec, von_s, bis_s, float(cfg["fenster_s"]))
@@ -1369,7 +1440,7 @@ def stabil_vorschlag(von_s: float, bis_s: float, rec: dict | None, cfg: dict) ->
 - [ ] **Step 5: Tests laufen lassen**
 
 Run: `cd "/Users/jansantos/NIRO Studio/tools/autocut" && venv/bin/python -m pytest tests/test_telemetrie.py -q`
-Expected: alle bestehen (Teil 1 + 14 neue inkl. 6 parametrisierte). Hinweis zu `test_clip_messen_rtmd_weg`: 10 °/s bei 71,6 mm KB ergeben ≈ 6,7 px dx je Frame, `bewegung` mittelt über dx und dy (≈ 3,3); `haltung == "gimbal"`, weil eine konstante Rate keine Energie über 3 Hz hat.
+Expected: alle bestehen (Teil 1 plus die neuen Testfälle dieser Task). Hinweis zu `test_clip_messen_rtmd_weg`: 10 °/s bei 71,6 mm KB ergeben ≈ 6,7 px dx je Frame, `bewegung` mittelt über dx und dy (≈ 3,3); `haltung == "gimbal"`, weil eine konstante Rate keine Energie über 3 Hz hat.
 
 - [ ] **Step 6: Gesamte Test-Suite**
 
@@ -1457,6 +1528,13 @@ def test_vergleich_index_zaehlt_uebereinstimmung():
 def test_bericht_ohne_clips():
     md = B.bericht_md([], "Leer")
     assert "0 Clips" in md and "## Unruhigste Clips" in md
+
+
+def test_bericht_unschaerfste_fenster_nur_mit_schaerfe():
+    assert "## Unschärfste Fenster" not in B.bericht_md(TELE, "T")
+    mit = [{**TELE[0], "schaerfe_p10": 0.4, "fenster": [[0.0, 0.04, 0.5, "fahrt", 0.35], [1.0, 0.04, 0.5, "fahrt", 0.9]]}]
+    md = B.bericht_md(mit, "T")
+    assert "## Unschärfste Fenster" in md and md.index("| FX3_1 | FX3 | 0 | 0,35 |") < md.index("| FX3_1 | FX3 | 1 | 0,90 |")
 ```
 
 ```python
@@ -1639,6 +1717,11 @@ def bericht_md(tele: list[dict], titel: str, index: dict | None = None) -> str:
               f"keine {q['keine']}, Fehler {sum(1 for r in tele if r.get('fehler'))}). Werte in px @480 je 25-fps-Frame; "
               f"Quelle ``_intern/autocut/telemetrie.json``.", "",
               "## Verteilung je Kamera", ""] + _verteilung(tele) + ["", f"## Unruhigste Clips (bis {TOP}, nach wackeln)", ""] + _unruhigste(tele) + [""]
+    unscharf = [(f[4], r.get("clip"), r.get("kamera"), f[0]) for r in tele for f in (r.get("fenster") or []) if len(f) > 4 and f[4] is not None]
+    if unscharf:
+        zeilen += [f"## Unschärfste Fenster (bis {TOP}, relative Schärfe p10; 1,0 = schärfstes Zehntel des Clips)", "",
+                   "| Clip | Kamera | Fenster ab (s) | Schärfe |", "|---|---|---|---|"]
+        zeilen += [f"| {_md(c)} | {_md(k)} | {t:g} | {_de(v)} |" for v, c, k, t in sorted(unscharf, key=lambda x: x[0])[:TOP]] + [""]
     zeilen += ["## Clips ohne Daten oder mit Fehler", ""]
     zeilen += [f"- {_md(r.get('clip'))} ({_md(r.get('kamera'))}, {_md(r.get('quelle'))}): {_md(r.get('fehler') or 'keine Datenspur, optisch nicht gemessen')}"
                for r in fehler] or ["- keine", ""]
@@ -1660,7 +1743,7 @@ def bericht_md(tele: list[dict], titel: str, index: dict | None = None) -> str:
 
 Aufruf:
     venv/bin/python scripts/autocut_telemetrie.py "<Charge>" [--ordner <Pfad> ...] [--limit N] [--force] [--ohne-optisch]
-                                                   [--parallel N] [--dry-run] [--kalibrieren]
+                                                   [--schaerfe] [--parallel N] [--dry-run] [--kalibrieren]
 
 Clip-Quelle: --ordner, sonst broll_index.json, inventar.json, B-Roll-Wurzeln des Transkript-Index, media.json.
 --kalibrieren misst Gyro und optischen Weg auf demselben 4-s-Fenster je Clip und schreibt telemetrie_kalibrierung.json
@@ -1686,6 +1769,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--force", action="store_true", help="Cache je Clip verwerfen und neu messen")
     ap.add_argument("--ohne-optisch", action="store_true", help="Clips ohne Datenspur nicht optisch messen (quelle: keine)")
+    ap.add_argument("--schaerfe", action="store_true", help="Schärfe je Fenster auch bei rtmd-Clips messen (dekodiert 480×270)")
     ap.add_argument("--parallel", type=int)
     ap.add_argument("--dry-run", action="store_true", help="nur Clip-Liste und Quelle zeigen, nichts messen oder schreiben")
     ap.add_argument("--kalibrieren", action="store_true", help="Gyro ↔ optisch auf demselben Fenster (telemetrie_kalibrierung.json)")
@@ -1707,7 +1791,8 @@ def main(argv: list[str] | None = None) -> int:
             append_protokoll(ch, "Telemetrie-Kalibrierung", [f"{erg['anzahl']} Clips, Datei {ch.autocut / 'telemetrie_kalibrierung.json'}"]
                              + [f"{k}: {v['empfehlung']}" for k, v in erg["kameras"].items()])
             return 0
-        out = telemetrie_charge(ch, todo, cfg, limit=None, force=args.force, ohne_optisch=args.ohne_optisch, parallel=args.parallel)
+        out = telemetrie_charge(ch, todo, cfg, limit=None, force=args.force, ohne_optisch=args.ohne_optisch, parallel=args.parallel,
+                                schaerfe=args.schaerfe)
         md = bericht_md(out["clips"], f"{ch.kunde} / {ch.projekt} / {ch.root.name}", ch.read_json("broll_index.json"))
         ziel = ch.ergebnisse / "telemetrie.md"
         ch.assert_writable(ziel)
@@ -2131,8 +2216,9 @@ auf die Empfehlung aus Schritt 2 setzen; im Kommentar das Datum und die Zahl der
 - [ ] **Step 4: Messlauf Hochzeitszauber und Schwelle `hand_hf_anteil_min`**
 
 ```bash
-cd "/Users/jansantos/NIRO Studio" && HZ="projects/MN Deko und Verleih/Hochzeitsmesse Aftermovie/2026-09 Hochzeitsmesse 13.09" && tools/autocut/venv/bin/python tools/autocut/scripts/autocut_telemetrie.py "$HZ" --force --parallel 2 2>&1 | tail -8
+cd "/Users/jansantos/NIRO Studio" && HZ="projects/MN Deko und Verleih/Hochzeitsmesse Aftermovie/2026-09 Hochzeitsmesse 13.09" && tools/autocut/venv/bin/python tools/autocut/scripts/autocut_telemetrie.py "$HZ" --force --schaerfe --parallel 2 2>&1 | tail -8
 ```
+(`--schaerfe` hier bewusst: der Bericht bekommt damit die unschärfsten Fenster; Rechenzeit steigt durch die Dekodierung auf etwa das Doppelte.)
 Dann die Verteilung des Hochfrequenzanteils je Kamera ansehen:
 
 ```bash
@@ -2588,7 +2674,8 @@ In `plan()` die V3-Schleife:
         src_out = src_in + int(round(n * faktor))  # angehängt bei 100 %; SetSpeed 50 halbiert den Quellbereich
         quelle_genutzt = int(round(n if langsam else n * faktor))
         tele_rec = TM.finden(TELE, s["datei"])
-        vorschlag, grund = TM.stabil_vorschlag(src_in / s["clip_fps"], (src_in + quelle_genutzt) / s["clip_fps"], tele_rec, TCFG)
+        vorschlag, grund = TM.stabil_vorschlag(src_in / s["clip_fps"], (src_in + quelle_genutzt) / s["clip_fps"], tele_rec, TCFG,
+                                               path=s["datei"])
         stabil = vorschlag if stabil_hand is None else bool(stabil_hand)
         if stabil_hand is not None and stabil != vorschlag:
             grund += " — von Hand überstimmt"
@@ -2632,7 +2719,10 @@ In `bauen()` die Stabilisier-Schleife:
 Stativ/Gimbal bleiben unstabilisiert, Handkamera mit `wackeln` > `telemetrie.ruhig_max_px` wird stabilisiert. Der Probelauf druckt je
 Shot Vorschlag und Grund; `roll_grad` > 2° erscheint als „schief"."
 WORKFLOW 6d („### 6d Feinschnitt-Bau", Punkt 2, Zeile V3): „**V3** B-Roll: bei 100 % anhängen → `RetimeProcess` Nearest → `SetSpeed` 50 %
-→ `Stabilize()` nur für Shots mit `stabil` (Vorschlag aus `telemetrie.json`, Spalte 7 in `BROLL` überstimmt)."
+→ `Stabilize()` nur für Shots mit `stabil` (Vorschlag aus `telemetrie.json`, Spalte 7 in `BROLL` überstimmt; Dateien mit `_stabilized`
+im Namen — Avata-Exporte — nie). Der Stabilisierungs-Modus bleibt Sache des DRT-Roundtrips der Charge (User-Standard Translation,
+Smooth 0,25; `drt_stabilisierung.py` in WTN/Wurst & Liebe/Assenheimer, noch kein gemeinsames Werkzeug) — `Stabilize()` allein nimmt
+Perspective."
 
 - [ ] **Step 5: Tests laufen lassen**
 
