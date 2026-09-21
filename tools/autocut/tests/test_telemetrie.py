@@ -826,3 +826,67 @@ def test_clip_messen_ohne_rtmd_brennweite_ohne_zooms(monkeypatch, tmp_path):
     monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=100))
     rec2 = T.clip_messen(fest, CFG)
     assert rec2["kb_verlauf"] == [[0.0, 71.6]] and rec2["zooms"] == [] and rec2["zoomfahrt"] is False
+
+
+# --- Brennweite im Bereich: kb_am, kb_im_bereich, zooms_im_bereich, 2b-Werte, Texte (Spec 2026-09-21) -------------------
+
+_ZOOM_REC = {"kb_mm": 48.0, "kb_verlauf": [[0.0, 24.0], [1.0, 24.0], [2.0, 48.0], [3.0, 48.0]],
+             "zooms": [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 24.0, "bis_mm": 48.0, "tempo_max": 85.2, "tempo_mittel": 69.3,
+                        "ruck": 0.1, "ruckartig": False, "urteil": "schnell"},
+                       {"von_s": 5.0, "bis_s": 6.0, "von_mm": 48.0, "bis_mm": 50.0, "tempo_max": 4.0, "tempo_mittel": 3.0,
+                        "ruck": 0.1, "ruckartig": False, "urteil": "langsam"}]}
+
+
+def test_kb_am_seiten_raender_und_ohne_verlauf():
+    # Spanne 0,5 s auf dem 0,1-s-Raster, linear zwischen den Verlaufspunkten (1 s: 24 mm, 2 s: 48 mm)
+    assert T.kb_am(_ZOOM_REC, 2.0, seite="ende") == 42.0           # 1,5–2,0 s: 36 … 48 → Median (40,8 + 43,2) / 2
+    assert T.kb_am(_ZOOM_REC, 2.0, seite="anfang") == 48.0         # 2,0–2,5 s
+    assert T.kb_am(_ZOOM_REC, 1.0, seite="ende") == 24.0
+    assert T.kb_am(_ZOOM_REC, 1.0) == 24.6                         # mittig 0,75–1,25 s: 24, 24, 24, 25,2, 27,6, 30
+    assert T.kb_am(_ZOOM_REC, 0.0, seite="ende") == 24.0 and T.kb_am(_ZOOM_REC, 10.0, seite="anfang") == 48.0
+    assert T.kb_am({"kb_verlauf": [[0.0, 71.6]]}, 3.0, seite="ende") == 71.6    # Festbrennweite: ein Eintrag
+    assert T.kb_am(None, 1.0) is None and T.kb_am({"kb_verlauf": []}, 1.0) is None
+    assert T.kb_am({"kb_mm": 50.0}, 1.0) is None                   # Datensatz von vor der Umstellung: unbekannt
+
+
+def test_kb_im_bereich_und_zooms_im_bereich():
+    assert T.kb_im_bereich(_ZOOM_REC, 0.0, 3.0) == 36.0            # 11 × 24, 26,4 … 45,6, 11 × 48 → Mitte 36
+    assert T.kb_im_bereich(_ZOOM_REC, 2.0, 3.0) == 48.0 and T.kb_im_bereich({}, 0.0, 1.0) is None
+    schnell, langsam = _ZOOM_REC["zooms"]
+    assert T.zooms_im_bereich(_ZOOM_REC, 0.0, 1.5) == [schnell]
+    assert T.zooms_im_bereich(_ZOOM_REC, 2.0, 5.0) == []           # Berühren zählt nicht
+    assert T.zooms_im_bereich(_ZOOM_REC, 0.0, 10.0) == [schnell]
+    assert T.zooms_im_bereich(_ZOOM_REC, 0.0, 10.0, nur_schnelle=False) == [schnell, langsam]
+    assert T.zooms_im_bereich({"kb_mm": 50.0}, 0.0, 10.0) == [] and T.zooms_im_bereich(None, 0.0, 1.0) == []
+
+
+def test_abschnitt_brennweite_und_brennweite_text():
+    assert T.abschnitt_brennweite(_ZOOM_REC, 0.0, 1.5) == {"brennweite_mm": 24.0, "zoom": "schnell"}
+    assert T.abschnitt_brennweite(_ZOOM_REC, 5.5, 6.0) == {"brennweite_mm": 48.0, "zoom": "langsam"}
+    assert T.abschnitt_brennweite(_ZOOM_REC, 3.0, 4.0) == {"brennweite_mm": 48.0, "zoom": "keiner"}
+    assert T.abschnitt_brennweite({"kb_mm": 50.0}, 0.0, 1.0) == {"brennweite_mm": None, "zoom": None}
+    assert T.brennweite_text(_ZOOM_REC) == "KB 24–48 mm, schneller Zoom"
+    langsam = {**_ZOOM_REC, "zooms": _ZOOM_REC["zooms"][1:]}
+    assert T.brennweite_text(langsam) == "KB 24–48 mm, langsamer Zoom"
+    assert T.brennweite_text({"kb_mm": 71.6, "kb_verlauf": [[0.0, 71.6]], "zooms": []}) == "KB 71,6 mm"
+    assert T.brennweite_text({"kb_mm": 50.0}) == "KB 50 mm"         # Altdatensatz ohne Verlauf
+    assert T.brennweite_text({"kb_mm": None}) is None and T.brennweite_text(None) is None
+
+
+def test_zoom_hinweise():
+    rec = {"zooms": [{"von_s": 2.4, "bis_s": 3.1, "von_mm": 24.0, "bis_mm": 70.0, "tempo_max": 85.2, "tempo_mittel": 60.0,
+                      "ruck": 0.2, "ruckartig": False, "urteil": "schnell"}]}
+    assert T.zoom_hinweise("S07", rec, 2.0, 4.0) == ["S07: schneller Zoom 2,4–3,1 s (24 → 70 mm, 85 %/s)"]
+    ruck = {"zooms": [{**rec["zooms"][0], "tempo_max": 14.6, "ruckartig": True}]}
+    assert T.zoom_hinweise("S08", ruck, 0.0, 10.0) == ["S08: schneller Zoom 2,4–3,1 s (24 → 70 mm, 15 %/s, ruckartig)"]
+    assert T.zoom_hinweise("S07", rec, 3.1, 5.0) == [] and T.zoom_hinweise("S07", None, 0.0, 1.0) == []
+    # 6d-Zeitlupe (50 %): sichtbares Tempo halb so hoch — 85 → 43 %/s bleibt schnell (CFG: 20 %/s), 30 → 15 %/s nicht
+    assert T.zoom_hinweise("S07", rec, 2.0, 4.0, tempo_faktor=0.5, cfg=CFG) == [
+        "S07: schneller Zoom 2,4–3,1 s (24 → 70 mm, 43 %/s sichtbar bei 50 %)"]
+    maessig = {"zooms": [{**rec["zooms"][0], "tempo_max": 30.0}]}
+    assert T.zoom_hinweise("S09", maessig, 2.0, 4.0, tempo_faktor=0.5, cfg=CFG) == []
+    # ruckartig bleibt schnell, egal wie langsam
+    assert T.zoom_hinweise("S08", ruck, 0.0, 10.0, tempo_faktor=0.5, cfg=CFG) == [
+        "S08: schneller Zoom 2,4–3,1 s (24 → 70 mm, 7 %/s sichtbar bei 50 %, ruckartig)"]
+    # ohne cfg bleibt der Hinweis (Schwelle unbekannt → lieber melden)
+    assert len(T.zoom_hinweise("S09", maessig, 2.0, 4.0, tempo_faktor=0.5)) == 1

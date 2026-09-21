@@ -687,3 +687,98 @@ def stabil_vorschlag(von_s: float, bis_s: float, rec: dict | None, cfg: dict,
     if wk > grenze:
         return True, f"Hand, wackeln {wk:.2f} px > {grenze:.2f}".replace(".", ",")
     return False, f"Hand, aber ruhig (wackeln {wk:.2f} px ≤ {grenze:.2f})".replace(".", ",")
+
+
+# --- Brennweite im Bereich (Stufe 2b, Vorlagen 3a/6d; Spec 2026-09-21) --------------------------------------------------
+
+OHNE_TELEMETRIE = "keine Telemetrie — Brennweitenregel nicht geprüft"
+
+
+def _zahl(x: float, stellen: int = 1) -> str:
+    """Zahl mit Dezimalkomma ohne überflüssige Nullen: 71,6 · 50 · 1,25."""
+    return f"{round(float(x), stellen):g}".replace(".", ",")
+
+
+def _kb_median(verlauf: list[list[float]], von_s: float, bis_s: float) -> float:
+    """Median der linear interpolierten Brennweite auf einem 0,1-s-Raster über [von_s, bis_s]
+    (Ränder gehalten)."""
+    t = np.array([p[0] for p in verlauf], np.float64)
+    k = np.array([p[1] for p in verlauf], np.float64)
+    n = max(2, int(round((bis_s - von_s) * 10)) + 1)
+    return round(float(np.median(np.interp(np.linspace(von_s, bis_s, n), t, k))), 1)
+
+
+def kb_am(rec: dict | None, t_s: float, spanne_s: float = 0.5,
+          seite: str = "mitte") -> float | None:
+    """Median der KB-Brennweite über ``spanne_s`` an ``t_s`` (s im Clip) aus ``kb_verlauf``:
+    ``seite="ende"`` = die Spanne bis t_s (Quell-Out), ``"anfang"`` = ab t_s (Quell-In), sonst mittig;
+    außerhalb des Verlaufs gilt der Randwert. None ohne Verlauf (Drohne, Datensatz von vor der
+    Umstellung)."""
+    verlauf = (rec or {}).get("kb_verlauf") or []
+    if not verlauf:
+        return None
+    von = {"ende": t_s - spanne_s, "anfang": t_s}.get(seite, t_s - spanne_s / 2)
+    return _kb_median(verlauf, von, von + spanne_s)
+
+
+def kb_im_bereich(rec: dict | None, von_s: float, bis_s: float) -> float | None:
+    """Median der KB-Brennweite im Bereich [von_s, bis_s] (s im Clip); None ohne Verlauf."""
+    verlauf = (rec or {}).get("kb_verlauf") or []
+    if not verlauf:
+        return None
+    return _kb_median(verlauf, von_s, max(von_s, bis_s))
+
+
+def zooms_im_bereich(rec: dict | None, von_s: float, bis_s: float,
+                     nur_schnelle: bool = True) -> list[dict]:
+    """Zoomfahrten, die den Bereich (von_s, bis_s) schneiden (Berühren zählt nicht); leer ohne
+    ``zooms``."""
+    return [z for z in (rec or {}).get("zooms") or []
+            if z["von_s"] < bis_s and z["bis_s"] > von_s and
+            (not nur_schnelle or z.get("urteil") == "schnell")]
+
+
+def abschnitt_brennweite(rec: dict | None, von_s: float, bis_s: float) -> dict:
+    """Stufe 2b: ``brennweite_mm`` (Median im Abschnitt) und ``zoom`` (keiner | langsam |
+    schnell — die schnellste Zoomfahrt im Abschnitt); beide None ohne Brennweitenverlauf."""
+    if not (rec or {}).get("kb_verlauf"):
+        return {"brennweite_mm": None, "zoom": None}
+    urteile = {z.get("urteil") for z in zooms_im_bereich(rec, von_s, bis_s,
+                                                          nur_schnelle=False)}
+    zoom = "schnell" if "schnell" in urteile else "langsam" if "langsam" in urteile else "keiner"
+    return {"brennweite_mm": kb_im_bereich(rec, von_s, bis_s), "zoom": zoom}
+
+
+def brennweite_text(rec: dict | None) -> str | None:
+    """Kurztext der gemessenen KB-Brennweite: „KB 71,6 mm", mit Zoomfahrten „KB 24–70 mm,
+    langsamer Zoom" (schneller Zoom, sobald eine Fahrt schnell ist); None ohne Brennweite."""
+    r = rec or {}
+    if not r.get("kb_mm"):
+        return None
+    werte = [p[1] for p in r.get("kb_verlauf") or []]
+    zooms = r.get("zooms") or []
+    if not zooms or len(werte) < 2:
+        return f"KB {_zahl(r['kb_mm'])} mm"
+    art = "schneller" if any(z.get("urteil") == "schnell" for z in zooms) else "langsamer"
+    return f"KB {_zahl(min(werte))}–{_zahl(max(werte))} mm, {art} Zoom"
+
+
+def zoom_hinweise(sid: str, rec: dict | None, von_s: float, bis_s: float,
+                  tempo_faktor: float = 1.0, cfg: dict | None = None) -> list[str]:
+    """Probelauf-Hinweise (3a/6d) zu schnellen Zoomfahrten im genutzten Quellbereich (s im Clip),
+    z. B. „S07: schneller Zoom 2,4–3,1 s (24 → 70 mm, 85 %/s)" — nur Hinweis, gebaut wird
+    trotzdem. Bei Zeitlupe (``tempo_faktor`` < 1) zählt das sichtbare Tempo: ein Zoom, der nur
+    wegen des Tempos schnell war, entfällt, wenn er sichtbar höchstens ``zoom_schnell_proz_s``
+    erreicht; ruckartige bleiben; ohne ``cfg`` bleibt jeder Hinweis."""
+    schwelle = float((cfg or {}).get("zoom_schnell_proz_s", 0.0))
+    out = []
+    for z in zooms_im_bereich(rec, von_s, bis_s):
+        tempo = float(z["tempo_max"]) * tempo_faktor
+        if tempo_faktor < 1.0 and not z.get("ruckartig") and cfg is not None and tempo <= schwelle:
+            continue
+        sichtbar = f" sichtbar bei {tempo_faktor * 100:.0f} %" if tempo_faktor != 1.0 else ""
+        ruck = ", ruckartig" if z.get("ruckartig") else ""
+        out.append(f"{sid}: schneller Zoom {_zahl(z['von_s'])}–{_zahl(z['bis_s'])} s "
+                   f"({_zahl(z['von_mm'])} → {_zahl(z['bis_mm'])} mm, {tempo:.0f} %/s"
+                   f"{sichtbar}{ruck})")
+    return out
