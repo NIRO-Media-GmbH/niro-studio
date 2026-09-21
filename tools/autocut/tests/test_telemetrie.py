@@ -23,7 +23,7 @@ CFG = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_max_px": 0.
        "achsen": {"schwenk": 1, "tilt": 0}, "vorzeichen": {"schwenk": -1, "tilt": 1, "pitch": 1},
        "px_faktor": {"FX3": 1.0, "a7IV": 1.0}, "optisch_fuer": [], "optisch_breite": 480, "parallel": 2,
        "zoom_min_proz": 3.0, "zoom_rausch_proz_s": 1.0, "zoom_schnell_proz_s": 20.0, "zoom_ruck_max": 0.6,
-       "zoom_stocken_anteil": 0.2, "zoom_sprung_proz": 10.0, "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20,
+       "zoom_stocken_anteil": 0.2, "zoom_sprung_proz": 12.0, "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20,
        "digitalzoom_faktor": 1.25, "digitalzoom_max": 1.5}
 
 
@@ -714,6 +714,14 @@ def test_defaults_haben_zoom_schluessel():
         assert k in cfg
 
 
+def test_sprung_grenze_ist_die_tempo_grenze_auf_0_12_s():
+    """Nachtrag Final Review (Controller 21.09.2026): 12 % = 100 %/s × 0,12 s — das Sprung-Kriterium misst die Grenze des
+    Users („grob ab 100 %/s") auf dem kürzeren Fenster, statt sie zu senken (10 % entspräche ≈ 83 %/s)."""
+    cfg = load_config(Path("/nirgendwo"))["telemetrie"]
+    assert cfg["zoom_sprung_proz"] == 12.0
+    assert cfg["zoom_sprung_proz"] == pytest.approx(cfg["zoom_schnell_proz_s"] * T.ZOOM_SPRUNG_S)
+
+
 def test_kb_je_frame_median_raster_und_luecken():
     ausreisser = [50.0] * 10 + [80.0] + [50.0] * 10
     assert np.allclose(T.kb_je_frame(ausreisser, None, 25.0, 21), 50.0)         # Median über 0,2 s (5 Samples)
@@ -779,12 +787,13 @@ def test_stop_and_go_unter_0_3_s_ist_eine_fahrt():
 
 def test_stufiger_sprung_ist_schnell():
     # Klarbild-Zoom der a7 IV schaltet stufig: 50 → 60 mm in zwei Frames (+20 %) — schnell mit den Test-Schwellen
-    # (Tempo über 20 %/s) und mit den ausgelieferten (Tempo 91 %/s unter 100, aber Sprung 18,2 % ≥ zoom_sprung_proz)
+    # (Tempo über 20 %/s) und mit den ausgelieferten (Tempo 91 %/s unter 100, aber Sprung 18,2 % ≥ 12 %)
     kb = _zoomreihe((1.0, 50, 50), (0.08, 50, 60), (1.0, 60, 60))
     for cfg in (CFG, load_config(Path("/nirgendwo"))["telemetrie"]):
         z = T.zoomfahrten(T.kb_je_frame(kb, None, 25.0, len(kb)), cfg)
         assert len(z) == 1 and z[0]["urteil"] == "schnell" and z[0]["tempo_max"] > 20.0
         assert (z[0]["von_mm"], z[0]["bis_mm"]) == (50.0, 60.0) and z[0]["sprung_proz"] == 18.2
+        assert z[0]["sprunghaft"] is True
 
 
 def test_zoom_sprung_groesste_aenderung_in_0_12_s():
@@ -801,20 +810,22 @@ def test_zoom_sprung_groesste_aenderung_in_0_12_s():
     assert T.zoom_sprung(np.array([50.0])) == 0.0 and T.zoom_sprung(np.zeros(0)) == 0.0
 
 
-@pytest.mark.parametrize("stuecke,sprung", [
-    (((1.0, 50, 50), (0.08, 50, 60), (1.0, 60, 60)), 18.2),     # 50 → 60 mm in 2 Frames: Tempo 91 %/s
-    (((1.0, 24, 24), (0.04, 24, 28), (1.0, 28, 28)), 15.4),     # 24 → 28 mm in 1 Frame: Tempo 77 %/s
-    (((1.0, 70, 70), (0.04, 70, 85), (1.0, 85, 85)), 19.4),     # 70 → 85 mm in 1 Frame: Tempo 97 %/s
+@pytest.mark.parametrize("stuecke,sprung,urteil", [
+    (((1.0, 50, 50), (0.08, 50, 60), (1.0, 60, 60)), 18.2, "schnell"),        # 50 → 60 mm (+20 %) in 2 Frames: 91 %/s
+    (((1.0, 24, 24), (0.04, 24, 28), (1.0, 28, 28)), 15.4, "schnell"),        # 24 → 28 mm (+16,7 %) in 1 Frame: 77 %/s
+    (((1.0, 70, 70), (0.04, 70, 85), (1.0, 85, 85)), 19.4, "schnell"),        # 70 → 85 mm (+21 %) in 1 Frame: 97 %/s
+    (((1.0, 50, 50), (0.04, 50, 56.2), (1.0, 56.2, 56.2)), 11.7, "langsam"),  # knapp unter 12 %: ≙ 97 %/s in 0,12 s
+    (((1.0, 50, 50), (0.04, 50, 56.5), (1.0, 56.5, 56.5)), 12.2, "schnell"),  # knapp über 12 %: ≙ 102 %/s in 0,12 s
 ])
-def test_sprung_zooms_mit_ausgelieferten_werten_schnell(stuecke, sprung):
-    """I1: das 0,2-s-Gleitmittel kappt die Spitze eines Sprungs auf Δln / 0,2 s — mit zoom_schnell_proz_s 100 wären diese
-    Sprünge „langsam"; das Sprung-Kriterium (zoom_sprung_proz, ausgeliefert 10 %) macht sie schnell."""
+def test_sprung_zooms_mit_ausgelieferten_werten(stuecke, sprung, urteil):
+    """I1: das 0,2-s-Gleitmittel kappt die Spitze eines Sprungs auf Δln / 0,2 s — mit zoom_schnell_proz_s 100 wären alle
+    diese Sprünge „langsam" (Tempo 58–97 %/s, nicht ruckartig); das Sprung-Kriterium (ausgeliefert 12 % in 0,12 s) macht
+    die ab 12 % schnell (sprunghaft), einen knapp darunter nicht."""
     cfg = load_config(Path("/nirgendwo"))["telemetrie"]
-    assert cfg["zoom_sprung_proz"] == 10.0
     kb = _zoomreihe(*stuecke)
     z = T.zoomfahrten(T.kb_je_frame(kb, None, 25.0, len(kb)), cfg)
     assert len(z) == 1 and z[0]["tempo_max"] < cfg["zoom_schnell_proz_s"] and z[0]["ruckartig"] is False
-    assert z[0]["sprung_proz"] == sprung and z[0]["urteil"] == "schnell"
+    assert z[0]["sprung_proz"] == sprung and z[0]["urteil"] == urteil and z[0]["sprunghaft"] is (urteil == "schnell")
 
 
 def test_gleichmaessige_fahrt_55_prozent_mit_ausgelieferten_werten_langsam():
@@ -823,7 +834,7 @@ def test_gleichmaessige_fahrt_55_prozent_mit_ausgelieferten_werten_langsam():
     cfg = load_config(Path("/nirgendwo"))["telemetrie"]
     kb = _zoomreihe((1.0, 36.7, 36.7), (2.0, 36.7, 36.7 * math.exp(1.1)), (1.0, 110.3, 110.3))
     z = T.zoomfahrten(T.kb_je_frame(kb, None, 25.0, len(kb)), cfg)
-    assert len(z) == 1 and z[0]["urteil"] == "langsam"
+    assert len(z) == 1 and z[0]["urteil"] == "langsam" and z[0]["sprunghaft"] is False
     assert 50.0 < z[0]["tempo_max"] < 60.0 and 6.0 <= z[0]["sprung_proz"] < 7.5
 
 
@@ -961,7 +972,7 @@ def test_zoom_hinweise():
 def test_zoom_hinweise_mit_sprung():
     """I1: ein Zoom, der nur wegen des Sprungs schnell ist, nennt den Sprung (sonst stünde dort ein Tempo unter der
     Schwelle ohne Grund); bei Zeitlupe zählt der sichtbare Sprung (Sprung × Tempo) wie das sichtbare Tempo."""
-    cfg = {**CFG, "zoom_schnell_proz_s": 100.0, "zoom_sprung_proz": 10.0}
+    cfg = load_config(Path("/nirgendwo"))["telemetrie"]                         # 100 %/s, Sprung 12 %
     sprung = {"zooms": [{"von_s": 2.4, "bis_s": 2.6, "von_mm": 50.0, "bis_mm": 60.0, "tempo_max": 91.2,
                          "tempo_mittel": 60.0, "ruck": 0.0, "ruckartig": False, "sprung_proz": 18.2, "urteil": "schnell"}]}
     assert T.zoom_hinweise("S07", sprung, 2.0, 4.0, cfg=cfg) == [
@@ -969,10 +980,10 @@ def test_zoom_hinweise_mit_sprung():
     assert T.zoom_hinweise("S07", sprung, 2.0, 4.0) == ["S07: schneller Zoom 2,4–2,6 s (50 → 60 mm, 91 %/s)"]
     # 50 %: sichtbar 46 %/s und 9,1 % — beides unter der Schwelle → kein Hinweis
     assert T.zoom_hinweise("S07", sprung, 2.0, 4.0, tempo_faktor=0.5, cfg=cfg) == []
-    # großer Sprung: 150 %/s und 24 % → bei 50 % sichtbar 75 %/s, aber 12 % Sprung → bleibt, mit Grund
-    gross = {"zooms": [{**sprung["zooms"][0], "tempo_max": 150.0, "sprung_proz": 24.0}]}
+    # großer Sprung: 150 %/s und 26 % → bei 50 % sichtbar 75 %/s, aber 13 % Sprung → bleibt, mit Grund
+    gross = {"zooms": [{**sprung["zooms"][0], "tempo_max": 150.0, "sprung_proz": 26.0}]}
     assert T.zoom_hinweise("S08", gross, 2.0, 4.0, tempo_faktor=0.5, cfg=cfg) == [
-        "S08: schneller Zoom 2,4–2,6 s (50 → 60 mm, 75 %/s sichtbar bei 50 %, Sprung 12 %)"]
+        "S08: schneller Zoom 2,4–2,6 s (50 → 60 mm, 75 %/s sichtbar bei 50 %, Sprung 13 %)"]
     # schnell schon durch das Tempo: kein Sprung-Zusatz; Datensatz ohne sprung_proz (vor dem Fix) wie bisher
     tempo = {"zooms": [{**sprung["zooms"][0], "tempo_max": 150.0}]}
     assert T.zoom_hinweise("S09", tempo, 2.0, 4.0, cfg=cfg) == ["S09: schneller Zoom 2,4–2,6 s (50 → 60 mm, 150 %/s)"]
@@ -1000,7 +1011,7 @@ def test_telemetrie_hinweise_alte_und_abweichende_datensaetze():
         "1 Clip mit anderen Telemetrie-Schwellen gemessen — autocut_telemetrie.py neu laufen lassen"]
     # Vorlagen-Schlüssel der Brennweitenfolge ändern den Hash nicht (M1) → kein Hinweis
     assert T.telemetrie_hinweise([neu], {**CFG, "digitalzoom_max": 1.3}) == []
-    assert T.telemetrie_hinweise([neu], {**CFG, "zoom_sprung_proz": 12.0}) == [
+    assert T.telemetrie_hinweise([neu], {**CFG, "zoom_sprung_proz": 10.0}) == [
         "1 Clip mit anderen Telemetrie-Schwellen gemessen — autocut_telemetrie.py neu laufen lassen"]
 
 

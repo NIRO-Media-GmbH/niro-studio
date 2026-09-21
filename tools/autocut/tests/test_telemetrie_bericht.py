@@ -116,3 +116,20 @@ def test_bericht_schnelle_zoomfahrten():
     assert "## Schnelle Zoomfahrten" in ohne and ohne.split("## Schnelle Zoomfahrten")[1].splitlines()[2] == "- keine"
     alt = [{k: v for k, v in TELE[1].items() if k != "zooms"}]                # Datensatz von vor der Umstellung
     assert "- keine" in B.bericht_md(alt, "T").split("## Schnelle Zoomfahrten")[1]
+
+
+def test_bericht_schnelle_zoomfahrten_nennen_den_sprung():
+    """Nachtrag Final Review (21.09.2026): die Tabelle zeigt, warum eine Fahrt schnell ist — neben Tempo und ruckartig
+    der Sprung (``sprunghaft``: Änderung in 0,12 s ab ``zoom_sprung_proz``) als „14 %", sonst „–" (auch bei Datensätzen
+    von vor dem Sprung-Kriterium)."""
+    sprung = {**ZOOM_SCHNELL, "von_s": 12.0, "bis_s": 12.3, "von_mm": 50.0, "bis_mm": 57.8, "tempo_max": 72.4,
+              "tempo_mittel": 40.1, "sprung_proz": 14.3, "sprunghaft": True}
+    ruck = {**ZOOM_SCHNELL, "von_s": 20.0, "bis_s": 22.0, "tempo_max": 20.2, "tempo_mittel": 8.4, "ruckartig": True,
+            "sprung_proz": 3.1, "sprunghaft": False}
+    md = B.bericht_md([{**TELE[1], "zooms": [ZOOM_SCHNELL, sprung, ruck, ZOOM_LANGSAM]}], "T")
+    teil = md.split("## Schnelle Zoomfahrten")[1]
+    assert "Sprung (Änderung der Brennweite in 0,12 s ab `telemetrie.zoom_sprung_proz`)" in teil
+    assert "| Clip | Kamera | von–bis (s) | mm → mm | Tempo % pro s (Spitze/Mittel) | ruckartig | Sprung in 0,12 s |" in teil
+    assert "| a7_1 | a7IV | 2,4–3,1 | 24,0 → 70,0 | 85/60 | nein | – |" in teil          # Datensatz ohne Sprung-Felder
+    assert "| a7_1 | a7IV | 12,0–12,3 | 50,0 → 57,8 | 72/40 | nein | 14 % |" in teil
+    assert "| a7_1 | a7IV | 20,0–22,0 | 24,0 → 70,0 | 20/8 | ja | – |" in teil

@@ -48,14 +48,15 @@ mindestens `zoom_min_proz` (Start 3 %) ändert; Bereiche mit weniger als 0,3 s A
   median-gefilterten 25-fps-Reihe, also vor dem Gleitmittel des Tempos (Nachtrag Final Review 21.09., siehe „Fehler
   und Randfälle").
 - **schnell**, wenn `tempo_max` > `zoom_schnell_proz_s` **oder** `ruck` > `zoom_ruck_max` **oder** `sprung_proz` ≥
-  `zoom_sprung_proz`; sonst **langsam**.
+  `zoom_sprung_proz` (`sprunghaft`); sonst **langsam**.
 - Startwerte bis zur Kalibrierung: `zoom_schnell_proz_s: 20`, `zoom_ruck_max: 0.6`.
 
 **Neue Felder je Clip** (`telemetrie.json`, Cache):
 
 ```
 kb_verlauf   [[t_s, kb_mm], …]   5 Werte je Sekunde (zoom_verlauf_hz); bei gleichbleibender Brennweite genau ein Eintrag [0.0, kb]
-zooms        [{von_s, bis_s, von_mm, bis_mm, tempo_max, tempo_mittel, ruck, ruckartig, sprung_proz, urteil: langsam|schnell}, …]
+zooms        [{von_s, bis_s, von_mm, bis_mm, tempo_max, tempo_mittel, ruck, ruckartig, sprung_proz, sprunghaft,
+               urteil: langsam|schnell}, …]
 zoomfahrt    true, wenn zooms nicht leer ist (ersetzt die bisherige kb_max/kb_min-Regel)
 ```
 
@@ -76,8 +77,8 @@ Ohne rtmd-Brennweite: `kb_verlauf` leer, `zooms` leer.
   `kb_anfang`/`kb_ende` über `kb_am` aus und rufen sie auf — getestet wird die Logik hier, nicht in den Vorlagen.
 
 **Bericht (`telemetrie.md`):** Spalte Brennweite je Kamera in mm (Median, Spanne) statt weit/normal/tele; neuer Abschnitt
-„Schnelle Zoomfahrten" (Clip, von–bis s, mm → mm, Tempo, ruckartig); der Index-Vergleich zeigt keine Brennweite mehr
-(nur Perspektive Höhe und Haltung).
+„Schnelle Zoomfahrten" (Clip, von–bis s, mm → mm, Tempo, ruckartig, Sprung in 0,12 s); der Index-Vergleich zeigt keine
+Brennweite mehr (nur Perspektive Höhe und Haltung).
 
 ## 2 — Regeln im Probelauf (Vorlagen 3a und 6d)
 
@@ -144,7 +145,7 @@ bleiben 0); der Readback prüft den Wert, die Tabelle im Bericht nennt ihn. Ohne
 | `zoom_min_proz` | 3.0 | Mindeständerung der Brennweite für eine Zoomfahrt (%) |
 | `zoom_schnell_proz_s` | 20.0 | Spitzentempo, ab dem eine Zoomfahrt schnell ist (% pro s) — Kalibrierung |
 | `zoom_ruck_max` | 0.6 | Ungleichmäßigkeit, ab der eine Zoomfahrt als ruckartig (= schnell) gilt — Kalibrierung |
-| `zoom_sprung_proz` | 10.0 | Sprung: Änderung der Brennweite in 0,12 s (%, ln), ab der eine Zoomfahrt schnell ist (Final Review 21.09.) |
+| `zoom_sprung_proz` | 12.0 | Sprung: Änderung der Brennweite in 0,12 s (%, ln), ab der eine Zoomfahrt schnell ist; = `zoom_schnell_proz_s` × 0,12 s (100 %/s × 0,12 s), nur zusammen ändern (Final Review 21.09.) |
 | `zoom_verlauf_hz` | 5 | Auflösung von `kb_verlauf` |
 | `brennweite_gleich_max` | 0.20 | unter diesem Abstand gilt die Brennweite als gleich |
 | `digitalzoom_faktor` | 1.25 | Zoom für den Shot mit der längeren scheinbaren Brennweite |
@@ -161,7 +162,7 @@ Entfällt: `brennweite_klassen_kb`. Der Config-Hash der Telemetrie ändert sich 
 | Datensätze genutzter Clips von vor der Umstellung (rtmd ohne `kb_verlauf`) oder mit anderem `config_hash` | Hinweiszeilen im Probelauf („N Clips ohne Brennweitenverlauf (alte Telemetrie)", „N Clips mit anderen Telemetrie-Schwellen gemessen" — `autocut_telemetrie.py` neu laufen lassen); sonst bliebe die Regel stumm (Final Review 21.09., `telemetrie_hinweise`) |
 | erzwungener `zoom` < 1,0 oder > `digitalzoom_max` | Plan-Fehler (Bau stoppt) |
 | schneller Zoom im genutzten Bereich | Hinweis, kein Fehler |
-| Verlauf mit Sprüngen (Klarbild-Zoom a7 IV schaltet stufig) | Sprung innerhalb weniger Frames = Zoomfahrt mit hohem Tempo → schnell. Umsetzung (Final Review 21.09.): ändert sich ln(KB) innerhalb von 0,12 s (3 Frames, vor dem 0,2-s-Gleitmittel, das die Spitze eines Sprungs auf Δln / 0,2 s kappt) um mindestens `zoom_sprung_proz` (10 %), ist die Fahrt schnell; Feld `sprung_proz` je Fahrt. Sonst gälten mit 100 %/s Sprünge unter ≈ 20 % als langsam (50 → 60 mm in 2 Frames: 91 %/s) |
+| Verlauf mit Sprüngen (Klarbild-Zoom a7 IV schaltet stufig) | Sprung innerhalb weniger Frames = Zoomfahrt mit hohem Tempo → schnell. Umsetzung (Final Review 21.09.): ändert sich ln(KB) innerhalb von 0,12 s (3 Frames, vor dem 0,2-s-Gleitmittel, das die Spitze eines Sprungs auf Δln / 0,2 s kappt) um mindestens `zoom_sprung_proz` (12 % = 100 %/s × 0,12 s: die Tempo-Grenze des Users auf dem kürzeren Fenster), ist die Fahrt schnell; Felder `sprung_proz` und `sprunghaft` je Fahrt. Sonst gälten mit 100 %/s Sprünge unter ≈ 20 % als langsam (50 → 60 mm in 2 Frames: 91 %/s) |
 
 ## Tests (pytest, ohne NAS, ohne Resolve)
 
@@ -230,7 +231,7 @@ Stocken 0 und ruck ≥ 0,8 — die Stocken-Regel markierte die „ok"-Fahrten 5 
 für Abstand zu den ruckartigen „ok"-Beispielen 0,74/0,77, passend zu „grob"), `zoom_stocken_anteil` 0,0 = Regel aus.
 
 **Gegenproben:** gleichmäßige Drehteller-Zooms 28–39 %/s langsam; Rück-Zooms 0697/0698/0699/0700 (123–194 %/s) schnell;
-0085-Rück-Zoom 99 %/s und 0087 89 %/s knapp unter der Grenze → langsam (Entscheidung „grob"; seit dem
+0085-Rück-Zoom 99 %/s und 0087 89 %/s knapp unter der Grenze → langsam (Entscheidung „grob"; 0085 seit dem
 Sprung-Kriterium schnell, siehe unten). Die im Plan vorgesehene
 MEK-Gegenprobe a7MK4_20260624_9885 (109 → 169 mm) hat nur 50 %/s Spitze → langsam; sie taugt bei dieser Grenze nicht als
 „schnell"-Referenz, der Regressionstest nimmt stattdessen den Rück-Zoom 0698.
@@ -246,12 +247,14 @@ später senken; eine zweite Stichprobe mit 60–200 %/s ist mit `zoom_beispiele.
 auf Δln / 0,2 s — mit 100 %/s galten Sprünge unter ≈ 20 % als langsam (50 → 60 mm in 2 Frames 91 %/s, 24 → 28 mm in
 1 Frame 77 %/s, 70 → 85 mm in 1 Frame 97 %/s), obwohl die Tabelle „Fehler und Randfälle" sie schnell verlangt. Neu je
 Fahrt `sprung_proz` = größte Änderung von ln(KB) innerhalb von 0,12 s (`ZOOM_SPRUNG_S`) auf der median-gefilterten Reihe;
-ab `zoom_sprung_proz` 10 % ist die Fahrt schnell (Test: `test_sprung_zooms_mit_ausgelieferten_werten_schnell`). Prüfung
-an den echten Reihen (`_intern/kb_reihen.json` der Kalibrier-Charge): Beispiele 1–10 haben 2,5–7,2 % (alle weiter
-langsam, Nr. 6 mit 55 %/s = 7,2 %), Drehteller 0090 4,4 % langsam, Rück-Zoom 0698 29,0 % schnell. Ein gleichmäßiger
-Zoom legt in 0,12 s Tempo × 0,12 zu — damit gelten auch gleichmäßige Fahrten ab ≈ 83 %/s als schnell: die Gegenproben
-0085-Rück-Zoom (98,7 %/s, Sprung 12,1 %) und 0087 (88,7 %/s, 10,8 %) sind jetzt schnell, in den Kalibrier-Reihen außerdem
-drei Fahrten von 0070 (77–92 %/s), zwei von MEK 9885 (77/80 %/s) und zwei kurze von FX3_9664 (66 %/s, 13,3 %). Die
-Zählungen 242/191 oben stammen von vor dem Sprung-Kriterium. Bei Zeitlupe (6d) zählt der sichtbare Sprung
-(`sprung_proz` × Tempo) wie das sichtbare Tempo; der Hinweis nennt den Sprung, wenn er und nicht das Tempo den Zoom
-schnell macht.
+ab `zoom_sprung_proz` 12 % ist die Fahrt schnell (`sprunghaft`; Test: `test_sprung_zooms_mit_ausgelieferten_werten`).
+12 % = 100 %/s × 0,12 s: das Kriterium misst die Grenze des Users („grob ab 100 %/s") auf dem kürzeren Fenster, statt sie
+zu senken — gleichmäßige Fahrten bleiben bis 100 %/s langsam (Controller-Entscheidung 21.09.; der erste Wert 10 % hätte
+die Grenze auf ≈ 83 %/s gesenkt und 9 Fahrten der Kalibrier-Reihen mit 66–99 %/s schnell gemacht). Prüfung an den
+echten Reihen (`_intern/kb_reihen.json` der Kalibrier-Charge): Beispiele 1–10 haben 2,5–7,2 % (alle weiter langsam,
+Nr. 6 mit 55 %/s = 7,2 %), Drehteller 0090 4,4 % langsam, Rück-Zoom 0698 29,0 % schnell. In den Kalibrier-Reihen
+wechseln drei Fahrten zu schnell: der Drehteller-Rück-Zoom 0085 (geglättet 98,7 %/s, in 0,12 s 12,1 % ≙ 101 %/s) und
+zwei kurze Fahrten von FX3_9664 (66 %/s, 13,3 %); 0087 (10,8 %), drei Fahrten von 0070 (11,2–11,8 %) und zwei von MEK
+9885 (10,1/11,2 %) bleiben langsam. Die Zählungen 242/191 oben stammen von vor dem Sprung-Kriterium. Bei Zeitlupe (6d)
+zählt der sichtbare Sprung (`sprung_proz` × Tempo) wie das sichtbare Tempo; der Hinweis nennt den Sprung, wenn er und
+nicht das Tempo den Zoom schnell macht; `telemetrie.md` zeigt ihn in der Spalte „Sprung in 0,12 s".

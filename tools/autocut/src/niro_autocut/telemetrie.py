@@ -327,9 +327,9 @@ def zoom_sprung(kb25: np.ndarray, ziel_fps: float = ZIEL_FPS) -> float:
 def zoomfahrten(kb25: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list[dict]:
     """Zoomfahrten einer Brennweitenreihe je Zielframe: Bereiche aus ``zoom_bereiche`` mit mindestens ``zoom_min_proz``
     Änderung (größte / kleinste Brennweite im Bereich − 1). Je Fahrt Zeiten (s), Brennweiten am Anfang/Ende (mm), Tempo
-    (% pro s), ruck, ruckartig (ruck > ``zoom_ruck_max`` oder Stocken), ``sprung_proz`` (``zoom_sprung`` im Bereich) und
-    Urteil: schnell, wenn tempo_max > ``zoom_schnell_proz_s``, ruckartig oder sprung_proz ≥ ``zoom_sprung_proz``
-    (Verlauf mit Sprüngen, Spec „Fehler und Randfälle"), sonst langsam."""
+    (% pro s), ruck, ruckartig (ruck > ``zoom_ruck_max`` oder Stocken), ``sprung_proz`` (``zoom_sprung`` im Bereich),
+    sprunghaft (sprung_proz ≥ ``zoom_sprung_proz``; Verlauf mit Sprüngen, Spec „Fehler und Randfälle") und Urteil:
+    schnell, wenn tempo_max > ``zoom_schnell_proz_s``, ruckartig oder sprunghaft, sonst langsam."""
     kb25 = np.asarray(kb25, np.float64)
     v = zoom_tempo(kb25, ziel_fps)
     out = []
@@ -342,13 +342,13 @@ def zoomfahrten(kb25: np.ndarray, cfg: dict, ziel_fps: float = ZIEL_FPS) -> list
         ruckartig = ruck > float(cfg["zoom_ruck_max"]) or stockt
         tempo_max = float(betrag.max())
         sprung = zoom_sprung(teil, ziel_fps)
-        schnell = (tempo_max > float(cfg["zoom_schnell_proz_s"]) or ruckartig
-                   or sprung >= float(cfg["zoom_sprung_proz"]))
+        sprunghaft = sprung >= float(cfg["zoom_sprung_proz"])
+        schnell = tempo_max > float(cfg["zoom_schnell_proz_s"]) or ruckartig or sprunghaft
         out.append({"von_s": round(a / ziel_fps, 2), "bis_s": round(b / ziel_fps, 2),
                     "von_mm": round(float(kb25[a]), 1), "bis_mm": round(float(kb25[b - 1]), 1),
                     "tempo_max": round(tempo_max, 1), "tempo_mittel": round(float(betrag.mean()), 1),
                     "ruck": round(ruck, 2), "ruckartig": ruckartig, "sprung_proz": round(sprung, 1),
-                    "urteil": "schnell" if schnell else "langsam"})
+                    "sprunghaft": sprunghaft, "urteil": "schnell" if schnell else "langsam"})
     return out
 
 

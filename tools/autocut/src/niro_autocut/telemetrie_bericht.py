@@ -72,17 +72,21 @@ def _unruhigste(tele: list[dict]) -> list[str]:
 
 
 def _schnelle_zooms(tele: list[dict]) -> list[str]:
-    """Schnelle Zoomfahrten aller Clips, nach Spitzentempo absteigend (bis TOP); „ruckartig" = ruck oder Stocken."""
+    """Schnelle Zoomfahrten aller Clips, nach Spitzentempo absteigend (bis TOP), mit dem Grund: Tempo, „ruckartig" (ruck
+    oder Stocken) und „Sprung in 0,12 s" (``sprunghaft``: ``sprung_proz`` ab ``zoom_sprung_proz``, sonst „–")."""
     fahrten = [(z, r) for r in tele for z in (r.get("zooms") or []) if z.get("urteil") == "schnell"]
     if not fahrten:
         return ["- keine", ""]
-    zeilen = ["| Clip | Kamera | von–bis (s) | mm → mm | Tempo % pro s (Spitze/Mittel) | ruckartig |",
-              "|---|---|---|---|---|---|"]
+    zeilen = ["Schnell = Spitzentempo über `telemetrie.zoom_schnell_proz_s`, ruckartig (ruck/Stocken) oder Sprung "
+              "(Änderung der Brennweite in 0,12 s ab `telemetrie.zoom_sprung_proz`).", "",
+              "| Clip | Kamera | von–bis (s) | mm → mm | Tempo % pro s (Spitze/Mittel) | ruckartig | Sprung in 0,12 s |",
+              "|---|---|---|---|---|---|---|"]
     for z, r in sorted(fahrten, key=lambda zr: -float(zr[0].get("tempo_max") or 0.0))[:TOP]:
+        sprung = f"{_de(z.get('sprung_proz'), 0)} %" if z.get("sprunghaft") else "–"
         zeilen.append(f"| {_md(r.get('clip'))} | {_md(r.get('kamera'))} | {_de(z['von_s'], 1)}–{_de(z['bis_s'], 1)} | "
                       f"{_de(z['von_mm'], 1)} → {_de(z['bis_mm'], 1)} | "
                       f"{_de(z['tempo_max'], 0)}/{_de(z.get('tempo_mittel'), 0)} | "
-                      f"{'ja' if z.get('ruckartig') else 'nein'} |")
+                      f"{'ja' if z.get('ruckartig') else 'nein'} | {sprung} |")
     return zeilen + [""]
 
 
