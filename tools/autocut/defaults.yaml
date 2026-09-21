@@ -132,6 +132,7 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
                             # Fahrten mit Stocken, auch Drehteller 0085, vom User „ok")
   zoom_verlauf_hz: 5        # Auflösung von kb_verlauf (Werte je Sekunde)
   # Brennweitenfolge B-Roll (Spec 2026-09-21): nie zweimal dieselbe Brennweite direkt hintereinander, sonst digitaler Zoom
+  # (nur Vorlagen 3a/6d, ändert keine Messung → nicht im Config-Hash der Telemetrie)
   brennweite_gleich_max: 0.20   # Abstand größere/kleinere KB-Brennweite − 1: darunter gilt die Brennweite als gleich
   digitalzoom_faktor: 1.25      # Zoom für den Shot mit der längeren scheinbaren Brennweite (der kürzere braucht mehr)
   digitalzoom_max: 1.5          # Obergrenze für das Produkt aller Zooms eines Shots (4K: bewusst leicht hochskaliert)

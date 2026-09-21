@@ -502,6 +502,17 @@ def test_config_hash_ohne_parallel():
     assert "config_hash" in leer and leer["config_hash"] is None and "fenster_s" in leer and leer["fenster_s"] is None
 
 
+def test_config_hash_ohne_vorlagen_schluessel():
+    """M1 (Final Review 21.09.2026): Brennweitenfolge-Schlüssel wirken nur in den Vorlagen 3a/6d, nicht auf die Messung —
+    ihre Änderung darf keine Neumessung auslösen; Zoom-Schwellen der Messung zählen weiter."""
+    h = T.config_hash(CFG)
+    for k, wert in (("brennweite_gleich_max", 0.3), ("digitalzoom_faktor", 1.1), ("digitalzoom_max", 1.3)):
+        assert T.config_hash({**CFG, k: wert}) == h, k
+    ohne = {k: v for k, v in CFG.items() if k not in ("brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max")}
+    assert T.config_hash(ohne) == h
+    assert T.config_hash({**CFG, "zoom_schnell_proz_s": 50.0}) != h
+
+
 def test_clip_mit_cache_misst_nach_config_aenderung_neu(monkeypatch, basis_charge, tmp_path):
     """I1: haltung, bewegungsart, Klassen, wackeln × px_faktor, ruhige_fenster und Fensterlänge hängen an der Config zum
     Messzeitpunkt — ein gecachter Datensatz mit fehlendem oder anderem config_hash gilt als veraltet."""

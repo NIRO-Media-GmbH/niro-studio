@@ -701,7 +701,8 @@ des Bildinhalts je 25-fps-Frame in px @480 — `wackeln` (Zittern) und `bewegung
 Clip-Quelle: `--ordner`, sonst `broll_index.json`, `inventar.json`, B-Roll-Wurzeln des Transkript-Index, `media.json`.
 Cache je Clip unter `_intern/autocut/telemetrie/<fingerprint>.json`; Lesen der Datenspur kostet die ganze Datei (≈ 300 MB/s
 übers NAS). Nach einer Änderung unter `telemetrie:` (`defaults.yaml` oder Chargen-`config.yaml`) misst der nächste Lauf die
-betroffenen Clips neu (der Cache trägt je Clip einen Config-Hash, ohne `parallel`); `--force` misst alles neu.
+betroffenen Clips neu (der Cache trägt je Clip einen Config-Hash, ohne `parallel` und ohne die Vorlagen-Schlüssel der
+Brennweitenfolge `brennweite_gleich_max`, `digitalzoom_faktor`, `digitalzoom_max`); `--force` misst alles neu.
 Felder je Clip: `quelle` (rtmd/optisch/keine), `kamera`, `kb_mm` (Median; Verlauf und Zoomfahrten unten),
 `pitch_grad`/`perspektive_hoehe`, `roll_grad`, `haltung` (stativ/gimbal/hand), `bewegungsart` (statisch, schwenk_links/rechts,
 tilt_auf/ab, fahrt, gemischt — `schwenk_links` = Kamera dreht nach links), `wackeln`, `bewegung`, `fenster` (2 s, Schritt 1 s),

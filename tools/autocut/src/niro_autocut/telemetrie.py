@@ -361,10 +361,15 @@ def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samp
 
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------
 
+# Schlüssel ohne Einfluss auf die Messung: Parallelität und die Brennweitenfolge der Vorlagen 3a/6d
+OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max")
+
+
 def config_hash(cfg: dict) -> str:
-    """Kurzer Hash (12 Hex-Zeichen, sha1) der ``telemetrie:``-Config ohne ``parallel`` — Haltung, Bewegungsart, Klassen,
-    wackeln × px_faktor, ruhige Fenster und Fensterlänge hängen an ihr; ein Cache-Datensatz mit anderem Hash ist veraltet."""
-    text = json.dumps({k: v for k, v in cfg.items() if k != "parallel"}, sort_keys=True, default=str)
+    """Kurzer Hash (12 Hex-Zeichen, sha1) der ``telemetrie:``-Config ohne ``OHNE_MESSWIRKUNG`` — Haltung, Bewegungsart,
+    Klassen, wackeln × px_faktor, ruhige Fenster, Fensterlänge und Zoomfahrten hängen an ihr; ein Cache-Datensatz mit
+    anderem Hash ist veraltet."""
+    text = json.dumps({k: v for k, v in cfg.items() if k not in OHNE_MESSWIRKUNG}, sort_keys=True, default=str)
     return hashlib.sha1(text.encode("utf-8")).hexdigest()[:12]
 
 
