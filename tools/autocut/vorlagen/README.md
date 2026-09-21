@@ -64,6 +64,8 @@ Resolve. Resolve-Regeln: `tools/resolve/WORKFLOW-Resolve.md`.
   ohne sie kommt der Vorschlag aus `_intern/autocut/telemetrie.json` (`autocut_telemetrie.py` vorher laufen
   lassen): Stativ/Gimbal bleiben unstabilisiert, Handkamera mit `wackeln` > `telemetrie.ruhig_max_px` wird
   stabilisiert. Der Probelauf druckt je Shot Vorschlag und Grund; `roll_grad` > 2° erscheint als „schief".
+  Die optionale 8. Spalte `zoom` legt den digitalen Zoom fest (1.0 = keiner); ohne sie setzt die Brennweitenregel aus
+  `telemetrie.json` einen Zoom, wenn zwei direkt anschließende Shots dieselbe KB-Brennweite hätten (Spec 2026-09-21).
 - **`color/grading_anwenden.py`**: `cdl_fuer`, `resolve_cdl`, `LUT_REL` und die Tabelle `GRUPPEN` braucht auch
   `begradigen/pruefung_resolve.py`.
 - **`color/skripte/colorlib.py`** wird genutzt von `begradigen/linien_messen.py` und den Color-Skripten.

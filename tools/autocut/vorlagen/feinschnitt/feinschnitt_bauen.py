@@ -97,12 +97,17 @@ A_ABSCHNITTE: list[tuple[int, int]] = [
 # --- V3: B-Roll (Shot aus broll_auswahl.json, Versatz im Shot [Timeline-Frames bei 100 %], Länge, Record-In, Beat,
 # 50 %[, stabil]) -- Versatz + genutzte Länge (bei 50 % die halbe Länge) müssen in der Auswahl des Users liegen —
 # kürzen ja, nie verlängern.
-# 7. Spalte optional: True/False erzwingt Stabilize() bzw. lässt es aus; weggelassen = Vorschlag aus telemetrie.json
-# (hand und wackeln > telemetrie.ruhig_max_px → stabilisieren; stativ/gimbal → nicht; ohne Telemetrie → stabilisieren).
-# True bei einer _stabilized-Datei (Avata-Export) ist ein Plan-Fehler: Avata nie in Resolve stabilisieren.
+# 7. Spalte optional: True/False erzwingt Stabilize() bzw. lässt es aus; weggelassen oder None = Vorschlag aus
+# telemetrie.json (hand und wackeln > telemetrie.ruhig_max_px → stabilisieren; stativ/gimbal → nicht; ohne Telemetrie →
+# stabilisieren). True bei einer _stabilized-Datei (Avata-Export) ist ein Plan-Fehler: Avata nie in Resolve stabilisieren.
+# 8. Spalte optional (Spec 2026-09-21): Zahl = digitaler Zoom des Shots fest (1.0 = keiner); weggelassen = Automatik der
+# Brennweitenregel aus telemetrie.json — nie zweimal dieselbe KB-Brennweite direkt hintereinander (Abstand unter
+# telemetrie.brennweite_gleich_max), sonst Zoom auf einen der beiden Shots (1,25×, Grenze telemetrie.digitalzoom_max).
+# Ein Wert über der Grenze ist ein Plan-Fehler. Schnelle Zooms im genutzten Quellbereich meldet der Probelauf als Hinweis.
 BROLL: list[tuple] = [
     # (10, 27, 54, 345, "4", True),          # Shot 10 ab Frame 27 seiner Auswahl, 54 Frames lang, Record 345, Beat #4, 50 %
     # (11, 0, 40, 400, "5", False, False),   # … und ausdrücklich nicht stabilisieren
+    # (12, 0, 40, 440, "5", False, None, 1.0),   # … Stabilisieren nach Vorschlag, aber kein digitaler Zoom
 ]
 
 # --- Musik (Spur, Datei, Quell-In [Frames], Record-In, Record-Out, Pegel dB, Fade-In, Fade-Out) ---------------------
@@ -354,10 +359,11 @@ def plan(tl: dict, shots: dict) -> tuple[dict, list[str]]:
         s = it["src_in_f"] + a - it["rec_in_f"]
         v2.append(Item("V2", it["clip"], s, s + b - a, a, b, True, it["beat_nr"], "oton", True))
     # V3 B-Roll
-    v3, v3_meta = [], []
+    v3, v3_meta, folge = [], [], []  # folge: Eingabe der Brennweitenregel (TM.brennweitenfolge)
     for eintrag in sorted(BROLL, key=lambda x: x[3]):
         nr, off, n, rec, beat, langsam, *rest = eintrag
         stabil_hand = rest[0] if rest else None
+        zoom_hand = rest[1] if len(rest) > 1 else None  # 8. Spalte: erzwungener Zoom, None = Automatik
         s = shots.get(nr)
         if s is None:
             fehler.append(f"S{nr:02d}: Shot fehlt in broll_auswahl.json")
@@ -384,7 +390,18 @@ def plan(tl: dict, shots: dict) -> tuple[dict, list[str]]:
         v3_meta.append({"shot": nr, "clip": s["clip"], "rec_in_f": rec, "dauer_f": n, "langsam": langsam, "src_in_f": src_in,
                         "quelle_genutzt_50p": quelle_genutzt, "auswahl_50p": auswahl_50p,
                         "stabil": stabil, "stabil_grund": grund,
-                        "roll_grad": (tele_rec or {}).get("roll_grad")})
+                        "roll_grad": (tele_rec or {}).get("roll_grad"),
+                        "zoom_hinweise": TM.zoom_hinweise(f"S{nr:02d}", tele_rec, *bereich, cfg=TCFG,
+                                                          tempo_faktor=0.5 if langsam else 1.0)})
+        # Brennweite am Schnitt: Ende des genutzten Quellbereichs (bei 50 % halb so lang) bzw. sein Anfang
+        folge.append({"id": f"S{nr:02d}", "rec_in": rec, "rec_out": rec + n, "zoom_erzwungen": zoom_hand,
+                      "kb_anfang": TM.kb_am(tele_rec, bereich[0], seite="anfang"),
+                      "kb_ende": TM.kb_am(tele_rec, bereich[1], seite="ende")})
+    # Brennweitenregel (Spec 2026-09-21): nie zweimal dieselbe KB-Brennweite direkt hintereinander, sonst digitaler Zoom
+    for m, f, z in zip(v3_meta, folge, TM.brennweitenfolge(folge, TCFG)):
+        m.update(zoom=z["zoom"], zoom_hinweis=z["hinweis"], kb_anfang=f["kb_anfang"], kb_ende=f["kb_ende"])
+        if z["fehler"]:
+            fehler.append(z["fehler"])
     for a, b in zip(v3, v3[1:]):
         if b.rec_in_f < a.rec_out_f:
             fehler.append(f"V3 überlappt bei {b.rec_in_f}")
@@ -424,11 +441,19 @@ def bericht(p: dict) -> None:
         print("  Bild gehalten:", zeile)
     frei = sum(b - a for a, b in p["luecken"])
     print(f"Ohne Bild auf V1–V3: {len(p['luecken'])} Lücken / {frei} Frames — davon ohne deckende Grafik: {len(p['schwarz'])}")
-    print(f"Stabilisierung ({len(TELE)} Clips in telemetrie.json):")
+    print(f"Stabilisierung, Brennweite und Zoom ({len(TELE)} Clips in telemetrie.json):")
     for m in p["v3_meta"]:
         roll = m.get("roll_grad")
         schief = f"  schief {abs(roll):.1f}°".replace(".", ",") if roll is not None and abs(roll) > 2.0 else ""
-        print(f"  S{m['shot']:02d} {'stabilisieren' if m['stabil'] else 'lassen       '}  {m['stabil_grund']}{schief}")
+        kb = "KB –" if m.get("kb_anfang") is None else f"KB {m['kb_anfang']:g} → {m['kb_ende']:g} mm".replace(".", ",")
+        zoom = f"  Zoom {m['zoom']:g}×".replace(".", ",") if m.get("zoom", 1.0) != 1.0 else ""
+        print(f"  S{m['shot']:02d} {'stabilisieren' if m['stabil'] else 'lassen       '}  {m['stabil_grund']}{schief}"
+              f"  {kb}{zoom}")
+    hinweise = [] if TELE else [TM.OHNE_TELEMETRIE]
+    for m in p["v3_meta"]:
+        hinweise += m.get("zoom_hinweise", []) + ([m["zoom_hinweis"]] if m.get("zoom_hinweis") else [])
+    for h in hinweise:
+        print(f"  Hinweis: {h}")
 
 
 def bauen(p: dict) -> dict:
@@ -485,6 +510,15 @@ def bauen(p: dict) -> dict:
             stab[shot] = bool(RA._safe(v3_items[m["rec_in_f"]].Stabilize, False))
             print(f"  Stabilisiert {n_}/{len(p['v3_meta'])} {shot}: {stab[shot]} ({(dt.datetime.now() - t0).total_seconds():.1f} s)", flush=True)
         out["stabilisiert"] = stab
+        # Digitaler Zoom der Brennweitenregel (Spec 2026-09-21): auf die Bildmitte, Pan/Tilt bleiben 0
+        zoom_ok = {}
+        for m in p["v3_meta"]:
+            if m["zoom"] == 1.0:
+                continue
+            x = v3_items[m["rec_in_f"]]
+            gesetzt = [bool(RA._safe(x.SetProperty, False, k, float(m["zoom"]))) for k in ("ZoomX", "ZoomY")]
+            zoom_ok[f"S{m['shot']:02d}"] = all(gesetzt)
+        out["zoom_gesetzt"] = zoom_ok
         if PUNCH_IN["beat"] is None:
             out["punch_in"] = None  # kein Punch-in geplant
         else:
@@ -538,6 +572,12 @@ def bauen(p: dict) -> dict:
         v3_rb.append({"start": int(x.GetStart()) - start, "dauer": int(x.GetDuration()), "left": int(x.GetLeftOffset()),
                       "src": [RA._safe(x.GetSourceStartFrame, None), RA._safe(x.GetSourceEndFrame, None)], "speed": sp.get("Percentage")})
     out["v3"] = v3_rb
+    # Readback Zoom (Spec 2026-09-21): ZoomX je V3-Item gegen den Plan (1.0 = kein digitaler Zoom)
+    v3_zoom = [RA._safe(x.GetProperty, None, "ZoomX")
+               for x in sorted(tl.GetItemListInTrack("video", 3) or [], key=lambda y: y.GetStart())]
+    out["zoom_abweichungen"] = [{"shot": m["shot"], "soll": m["zoom"], "ist": z}
+                                for m, z in zip(sorted(p["v3_meta"], key=lambda v: v["rec_in_f"]), v3_zoom)
+                                if z is None or abs(float(z) - m["zoom"]) > 1e-3]
     ausserhalb = []
     for m, x in zip(sorted(p["v3_meta"], key=lambda z: z["rec_in_f"]), v3_rb):
         s0, s1 = x["src"]

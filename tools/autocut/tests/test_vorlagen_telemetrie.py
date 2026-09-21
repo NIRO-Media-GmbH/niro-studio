@@ -64,3 +64,79 @@ def test_plan_stoppt_bei_spalte_7_true_und_stabilized(monkeypatch, datei, spalte
     assert bool(treffer) is fehler_erwartet
     if fehler_erwartet:
         assert treffer == ["S01: Spalte 7 True bei _stabilized-Datei — Avata nie in Resolve stabilisieren"]
+
+
+# --- Brennweitenregel und Zoomfahrten (Spec 2026-09-21) ------------------------------------------------------------------
+
+def _zoom(von: float, bis: float, von_mm: float, bis_mm: float, tempo: float) -> dict:
+    return {"von_s": von, "bis_s": bis, "von_mm": von_mm, "bis_mm": bis_mm, "tempo_max": tempo, "tempo_mittel": tempo,
+            "ruck": 0.1, "ruckartig": False, "urteil": "schnell"}
+
+
+# Clip A: 35 → 50 mm bei 0,4–0,9 s, 50 mm bis 2 s, dann Zoom auf 100 mm. Clip B: 24 → 52 mm bei 2,0–2,5 s, 52 mm bis
+# 3,7 s, dann Zoom auf 70 mm (4,2 s). Beide 50p, gimbal.
+TELE_A = {"path": "/ssd/FX3/FX3_A.MP4", "quelle": "rtmd", "haltung": "gimbal", "wackeln": 0.02, "fehler": None,
+          "fenster": [[0.0, 0.02, 0.1, "statisch"]],
+          "kb_verlauf": [[0.0, 35.0], [0.4, 35.0], [0.9, 50.0], [2.0, 50.0], [3.0, 100.0], [10.0, 100.0]],
+          "zooms": [_zoom(0.4, 0.9, 35.0, 50.0, 72.4), _zoom(2.0, 3.0, 50.0, 100.0, 69.3)]}
+TELE_B = {**TELE_A, "path": "/ssd/FX3/FX3_B.MP4",
+          "kb_verlauf": [[0.0, 24.0], [2.0, 24.0], [2.5, 52.0], [3.7, 52.0], [4.2, 70.0], [10.0, 70.0]],
+          "zooms": [_zoom(2.0, 2.5, 24.0, 52.0, 150.0), _zoom(3.7, 4.2, 52.0, 70.0, 59.4)]}
+SHOTS = {1: {"nr": 1, "clip": "FX3_A", "datei": "/ssd/FX3/FX3_A.MP4", "clip_fps": 50.0, "left_offset_f": 0,
+             "dauer_f": 100},
+         2: {"nr": 2, "clip": "FX3_B", "datei": "/ssd/FX3/FX3_B.MP4", "clip_fps": 50.0, "left_offset_f": 50,
+             "dauer_f": 100}}
+
+
+def _fb_plan(monkeypatch, broll: list[tuple], tele: list[dict]):
+    fb = _vorlage_laden(monkeypatch)
+    monkeypatch.setattr(fb, "anpassen_pruefen", lambda fuer_bau=False: None)
+    monkeypatch.setattr(fb, "ENDE", 80)
+    monkeypatch.setattr(fb, "alpha_min", lambda: [255] * 80)
+    monkeypatch.setattr(fb, "v4_stuecke", lambda fehler: [])
+    monkeypatch.setattr(fb, "TELE", tele)
+    monkeypatch.setattr(fb, "TCFG", {**fb.TCFG, "brennweite_gleich_max": 0.2, "digitalzoom_faktor": 1.25,
+                                     "digitalzoom_max": 1.5})
+    monkeypatch.setattr(fb, "BROLL", broll)
+    p, fehler = fb.plan({"items": []}, SHOTS)
+    return fb, p, fehler
+
+
+def test_6d_plan_brennweitenregel_mit_50_prozent(monkeypatch, capsys):
+    """S01 (100 %) Record 0–40: Quelle 0–80 Frames = 0–1,6 s → am Out 50 mm. S02 (50 %) Record 40–80 direkt danach:
+    Quell-In (50 + 20) · 2 = 140 Frames = 2,8 s, 40 Timeline-Frames bei 50 % = 0,8 s Quelle → 2,8–3,6 s → am In
+    52 mm. 50/52 mm = gleich → Zoom 1,25× auf S02 (längere Brennweite). Schneller Zoom 0,4–0,9 s liegt in S01;
+    der von B bei 3,7–4,2 s liegt nur bei 100 % im genutzten Bereich, bei 50 % nicht."""
+    fb, p, fehler = _fb_plan(monkeypatch, [(1, 0, 40, 0, "1", False), (2, 20, 40, 40, "1", True)], [TELE_A, TELE_B])
+    assert fehler == []
+    m1, m2 = p["v3_meta"]
+    assert (m1["kb_ende"], m2["kb_anfang"]) == (50.0, 52.0) and (m1["zoom"], m2["zoom"]) == (1.0, 1.25)
+    assert m1["zoom_hinweise"] == ["S01: schneller Zoom 0,4–0,9 s (35 → 50 mm, 72 %/s)"] and m2["zoom_hinweise"] == []
+    assert m2["zoom_hinweis"] == "S02: 50 → 52 mm am Schnitt, Zoom 1,25× auf S02" and m1["zoom_hinweis"] is None
+    fb.bericht(p)
+    out = capsys.readouterr().out
+    assert "Hinweis: S01: schneller Zoom 0,4–0,9 s (35 → 50 mm, 72 %/s)" in out
+    assert "Hinweis: S02: 50 → 52 mm am Schnitt, Zoom 1,25× auf S02" in out
+    assert "KB 52 → 52 mm  Zoom 1,25×" in out and "keine Telemetrie" not in out
+
+
+def test_6d_plan_spalte_zoom_und_ohne_telemetrie(monkeypatch, capsys):
+    _, p, fehler = _fb_plan(monkeypatch, [(1, 0, 40, 0, "1", False), (2, 20, 40, 40, "1", True, None, 1.0)],
+                            [TELE_A, TELE_B])
+    assert fehler == [] and [m["zoom"] for m in p["v3_meta"]] == [1.3, 1.0]     # S02 fest → A: 1,25 × 52 / 50
+    _, p2, fehler2 = _fb_plan(monkeypatch, [(1, 0, 40, 0, "1", False), (2, 20, 40, 40, "1", True, None, 1.6)],
+                              [TELE_A, TELE_B])
+    assert "S02: Spalte zoom 1,6× außerhalb 1,0–1,5× (telemetrie.digitalzoom_max)" in fehler2
+    fb, p3, fehler3 = _fb_plan(monkeypatch, [(1, 0, 40, 0, "1", False), (2, 20, 40, 40, "1", True)], [])
+    assert fehler3 == [] and [m["zoom"] for m in p3["v3_meta"]] == [1.0, 1.0]
+    fb.bericht(p3)
+    assert "Hinweis: keine Telemetrie — Brennweitenregel nicht geprüft" in capsys.readouterr().out
+
+
+def test_6d_vorlage_setzt_zoom_beim_bau():
+    text = VORLAGE.read_text(encoding="utf-8")
+    assert "TM.brennweitenfolge(folge, TCFG)" in text and "TM.kb_am(" in text and "TM.zoom_hinweise(" in text
+    assert "tempo_faktor=0.5 if langsam else 1.0" in text      # Zeitlupe: sichtbares Tempo zählt
+    assert 'RA._safe(x.SetProperty, False, k, float(m["zoom"]))' in text and 'for k in ("ZoomX", "ZoomY")' in text
+    assert 'RA._safe(x.GetProperty, None, "ZoomX")' in text and 'out["zoom_abweichungen"]' in text
+    assert "8. Spalte optional" in text

@@ -452,7 +452,7 @@ oder einen Zwischenstand.
 - `PUNCH_IN` (Innenschnitte ohne Zweitkamera)
 - `A_ABSCHNITTE` (Perspektivwechsel)
 - `BROLL` (aus `broll_einsatz.json`; 50 % nur bei Händen, Details und Kamerafahrten, nie bei Sprechenden, nur aus
-  50p-Quellen)
+  50p-Quellen; optional Spalte 7 `stabil` und Spalte 8 `zoom`)
 - `MUSIK_PLAN`, `MARKER`
 
 1. **Probelauf** (ohne Flag):
@@ -462,6 +462,10 @@ oder einen Zwischenstand.
    - Nicht deckende Wipe-/Iris-Ränder (3–10 Frames) werden durch Halten des Bilds darunter gedeckt. B-Roll über
      die Auswahl hinaus zu verlängern ist ein Fehler.
    - Ziel: **0 Frames ohne Bild und ohne deckende Grafik** (Taxodia vorher 51).
+   - Brennweite (Spec 2026-09-21, `telemetrie.json`): je Shot die KB-Brennweite am Quell-In/-Out des genutzten Bereichs
+     (bei 50 % halb so lang) und der digitale Zoom der Brennweitenregel; Hinweise für schnelle Zooms im genutzten Bereich,
+     gesetzte Zooms („S12: 50 → 52 mm am Schnitt, Zoom 1,25× auf S12") und nicht mögliche; ohne Telemetrie „keine
+     Telemetrie — Brennweitenregel nicht geprüft". Spalte 8 über `digitalzoom_max` ist ein Fehler.
 2. **Bauen** (`--bauen`): neue Timeline im Bin `AutoCut/<Video>`, die roh-Timelines bleiben. Spuren:
    - **A1–A5** vor dem ersten Anhängen anlegen (nachträglich angelegte Tonspuren sind stumm).
    - **V1** FX3 mit Bildverlängerungen, J-Cuts und Punch-in.
@@ -470,7 +474,8 @@ oder einen Zwischenstand.
      `stabil` (Vorschlag aus `telemetrie.json`, Spalte 7 in `BROLL` überstimmt; Dateien mit `_stabilized` im Namen —
      Avata-Exporte — nie). Der Stabilisierungs-Modus bleibt Sache des DRT-Roundtrips der Charge (User-Standard
      Translation, Smooth 0,25; `drt_stabilisierung.py` in WTN/Wurst & Liebe/Assenheimer, noch kein gemeinsames
-     Werkzeug) — `Stabilize()` allein nimmt Perspective.
+     Werkzeug) — `Stabilize()` allein nimmt Perspective. Danach der digitale Zoom der Brennweitenregel (`SetProperty`
+     `ZoomX`/`ZoomY`, Bildmitte); Readback `zoom_gesetzt` und `zoom_abweichungen` in `feinschnitt.json`.
    - **V4** Grafik je Element, auf sichtbare Frames getrimmt.
    - **A1** Ton mit True Peak −3 je Clip und Voice Isolation 50.
    - **A2/A3** Musik mit Überblendungen (`SetFades` in Frames).
@@ -697,7 +702,7 @@ tilt_auf/ab, fahrt, gemischt — `schwenk_links` = Kamera dreht nach links), `wa
 `ruhige_fenster` (wackeln ≤ `telemetrie.ruhig_max_px`). `ruhige_fenster` sind Fenster-Startzeiten in s (Fensterlänge `fenster_s`
 im Datensatz); das letzte Fenster kann kürzer sein. Schwellen und Kamerafaktoren in `defaults.yaml` unter `telemetrie:`.
 Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b (Perspektive aus Metadaten, Brennweite in mm und Zoom je Abschnitt,
-`bewegungsart`/`haltung` je Abschnitt) und 6d (Stabilisieren nur bei Bedarf). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
+`bewegungsart`/`haltung` je Abschnitt) und 6d (Stabilisieren nur bei Bedarf, Brennweitenregel). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
 Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
 
 **Zoomfahrten (seit 21.09.2026, Spec `docs/superpowers/specs/2026-09-21-autocut-zoom-brennweite-design.md`):** aus der
