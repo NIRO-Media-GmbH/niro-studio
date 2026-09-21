@@ -782,3 +782,87 @@ def zoom_hinweise(sid: str, rec: dict | None, von_s: float, bis_s: float,
                    f"({_zahl(z['von_mm'])} → {_zahl(z['bis_mm'])} mm, {tempo:.0f} %/s"
                    f"{sichtbar}{ruck})")
     return out
+
+
+# --- Brennweitenfolge: nie zweimal dieselbe Brennweite direkt hintereinander (Spec 2026-09-21, Abschnitt 2) -----
+
+def brennweite_abstand(kb_a: float, kb_b: float) -> float:
+    """Abstand zweier Brennweiten = größere / kleinere − 1 (auf vier Stellen, damit 60/50 genau 0,2 ist)."""
+    return round(max(kb_a, kb_b) / min(kb_a, kb_b) - 1.0, 4)
+
+
+def gleiche_brennweite(kb_a: float, kb_b: float, abstand_max: float) -> bool:
+    """Gleich, wenn der Abstand unter ``abstand_max`` liegt (0,20: 50/55 und 24/28 gleich, 35/50 und 70/85 nicht)."""
+    return brennweite_abstand(kb_a, kb_b) < abstand_max
+
+
+def digitalzoom(kb_a: float, kb_b: float, zoom_a: float, zoom_b: float, cfg: dict, a_erlaubt: bool = True,
+                b_erlaubt: bool = True) -> tuple[str, float] | None:
+    """Digitaler Zoom für ein Paar A → B mit gleicher scheinbarer Brennweite am Schnitt (kb × vorhandener Zoom): der Shot
+    mit der längeren scheinbaren Brennweite braucht ``digitalzoom_faktor``, der kürzere ``digitalzoom_faktor × längere /
+    kürzere``. Zulässig ist ein erlaubter Kandidat, wenn vorhandener Zoom × Faktor ≤ ``digitalzoom_max``; gewählt wird
+    der mit dem kleineren Gesamtzoom (mehr Reserve), bei Gleichstand B. Liefert ("a" | "b", Gesamtzoom auf drei Stellen)
+    oder None, wenn kein Kandidat zulässig ist."""
+    faktor, grenze = float(cfg["digitalzoom_faktor"]), float(cfg["digitalzoom_max"])
+    schein_a, schein_b = kb_a * zoom_a, kb_b * zoom_b
+    lang = max(schein_a, schein_b)
+    kandidaten = []
+    for seite, erlaubt, schein, zoom in (("b", b_erlaubt, schein_b, zoom_b), ("a", a_erlaubt, schein_a, zoom_a)):
+        gesamt = zoom * faktor * lang / schein
+        if erlaubt and gesamt <= grenze + 1e-9:
+            kandidaten.append((round(gesamt, 3), seite))
+    if not kandidaten:
+        return None
+    gesamt, seite = min(kandidaten, key=lambda k: k[0])      # min ist stabil: bei Gleichstand bleibt B (zuerst)
+    return seite, gesamt
+
+
+def brennweitenfolge(eintraege: list[dict], cfg: dict) -> list[dict]:
+    """Regel „nie zweimal dieselbe Brennweite direkt hintereinander" für die B-Roll-Shots auf V3 als reine Funktion.
+
+    Eingabe je Shot: ``id`` (Anzeige, z. B. „S07"), ``rec_in``/``rec_out`` (Timeline-Frames), ``kb_anfang``/``kb_ende``
+    (KB-Brennweite am Quell-In bzw. -Out des genutzten Bereichs, ``kb_am``; None = unbekannt) und ``zoom_erzwungen``
+    (Spalte ``zoom``; None = Automatik). Paare A → B werden in Record-Reihenfolge von links nach rechts geprüft, nur wenn
+    B direkt an A anschließt (rec_out A = rec_in B) und beide Brennweiten bekannt sind. Gleich (Abstand der scheinbaren
+    Brennweiten kb × Zoom unter ``brennweite_gleich_max``) → ``digitalzoom``; ein gesetzter Zoom zählt für das nächste
+    Paar mit. A kommt nur in Frage, wenn er noch keinen Zoom hat, nicht per Spalte festliegt und der Zoom den Schnitt zu
+    seinem Vorgänger nicht wieder gleich macht. Ein erzwungener Zoom liegt fest; unter 1,0 oder über ``digitalzoom_max``
+    ist er ein Plan-Fehler.
+    Ausgabe je Shot in Eingabe-Reihenfolge: ``id``, ``zoom`` (1.0 = kein digitaler Zoom), ``hinweis`` (am zweiten Shot
+    des Paares, sonst None) und ``fehler`` (str | None)."""
+    grenze, gleich_max = float(cfg["digitalzoom_max"]), float(cfg["brennweite_gleich_max"])
+    out = [{"id": e["id"], "zoom": 1.0, "hinweis": None, "fehler": None} for e in eintraege]
+    fest = [e.get("zoom_erzwungen") is not None for e in eintraege]
+    for i, e in enumerate(eintraege):
+        if fest[i]:
+            z = float(e["zoom_erzwungen"])
+            out[i]["zoom"] = z
+            if z < 1.0 or z > grenze + 1e-9:
+                out[i]["fehler"] = (f"{e['id']}: Spalte zoom {_zahl(z, 3)}× außerhalb 1,0–{_zahl(grenze, 3)}× "
+                                    f"(telemetrie.digitalzoom_max)")
+    reihe = sorted(range(len(eintraege)), key=lambda i: eintraege[i]["rec_in"])
+    vorgaenger: dict[int, int] = {}
+    for ia, ib in zip(reihe, reihe[1:]):
+        a, b = eintraege[ia], eintraege[ib]
+        if a["rec_out"] != b["rec_in"] or a.get("kb_ende") is None or b.get("kb_anfang") is None:
+            continue
+        vorgaenger[ib] = ia
+        schein_a, schein_b = a["kb_ende"] * out[ia]["zoom"], b["kb_anfang"] * out[ib]["zoom"]
+        if not gleiche_brennweite(schein_a, schein_b, gleich_max):
+            continue
+        args = (a["kb_ende"], b["kb_anfang"], out[ia]["zoom"], out[ib]["zoom"], cfg)
+        wahl = digitalzoom(*args, a_erlaubt=not fest[ia] and out[ia]["zoom"] == 1.0, b_erlaubt=not fest[ib])
+        ip = vorgaenger.get(ia)
+        if wahl and wahl[0] == "a" and ip is not None and gleiche_brennweite(
+                eintraege[ip]["kb_ende"] * out[ip]["zoom"], a["kb_anfang"] * wahl[1], gleich_max):
+            wahl = digitalzoom(*args, a_erlaubt=False, b_erlaubt=not fest[ib])     # kein Rückfall zum Vorgänger
+        if wahl is None:
+            grund = "Spalte zoom" if fest[ib] else f"{_zahl(grenze, 3)}×-Grenze"
+            out[ib]["hinweis"] = (f"{b['id']}: gleiche Brennweite wie {a['id']} ({_zahl(schein_a)}/{_zahl(schein_b)} mm), "
+                                  f"Zoom nicht möglich ({grund})")
+            continue
+        ziel = ia if wahl[0] == "a" else ib
+        out[ziel]["zoom"] = wahl[1]
+        out[ib]["hinweis"] = (f"{b['id']}: {_zahl(schein_a)} → {_zahl(schein_b)} mm am Schnitt, Zoom "
+                              f"{_zahl(wahl[1], 3)}× auf {eintraege[ziel]['id']}")
+    return out

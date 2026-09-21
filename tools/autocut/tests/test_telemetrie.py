@@ -23,7 +23,8 @@ CFG = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_max_px": 0.
        "achsen": {"schwenk": 1, "tilt": 0}, "vorzeichen": {"schwenk": -1, "tilt": 1, "pitch": 1},
        "px_faktor": {"FX3": 1.0, "a7IV": 1.0}, "optisch_fuer": [], "optisch_breite": 480, "parallel": 2,
        "zoom_min_proz": 3.0, "zoom_rausch_proz_s": 1.0, "zoom_schnell_proz_s": 20.0, "zoom_ruck_max": 0.6,
-       "zoom_stocken_anteil": 0.2, "zoom_verlauf_hz": 5}
+       "zoom_stocken_anteil": 0.2, "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20, "digitalzoom_faktor": 1.25,
+       "digitalzoom_max": 1.5}
 
 
 def _sinus(hz: float, amp: float, n: int = 100, fps: float = 25.0) -> np.ndarray:
@@ -890,3 +891,105 @@ def test_zoom_hinweise():
         "S08: schneller Zoom 2,4–3,1 s (24 → 70 mm, 7 %/s sichtbar bei 50 %, ruckartig)"]
     # ohne cfg bleibt der Hinweis (Schwelle unbekannt → lieber melden)
     assert len(T.zoom_hinweise("S09", maessig, 2.0, 4.0, tempo_faktor=0.5)) == 1
+
+
+# --- Brennweitenfolge: gleiche Brennweite, digitaler Zoom (Spec 2026-09-21, Abschnitt 2) -----------
+
+def test_defaults_haben_brennweitenregel():
+    cfg = load_config(Path("/nirgendwo"))["telemetrie"]
+    assert cfg["brennweite_gleich_max"] == 0.20 and cfg["digitalzoom_faktor"] == 1.25 and cfg["digitalzoom_max"] == 1.5
+
+
+@pytest.mark.parametrize("a,b,abstand,gleich", [
+    (50, 55, 0.1, True), (24, 28, 0.1667, True), (35, 50, 0.4286, False), (70, 85, 0.2143, False),
+    (50, 60, 0.2, False),                   # genau 20 %: nicht „unter 20 %"
+    (50, 59.9, 0.198, True), (55, 50, 0.1, True),
+])
+def test_brennweite_abstand_und_gleich(a, b, abstand, gleich):
+    assert T.brennweite_abstand(a, b) == abstand and T.gleiche_brennweite(a, b, 0.20) is gleich
+
+
+@pytest.mark.parametrize("args,kw,erwartet", [
+    ((50, 52, 1.0, 1.0), {}, ("b", 1.25)),                         # B länger: 1,25 reicht
+    ((52, 50, 1.0, 1.0), {}, ("a", 1.25)),                         # A länger
+    ((52, 50, 1.0, 1.0), {"a_erlaubt": False}, ("b", 1.3)),        # kürzerer mit Aufschlag: 1,25 × 52 / 50
+    ((50, 52, 1.0, 1.0), {"b_erlaubt": False}, ("a", 1.3)),
+    ((50, 50, 1.0, 1.0), {}, ("b", 1.25)),                         # Gleichstand → B
+    ((50, 52, 1.0, 1.1), {}, ("b", 1.375)),                        # vorhandener Zoom: 1,1 × 1,25 (A bräuchte 1,43)
+    ((50, 52, 1.0, 1.0), {"a_erlaubt": False, "b_erlaubt": False}, None),
+])
+def test_digitalzoom(args, kw, erwartet):
+    assert T.digitalzoom(*args, CFG, **kw) == erwartet
+
+
+def test_digitalzoom_grenze():
+    assert T.digitalzoom(50, 52, 1.0, 1.1, {**CFG, "digitalzoom_max": 1.3}) is None     # 1,375 und 1,43 > 1,3
+    assert T.digitalzoom(50, 52, 1.0, 1.0, {**CFG, "digitalzoom_max": 1.25}) == ("b", 1.25)   # Grenze zählt mit
+
+
+def _shot(sid: str, rec_in: int, rec_out: int, kb_anfang: float | None, kb_ende: float | None,
+          zoom: float | None = None) -> dict:
+    return {"id": sid, "rec_in": rec_in, "rec_out": rec_out, "kb_anfang": kb_anfang, "kb_ende": kb_ende,
+            "zoom_erzwungen": zoom}
+
+
+def _zooms(folge: list[dict]) -> list[float]:
+    return [e["zoom"] for e in folge]
+
+
+def test_brennweitenfolge_automatik_verschieden_luecke_unbekannt():
+    f = T.brennweitenfolge([_shot("S01", 0, 50, 50.0, 50.0), _shot("S02", 50, 100, 52.0, 52.0)], CFG)
+    assert _zooms(f) == [1.0, 1.25] and f[0]["hinweis"] is None and f[1]["fehler"] is None
+    assert f[1]["hinweis"] == "S02: 50 → 52 mm am Schnitt, Zoom 1,25× auf S02"
+    verschieden = T.brennweitenfolge([_shot("S01", 0, 50, 24.0, 24.0), _shot("S02", 50, 100, 50.0, 50.0)], CFG)
+    assert _zooms(verschieden) == [1.0, 1.0] and verschieden[1]["hinweis"] is None
+    luecke = T.brennweitenfolge([_shot("S01", 0, 50, 50.0, 50.0), _shot("S02", 60, 110, 50.0, 50.0)], CFG)
+    assert _zooms(luecke) == [1.0, 1.0] and luecke[1]["hinweis"] is None
+    unbekannt = T.brennweitenfolge([_shot("S01", 0, 50, 50.0, 50.0), _shot("S02", 50, 100, None, None),
+                                    _shot("S03", 100, 150, 50.0, 50.0)], CFG)
+    assert _zooms(unbekannt) == [1.0, 1.0, 1.0] and all(e["hinweis"] is None for e in unbekannt)
+    # Eingabe nicht in Record-Reihenfolge: geprüft wird nach rec_in, Ausgabe bleibt in Eingabe-Reihenfolge
+    umgekehrt = T.brennweitenfolge([_shot("S02", 50, 100, 52.0, 52.0), _shot("S01", 0, 50, 50.0, 50.0)], CFG)
+    assert [e["id"] for e in umgekehrt] == ["S02", "S01"] and _zooms(umgekehrt) == [1.25, 1.0]
+    assert T.brennweitenfolge([], CFG) == []
+
+
+def test_brennweitenfolge_spalte_zoom_erzwingt_und_verbietet():
+    verbietet_b = T.brennweitenfolge([_shot("S01", 0, 50, 50.0, 50.0), _shot("S02", 50, 100, 52.0, 52.0, 1.0)], CFG)
+    assert _zooms(verbietet_b) == [1.3, 1.0]                              # nur A: 1,25 × 52 / 50
+    assert verbietet_b[1]["hinweis"] == "S02: 50 → 52 mm am Schnitt, Zoom 1,3× auf S01"
+    beide = T.brennweitenfolge([_shot("S01", 0, 50, 50.0, 50.0, 1.0), _shot("S02", 50, 100, 52.0, 52.0, 1.0)], CFG)
+    assert _zooms(beide) == [1.0, 1.0]
+    assert beide[1]["hinweis"] == "S02: gleiche Brennweite wie S01 (50/52 mm), Zoom nicht möglich (Spalte zoom)"
+    erzwingt = T.brennweitenfolge([_shot("S01", 0, 50, 50.0, 50.0), _shot("S02", 50, 100, 52.0, 52.0, 1.4)], CFG)
+    assert _zooms(erzwingt) == [1.0, 1.4] and erzwingt[1]["hinweis"] is None      # 50 / 72,8 mm: verschieden
+    zu_gross = T.brennweitenfolge([_shot("S01", 0, 50, 24.0, 24.0, 1.6), _shot("S02", 60, 90, 50.0, 50.0, 0.9)], CFG)
+    assert zu_gross[0]["fehler"] == "S01: Spalte zoom 1,6× außerhalb 1,0–1,5× (telemetrie.digitalzoom_max)"
+    assert zu_gross[1]["fehler"] == "S02: Spalte zoom 0,9× außerhalb 1,0–1,5× (telemetrie.digitalzoom_max)"
+
+
+def test_brennweitenfolge_kette_a_schon_gezoomt_nur_b():
+    # Faktor 1,1: S02 bekommt 1,1 (Gleichstand → B); S02 → S03: 52,3 × 1,1 = 57,53 mm gegen 50 mm = gleich (15 %).
+    # A (S02) hat schon einen Zoom → nur B: 1,1 × 57,53 / 50 = 1,266 (A allein bräuchte nur 1,1 × 1,1 = 1,21)
+    cfg = {**CFG, "digitalzoom_faktor": 1.1}
+    f = T.brennweitenfolge([_shot("S01", 0, 50, 50.0, 50.0), _shot("S02", 50, 100, 50.0, 52.3),
+                            _shot("S03", 100, 150, 50.0, 50.0)], cfg)
+    assert _zooms(f) == [1.0, 1.1, 1.266]
+    assert f[2]["hinweis"] == "S03: 57,5 → 50 mm am Schnitt, Zoom 1,266× auf S03"
+
+
+def test_brennweitenfolge_kein_rueckfall_zum_vorgaenger():
+    # S01 → S02: 62,5 / 50 mm = 25 %, verschieden. S02 → S03: 52 / 50 = gleich; A (S02) wäre billiger (1,25 < 1,3),
+    # 50 × 1,25 = 62,5 mm machte aber den Schnitt S01 → S02 wieder gleich → nur B: 1,25 × 52 / 50 = 1,3
+    f = T.brennweitenfolge([_shot("S01", 0, 50, 62.5, 62.5), _shot("S02", 50, 100, 50.0, 52.0),
+                            _shot("S03", 100, 150, 50.0, 50.0)], CFG)
+    assert _zooms(f) == [1.0, 1.0, 1.3] and f[2]["hinweis"] == "S03: 52 → 50 mm am Schnitt, Zoom 1,3× auf S03"
+    ohne_vorgaenger = T.brennweitenfolge([_shot("S02", 50, 100, 50.0, 52.0), _shot("S03", 100, 150, 50.0, 50.0)], CFG)
+    assert _zooms(ohne_vorgaenger) == [1.25, 1.0]                          # ohne S01 darf A den Zoom tragen
+
+
+def test_brennweitenfolge_zoom_nicht_moeglich():
+    f = T.brennweitenfolge([_shot("S11", 0, 50, 50.0, 50.0), _shot("S12", 50, 100, 52.0, 52.0)],
+                           {**CFG, "digitalzoom_max": 1.2})
+    assert _zooms(f) == [1.0, 1.0]
+    assert f[1]["hinweis"] == "S12: gleiche Brennweite wie S11 (50/52 mm), Zoom nicht möglich (1,2×-Grenze)"
