@@ -1,6 +1,7 @@
 # AutoCut — Kamera-Telemetrie je Clip (Spec)
 
-Datum: 2026-09-19 · Status: Abschnitte 1–3 im Chat vom User freigegeben (19.09.), Nachtrag mit Messwerten vom 21.09.
+Datum: 2026-09-19 · Status: umgesetzt 21.09.2026 (Plan docs/superpowers/plans/2026-09-21-autocut-telemetrie.md); Bericht liegt unter
+Ergebnisse/Rohschnitt/telemetrie.md (Schreibbereich von Charge.open_basis), nicht unter Ergebnisse/Sortierung/.
 Erster Baustein aus der GitHub-Recherche (`tools/autocut/docs/referenz/2026-09-19-github-recherche.md`, Punkt 1).
 
 ## Anlass

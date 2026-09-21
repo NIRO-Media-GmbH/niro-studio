@@ -49,6 +49,8 @@ Details, Fehlerbilder und Eiserne Regeln: `WORKFLOW-AutoCut.md`.
   Finalisieren löscht die eigene roh-Timeline desselben Laufs, Probe-Skripte löschen ihre eigenen Probe-Objekte.
 - Prüfen vor Bauen: `autocut_build.py` läuft nur mit passender `verify.json` (Hash der Cutlist).
 - Format und Bildrate kommen aus dem Material (`media.json`), nie aus dem Plan.
+- Keine neue Abhängigkeit für die Telemetrie: `rtmd.py`, `telemetrie*.py` kommen mit numpy, scipy und ffmpeg der
+  AutoCut-venv aus (kein OpenCV); die cv2-Gegenprobe der Kalibrierung liest nur vorhandene `ruhe.json`-Werte.
 
 ## Schnellstart
 

@@ -38,6 +38,7 @@ Original-Skripte in `_intern/`, Ablauf und Zahlen in `Protokoll.md`).
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe |
 | „Feinschnitt" | 6 | neue Timeline „AutoCut <Video> <Datum> Feinschnitt": A/B-Wechsel, B-Roll-Tempo und Stabilisierung, Grafik V4, Ton, Musik, SFX; danach Grading, Begradigen, Kopfposition. Die Bausteine 6a–6i sind einzeln aufrufbar, z. B. „AutoCut: … Grading" (Vorlagen) |
 | „Kanten" | – | Kantenprüfung am Export einer AutoCut-Timeline (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) mit Schnittbildern; Resolve nur lesend |
+| „Telemetrie" | – | Gyro/Beschleunigung/Brennweite je Clip aus der Sony-rtmd-Spur (optischer Rückfall) → `telemetrie.json` + Bericht: wackeln, ruhige Fenster, Haltung, Bewegungsart, Brennweiten-/Perspektivklasse; Grundlage für Sichtung, 2b, 6d |
 | „Replay" | – | Timeline nach Dropbox Replay hochladen: Vorschau, Upload nur nach OK im Chat, danach im Chrome in `Autocut/<Kunde>/<Projekt>` einsortieren |
 | „Kommentare" | – | Replay-Kommentare selbstständig aus dem Replay-Ordner des Projekts holen, Eindeutiges in einer neuen Timeline-Version umsetzen, Handarbeit und Rückfragen melden |
 
@@ -1019,6 +1020,9 @@ Meldung an den User immer mit: Timeline-Name, Berichtspfad, Zahlen, Warnungen, o
 - **Vision-Messungen** (Gesichter, Köpfe) laufen auf den Proxys (1920×1080). Pan/Tilt zählen in Resolve
   dagegen in Timeline-Pixeln: Bei einer 4K-Timeline sind Proxy-Pixel × 2 umzurechnen. Abstände in Berichten
   deshalb immer mit Bezug angeben („60 px @1080p").
+- **Telemetrie:** Lesen der Datenspur kostet die ganze Datei (≈ 300 MB/s übers NAS) — Läufe über ganze Drehs im Hintergrund starten;
+  Cache je Clip. Der Gyro sieht die Handbewegung, IBIS glättet das Bild — deshalb `px_faktor` je Kamera aus der Kalibrierung, nie 1,0
+  raten. FX3-Beschleunigung misst 1,15 g: Gates relativ zum Clip-Median.
 
 ## Sonderfall: Aftermovie ohne Sprache (seit 17.09.2026, MN Deko „Hochzeitszauber")
 
@@ -1035,8 +1039,9 @@ mit Freigabe; V1 Bild mit Tempo, V2 Text, A1 Musik, A2 VO, A3 Atmo, Marker). Ref
   Tabelle mit Belegen (`Ergebnisse/Schnittplan/aussteller.md`); Stände ohne lesbaren Namen kommen als „Rundgang" (je 1 Shot,
   Karte „… und viele mehr"), Namen holt der Kunde nach.
 - **Szene = Aussteller, ≥ 3 Shots** (Totale 4 Beats + zwei Details je 2), nur bei zwei brauchbaren Clips Ausnahme; **Ruhe-Regel:**
-  Quell-Ins nur in gemessenen ruhigen 2-s-Fenstern (`_intern/skripte/ruhe.py`, `ruhe_fenster.py`), Rest stabilisieren
-  (`stabil.py` im Entwurf, `Stabilize()` in Resolve). Nur Musik, keine Sprache; mehr Länge über eine Musikschleife von 8 Takten
-  (Sprung exakt auf dem Takt) statt über schnellere Schnitte.
+  Quell-Ins nur in gemessenen ruhigen 2-s-Fenstern (`autocut_telemetrie.py "<Charge>"` (Abschnitt „Telemetrie": `ruhige_fenster`,
+  `wackeln`, `haltung`, `bewegungsart` je Clip in `_intern/autocut/telemetrie.json`; Hochzeitszauber lief noch mit
+  `_intern/skripte/ruhe.py`/`ruhe_fenster.py`, optisch)), Rest stabilisieren (`stabil.py` im Entwurf, `Stabilize()` in Resolve). Nur
+  Musik, keine Sprache; mehr Länge über eine Musikschleife von 8 Takten (Sprung exakt auf dem Takt) statt über schnellere Schnitte.
 - **Resolve-Bau:** `AppendToTimeline.endFrame` exklusiv, ein Marker je Frame (zusammenführen), Aspekt-Zoom für Mavic/Avata,
   Readback muss 0 Lücken/Abweichungen zeigen; Stereo Fixer entfällt ohne Sprach-/SFX-Spur.
