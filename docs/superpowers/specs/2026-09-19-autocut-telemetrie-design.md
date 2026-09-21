@@ -26,10 +26,11 @@ Gyro-Wert taugt dort zur Rangfolge, die absolute Schwelle braucht einen Kamerafa
 | Frage | Entscheidung |
 |---|---|
 | Leser | Eigener rtmd-Parser (aus `lage_messen.py`) als Modul. `telemetry-parser` (PyPI 0.3.0 von 01/2024) brächte nur die Avata dazu (8 von 368 Clips bei Hochzeitszauber), keine Brennweite/Fokus — Folgeschritt, falls Drohnen-Gyro häufiger wird. Gyroflow bleibt Punkt 11 (Stabilisierung). |
-| Bewegungsrichtung | `bewegungsrichtung` in 2b bleibt Motivbewegung (Claude). Die Kamera bekommt ein **neues** Feld `kamerabewegung`. |
+| Bewegungsrichtung | `bewegungsrichtung` in 2b bleibt Motivbewegung (Claude). Die Kamera bekommt ein **neues** Feld `bewegungsart` — nicht `kamerabewegung`, denn so heißt schon das Claude-Feld des Erst-Index (statisch/Schwenk/Fahrt/Handkamera/Gimbal/Drohne/Zoom/gemischt), das unangetastet bleibt. |
 | Vergleichbarkeit | Gyro-Werte werden über die KB-Brennweite in Bildpixel @480 umgerechnet — dieselbe Größe wie `jitter`/`bewegung` in `ruhe.py`. |
 | Optischer Weg | Bleibt als zweiter Messweg im selben Modul (numpy statt cv2), für Clips ohne rtmd (Mavic) und als Referenz der Kalibrierung. |
 | Abnehmer | Sichtung/Aftermovie, Stufe 2b, 6d — jede Anschlussstelle für sich abschaltbar. Stufe 3 (Layout) bleibt ausgesetzt. |
+| Umsetzung | Plan `docs/superpowers/plans/2026-09-21-autocut-telemetrie.md` (10 Tasks, TDD, keine neue Abhängigkeit). |
 | Hochzeitszauber | Die Chargen-Skripte werden nicht umgebaut; das Material dient der Kalibrierung. Der nächste Aftermovie nutzt die CLI. |
 | Umgebung | AutoCut-venv (numpy/scipy), ffmpeg; ohne Resolve; NAS nur lesend. |
 
@@ -42,7 +43,7 @@ Gyro-Wert taugt dort zur Rangfolge, die absolute Schwelle braucht einen Kamerafa
   `media.json` (Interview-Clips). Damit läuft es für AutoCut-Chargen und für den Aftermovie-Sonderfall ohne `Charge.open`.
 - Ergebnis `_intern/autocut/telemetrie.json` (Liste, ein Eintrag je Clip, `path` + `clip`-Stamm), Cache je Clip
   `_intern/autocut/telemetrie/<fingerprint>.json` (Fingerprint wie im B-Roll-Index: Name, Größe, mtime; `--force` misst neu),
-  Bericht `Ergebnisse/Sortierung/telemetrie.md`.
+  Bericht `Ergebnisse/Rohschnitt/telemetrie.md`.
 
 ### Messweg 1 — rtmd
 
@@ -81,9 +82,9 @@ brennweitenklasse         weit | normal | tele            kb_mm < 30 | 30–60 |
 pitch_grad, roll_grad     aus dem Schwerkraftvektor (Median), nur bei |a| ≈ 1 g, sonst null mit grund
 perspektive_hoehe         Vogelperspektive | Aufsicht | Untersicht | Augenhöhe   pitch ≤ −60 | ≤ −8 | ≥ +8 | sonst
 haltung                   stativ | gimbal | hand
-kamerabewegung            statisch | schwenk_links | schwenk_rechts | tilt_auf | tilt_ab | fahrt | gemischt
+bewegungsart              statisch | schwenk_links | schwenk_rechts | tilt_auf | tilt_ab | fahrt | gemischt
 wackeln, bewegung         px @480 je Frame (25 fps), wie jitter/bewegung in ruhe.py
-fenster                   [[t_s, wackeln, bewegung, kamerabewegung], …]   2-s-Fenster, Schritt 1 s
+fenster                   [[t_s, wackeln, bewegung, bewegungsart], …]   2-s-Fenster, Schritt 1 s
 ruhige_fenster            [t_s, …]   Fenster mit wackeln ≤ ruhig_max_px (nach Kamerafaktor)
 fehler                    nur wenn etwas nicht lesbar war
 ```
@@ -98,7 +99,7 @@ fehler                    nur wenn etwas nicht lesbar war
   hoch → `hand`; Bewegung vorhanden, fast nur unter der Grenze → `gimbal`. Schwellen aus drei Referenzmengen: FX3 bei
   Hochzeitszauber (Gimbal), a7 IV dort (Hand), Taxodia-Interviews (Stativ). Beim optischen Weg dieselbe Logik auf der
   Verschiebungsreihe in px (Stativ: `bewegung` und `wackeln` < 0,02 px).
-- **kamerabewegung** je 2-s-Fenster aus tiefpassgefiltertem ω (0,5 s): dominanter Schwenk ≥ `schwenk_min_grad_s` →
+- **bewegungsart** je 2-s-Fenster aus tiefpassgefiltertem ω (0,5 s): dominanter Schwenk ≥ `schwenk_min_grad_s` →
   `schwenk_links/rechts`, dominanter Tilt → `tilt_auf/ab`, RMS < `stativ_max_grad_s` → `statisch`, Bewegung ohne
   dominante Drehachse (Gimbal-Gang, Slider) → `fahrt`, Richtungswechsel im Fenster → `gemischt`. Clip-Wert = Mehrheit
   der Fenster (≥ 60 %), sonst `gemischt`. Konvention: `schwenk_links` = die Kamera dreht nach links, der Bildinhalt
@@ -142,12 +143,13 @@ Beide Messwege auf demselben Material und demselben Zeitbereich je Clip (Hochzei
 
 1. **Sichtung/Aftermovie.** Im WORKFLOW-Sonderfall ersetzt `autocut_telemetrie.py "<Charge>"` den Schritt „Ruhe"
    (`ruhe.py` + `ruhe_fenster.py`). Die Schnittskripte der nächsten Aftermovie-Charge lesen `ruhige_fenster`, `wackeln`,
-   `haltung`, `kamerabewegung` aus `telemetrie.json`. Bericht `Ergebnisse/Sortierung/telemetrie.md`: unruhigste Clips,
+   `haltung`, `bewegungsart` aus `telemetrie.json`. Bericht `Ergebnisse/Rohschnitt/telemetrie.md` (Schreibbereich von
+   `Charge.open_basis`, wie `broll-index.md`; Planänderung 21.09.): unruhigste Clips,
    Verteilung Haltung/Kamerabewegung/Brennweitenklasse, Clips ohne Daten.
 2. **Stufe 2b** (`index_sections.py`). Liegt Telemetrie für den Clip vor: (a) der Abschnittsbogen bekommt eine
    Kontextzeile („Metadaten: KB 35 mm = normal, Pitch −12° = Aufsicht, Kamerabewegung Schwenk links, Haltung Gimbal");
    (b) nach der Antwort überschreibt der Code `brennweite` und `perspektive_hoehe` mit den Metadatenklassen und vermerkt
-   `felder_quelle: {brennweite: rtmd, perspektive_hoehe: rtmd}`; (c) je Abschnitt kommen `kamerabewegung` und `haltung`
+   `felder_quelle: {brennweite: rtmd, perspektive_hoehe: rtmd}`; (c) je Abschnitt kommen `bewegungsart` und `haltung`
    dazu (Mehrheit der Fenster im Abschnittsbereich). Ohne Telemetrie bleibt alles wie heute; das Antwortschema bleibt
    unverändert. `--dry-run` zeigt, wie viele Clips Telemetrie haben.
 3. **6d** (`vorlagen/feinschnitt/feinschnitt_bauen.py`). Der Probelauf liest `telemetrie.json` und schlägt je B-Roll-Shot
@@ -191,7 +193,7 @@ Stufe 2b, 6d und dem Aftermovie-Sonderfall; README (Stufen-Tabelle, Aufbau, Schn
 
 ## Nicht enthalten (Folgeschritte)
 
-Stufe-3-Layout mit `kamerabewegung`/`haltung`; Gyroflow-Vorstabilisierung (Punkt 11); Umbau von `lage_messen.py` auf das
+Stufe-3-Layout mit `bewegungsart`/`haltung`; Gyroflow-Vorstabilisierung (Punkt 11); Umbau von `lage_messen.py` auf das
 Modul; Avata-Gyro über `telemetry-parser`; Stufe 2 (Erst-Index) mit Telemetrie-Kontext.
 
 ## Nachtrag 21.09.2026 — Messwerte an Hochzeitszauber-Clips (FX3_0330 25p, a7MK4_20260913_2128 50p)
