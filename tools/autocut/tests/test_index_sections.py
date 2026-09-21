@@ -369,6 +369,7 @@ def test_index_sections_clip_wendet_telemetrie_bei_cache_treffer_an(tmp_path):
     assert out["felder_quelle"]["brennweite"] == "rtmd"
     cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
     assert cached["abschnitte"][0]["perspektive_hoehe"] == "Aufsicht"
+    assert cached["abschnitte"][0]["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}   # I2
     assert cached["abschnitte"][0]["bewegungsart"] == "schwenk_links"
     ohne = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=kein_api)
     assert ohne["_cache"] is True and ohne["abschnitte"][0]["brennweite"] == "normal"
@@ -393,6 +394,7 @@ def test_index_sections_clip_api_mit_telemetrie(tmp_path):
     a = out["abschnitte"][0]
     assert a["brennweite"] == "tele" and a["perspektive_hoehe"] == "Aufsicht"
     assert a["bewegungsart"] == "schwenk_links" and a["haltung"] == "gimbal"
+    assert a["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}          # I2: Claudes Antwort
     assert out["felder_quelle"] == {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"}
     cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
     assert cached["felder_quelle"]["brennweite"] == "rtmd" and "_cache" not in cached
@@ -468,3 +470,118 @@ def test_index_sections_clip_meta_text_stimmt_mit_geschriebenem_bewegungsart_ueb
     art = out["abschnitte"][0]["bewegungsart"]
     assert art == "statisch"
     assert f"A1 {art}" in gesehen["meta_text"]
+
+
+# --- Final Review (21.09.2026): Claudes Originalwerte (I2), felder_quelle (M3), .part je Schreiber (M5), Zählung (M12) ---
+
+def test_telemetrie_anwenden_sichert_claudes_originalwerte():
+    """I2: Claudes Werte der überschriebenen Felder bleiben je Abschnitt in ``claude`` — der Bericht vergleicht dagegen
+    statt Telemetrie mit sich selbst. Zweimal anwenden ändert nichts (claude nie mit dem Telemetrie-Wert überschrieben)."""
+    rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "brennweite": "normal", "perspektive_hoehe": "Augenhöhe"},
+                          {"von_s": 4, "bis_s": 8, "brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]}
+    neu, geaendert = S.telemetrie_anwenden(rec, TELE)
+    assert geaendert and [a["claude"] for a in neu["abschnitte"]] == [
+        {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}, {"brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]
+    wieder, geaendert2 = S.telemetrie_anwenden(neu, TELE)
+    assert not geaendert2 and wieder == neu
+    ohne_pitch, _ = S.telemetrie_anwenden(rec, {**TELE, "pitch_grad": None, "perspektive_hoehe": None})
+    assert ohne_pitch["abschnitte"][0]["claude"] == {"brennweite": "normal"}         # nur überschriebene Felder
+    assert ohne_pitch["abschnitte"][0]["perspektive_hoehe"] == "Augenhöhe"
+    # Altbestand (vor dem Fix angewendet): felder_quelle gesetzt, kein claude → der Telemetrie-Wert ist nicht Claudes
+    alt = {"felder_quelle": {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"},
+           "abschnitte": [{"von_s": 0, "bis_s": 4, "brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]}
+    assert "claude" not in S.telemetrie_anwenden(alt, TELE)[0]["abschnitte"][0]
+    assert "claude" not in S.telemetrie_anwenden(rec, None)[0]["abschnitte"][0]
+
+
+def test_telemetrie_anwenden_felder_quelle_immer_metadaten():
+    """M3: Brennweite und Pitch kommen immer aus den Metadaten, auch wenn die Bewegung optisch gemessen wurde."""
+    rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}]}
+    neu, _ = S.telemetrie_anwenden(rec, {**TELE, "quelle": "optisch"})
+    assert neu["felder_quelle"] == {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"}
+
+
+def test_index_sections_clip_api_setzt_claude_aus_der_antwort(tmp_path):
+    """I2: im API-Pfad kommen brennweite/perspektive_hoehe frisch aus der Modellantwort — claude wird daraus neu gesetzt,
+    auch wenn der Datensatz schon felder_quelle und ein altes claude trägt (Neulauf mit --force)."""
+    _frames(tmp_path)
+    ch = _Ch(tmp_path)
+    (ch.autocut / "broll_index").mkdir()
+    rec = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "datei": "FX3_1.MP4", "fingerprint": "abcdefabcdef0000",
+           "orientierung": "16:9", "felder_quelle": {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"},
+           "abschnitte": [{"von_s": 0, "bis_s": 4, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": True, **_GOOD_ITEM,
+                           "brennweite": "tele", "perspektive_hoehe": "Aufsicht", "setup_hash": "0123456789abcdef",
+                           "claude": {"brennweite": "weit", "perspektive_hoehe": "Untersicht"}}]}
+
+    def fake_describe(client, sheet, meta_text, cfg, prompt):
+        return {"abschnitte": [{"nr": 1, **_GOOD_ITEM}], "_usage": dict(_USAGE)}   # normal / Augenhöhe
+
+    out = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", force=True, describe=fake_describe, telemetrie=TELE)
+    a = out["abschnitte"][0]
+    assert a["brennweite"] == "tele" and a["perspektive_hoehe"] == "Aufsicht"
+    assert a["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}
+    cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
+    assert cached["abschnitte"][0]["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}
+    # Neulauf ohne Telemetrie, felder_quelle noch vom früheren Lauf: Claudes frische Werte bleiben in claude stehen
+    ohne = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", force=True, describe=fake_describe)
+    b = ohne["abschnitte"][0]
+    assert b["brennweite"] == "normal" and b["claude"] == {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}
+
+
+def test_cache_schreiben_eindeutiger_part_name_je_schreiber(tmp_path, monkeypatch):
+    """M5: _cache_schreiben läuft jetzt auch bei Cache-Treffern — zwei Schreiber desselben Clips dürfen nicht im selben
+    .part kollidieren (pid + Thread-Id wie clip_mit_cache)."""
+    import os
+    import threading
+    ch = _Ch(tmp_path)
+    teile: list[str] = []
+    echt = os.replace
+
+    def spion(src, dst):
+        teile.append(Path(src).name)
+        echt(src, dst)
+
+    monkeypatch.setattr(S.os, "replace", spion)
+    rec = {"fingerprint": "abcdefabcdef0000", "abschnitte": [], "_cache": True}
+    t = threading.Thread(target=S._cache_schreiben, args=(ch, rec))
+    t.start()
+    t.join()
+    S._cache_schreiben(ch, rec)
+    assert len(teile) == 2 and teile[0] != teile[1]
+    assert all(n.startswith("abcdefabcdef0000.json.") and n.endswith(".part") and str(os.getpid()) in n for n in teile)
+    cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
+    assert "_cache" not in cached
+
+
+def test_index_sections_zaehlt_nur_telemetrie_mit_daten(tmp_path, monkeypatch):
+    """M12: ein Datensatz mit quelle „keine" (keine Datenspur, --ohne-optisch) zählt nicht als Telemetrie."""
+    ch, rec = _rec2(tmp_path)
+    (ch.autocut / "telemetrie.json").write_text(json.dumps([{"path": rec["path"], "clip": "FX3_1", "quelle": "keine",
+                                                             "fehler": None, "fenster": []}]), encoding="utf-8")
+    monkeypatch.setattr(S, "_make_client", lambda cfg: object())
+    monkeypatch.setattr(S, "load_system_prompt", lambda: "prompt")
+
+    def fake_clip(charge, c, client, cfg, prompt, force, telemetrie=None):
+        return {**c, "abschnitte": [{**a, **_GOOD_ITEM, "setup_hash": "0" * 16} for a in c["abschnitte"]],
+                "nachlauf": {"usage": dict(_USAGE), "reparaturen": 0}, "_cache": False}
+
+    monkeypatch.setattr(S, "index_sections_clip", fake_clip)
+    assert S.index_sections(ch, {"clips": [rec]}, _CFG2, parallel=1)["mit_telemetrie"] == 0
+
+
+def test_cli_dry_run_zaehlt_nur_telemetrie_mit_daten(charge_dir, capsys):
+    """M12: „Telemetrie: N von M" im Skript zählt nur Datensätze mit Daten (quelle nicht None/„keine")."""
+    import importlib.util
+    skript_pfad = Path(__file__).resolve().parents[1] / "scripts" / "autocut_index_sections.py"
+    spec = importlib.util.spec_from_file_location("autocut_index_sections", skript_pfad)
+    skript = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(skript)
+    ac = charge_dir / "_intern" / "autocut"
+    ac.mkdir(parents=True)
+    clips = [{"path": f"/nas/B-Roll/FX3_{i}.MP4", "abschnitte": [{"von_s": 0, "bis_s": 4}]} for i in (1, 2)]
+    (ac / "broll_index.json").write_text(json.dumps({"clips": clips}), encoding="utf-8")
+    (ac / "telemetrie.json").write_text(json.dumps([{**TELE, "path": clips[0]["path"]},
+                                                    {"path": clips[1]["path"], "quelle": "keine", "fenster": []}]),
+                                        encoding="utf-8")
+    assert skript.main([str(charge_dir), "--dry-run"]) == 0
+    assert "Telemetrie: 1 von 2 Clips" in capsys.readouterr().out

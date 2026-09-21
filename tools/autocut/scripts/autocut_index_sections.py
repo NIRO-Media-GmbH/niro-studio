@@ -41,7 +41,8 @@ def main(argv: list[str] | None = None) -> int:
               f"{scfg['per_section']} je Abschnitt\nGesamt {len(clips)} Clips, dieser Lauf {len(todo)}, per API {len(offen)}.\n"
               f"Kosten: {estimate_sections_cost(offen, int(scfg['tile_px']), int(scfg['per_section']), max_sections)}\n")
         tele = telemetrie_laden(ch.autocut)
-        mit_tele = sum(1 for c in todo if finden(tele, str(c["path"])))
+        # nur Datensätze mit Daten zählen (quelle „keine": keine Datenspur und nicht optisch gemessen)
+        mit_tele = sum(1 for c in todo if (finden(tele, str(c["path"])) or {}).get("quelle") not in (None, "keine"))
         hinweis = ("" if mit_tele else " — erst scripts/autocut_telemetrie.py ausführen, dann kommen Brennweite "
                    "und Perspektive Höhe aus den Metadaten.")
         print(f"Telemetrie: {mit_tele} von {len(todo)} Clips" + hinweis + "\n")

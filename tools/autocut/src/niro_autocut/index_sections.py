@@ -10,6 +10,7 @@ import datetime as _dt
 import json
 import os
 import random
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -173,24 +174,44 @@ def section_meta_text(rec: dict, tele: dict | None = None, fenster_s: float = 2.
     return "\n".join(lines)
 
 
+_TELE_FELDER = (("brennweite", "brennweitenklasse"), ("perspektive_hoehe", "perspektive_hoehe"))
+
+
+def _tele_felder(tele: dict | None) -> dict[str, str]:
+    """Abschnittsfeld → Metadatenklasse, die ``telemetrie_anwenden`` setzt (Brennweite, Pitch); leer ohne Telemetrie."""
+    if not tele or tele.get("quelle") in (None, "keine"):
+        return {}
+    return {feld: tele[k] for feld, k in _TELE_FELDER if tele.get(k)}
+
+
 def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) -> tuple[dict, bool]:
-    """Metadatenklassen in die Abschnitte: brennweite/perspektive_hoehe überschreiben (Quelle in felder_quelle),
-    bewegungsart/haltung ergänzen. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert."""
+    """Metadatenklassen in die Abschnitte: brennweite/perspektive_hoehe überschreiben (``felder_quelle`` je Feld „rtmd":
+    Brennweite und Pitch stammen immer aus den Metadaten, auch wenn die Bewegung optisch gemessen wurde),
+    bewegungsart/haltung ergänzen. Claudes Originalwert je überschriebenem Feld bleibt im Abschnitt unter ``claude``:
+    stammt das Feld laut ``felder_quelle`` schon aus der Telemetrie, bleibt ein vorhandenes ``claude[feld]`` stehen
+    (der aktuelle Wert ist dann der Telemetrie-Wert), sonst ist der aktuelle Wert Claudes und wird gesichert.
+    Idempotent. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert."""
     if not tele or tele.get("quelle") in (None, "keine"):
         return rec, False
+    felder = _tele_felder(tele)
+    schon = rec.get("felder_quelle") or {}
     quelle: dict[str, str] = {}
     neu = []
     geaendert = False
     for a in rec.get("abschnitte") or []:
         b = dict(a)
-        if tele.get("brennweitenklasse") and "brennweite" in b:
-            quelle["brennweite"] = str(tele["quelle"])
-            geaendert |= b.get("brennweite") != tele["brennweitenklasse"]
-            b["brennweite"] = tele["brennweitenklasse"]
-        if tele.get("perspektive_hoehe") and "perspektive_hoehe" in b:
-            quelle["perspektive_hoehe"] = str(tele["quelle"])
-            geaendert |= b.get("perspektive_hoehe") != tele["perspektive_hoehe"]
-            b["perspektive_hoehe"] = tele["perspektive_hoehe"]
+        claude = dict(b.get("claude") or {})
+        for feld, wert in felder.items():
+            if feld not in b:
+                continue
+            quelle[feld] = "rtmd"
+            if feld not in schon:
+                claude[feld] = b[feld]
+            geaendert |= b.get(feld) != wert
+            b[feld] = wert
+        if claude:
+            geaendert |= b.get("claude") != claude
+            b["claude"] = claude
         w = abschnitt_werte(tele, float(b.get("von_s", 0)), float(b.get("bis_s", 0)), fenster_s)
         for k in ("bewegungsart", "haltung"):
             if w.get(k) is not None:
@@ -205,13 +226,14 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) ->
 
 
 def _cache_schreiben(charge, rec: dict) -> None:
-    """Clip-Datensatz atomar in den Cache (ohne ``_``-Schlüssel)."""
+    """Clip-Datensatz atomar in den Cache (ohne ``_``-Schlüssel). Je Schreiber ein eindeutiger ``.part``-Name
+    (pid + Thread-Id): läuft auch bei Cache-Treffern, zwei Schreiber desselben Clips kollidieren sonst im selben .part."""
     cache_dir = Path(charge.autocut) / CACHE_DIR
     cache_dir.mkdir(parents=True, exist_ok=True)
     cache_file = cache_dir / f"{rec['fingerprint']}.json"
     charge.assert_writable(cache_file)
     persist = {k: v for k, v in rec.items() if not k.startswith("_")}
-    part = cache_file.with_name(cache_file.name + ".part")
+    part = cache_file.with_name(f"{cache_file.name}.{os.getpid()}-{threading.get_ident()}.part")
     part.write_text(json.dumps(persist, ensure_ascii=False, indent=1), encoding="utf-8")
     os.replace(part, cache_file)
 
@@ -323,6 +345,11 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
     Abschnitte ohne Frame im Fenster ``[von_s, bis_s]`` bekommen den nächstgelegenen Frame als Ersatz
     (``pick_section_frames`` fällt selbst darauf zurück); liegt dessen Zeit mehr als 1,0 s außerhalb des
     Fensters, landet eine Warnung in ``warnungen`` und die tatsächlich genutzten Frame-Zeiten in ``frame_s``.
+
+    ``telemetrie`` = Datensatz des Clips aus ``telemetrie.json`` (``finden``) oder None: gibt dem Abschnittsbogen eine
+    Kontextzeile und wird nach der Antwort per ``telemetrie_anwenden`` eingetragen (Fensterlänge aus
+    ``cfg["telemetrie"]["fenster_s"]``). Im API-Pfad hält ``claude`` je Abschnitt die frischen Modellwerte der
+    überschriebenen Felder. Auch ein Cache-Treffer wird neu in den Cache geschrieben, wenn die Telemetrie etwas ändert.
     """
     scfg = cfg["index_sections"]
     icfg = cfg["index"]
@@ -363,10 +390,16 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
     if probs:
         raise AutoCutError(f"Antwort verletzt das Schema (auch nach {reparaturen} Nachfrage): " + "; ".join(probs[:6]))
     warnungen = list(rec.get("warnungen") or [])
+    # brennweite/perspektive_hoehe kommen hier frisch aus der Modellantwort: ``claude`` daraus neu setzen (ein altes gilt
+    # nicht mehr) — für die Felder, die die Telemetrie jetzt überschreibt oder felder_quelle aus einem früheren Lauf führt
+    ueberschrieben = [f for f, _ in _TELE_FELDER if f in _tele_felder(telemetrie) or f in (rec.get("felder_quelle") or {})]
     merged = []
     for i, (a, s, g) in enumerate(zip(rec.get("abschnitte") or [], data["abschnitte"], groups), 1):
         mid = g[-1][0] if g else None
-        entry = {**a, **{k: s[k] for k in FIELDS}, "setup_hash": dhash(mid) if mid else ""}
+        entry = {**{k: v for k, v in a.items() if k != "claude"}, **{k: s[k] for k in FIELDS},
+                 "setup_hash": dhash(mid) if mid else ""}
+        if ueberschrieben:
+            entry["claude"] = {f: s[f] for f in ueberschrieben}
         if g:
             t = g[-1][1]
             von_s, bis_s = float(a["von_s"]), float(a["bis_s"])
@@ -415,7 +448,7 @@ def index_sections(charge, index: dict, cfg: dict, limit: int | None = None, par
         futs = {}
         for c in todo:
             t = finden(tele, str(c["path"]))
-            mit_tele += int(t is not None)
+            mit_tele += int(t is not None and t.get("quelle") not in (None, "keine"))     # nur Datensätze mit Daten
             futs[ex.submit(index_sections_clip, charge, c, client, cfg, prompt, force, telemetrie=t)] = c
         for i, fut in enumerate(as_completed(futs), 1):
             c = futs[fut]

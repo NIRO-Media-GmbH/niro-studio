@@ -63,7 +63,9 @@ def _unruhigste(tele: list[dict]) -> list[str]:
 
 def vergleich_index(tele: list[dict], index: dict) -> dict:
     """Übereinstimmung Telemetrie ↔ Claude: je Abschnitt Brennweite und Perspektive Höhe (Stufe 2b),
-    je Clip Haltung ↔ Kamerabewegung."""
+    je Clip Haltung ↔ Kamerabewegung. Verglichen wird gegen Claudes Originalwert (``claude`` im Abschnitt, Stufe 2b hat
+    das Feld mit der Telemetrie überschrieben), sonst gegen den Feldwert — aber nur, wenn das Feld laut ``felder_quelle``
+    des Clips nicht aus der Telemetrie stammt (sonst Abschnitt für dieses Feld übersprungen: kein Selbstvergleich)."""
     out = {k: {"n": 0, "gleich": 0, "kreuz": Counter()} for k in ("brennweite", "perspektive_hoehe", "haltung")}
     for c in index.get("clips") or []:
         r = finden(tele, str(c.get("path", "")))
@@ -76,17 +78,19 @@ def vergleich_index(tele: list[dict], index: dict) -> dict:
             v["gleich"] += int((r["haltung"], c["kamerabewegung"]) in {
                 ("hand", "Handkamera"), ("gimbal", "Gimbal"), ("stativ", "statisch"),
                 ("stativ", "Schwenk"), ("gimbal", "Fahrt"), ("gimbal", "Drohne")})
+        aus_telemetrie = c.get("felder_quelle") or {}
+        paare = (("brennweite", r.get("brennweitenklasse")), ("perspektive_hoehe", r.get("perspektive_hoehe")))
         for a in c.get("abschnitte") or []:
-            if r.get("brennweitenklasse") and a.get("brennweite"):
-                v = out["brennweite"]
+            for feld, t_wert in paare:
+                claude = (a.get("claude") or {}).get(feld)
+                if claude is None and feld not in aus_telemetrie:
+                    claude = a.get(feld)
+                if not t_wert or not claude:
+                    continue
+                v = out[feld]
                 v["n"] += 1
-                v["kreuz"][(r["brennweitenklasse"], a["brennweite"])] += 1
-                v["gleich"] += int(r["brennweitenklasse"] == a["brennweite"])
-            if r.get("perspektive_hoehe") and a.get("perspektive_hoehe"):
-                v = out["perspektive_hoehe"]
-                v["n"] += 1
-                v["kreuz"][(r["perspektive_hoehe"], a["perspektive_hoehe"])] += 1
-                v["gleich"] += int(r["perspektive_hoehe"] == a["perspektive_hoehe"])
+                v["kreuz"][(t_wert, claude)] += 1
+                v["gleich"] += int(t_wert == claude)
     return out
 
 

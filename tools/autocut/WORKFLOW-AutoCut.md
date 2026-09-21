@@ -278,7 +278,8 @@ Abweichend davon:
 Liegt `telemetrie.json` vor (`autocut_telemetrie.py`), bekommt der Abschnittsbogen eine Kontextzeile mit
 KB-Brennweite, Pitch, Haltung und Bewegungsart je Abschnitt; nach der Antwort setzt der Code `brennweite`
 und `perspektive_hoehe` aus den Metadaten fest (`felder_quelle` im Datensatz) und ergänzt je Abschnitt
-`bewegungsart` und `haltung`. Cache-Treffer bekommen die Felder ohne API-Aufruf. Ohne Telemetrie bleibt
+`bewegungsart` und `haltung`. `claude` je Abschnitt hält Claudes Originalwerte der überschriebenen Felder; der
+Bericht `telemetrie.md` vergleicht dagegen. Cache-Treffer bekommen die Felder ohne API-Aufruf. Ohne Telemetrie bleibt
 alles wie bisher; `--dry-run` zeigt die Zahl.
 
 ## Ablauf Stufe 3 — „B-Roll" (v2)

@@ -65,3 +65,19 @@ def test_bericht_unschaerfste_fenster_nur_mit_schaerfe():
     mit = [{**TELE[0], "schaerfe_p10": 0.4, "fenster": [[0.0, 0.04, 0.5, "fahrt", 0.35], [1.0, 0.04, 0.5, "fahrt", 0.9]]}]
     md = B.bericht_md(mit, "T")
     assert "## Unschärfste Fenster" in md and md.index("| FX3_1 | FX3 | 0 | 0,35 |") < md.index("| FX3_1 | FX3 | 1 | 0,90 |")
+
+
+def test_vergleich_index_nutzt_claudes_originalwerte():
+    """I2: nach Stufe 2b stehen in brennweite/perspektive_hoehe die Telemetrie-Werte — verglichen wird gegen Claudes
+    Originalwerte in ``claude``; fehlen sie (Altbestand) und stammt das Feld laut felder_quelle aus der Telemetrie,
+    wird der Abschnitt für dieses Feld übersprungen (kein Selbstvergleich)."""
+    index = {"clips": [
+        {"path": "/nas/A7/a7_1.MP4", "kamerabewegung": "Handkamera",
+         "felder_quelle": {"brennweite": "rtmd", "perspektive_hoehe": "rtmd"},
+         "abschnitte": [{"von_s": 0, "bis_s": 2, "brennweite": "tele", "perspektive_hoehe": "Aufsicht",
+                         "claude": {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}},
+                        {"von_s": 2, "bis_s": 4, "brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]}]}
+    v = B.vergleich_index(TELE, index)
+    assert v["brennweite"]["n"] == 1 and v["brennweite"]["gleich"] == 0
+    assert v["brennweite"]["kreuz"][("tele", "normal")] == 1
+    assert v["perspektive_hoehe"]["n"] == 1 and v["perspektive_hoehe"]["kreuz"][("Aufsicht", "Augenhöhe")] == 1
