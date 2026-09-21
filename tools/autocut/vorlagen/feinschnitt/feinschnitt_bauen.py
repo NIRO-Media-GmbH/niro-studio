@@ -103,7 +103,9 @@ A_ABSCHNITTE: list[tuple[int, int]] = [
 # 8. Spalte optional (Spec 2026-09-21): Zahl = digitaler Zoom des Shots fest (1.0 = keiner); weggelassen = Automatik der
 # Brennweitenregel aus telemetrie.json — nie zweimal dieselbe KB-Brennweite direkt hintereinander (Abstand unter
 # telemetrie.brennweite_gleich_max), sonst Zoom auf einen der beiden Shots (1,25×, Grenze telemetrie.digitalzoom_max).
-# Ein Wert über der Grenze ist ein Plan-Fehler. Schnelle Zooms im genutzten Quellbereich meldet der Probelauf als Hinweis.
+# Ein Wert unter 1.0 (Rand würde sichtbar) oder über der Grenze ist ein Plan-Fehler. Schnelle Zooms im genutzten
+# Quellbereich meldet der Probelauf als Hinweis. Ein in 3a erzwungener Zoom (PLAN-Spalte 7) muss hier als 8. Spalte
+# stehen; den automatischen rechnet 6d aus den eigenen Quellbereichen neu (bei 50 % andere) — er kann von 3a abweichen.
 BROLL: list[tuple] = [
     # (10, 27, 54, 345, "4", True),          # Shot 10 ab Frame 27 seiner Auswahl, 54 Frames lang, Record 345, Beat #4, 50 %
     # (11, 0, 40, 400, "5", False, False),   # … und ausdrücklich nicht stabilisieren

@@ -278,10 +278,12 @@ Abweichend davon:
 Liegt `telemetrie.json` vor (`autocut_telemetrie.py`), bekommt der Abschnittsbogen eine Kontextzeile mit der
 KB-Brennweite in mm („KB 71,6 mm", bei Zoomfahrten „KB 24–70 mm, langsamer Zoom"), Pitch, Haltung und Bewegungsart je
 Abschnitt; nach der Antwort setzt der Code `perspektive_hoehe` aus den Metadaten fest (`felder_quelle` im Datensatz)
-und ergänzt je Abschnitt `brennweite_mm` (Median im Abschnitt), `zoom` (keiner/langsam/schnell), `bewegungsart` und
-`haltung`. Claudes Klasse `brennweite` bleibt unangetastet (seit 21.09.2026, Spec Zoomfahrten). `claude` je Abschnitt
-hält Claudes Originalwert der überschriebenen Perspektive; der Bericht `telemetrie.md` vergleicht dagegen. Cache-Treffer
-bekommen die Felder ohne API-Aufruf. Ohne Telemetrie bleibt alles wie bisher; `--dry-run` zeigt die Zahl.
+und ergänzt je Abschnitt `brennweite_mm` (Median der **KB**-Brennweite im Abschnitt, mit Crop und Klarbild-Zoom — anders
+als `brennweite_mm` im Clip-Datensatz von `telemetrie.json`, dort die echte Objektivbrennweite; der Name bleibt wie im
+Spec), `zoom` (keiner/langsam/schnell), `bewegungsart` und `haltung`. Claudes Klasse `brennweite` bleibt unangetastet
+(seit 21.09.2026, Spec Zoomfahrten). `claude` je Abschnitt hält Claudes Originalwert der überschriebenen Perspektive;
+der Bericht `telemetrie.md` vergleicht dagegen. Cache-Treffer bekommen die Felder ohne API-Aufruf. Ohne Telemetrie
+bleibt alles wie bisher; `--dry-run` zeigt die Zahl.
 
 ## Ablauf Stufe 3 — „B-Roll" (v2)
 
@@ -332,7 +334,8 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    - Wer im B-Roll spricht, liegt nicht unter seinem eigenen O-Ton (Lippen).
    - Kein Einstellungs-Doppel in Folge und nie zweimal dieselbe KB-Brennweite direkt hintereinander (unter 20 %
      Abstand, `telemetrie.json`) — gibt das Material nichts anderes her, setzt der Bau einen digitalen Zoom (1,25×,
-     höchstens 1,5×; Spalte 7 `zoom` legt ihn fest, 1.0 = keiner).
+     höchstens 1,5×; Spalte 7 `zoom` legt ihn fest, 1.0 = keiner). Ein erzwungener Zoom unter 1,0 (Rand würde sichtbar)
+     ist wie einer über `digitalzoom_max` ein Plan-Fehler.
    - Schnelle Zoomfahrten meiden; langsame, gleichmäßige Zooms wie die Drehteller-Closeups (Wurst & Liebe) passen.
    - Jeder Shot höchstens einmal, nie über die Grenzen der Auswahl hinaus.
 5. **Probelauf** — `broll_einsetzen.py` ohne Flag. Er prüft Auswahl-Grenzen, Doppelnutzung und Überlappung und
@@ -464,7 +467,9 @@ oder einen Zwischenstand.
 - `PUNCH_IN` (Innenschnitte ohne Zweitkamera)
 - `A_ABSCHNITTE` (Perspektivwechsel)
 - `BROLL` (aus `broll_einsatz.json`; 50 % nur bei Händen, Details und Kamerafahrten, nie bei Sprechenden, nur aus
-  50p-Quellen; optional Spalte 7 `stabil` und Spalte 8 `zoom`)
+  50p-Quellen; optional Spalte 7 `stabil` und Spalte 8 `zoom`). Ein in 3a erzwungener `zoom` (Spalte 7 von `PLAN`)
+  muss als Spalte 8 übernommen werden (Spalte 7 dann `None` = Vorschlag). Den automatischen Zoom rechnet 6d aus den
+  eigenen Quellbereichen neu (bei 50 % andere als in 3a) — das Ergebnis kann vom Zoom in `broll_einsatz.json` abweichen.
 - `MUSIK_PLAN`, `MARKER`
 
 1. **Probelauf** (ohne Flag):
@@ -478,7 +483,8 @@ oder einen Zwischenstand.
      (bei 50 % halb so lang) und der digitale Zoom der Brennweitenregel; Hinweise für schnelle Zooms im genutzten Bereich,
      gesetzte Zooms („S12: 50 → 52 mm am Schnitt, Zoom 1,25× auf S12") und nicht mögliche; ohne Telemetrie „keine
      Telemetrie — Brennweitenregel nicht geprüft", bei alten oder mit anderen Schwellen gemessenen Datensätzen die
-     Hinweise wie in 3a (dann `autocut_telemetrie.py` neu laufen lassen). Spalte 8 über `digitalzoom_max` ist ein Fehler.
+     Hinweise wie in 3a (dann `autocut_telemetrie.py` neu laufen lassen). Spalte 8 unter 1,0 (Rand würde sichtbar) oder
+     über `digitalzoom_max` ist ein Plan-Fehler.
 2. **Bauen** (`--bauen`): neue Timeline im Bin `AutoCut/<Video>`, die roh-Timelines bleiben. Spuren:
    - **A1–A5** vor dem ersten Anhängen anlegen (nachträglich angelegte Tonspuren sind stumm).
    - **V1** FX3 mit Bildverlängerungen, J-Cuts und Punch-in.

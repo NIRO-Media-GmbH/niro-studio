@@ -55,7 +55,8 @@ FPS = 25  # Timeline-Bildrate [fps], ganzzahlig; Standard (15.09.)
 
 # (Shot-Nr aus der Auswahl, Versatz im Shot [Frames], Länge [Frames], Record-In [Frames], Beat, Inhalt[, zoom])
 # 7. Spalte optional: Zahl = digitaler Zoom des Shots fest (1.0 = keiner); weggelassen = Automatik der Brennweitenregel
-# (telemetrie.brennweite_gleich_max, digitalzoom_faktor, digitalzoom_max); über digitalzoom_max = Plan-Fehler.
+# (telemetrie.brennweite_gleich_max, digitalzoom_faktor, digitalzoom_max); unter 1.0 (Rand würde sichtbar) oder über
+# digitalzoom_max = Plan-Fehler. Ein hier erzwungener Zoom gehört in 6d als 8. Spalte in BROLL (6d rechnet sonst neu).
 PLAN = [  # Frames = Timeline-Frames; Versatz + Länge ≤ Dauer des Shots in der Auswahl; Beat = nr aus timeline.json
     # (10, 0, 54, 345, "4", "Person A geht zur Tür (Motiv laut Standbild)"),
     # (11, 0, 40, 399, "4", "Detail Hände", 1.0),   # … ohne digitalen Zoom, auch wenn die Brennweite gleich ist
