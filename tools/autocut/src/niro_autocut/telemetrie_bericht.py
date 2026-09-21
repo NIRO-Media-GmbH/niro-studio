@@ -1,9 +1,11 @@
-"""Bericht ``Ergebnisse/Rohschnitt/telemetrie.md``: Kopf, Verteilung je Kamera, unruhigste Clips, Clips ohne Daten,
-optional Vergleich mit dem B-Roll-Index (Stufe 2b: Brennweite, Perspektive Höhe; Erst-Index: Kamerabewegung ↔ Haltung)."""
+"""Bericht ``Ergebnisse/Rohschnitt/telemetrie.md``: Kopf, Verteilung je Kamera (Brennweite in mm), unruhigste Clips,
+schnelle Zoomfahrten, Clips ohne Daten, optional Vergleich mit dem B-Roll-Index (Stufe 2b: Perspektive Höhe; Erst-Index:
+Kamerabewegung ↔ Haltung). Die Brennweite wird seit 21.09.2026 nicht mehr verglichen (mm statt Klassen)."""
 from __future__ import annotations
 
 import datetime as _dt
 from collections import Counter
+from statistics import median
 
 from .telemetrie import BEWEGUNGSARTEN, HALTUNGEN, finden
 
@@ -21,22 +23,31 @@ def _md(s) -> str:
     return str(s if s is not None else "–").replace("|", "\\|")
 
 
+def _brennweite_mm(rs: list[dict]) -> str:
+    """Median der Clip-Brennweiten (KB, mm) und Spanne von der kleinsten bis zur größten gemessenen; – ohne Daten."""
+    mit = [r for r in rs if r.get("kb_mm")]
+    if not mit:
+        return "–"
+    lo = min(float(r.get("kb_min") or r["kb_mm"]) for r in mit)
+    hi = max(float(r.get("kb_max") or r["kb_mm"]) for r in mit)
+    return f"{_de(median(float(r['kb_mm']) for r in mit), 1)} ({_de(lo, 0)}–{_de(hi, 0)})"
+
+
 def _verteilung(tele: list[dict]) -> list[str]:
     zeilen = ["| Kamera | Clips | Quelle rtmd/optisch/keine | Haltung " + "/".join(HALTUNGEN)
               + " | Bewegungsart " + "/".join(BEWEGUNGSARTEN)
-              + " | Brennweite weit/normal/tele | Perspektive Augenhöhe/Aufsicht/Untersicht/Vogel |",
+              + " | Brennweite KB mm: Median (Spanne) | Perspektive Augenhöhe/Aufsicht/Untersicht/Vogel |",
               "|---|---|---|---|---|---|---|"]
     for kam in sorted({r.get("kamera") or "unbekannt" for r in tele}):
         rs = [r for r in tele if (r.get("kamera") or "unbekannt") == kam]
         q = Counter(r.get("quelle") for r in rs)
         h = Counter(r.get("haltung") for r in rs)
         b = Counter(r.get("bewegungsart") for r in rs)
-        f = Counter(r.get("brennweitenklasse") for r in rs)
         p = Counter(r.get("perspektive_hoehe") for r in rs)
         zeilen.append(f"| {kam} | {len(rs)} | {q['rtmd']}/{q['optisch']}/{q['keine']} | "
                       + "/".join(str(h[x]) for x in HALTUNGEN) + " | "
                       + "/".join(str(b[x]) for x in BEWEGUNGSARTEN)
-                      + f" | {f['weit']}/{f['normal']}/{f['tele']} | "
+                      + f" | {_brennweite_mm(rs)} | "
                       f"{p['Augenhöhe']}/{p['Aufsicht']}/{p['Untersicht']}/{p['Vogelperspektive']} |")
     return zeilen
 
@@ -60,12 +71,28 @@ def _unruhigste(tele: list[dict]) -> list[str]:
     return zeilen
 
 
+def _schnelle_zooms(tele: list[dict]) -> list[str]:
+    """Schnelle Zoomfahrten aller Clips, nach Spitzentempo absteigend (bis TOP); „ruckartig" = ruck oder Stocken."""
+    fahrten = [(z, r) for r in tele for z in (r.get("zooms") or []) if z.get("urteil") == "schnell"]
+    if not fahrten:
+        return ["- keine", ""]
+    zeilen = ["| Clip | Kamera | von–bis (s) | mm → mm | Tempo % pro s (Spitze/Mittel) | ruckartig |",
+              "|---|---|---|---|---|---|"]
+    for z, r in sorted(fahrten, key=lambda zr: -float(zr[0].get("tempo_max") or 0.0))[:TOP]:
+        zeilen.append(f"| {_md(r.get('clip'))} | {_md(r.get('kamera'))} | {_de(z['von_s'], 1)}–{_de(z['bis_s'], 1)} | "
+                      f"{_de(z['von_mm'], 1)} → {_de(z['bis_mm'], 1)} | "
+                      f"{_de(z['tempo_max'], 0)}/{_de(z.get('tempo_mittel'), 0)} | "
+                      f"{'ja' if z.get('ruckartig') else 'nein'} |")
+    return zeilen + [""]
+
+
 def vergleich_index(tele: list[dict], index: dict) -> dict:
-    """Übereinstimmung Telemetrie ↔ Claude: je Abschnitt Brennweite und Perspektive Höhe (Stufe 2b),
-    je Clip Haltung ↔ Kamerabewegung. Verglichen wird gegen Claudes Originalwert (``claude`` im Abschnitt, Stufe 2b hat
-    das Feld mit der Telemetrie überschrieben), sonst gegen den Feldwert — aber nur, wenn das Feld laut ``felder_quelle``
-    des Clips nicht aus der Telemetrie stammt (sonst Abschnitt für dieses Feld übersprungen: kein Selbstvergleich)."""
-    out = {k: {"n": 0, "gleich": 0, "kreuz": Counter()} for k in ("brennweite", "perspektive_hoehe", "haltung")}
+    """Übereinstimmung Telemetrie ↔ Claude: je Abschnitt Perspektive Höhe (Stufe 2b), je Clip Haltung ↔ Kamerabewegung;
+    keine Brennweite mehr (Spec 2026-09-21: mm statt Klassen, Claudes Klasse bleibt unangetastet). Verglichen wird gegen
+    Claudes Originalwert (``claude`` im Abschnitt, Stufe 2b hat das Feld mit der Telemetrie überschrieben), sonst gegen
+    den Feldwert — aber nur, wenn das Feld laut ``felder_quelle`` des Clips nicht aus der Telemetrie stammt (sonst
+    Abschnitt übersprungen: kein Selbstvergleich)."""
+    out = {k: {"n": 0, "gleich": 0, "kreuz": Counter()} for k in ("perspektive_hoehe", "haltung")}
     for c in index.get("clips") or []:
         r = finden(tele, str(c.get("path", "")))
         if not r or r.get("quelle") in (None, "keine"):
@@ -78,7 +105,7 @@ def vergleich_index(tele: list[dict], index: dict) -> dict:
                 ("hand", "Handkamera"), ("gimbal", "Gimbal"), ("stativ", "statisch"),
                 ("stativ", "Schwenk"), ("gimbal", "Fahrt"), ("gimbal", "Drohne")})
         aus_telemetrie = c.get("felder_quelle") or {}
-        paare = (("brennweite", r.get("brennweitenklasse")), ("perspektive_hoehe", r.get("perspektive_hoehe")))
+        paare = (("perspektive_hoehe", r.get("perspektive_hoehe")),)
         for a in c.get("abschnitte") or []:
             for feld, t_wert in paare:
                 claude = (a.get("claude") or {}).get(feld)
@@ -126,6 +153,7 @@ def bericht_md(tele: list[dict], titel: str, index: dict | None = None, px_fakto
               f"Quelle ``_intern/autocut/telemetrie.json``.", ""]
     zeilen += _ohne_kalibrierung(tele, px_faktor) + ["## Verteilung je Kamera", ""]
     zeilen += _verteilung(tele) + ["", f"## Unruhigste Clips (bis {TOP}, nach wackeln)", ""] + _unruhigste(tele) + [""]
+    zeilen += [f"## Schnelle Zoomfahrten (bis {TOP}, nach Spitzentempo)", ""] + _schnelle_zooms(tele)
     unscharf = [(f[4], r.get("clip"), r.get("kamera"), f[0]) for r in tele
                 for f in (r.get("fenster") or []) if len(f) > 4 and f[4] is not None]
     if unscharf:
@@ -140,7 +168,6 @@ def bericht_md(tele: list[dict], titel: str, index: dict | None = None, px_fakto
     if index:
         v = vergleich_index(tele, index)
         zeilen += ["", "## Vergleich mit dem B-Roll-Index", ""]
-        zeilen += _kreuz("Brennweite", v["brennweite"], "Telemetrie", "Claude (2b)")
         zeilen += _kreuz("Perspektive Höhe", v["perspektive_hoehe"], "Telemetrie", "Claude (2b)")
         zeilen += _kreuz("Haltung", v["haltung"], "Telemetrie", "Claude (Erst-Index kamerabewegung)")
     return "\n".join(zeilen).rstrip() + "\n"

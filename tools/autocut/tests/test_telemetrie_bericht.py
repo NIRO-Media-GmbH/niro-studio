@@ -4,21 +4,26 @@ from __future__ import annotations
 
 from niro_autocut import telemetrie_bericht as B
 
+ZOOM_SCHNELL = {"von_s": 2.4, "bis_s": 3.1, "von_mm": 24.0, "bis_mm": 70.0, "tempo_max": 85.2, "tempo_mittel": 60.3,
+                "ruck": 0.2, "ruckartig": False, "urteil": "schnell"}
+ZOOM_LANGSAM = {"von_s": 5.0, "bis_s": 9.0, "von_mm": 70.0, "bis_mm": 105.0, "tempo_max": 12.0, "tempo_mittel": 10.1,
+                "ruck": 0.1, "ruckartig": False, "urteil": "langsam"}
 TELE = [
     {"path": "/nas/FX3/FX3_1.MP4", "clip": "FX3_1", "kamera": "FX3", "ordner": "FX3", "quelle": "rtmd",
-     "haltung": "gimbal", "bewegungsart": "fahrt", "brennweitenklasse": "normal", "perspektive_hoehe": "Augenhöhe",
-     "wackeln": 0.04, "bewegung": 0.5, "ruhige_fenster": [0.0, 1.0],
+     "haltung": "gimbal", "bewegungsart": "fahrt", "kb_mm": 35.0, "kb_min": 35.0, "kb_max": 35.0, "zooms": [],
+     "perspektive_hoehe": "Augenhöhe", "wackeln": 0.04, "bewegung": 0.5, "ruhige_fenster": [0.0, 1.0],
      "fenster": [[0.0, 0.04, 0.5, "fahrt"], [1.0, 0.04, 0.5, "fahrt"]], "fehler": None, "roll_grad": 0.4},
     {"path": "/nas/A7/a7_1.MP4", "clip": "a7_1", "kamera": "a7IV", "ordner": "A7iv", "quelle": "rtmd",
-     "haltung": "hand", "bewegungsart": "schwenk_links", "brennweitenklasse": "tele", "perspektive_hoehe": "Aufsicht",
+     "haltung": "hand", "bewegungsart": "schwenk_links", "kb_mm": 71.6, "kb_min": 24.0, "kb_max": 105.0,
+     "zooms": [ZOOM_SCHNELL, ZOOM_LANGSAM], "zoomfahrt": True, "perspektive_hoehe": "Aufsicht",
      "wackeln": 0.41, "bewegung": 2.0, "ruhige_fenster": [], "fenster": [[0.0, 0.41, 2.0, "schwenk_links"]],
      "fehler": None, "roll_grad": 2.6},
     {"path": "/nas/Mavic/DJI_1.MOV", "clip": "DJI_1", "kamera": "DJI", "ordner": "Mavic", "quelle": "optisch",
-     "haltung": "gimbal", "bewegungsart": "fahrt", "brennweitenklasse": None, "perspektive_hoehe": None,
+     "haltung": "gimbal", "bewegungsart": "fahrt", "kb_mm": None, "zooms": [], "perspektive_hoehe": None,
      "wackeln": 0.02, "bewegung": 0.3, "ruhige_fenster": [0.0], "fenster": [[0.0, 0.02, 0.3, "fahrt"]],
      "fehler": None, "roll_grad": None},
     {"path": "/nas/FX3/FX3_2.MP4", "clip": "FX3_2", "kamera": "FX3", "ordner": "FX3", "quelle": "keine",
-     "haltung": None, "bewegungsart": None, "brennweitenklasse": None, "perspektive_hoehe": None, "wackeln": None,
+     "haltung": None, "bewegungsart": None, "kb_mm": None, "perspektive_hoehe": None, "wackeln": None,
      "bewegung": None, "ruhige_fenster": [], "fenster": [], "fehler": "Datei nicht gefunden: /nas/FX3/FX3_2.MP4",
      "roll_grad": None},
 ]
@@ -46,13 +51,14 @@ def test_bericht_kopf_verteilung_und_unruhigste():
 
 def test_vergleich_index_zaehlt_uebereinstimmung():
     v = B.vergleich_index(TELE, INDEX)
-    # FX3 normal=normal, a7 A1 tele≠normal, A2 tele=tele
-    assert v["brennweite"]["n"] == 3 and v["brennweite"]["gleich"] == 2
+    assert set(v) == {"perspektive_hoehe", "haltung"}                      # keine Brennweite mehr (Spec 2026-09-21)
+    # FX3 Augenhöhe = Augenhöhe, a7 A1 Aufsicht = Aufsicht, A2 Aufsicht ≠ Augenhöhe
     assert v["perspektive_hoehe"]["n"] == 3 and v["perspektive_hoehe"]["gleich"] == 2
     assert (v["haltung"]["n"] == 3 and v["haltung"]["kreuz"][("gimbal", "Gimbal")] == 1
             and v["haltung"]["kreuz"][("hand", "Handkamera")] == 1)
     md = B.bericht_md(TELE, "T", INDEX)
-    assert "## Vergleich mit dem B-Roll-Index" in md and "Brennweite: 2 von 3" in md and "| gimbal | Gimbal | 1 |" in md
+    assert "## Vergleich mit dem B-Roll-Index" in md and "Perspektive Höhe: 2 von 3" in md
+    assert "Brennweite: " not in md and "| gimbal | Gimbal | 1 |" in md
 
 
 def test_bericht_ohne_clips():
@@ -78,8 +84,7 @@ def test_vergleich_index_nutzt_claudes_originalwerte():
                          "claude": {"brennweite": "normal", "perspektive_hoehe": "Augenhöhe"}},
                         {"von_s": 2, "bis_s": 4, "brennweite": "tele", "perspektive_hoehe": "Aufsicht"}]}]}
     v = B.vergleich_index(TELE, index)
-    assert v["brennweite"]["n"] == 1 and v["brennweite"]["gleich"] == 0
-    assert v["brennweite"]["kreuz"][("tele", "normal")] == 1
+    assert "brennweite" not in v
     assert v["perspektive_hoehe"]["n"] == 1 and v["perspektive_hoehe"]["kreuz"][("Aufsicht", "Augenhöhe")] == 1
 
 
@@ -93,3 +98,21 @@ def test_bericht_nennt_kameras_ohne_kalibrierung():
     assert md.index(zeile) < md.index("## Verteilung je Kamera")
     assert "ohne Kalibrierung" not in B.bericht_md(TELE, "T")
     assert "ohne Kalibrierung" not in B.bericht_md(TELE, "T", px_faktor={"FX3": 0.6, "a7IV": 0.69})
+
+
+def test_verteilung_brennweite_in_mm():
+    md = B.bericht_md(TELE, "T")
+    assert "Brennweite KB mm: Median (Spanne)" in md and "weit/normal/tele" not in md
+    zeilen = {z.split("|")[1].strip(): z for z in md.splitlines() if z.startswith("| ")}
+    assert "| 35,0 (35–35) |" in zeilen["FX3"] and "| 71,6 (24–105) |" in zeilen["a7IV"] and "| – |" in zeilen["DJI"]
+
+
+def test_bericht_schnelle_zoomfahrten():
+    md = B.bericht_md(TELE, "T")
+    assert "## Schnelle Zoomfahrten" in md and "| a7_1 | a7IV | 2,4–3,1 | 24,0 → 70,0 | 85/60 | nein |" in md
+    assert "5,0–9,0" not in md                                             # langsame Fahrt steht nicht in der Liste
+    assert md.index("## Unruhigste Clips") < md.index("## Schnelle Zoomfahrten") < md.index("## Clips ohne Daten")
+    ohne = B.bericht_md([{**TELE[0]}], "T")
+    assert "## Schnelle Zoomfahrten" in ohne and ohne.split("## Schnelle Zoomfahrten")[1].splitlines()[2] == "- keine"
+    alt = [{k: v for k, v in TELE[1].items() if k != "zooms"}]                # Datensatz von vor der Umstellung
+    assert "- keine" in B.bericht_md(alt, "T").split("## Schnelle Zoomfahrten")[1]

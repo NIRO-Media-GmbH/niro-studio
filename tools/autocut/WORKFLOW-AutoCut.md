@@ -707,6 +707,8 @@ ln(KB) in % pro s. Je Clip `kb_verlauf` ([t_s, kb_mm] mit 5 Hz; bei gleichbleibe
 0,3 s gehören dazu (Stop-and-go). Schnell = Spitze über `zoom_schnell_proz_s` oder ruckartig (`ruck` über `zoom_ruck_max`
 oder Stocken unter `zoom_stocken_anteil` der Spitze). Fenster, die eine schnelle Fahrt schneiden, zählen nicht zu den
 `ruhige_fenster`. Ohne rtmd-Brennweite (Mavic, Avata) bleiben `kb_verlauf` und `zooms` leer (Brennweite unbekannt).
+Der Bericht `telemetrie.md` zeigt die KB-Brennweite je Kamera in mm und listet die schnellen Fahrten; der Vergleich mit
+dem B-Roll-Index umfasst nur noch Perspektive Höhe und Haltung.
 Startwerte bis zur Kalibrierung: 20 %/s, `ruck` 0,6, Stocken 0,2.
 
 **Kalibrierwerte (21.09.2026):** Hochzeitszauber, 301 FX3- und 54 a7-IV-Clips, Gyro gegen optischen Weg auf denselben Frames:
