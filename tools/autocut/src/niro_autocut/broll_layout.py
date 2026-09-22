@@ -651,6 +651,17 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 r.errors.append(f"{tag}: überschneidet die Sperre {sp.von_s:g}–{sp.bis_s:g}s ({sp.grund or 'ohne Grund'}).")
         if p["abweichung"] and not p["abweichung_grund"].strip():
             r.errors.append(f"{tag}: abweichung=true ohne abweichung_grund.")
+        rec = TM.finden(tele, p["clip"]) if tele else None
+        von = bis = None
+        if rec:
+            clip_fps = float(rec.get("fps") or fps)
+            # außerhalb der abweichung-Bedingung: Task 5 rechnet auf denselben Grenzen weiter
+            von, bis = TM.genutzter_quellbereich_s(p["src_in_f"], p["rec_out_f"] - p["rec_in_f"], clip_fps,
+                                                   langsam=(p.get("tempo") or 1) > 1, ziel_fps=fps)
+            if not p["abweichung"]:
+                for z in TM.zooms_im_bereich(rec, von, bis):
+                    r.errors.append(f"{tag}: schneller Zoom im genutzten Bereich ({z['von_mm']:g} → {z['bis_mm']:g} mm, "
+                                    f"Spitze {z['tempo_max']:.0f} %/s) — anderen Bereich wählen oder `abweichung` mit Grund.")
         if not p["grund"].strip():
             r.warnings.append(f"{tag}: ohne grund.")
         if p["tempo"] == 4:

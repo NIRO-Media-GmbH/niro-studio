@@ -418,3 +418,33 @@ def test_verify_layout_brennweitenfolge_frische_telemetrie_ohne_schwellen_warnun
             {**_tele("FX3_3.MP4", 70.0), "config_hash": h}]
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
     assert not any("Telemetrie-Schwellen" in w for w in r.warnings)
+
+
+# --------------------------------------------------------------------------- #
+# Task 4: Regel 3b — kein schneller Zoom im genutzten Bereich
+# --------------------------------------------------------------------------- #
+
+
+def test_verify_layout_schneller_zoom_im_genutzten_bereich():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    langsam = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 30.0, "bis_mm": 35.0, "tempo_max": 28.0,
+                "tempo_mittel": 20.0, "urteil": "langsam"}]
+    tele = [_tele("FX3_1.MP4", 25.0, schnell), _tele("FX3_2.MP4", 70.0, langsam), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("schneller Zoom" in e and "FX3_1" in e for e in r.errors)
+    assert not any("schneller Zoom" in e and "FX3_2" in e for e in r.errors)
+
+
+def test_verify_layout_schneller_zoom_mit_abweichung_erlaubt():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    plan.strecken[0].szenen[0].shots[0].abweichung = True
+    plan.strecken[0].szenen[0].shots[0].abweichung_grund = "Plan verlangt genau diese Fahrt"
+    schnell = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    tele = [_tele("FX3_1.MP4", 25.0, schnell), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("schneller Zoom" in e for e in r.errors)
