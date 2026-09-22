@@ -146,3 +146,46 @@ def zoom_ist_lesen(projekt: dict, max_zoom: float) -> tuple[float, bool]:
         return deckel, True
     wert = max(float(w) for w in werte)
     return wert, wert >= deckel - 1e-9
+
+
+def gyroflow_charge(ch, clips: list[dict], telemetrie: list[dict], cfg: dict, force: bool = False) -> dict:
+    """Sidecars für die genutzten B-Roll-Shots; je Quelldatei einer, auch bei Mehrfachnutzung.
+
+    Übersprungen wird mit Grund statt still: ohne Gyrospur, ohne Telemetrie-Eintrag, oder ``_stabilized`` im Namen
+    (Avata-Export — nie erneut stabilisieren, wie in 6d).
+
+    ``zoom_ist``/``zoom_gedeckelt`` kommen je erfolgreich exportiertem Clip aus dem Deckel-Rückfall von
+    ``zoom_ist_lesen`` — eine echte Messung aus der Gyroflow-Projektdatei ist ohne Reverse-Engineering ihres
+    internen Formats nicht mit vertretbarem Aufwand zu haben (siehe deren Docstring). Fehlerhafte und übersprungene
+    Einträge bleiben bei ``None``. Läuft absichtlich sequenziell statt parallel wie ``telemetrie_charge``: der
+    Cache-Tempname in ``clip_export`` enthält keine Thread-Id."""
+    pruefe_deckel(cfg)
+    nach_pfad = {str(Path(r["path"]).expanduser().resolve()): r for r in telemetrie if r.get("path")}
+    erlaubte = set(nach_pfad)
+
+    ergebnisse, uebersprungen, gesehen = [], [], set()
+    for eintrag in clips:
+        p = str(Path(eintrag["datei"]).expanduser().resolve())
+        if p in gesehen:
+            continue
+        gesehen.add(p)
+        rec = nach_pfad.get(p)
+        if rec is None:
+            uebersprungen.append({"datei": p, "grund": "kein Telemetrie-Eintrag"})
+        elif "_stabilized" in Path(p).stem:
+            uebersprungen.append({"datei": p, "grund": "Avata-Export (_stabilized)"})
+        elif rec.get("quelle") != "rtmd":
+            uebersprungen.append({"datei": p, "grund": "keine Gyrospur"})
+        else:
+            datensatz, _ = clip_export(ch, p, rec, cfg, erlaubte, force=force)
+            if not datensatz.get("fehler"):
+                deckel = preset_fuer(rec, cfg)["stabilization"]["max_zoom"]
+                datensatz["zoom_ist"], datensatz["zoom_gedeckelt"] = zoom_ist_lesen({}, deckel)
+            ergebnisse.append(datensatz)
+
+    erg = {"clips": ergebnisse, "uebersprungen": uebersprungen,
+           "stand": _dt.datetime.now().isoformat(timespec="seconds")}
+    ziel = Path(ch.autocut) / "gyroflow.json"
+    ch.assert_writable(ziel)
+    ziel.write_text(json.dumps(erg, ensure_ascii=False, indent=1), encoding="utf-8")
+    return erg

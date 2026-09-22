@@ -231,3 +231,94 @@ def test_zoom_ist_meldet_wenn_der_deckel_griff():
     wert, gedeckelt = G.zoom_ist_lesen(projekt, 120.0)
     assert wert == pytest.approx(1.20)
     assert gedeckelt is True
+
+
+def test_charge_lauf_fasst_mehrfach_genutzte_dateien_zusammen(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+    clips = [{"datei": str(v), "tempo50": False}, {"datei": str(v), "tempo50": True}]
+    tele = [{"path": str(v), "clip": "FX3_0001", "kamera": "FX3", "haltung": "hand", "quelle": "rtmd"}]
+
+    erg = G.gyroflow_charge(ch, clips, tele, cfg)
+
+    assert len(erg["clips"]) == 1
+    assert (medien / "aufrufe.log").read_text(encoding="utf-8").count("--export-project") == 1
+    assert json.loads((ch.autocut / "gyroflow.json").read_text(encoding="utf-8"))["clips"][0]["clip"] == "FX3_0001"
+
+
+def test_charge_lauf_ueberspringt_clips_ohne_gyrospur(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "ZV_0001.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+    tele = [{"path": str(v), "clip": "ZV_0001", "kamera": "ZV-E10", "haltung": "hand", "quelle": "keine"}]
+
+    erg = G.gyroflow_charge(ch, [{"datei": str(v), "tempo50": False}], tele, cfg)
+
+    assert erg["clips"] == []
+    assert erg["uebersprungen"][0]["grund"] == "keine Gyrospur"
+    assert not (medien / "aufrufe.log").exists()
+
+
+def test_charge_lauf_ueberspringt_stabilized_dateien(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "DJI_0001_stabilized.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+    tele = [{"path": str(v), "clip": "DJI_0001_stabilized", "kamera": "DJI", "haltung": "gimbal", "quelle": "rtmd"}]
+
+    erg = G.gyroflow_charge(ch, [{"datei": str(v), "tempo50": False}], tele, cfg)
+
+    assert erg["uebersprungen"][0]["grund"] == "Avata-Export (_stabilized)"
+
+
+def test_charge_lauf_ueberspringt_clips_ohne_telemetrie(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0009.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+
+    erg = G.gyroflow_charge(ch, [{"datei": str(v), "tempo50": False}], [], cfg)
+
+    assert erg["uebersprungen"][0]["grund"] == "kein Telemetrie-Eintrag"
+
+
+def test_charge_lauf_prueft_den_deckel_vor_dem_ersten_export(tmp_path: Path):
+    ch = _charge(tmp_path)
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["max_zoom"]["hand"] = 130
+    with pytest.raises(AutoCutError, match="max_zoom"):
+        G.gyroflow_charge(ch, [], [], cfg)
+
+
+def test_charge_lauf_fuellt_zoom_ist_aus_dem_deckel_rueckfall(tmp_path: Path):
+    """Ohne dekodierte Messwerte liefert zoom_ist_lesen den Deckel als Faktor — das füllt zoom_ist/zoom_gedeckelt
+    je erfolgreich exportiertem Clip statt sie bei None zu belassen (siehe Docstring von zoom_ist_lesen)."""
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+    tele = [{"path": str(v), "clip": "FX3_0001", "kamera": "FX3", "haltung": "hand", "quelle": "rtmd"}]
+
+    erg = G.gyroflow_charge(ch, [{"datei": str(v), "tempo50": False}], tele, cfg)
+
+    rec = erg["clips"][0]
+    assert rec["zoom_ist"] == pytest.approx(1.20)
+    assert rec["zoom_gedeckelt"] is True
