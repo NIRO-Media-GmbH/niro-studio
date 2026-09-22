@@ -666,13 +666,22 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
             tcfg = cfg.get("telemetrie") or {}
             rand = float(tcfg.get("bewegung_rand_s", 0.5))
             faktor = float(tcfg.get("bewegung_spitze_faktor", 3.0))
+            ruhig = float(tcfg.get("ruhig_max_px", 0.15))
             for t_s, bw in TM.bewegung_spitzen(rec, von - rand, bis + rand):
                 if min(abs(t_s - von), abs(t_s - bis)) > rand:
                     continue
                 grund_px = TM.bewegung_grundniveau(rec, t_s)
-                if grund_px and bw >= faktor * grund_px:
+                if grund_px is None:
+                    continue
+                # Untergrenze bei ruhig_max_px: darunter gilt das Bild ohnehin als ruhig (dieselbe Schwelle wie
+                # bei den ruhigen Fenstern). Ohne sie würde die Regel auf Stativmaterial schon bei Ausreißern
+                # weit unterhalb dieser Schwelle feuern (rein multiplikativer Vergleich, Fix-Runde 1) und bei
+                # einem Grundniveau von exakt 0,0 nie (der Faktor wäre unendlich).
+                basis = max(grund_px, ruhig)
+                if bw >= faktor * basis:
                     r.warnings.append(f"{tag}: Schnittgrenze bei {t_s:g} s liegt in einer Bewegungsspitze "
-                                      f"({bw:g} gegen Grundniveau {grund_px:g}) — Hinweis, Schwellen unkalibriert.")
+                                      f"({bw:g} gegen Grundniveau {basis:g}, mind. ruhig_max_px {ruhig:g}) — "
+                                      f"Hinweis, Schwellen unkalibriert.")
         if not p["grund"].strip():
             r.warnings.append(f"{tag}: ohne grund.")
         if p["tempo"] == 4:

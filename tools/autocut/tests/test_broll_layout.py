@@ -510,9 +510,46 @@ def test_verify_layout_schneller_zoom_ohne_zeitlupe_voller_bereich_gemeldet():
 def test_verify_layout_bewegungsspitze_an_der_schnittgrenze_warnt_nur():
     idx = _idx()
     plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
-    # Shot 1 endet bei 3,0 s; Spitze bei 3,0 s mit 9,0 gegen Grundniveau 0,5 = Faktor 18
+    # Shot 1 endet bei 3,0 s; Spitze bei 3,0 s mit 9,0 gegen Grundniveau 0,45 = Faktor 20 (Fix-Runde 1: das
+    # Fenster bei t=1,0 liegt nur 2,0 s entfernt und fällt NICHT aus dem 3,0-s-Ausschluss; Median von
+    # [0,4 @ 0,0s; 0,5 @ 8,0s] = 0,45, nicht 0,5)
     fen = [[0.0, 0.1, 0.4, "fahrt", None], [1.0, 0.1, 0.6, "fahrt", None],
            [3.0, 0.1, 9.0, "schwenk_links", None], [8.0, 0.1, 0.5, "fahrt", None]]
+    tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("Bewegungsspitze" in w for w in r.warnings)
+    assert not any("Bewegungsspitze" in e for e in r.errors)     # NIE ein Fehler: Schwellen unkalibriert
+
+
+def test_verify_layout_bewegungsspitze_unter_ruhig_max_px_warnt_nicht():
+    """Fix-Runde 1 (Review, Fund 2): rein multiplikativer Vergleich hätte auf Stativmaterial schon bei
+    winzigen Ausreißern deutlich unterhalb ruhig_max_px gefeuert. Handrechnung:
+    grund_px = bewegung_grundniveau(rec, 3.0, 3.0) = Median der Fenster mit Abstand >= 3,0 s von t=3,0 s
+             = Median([0,019 @ 6,0s]) = 0,019       (nur ein Fenster fern genug -> Median = der Wert selbst)
+    Ohne Untergrenze: Faktor = 0,08 / 0,019 ≈ 4,21 >= bewegung_spitze_faktor (3,0) -> hätte gewarnt.
+    Mit Untergrenze:  basis = max(grund_px, ruhig_max_px) = max(0,019; 0,15) = 0,15
+                      bewegung_spitze_faktor * basis = 3,0 * 0,15 = 0,45
+                      bw (0,08) >= 0,45 ist False -> keine Warnung, weil das System dieses Bild an
+                      anderer Stelle (ruhig_max_px) ohnehin als ruhig einstuft."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    fen = [[3.0, 0.1, 0.08, "schwenk_links", None], [6.0, 0.1, 0.019, "fahrt", None]]
+    tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("Bewegungsspitze" in w for w in r.warnings)
+
+
+def test_verify_layout_bewegungsspitze_grundniveau_null_warnt_trotzdem():
+    """Fix-Runde 1 (Review, Fund 1): grund_px = 0,0 ist falsy — ``if grund_px and …`` hätte jede noch so
+    extreme Spitze übergangen (der Faktor wäre rechnerisch unendlich). Handrechnung:
+    grund_px = bewegung_grundniveau(rec, 3.0, 3.0) = Median([0,0 @ 6,0s]) = 0,0
+    Mit explizitem ``is None``-Check (0,0 ist nicht None) und Untergrenze:
+                      basis = max(grund_px, ruhig_max_px) = max(0,0; 0,15) = 0,15
+                      bewegung_spitze_faktor * basis = 3,0 * 0,15 = 0,45
+                      bw (5,0) >= 0,45 ist True -> die Warnung muss kommen."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    fen = [[3.0, 0.1, 5.0, "schwenk_links", None], [6.0, 0.1, 0.0, "fahrt", None]]
     tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
     assert any("Bewegungsspitze" in w for w in r.warnings)
