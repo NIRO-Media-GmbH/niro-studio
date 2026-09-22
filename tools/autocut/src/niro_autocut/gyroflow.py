@@ -7,11 +7,15 @@ garantiert bleiben — deshalb braucht es keine Rückkopplung zwischen beiden Be
 """
 from __future__ import annotations
 
+import datetime as _dt
 import hashlib
 import json
+import os
+import subprocess
 from pathlib import Path
 
 from .charge import AutoCutError
+from .media import fingerprint
 
 CLI_STANDARD = "/Applications/Gyroflow.app/Contents/MacOS/gyroflow"
 HALTUNG_VORSICHTIG = "stativ"   # Rückfall ohne Telemetrie: wenig glätten, wenig Rand nehmen
@@ -68,3 +72,63 @@ def sidecar_pfad(video: str | Path, erlaubte_pfade: set[str]) -> Path:
     if p.suffix.lower() == ".gyroflow":
         raise AutoCutError(f"Sidecar verweigert: {p} ist bereits eine .gyroflow-Datei, nicht eine Mediendatei.")
     return p.with_suffix(".gyroflow")
+
+
+CACHE_DIR = "gyroflow"
+
+
+def _cli_aufrufen(cli: str, video: Path, preset: dict, zeitlimit: float) -> None:
+    """Gyroflow headless: Projektdatei schreiben, nicht rendern. Wirft AutoCutError mit der Fehlerausgabe."""
+    befehl = [cli, str(video), "--export-project", "2", "--preset", json.dumps(preset), "-f"]
+    try:
+        erg = subprocess.run(befehl, capture_output=True, text=True, timeout=zeitlimit)
+    except FileNotFoundError:
+        raise AutoCutError(f"Gyroflow-CLI nicht gefunden: {cli}\nPfad in defaults.yaml unter gyroflow.cli prüfen.")
+    except subprocess.TimeoutExpired:
+        raise AutoCutError(f"Gyroflow hat {video.name} nach {zeitlimit:.0f}s nicht beendet "
+                           f"(gyroflow.zeitueberschreitung_s). Liegt die Datei auf einem langsamen Laufwerk?")
+    if erg.returncode != 0:
+        raise AutoCutError((erg.stderr or erg.stdout or "").strip() or f"Gyroflow endete mit Code {erg.returncode}.")
+
+
+def clip_export(ch, video, rec: dict, cfg: dict, erlaubte_pfade: set[str],
+                force: bool = False) -> tuple[dict, bool]:
+    """Sidecar je Quelldatei erzeugen; gibt den Datensatz und zurück, ob er aus dem Cache kam.
+
+    Ein Fehler an einem Clip beendet den Lauf nicht — er landet als ``fehler`` im Datensatz, wie in der Telemetrie."""
+    gf = cfg.get("gyroflow") or {}
+    video = Path(video)
+    preset = preset_fuer(rec, cfg)
+    ph = preset_hash(preset)
+    fp = fingerprint(video)
+    cache = Path(ch.autocut) / CACHE_DIR / f"{fp}.json"
+
+    if cache.exists() and not force:
+        try:
+            alt = json.loads(cache.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+            alt = None
+        if isinstance(alt, dict) and not alt.get("fehler") and alt.get("preset_hash") == ph \
+                and alt.get("sidecar") and Path(alt["sidecar"]).is_file():
+            alt["path"], alt["clip"] = str(video), video.stem
+            return alt, True
+
+    datensatz = {"path": str(video), "clip": video.stem, "sidecar": None, "kamera": rec.get("kamera"),
+                 "haltung": rec.get("haltung"), "preset_hash": ph, "fingerprint": fp,
+                 "exportiert_am": _dt.datetime.now().isoformat(timespec="seconds"),
+                 "zoom_ist": None, "zoom_gedeckelt": None, "fehler": None}
+    try:
+        ziel = sidecar_pfad(video, erlaubte_pfade)
+        _cli_aufrufen(gf.get("cli") or CLI_STANDARD, video, preset, float(gf.get("zeitueberschreitung_s") or 300))
+        if not ziel.is_file():
+            raise AutoCutError(f"Gyroflow meldete Erfolg, aber {ziel.name} fehlt.")
+        datensatz["sidecar"] = str(ziel)
+    except AutoCutError as e:
+        datensatz["fehler"] = str(e)
+
+    ch.assert_writable(cache)
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    teil = cache.with_name(f"{cache.name}.{os.getpid()}.part")
+    teil.write_text(json.dumps(datensatz, ensure_ascii=False, indent=1), encoding="utf-8")
+    os.replace(teil, cache)
+    return datensatz, False

@@ -78,3 +78,93 @@ def test_sidecar_verweigert_gyroflow_datei_selbst(tmp_path: Path):
     v.write_bytes(b"x")
     with pytest.raises(AutoCutError, match="bereits eine .gyroflow"):
         G.sidecar_pfad(v, {str(v)})
+
+
+def _cli_attrappe(tmp_path: Path) -> str:
+    """Ausführbare Attrappe: schreibt neben die Eingabedatei eine .gyroflow-Datei und zählt die Aufrufe."""
+    p = tmp_path / "gyroflow_fake.sh"
+    p.write_text(
+        '#!/bin/sh\n'
+        'echo "$@" >> "$(dirname "$1")/aufrufe.log"\n'
+        'out="${1%.*}.gyroflow"\n'
+        'printf \'{"version":2,"stabilization":{"max_zoom":120.0}}\' > "$out"\n',
+        encoding="utf-8")
+    p.chmod(0o755)
+    return str(p)
+
+
+def _charge(tmp_path: Path):
+    from niro_autocut.charge import Charge
+    root = tmp_path / "2026-09 Testdreh"
+    (root / "_intern" / "autocut").mkdir(parents=True)
+    (root / "Ergebnisse" / "Rohschnitt").mkdir(parents=True)
+    return Charge(root=root, intern=root / "_intern", autocut=root / "_intern" / "autocut",
+                  work=root / "_intern" / "autocut" / "work", ergebnisse=root / "Ergebnisse" / "Rohschnitt",
+                  plaene=root / "Ergebnisse" / "O-Ton-Pläne", protokoll=root / "Protokoll.md", config=CFG)
+
+
+def test_clip_export_schreibt_sidecar_neben_die_mediendatei(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+
+    rec, aus_cache = G.clip_export(ch, v, {"haltung": "hand", "kamera": "FX3"}, cfg, {str(v)})
+
+    assert aus_cache is False
+    assert rec["fehler"] is None
+    assert Path(rec["sidecar"]) == medien / "FX3_0001.gyroflow"
+    assert (medien / "FX3_0001.gyroflow").is_file()
+    assert "--export-project 2" in (medien / "aufrufe.log").read_text(encoding="utf-8")
+
+
+def test_clip_export_nimmt_beim_zweiten_lauf_den_cache(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+
+    G.clip_export(ch, v, {"haltung": "hand"}, cfg, {str(v)})
+    _, aus_cache = G.clip_export(ch, v, {"haltung": "hand"}, cfg, {str(v)})
+
+    assert aus_cache is True
+    assert (medien / "aufrufe.log").read_text(encoding="utf-8").count("--export-project") == 1
+
+
+def test_clip_export_misst_neu_wenn_sich_das_preset_aendert(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+
+    G.clip_export(ch, v, {"haltung": "hand"}, cfg, {str(v)})
+    _, aus_cache = G.clip_export(ch, v, {"haltung": "gimbal"}, cfg, {str(v)})
+
+    assert aus_cache is False
+
+
+def test_clip_export_meldet_fehler_statt_abzubrechen(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    kaputt = tmp_path / "kaputt.sh"
+    kaputt.write_text('#!/bin/sh\necho "kein Gyro gefunden" >&2\nexit 1\n', encoding="utf-8")
+    kaputt.chmod(0o755)
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = str(kaputt)
+
+    rec, _ = G.clip_export(ch, v, {"haltung": "hand"}, cfg, {str(v)})
+
+    assert rec["fehler"] and "kein Gyro" in rec["fehler"]
+    assert rec["sidecar"] is None
