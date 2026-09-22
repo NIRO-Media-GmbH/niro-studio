@@ -401,6 +401,7 @@ Die Original-Skripte mit echten Werten liegen in der Taxodia-Charge (`_intern/`)
 | 6a Ton | `audio_normalisieren.py` | A1: True Peak −3 dBTP je Clip, Voice Isolation, `autocut/audio.json` |
 | 6b Grafik | Motion + `grafik_review.py`, `grafik_einsetzen.py` | Review-Bilder auf echtem Bild, V4 als Zwischenstand |
 | 6c Musik | `musik_analyse.py`, `musik/sprung_berechnen.py`, `musik/mischung_pruefen.py` | Tempo/Abschnitte, beat-genaue Sprünge, Mischungsmessung |
+| 6d Gyroflow-Sidecars | `scripts/autocut_gyroflow.py` (kein Vorlagen-Baustein, direkt in `tools/autocut/`) | `<clip>.gyroflow` neben den Medien, `autocut/gyroflow.json`, Bericht `gyroflow.md` |
 | 6d Feinschnitt-Bau | `feinschnitt_bauen.py` | neue Timeline „AutoCut <Video> <JJJJ-MM-TT HHMM> Feinschnitt", `autocut/feinschnitt.json` |
 | 6e Gesichts-Check | `gesichtscheck/` | kritische Frames, bei denen die Grafik Gesichter berührt |
 | 6f Umbau für Handarbeit | `feinschnitt_umbau.py` | nur für Timelines im alten Aufbau |
@@ -507,6 +508,18 @@ oder einen Zwischenstand.
    - `FPS` ist fest 25.
    - Zwei Bauten in derselben Minute brechen ab (gleicher Name).
    - Die TSX-Regex übergeht andere Schreibweisen still — Elementzahl im Probelauf gegen die Komposition prüfen.
+
+**Gyroflow-Sidecars** (`scripts/autocut_gyroflow.py "<Charge>" [--force] [--dry-run]`, Spec 2026-09-22): läuft nach
+dem Probelauf, sobald `BROLL` feststeht, und vor dem Bauen. Eingaben: `_intern/autocut/gyroflow_clips.json`
+(schreibt der Probelauf, `{datei, tempo50}` je genutztem Shot) und `_intern/autocut/telemetrie.json` (`haltung`,
+`quelle`). Ausgaben: `<clip>.gyroflow` neben der Mediendatei (eine je Quelldatei, auch bei Mehrfachnutzung),
+`_intern/autocut/gyroflow.json` und der Bericht `Ergebnisse/Rohschnitt/gyroflow.md` (Sidecars, Übersprungene mit
+Grund, wo der Zoom-Deckel griff). Vor dem ersten Export prüft der Lauf die Deckel-Ungleichung
+`max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100` (Standard je Haltung 105/110/120 ≤ 120 = 1,5 / 1,25 × 100)
+und bricht sonst mit `AutoCutError` ab. Clips ohne Gyrospur (`quelle` ≠ `rtmd`) und `_stabilized`-Exporte (Avata)
+bekommen keinen Sidecar und bleiben beim `Stabilize()`-Weg oben (Punkt V3) — Gyroflow tritt daneben, ersetzt ihn
+nicht. Die Anwendung des Sidecars in Resolve (Fusion-Comp je Clip, Spec Abschnitt 3) ist noch nicht Teil von
+`feinschnitt_bauen.py`.
 
 ### 6e Gesichts-Check
 `gesichtscheck/gesichtscheck.py` liest nur und schreibt nichts in Resolve.
@@ -1003,6 +1016,8 @@ Timeline als handbearbeitet (kein Neubau).
     ├── probe_api.json                   Resolve-Probe der 21.1-API (AudioVolume, Normalize, SetSpeed-Semantik, Fades,
     │                                    Transition, AutoAlign, QuickExport, Alpha-Import); Medien in work/probe_api/
     ├── ton.json · finalize.json         Stufe 5: True-Peak/Gain je A1-Clip, Finalisieren-Ergebnis (End-Timeline)
+    ├── gyroflow.json · gyroflow/        6d Gyroflow-Sidecars: Ergebnis je Clip (Preset, Zoom-Deckel, Fehler);
+    │                                    Cache je Fingerprint + Preset-Hash
     ├── kanten_readback.json · kanten.json   Kantenprüfung: Schnappschuss der Timeline (nur gelesen), Befunde + Messwerte
     └── work/audio · work/frames · work/sheets · work/ton_cache.json · work/xml/ · work/kanten/ · work/schnittbild/
                                          Caches (WAVs, Einzelbilder, Kontaktbögen, Pegel-Messungen, Bild-Metriken je
