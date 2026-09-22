@@ -82,8 +82,9 @@ def _cli_aufrufen(cli: str, video: Path, preset: dict, zeitlimit: float) -> None
     befehl = [cli, str(video), "--export-project", "2", "--preset", json.dumps(preset), "-f"]
     try:
         erg = subprocess.run(befehl, capture_output=True, text=True, timeout=zeitlimit)
-    except FileNotFoundError:
-        raise AutoCutError(f"Gyroflow-CLI nicht gefunden: {cli}\nPfad in defaults.yaml unter gyroflow.cli prüfen.")
+    except OSError as e:
+        raise AutoCutError(f"Gyroflow-CLI konnte nicht gestartet werden: {cli}\n{type(e).__name__}: {e}\n"
+                           f"Pfad in defaults.yaml unter gyroflow.cli prüfen.")
     except subprocess.TimeoutExpired:
         raise AutoCutError(f"Gyroflow hat {video.name} nach {zeitlimit:.0f}s nicht beendet "
                            f"(gyroflow.zeitueberschreitung_s). Liegt die Datei auf einem langsamen Laufwerk?")

@@ -168,3 +168,45 @@ def test_clip_export_meldet_fehler_statt_abzubrechen(tmp_path: Path):
 
     assert rec["fehler"] and "kein Gyro" in rec["fehler"]
     assert rec["sidecar"] is None
+
+
+def test_clip_export_meldet_nicht_executable_statt_abzubrechen(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    nicht_exec = tmp_path / "nicht_exec.sh"
+    nicht_exec.write_text('#!/bin/sh\necho "sollte nicht laufen"\n', encoding="utf-8")
+    # Deliberately do NOT chmod executable
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = str(nicht_exec)
+
+    rec, _ = G.clip_export(ch, v, {"haltung": "hand"}, cfg, {str(v)})
+
+    assert rec["fehler"] and "gyroflow.cli" in rec["fehler"]
+    assert rec["sidecar"] is None
+
+
+def test_clip_export_retry_nach_fehler_benoetigt_neu_export(tmp_path: Path):
+    ch = _charge(tmp_path)
+    medien = tmp_path / "medien"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    nicht_exec = tmp_path / "nicht_exec.sh"
+    nicht_exec.write_text('#!/bin/sh\necho "sollte nicht laufen"\n', encoding="utf-8")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = str(nicht_exec)
+
+    # Erster Lauf schlägt fehl
+    rec1, _ = G.clip_export(ch, v, {"haltung": "hand"}, cfg, {str(v)})
+    assert rec1["fehler"]
+
+    # Zweiter Lauf mit korrektem CLI (sollte nicht aus Cache kommen, sondern neu exportieren)
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+    rec2, aus_cache = G.clip_export(ch, v, {"haltung": "hand"}, cfg, {str(v)})
+
+    assert aus_cache is False
+    assert rec2["fehler"] is None
+    assert rec2["sidecar"] is not None
