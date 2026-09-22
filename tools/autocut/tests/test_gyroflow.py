@@ -71,3 +71,10 @@ def test_sidecar_verweigert_fehlende_datei(tmp_path: Path):
     v = tmp_path / "gibtsnicht.MP4"
     with pytest.raises(AutoCutError, match="nicht gefunden"):
         G.sidecar_pfad(v, {str(v)})
+
+
+def test_sidecar_verweigert_gyroflow_datei_selbst(tmp_path: Path):
+    v = tmp_path / "FX3_0001.gyroflow"
+    v.write_bytes(b"x")
+    with pytest.raises(AutoCutError, match="bereits eine .gyroflow"):
+        G.sidecar_pfad(v, {str(v)})

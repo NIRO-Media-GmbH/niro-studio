@@ -59,10 +59,12 @@ def sidecar_pfad(video: str | Path, erlaubte_pfade: set[str]) -> Path:
 
     Enge Regel statt aufgeweichtem ``Charge.assert_writable``: geschrieben wird nur neben eine **existierende**
     Mediendatei, die unter genau diesem Pfad in ``telemetrie.json`` geführt ist. Die Endung ist immer ``.gyroflow``,
-    der Stamm der der Mediendatei — ein Überschreiben von Material ist damit ausgeschlossen."""
+    der Stamm entspricht dem der Mediendatei — damit wird ein Überschreiben von Material garantiert ausgeschlossen."""
     p = Path(video).expanduser().resolve()
     if str(p) not in {str(Path(e).expanduser().resolve()) for e in erlaubte_pfade}:
         raise AutoCutError(f"Sidecar verweigert: {p} ist nicht in telemetrie.json geführt.")
     if not p.is_file():
         raise AutoCutError(f"Sidecar verweigert: {p} nicht gefunden. Ist das NAS gemountet?")
+    if p.suffix.lower() == ".gyroflow":
+        raise AutoCutError(f"Sidecar verweigert: {p} ist bereits eine .gyroflow-Datei, nicht eine Mediendatei.")
     return p.with_suffix(".gyroflow")
