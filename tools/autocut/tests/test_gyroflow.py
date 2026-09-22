@@ -51,3 +51,23 @@ def test_preset_hash_haengt_am_inhalt_nicht_an_der_reihenfolge():
     assert G.preset_hash(a) == G.preset_hash(b)
     assert len(G.preset_hash(a)) == 12
     assert G.preset_hash(a) != G.preset_hash(G.preset_fuer({"haltung": "hand"}, CFG))
+
+
+def test_sidecar_liegt_neben_der_mediendatei(tmp_path: Path):
+    v = tmp_path / "FX3_0001.MP4"
+    v.write_bytes(b"x")
+    p = G.sidecar_pfad(v, {str(v)})
+    assert p == tmp_path / "FX3_0001.gyroflow"
+
+
+def test_sidecar_verweigert_unbekannte_datei(tmp_path: Path):
+    v = tmp_path / "FX3_0001.MP4"
+    v.write_bytes(b"x")
+    with pytest.raises(AutoCutError, match="nicht in telemetrie.json"):
+        G.sidecar_pfad(v, set())
+
+
+def test_sidecar_verweigert_fehlende_datei(tmp_path: Path):
+    v = tmp_path / "gibtsnicht.MP4"
+    with pytest.raises(AutoCutError, match="nicht gefunden"):
+        G.sidecar_pfad(v, {str(v)})

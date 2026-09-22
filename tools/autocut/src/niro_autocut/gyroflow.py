@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 
 from .charge import AutoCutError
 
@@ -50,3 +51,18 @@ def preset_fuer(rec: dict, cfg: dict) -> dict:
 def preset_hash(preset: dict) -> str:
     """12 Hex-Zeichen über den Preset-Inhalt; hängt nicht an der Schlüsselreihenfolge."""
     return hashlib.sha1(json.dumps(preset, sort_keys=True, default=str).encode("utf-8")).hexdigest()[:12]
+
+
+def sidecar_pfad(video: str | Path, erlaubte_pfade: set[str]) -> Path:
+    """Pfad der ``.gyroflow``-Datei neben der Mediendatei — die einzige Stelle, an der außerhalb der Chargen-Ordner
+    geschrieben wird.
+
+    Enge Regel statt aufgeweichtem ``Charge.assert_writable``: geschrieben wird nur neben eine **existierende**
+    Mediendatei, die unter genau diesem Pfad in ``telemetrie.json`` geführt ist. Die Endung ist immer ``.gyroflow``,
+    der Stamm der der Mediendatei — ein Überschreiben von Material ist damit ausgeschlossen."""
+    p = Path(video).expanduser().resolve()
+    if str(p) not in {str(Path(e).expanduser().resolve()) for e in erlaubte_pfade}:
+        raise AutoCutError(f"Sidecar verweigert: {p} ist nicht in telemetrie.json geführt.")
+    if not p.is_file():
+        raise AutoCutError(f"Sidecar verweigert: {p} nicht gefunden. Ist das NAS gemountet?")
+    return p.with_suffix(".gyroflow")
