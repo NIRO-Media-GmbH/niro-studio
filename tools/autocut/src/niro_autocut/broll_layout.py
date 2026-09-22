@@ -14,6 +14,7 @@ import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from . import telemetrie as TM
 from .broll_plan import _index_by_path, _section_quality, _standort_nr, _usable_spans, clip_ref, resolve_clip_ref
 from .charge import AutoCutError
 from .cutlist import Beat, Cutlist, VerifyResult
@@ -558,7 +559,22 @@ def place_shots(plan: LayoutPlan, tp_dict: dict, index: dict, cfg: dict, fps: fl
     return placed, errs
 
 
-def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg: dict, fps: float) -> VerifyResult:
+def _kb_am_schnitt(p: dict, tele: list[dict] | None, fps: float, seite: str) -> float | None:
+    """Scheinbare KB-Brennweite am Anfang bzw. Ende eines platzierten Shots; None ohne Verlauf.
+    Bei Zeitlupe zählt der tatsächlich genutzte Quellbereich (wie 6d)."""
+    if not tele:
+        return None
+    rec = TM.finden(tele, p["clip"])
+    if not rec:
+        return None
+    clip_fps = float(rec.get("fps") or fps)
+    von, bis = TM.genutzter_quellbereich_s(p["src_in_f"], p["rec_out_f"] - p["rec_in_f"], clip_fps,
+                                           langsam=(p.get("tempo") or 1) > 1, ziel_fps=fps)
+    return TM.kb_am(rec, bis if seite == "ende" else von, seite=seite)
+
+
+def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg: dict, fps: float,
+                  tele: list[dict] | None = None) -> VerifyResult:
     """Harte Prüfung nach Spec v2 Abschnitt 3.3."""
     r = VerifyResult()
     fps = float(fps or tp_dict.get("fps") or 0)
@@ -666,15 +682,38 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     # Cut-Flow über aufeinanderfolgende Shots (nur innerhalb einer Strecke — dazwischen liegt ein Fenster)
     seq = sorted(placed, key=lambda p: p["rec_in_f"])
     min_dist = int(cfg["setup_hash_min_distance"])
+    grenze = float((cfg.get("telemetrie") or {}).get("brennweite_gleich_max", 0.2))
+    ungeprueft = 0
     for a, b in zip(seq, seq[1:]):
         if a["strecke"] != b["strecke"] or a["nachlauf_fehlt"] or b["nachlauf_fehlt"]:
             continue
-        if a["einstellung"] == b["einstellung"] and a["perspektive"] == b["perspektive"] and a["brennweite"] == b["brennweite"]:
-            r.errors.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} haben dieselbe Einstellung ({a['einstellung']}), Perspektive "
-                            f"({a['perspektive']}) und Brennweite ({a['brennweite']}) — anderer Shot.")
+        kb_a, kb_b = _kb_am_schnitt(a, tele, fps, "ende"), _kb_am_schnitt(b, tele, fps, "anfang")
+        gleiche_kb = None
+        if kb_a is not None and kb_b is not None:
+            # NICHT selbst rechnen: brennweite_abstand() rundet auf vier Stellen, damit 60/50 genau 0,2 ergibt
+            # (float: 1.2 - 1 = 0.19999999999999996 wäre sonst fälschlich „gleich")
+            gleiche_kb = TM.gleiche_brennweite(kb_a, kb_b, grenze)
+            if gleiche_kb:
+                r.errors.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} schneiden dieselbe KB-Brennweite "
+                                f"({kb_a:g} → {kb_b:g} mm, Abstand {TM.brennweite_abstand(kb_a, kb_b):.0%}) — anderen Shot wählen.")
+        else:
+            ungeprueft += 1
+        if a["einstellung"] == b["einstellung"] and a["perspektive"] == b["perspektive"] and \
+                (gleiche_kb if gleiche_kb is not None else a["brennweite"] == b["brennweite"]):
+            r.errors.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} haben dieselbe Einstellung ({a['einstellung']}) "
+                            f"und Perspektive ({a['perspektive']}) bei gleicher Brennweite — anderer Shot.")
         if a["setup_hash"] and b["setup_hash"] and _hamming(a["setup_hash"], b["setup_hash"]) < min_dist:
             r.warnings.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} sehen fast gleich aus (Setup-Abstand "
                               f"{_hamming(a['setup_hash'], b['setup_hash'])}).")
+    if ungeprueft:
+        r.warnings.append(f"{ungeprueft} Schnitte ohne Brennweitenverlauf — keine Telemetrie oder Datensatz von vor der "
+                          f"Umstellung; Brennweitenregel dort nicht geprüft.")
+    if not tele:
+        r.warnings.append("keine Telemetrie — Brennweiten- und Zoomregel nicht geprüft.")
+    else:
+        # veraltete Datensätze der genutzten Clips melden, wie es die Vorlagen 3a/6d tun
+        for hinweis in TM.telemetrie_hinweise([TM.finden(tele, p["clip"]) for p in seq], cfg.get("telemetrie") or {}):
+            r.warnings.append(hinweis)
     return r
 
 

@@ -52,6 +52,7 @@ from niro_autocut.media import proxy_for  # noqa: E402
 from niro_autocut import readback as RB  # noqa: E402
 from niro_autocut import replay  # noqa: E402
 from niro_autocut.report import write_report  # noqa: E402
+from niro_autocut import telemetrie as TM  # noqa: E402
 
 PLAN_FILE = "broll_plan.json"
 RASTER_FILE = "raster.json"
@@ -277,7 +278,8 @@ def main(argv: list[str] | None = None) -> int:
               f"Beat-Positionen: {quelle}\nProfil: {args.profile} · B-Roll-Plan: {len(plan.strecken)} Strecken, "
               f"{sum(len(st.szenen) for st in plan.strecken)} Szenen, {len(plan.all_shots())} Shots\n")
 
-        res = verify_layout(plan, tp_dict, index, cl, cfg_broll, fps)
+        tele = TM.laden(ch.autocut)
+        res = verify_layout(plan, tp_dict, index, cl, cfg_broll, fps, tele)
         if any(e.startswith("Config:") for e in res.errors):
             # cfg_broll fehlt ein Pflichtschlüssel — verify_layout hat das schon als Fehler gemeldet; die
             # Neuberechnung hier (nur um `placed` fürs Bauen/check_shot_files zu bekommen) würde mit demselben

@@ -366,3 +366,31 @@ def test_compact_index_v2_ohne_telemetrie_liefert_none():
     ab = cx[0]["abschnitte"][0]
     assert ab["brennweite_mm"] is None and ab["zoom"] is None
     assert ab["bewegungsart"] is None and ab["haltung"] is None and ab["bewegung_spitzen"] == []
+
+
+# --------------------------------------------------------------------------- #
+# Task 3: Telemetrie in verify_layout() — Regel 3a (Brennweitenfolge)
+# --------------------------------------------------------------------------- #
+
+def _tele(datei, kb_mm, zooms=None, fenster=None):
+    """Telemetrie-Datensatz wie in telemetrie.json; konstante Brennweite = ein kb_verlauf-Eintrag."""
+    return {"path": f"/nas/Standort 1/Sortiert/B-Roll/Flur/{datei}", "clip": datei.split(".")[0],
+            "quelle": "rtmd", "fps": 25.0, "dauer_s": 12.0, "fenster_s": 2.0,
+            "kb_verlauf": [[0.0, kb_mm]], "zooms": zooms or [], "fenster": fenster or []}
+
+
+def test_verify_layout_brennweitenfolge_meldet_gleiche_kb_am_schnitt():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [_tele("FX3_1.MP4", 25.0), _tele("FX3_2.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("KB" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors)   # 25,0 → 25,0 mm
+    assert not any("KB" in e and "FX3_3" in e for e in r.errors)                # 25,0 → 70,0 mm ist weit genug
+
+
+def test_verify_layout_brennweitenfolge_ohne_telemetrie_still():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, None)
+    assert not any("KB" in e for e in r.errors)
+    assert any("keine Telemetrie" in w for w in r.warnings)
