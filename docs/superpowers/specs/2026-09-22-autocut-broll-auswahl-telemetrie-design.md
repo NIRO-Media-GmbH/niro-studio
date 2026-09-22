@@ -176,3 +176,34 @@ wird der Entwurf verworfen statt gebaut.
   Brennweitenregel ohne ihn zu oft keinen Ausweg hat.
 - **Erkennen von Absicht** — braucht den Bildinhalt; gehört in den Index, nicht in die Telemetrie.
 - **Ablösung von Stufe 3a** — Ziel des Users, aber erst nach dem Vergleich zu entscheiden; 3a bleibt unverändert.
+
+## Nachtrag 22.09.2026 — Probe Schritt 3: der alte MEK-Plan gegen die beiden harten Regeln
+
+Gemessen am **gebauten** Rohschnitt (`broll_build.json`, 68 B-Roll-Items mit Quell- und Record-Positionen), nicht am
+Plan auf dem Papier; Zeitlupen über `genutzter_quellbereich_s()`. Wegwerf-Skript, kein Produktionscode, nur lesend.
+Der Plan entstand blind für die Telemetrie.
+
+**Regel 3a — Brennweitenfolge (`brennweite_gleich_max` = 0,2):**
+
+| | Paare | prüfbar | Verstöße |
+|---|---|---|---|
+| alle aufeinanderfolgenden B-Roll-Shots | 67 | 67 | **9 (13 %)** |
+| nur direkte Schnitte (A endet, B beginnt) | 43 | 43 | **5 (12 %)** |
+
+Drei Paare liegen bei **0,0 % Abstand** — identische KB-Brennweite gegeneinander geschnitten (25,4 → 25,4 mm;
+74,1 → 74,1 mm zweimal). Die Klassenprüfung sah das nicht, weil beide Werte „normal" heißen.
+
+**Regel 3b — schneller Zoom im genutzten Bereich:** **mindestens 7 von 68 Shots (10 %)**, Spitzen 94–242 %/s. Der
+94er ist über `ruck` 1,19 > `zoom_ruck_max` 1,0 schnell, nicht über das Tempo.
+
+Zusammen ist rund jeder sechste Shot betroffen. **Der Entwurf ist damit gerechtfertigt und wird nicht verworfen.**
+
+**Einschränkung (gemessen, nicht geschätzt):** Die MEK-Telemetrie stammt vom 21.09. 18:41 mit Config-Hash
+`508cf894e9e3`; die heutige `defaults.yaml` ergibt `40b5745652f3`. Das Sprung-Kriterium kam danach — `sprung_proz`
+fehlt in allen 444 Zoomfahrten. Folgen:
+
+- **3a unberührt** — rechnet auf `kb_verlauf`, und `brennweite_gleich_max` steht in `OHNE_MESSWIRKUNG`.
+- **3b ist eine Untergrenze** — `sprunghaft` ist eine ODER-Bedingung und kann nur „schnell" hinzufügen.
+
+Vor dem Vergleich zweier Pläne (Schritt 4) muss `autocut_telemetrie.py` für MEK einmal neu laufen; der Cache misst
+wegen des abweichenden Hashes ohnehin alle 463 Clips neu (I/O über die SSD, keine API-Kosten).
