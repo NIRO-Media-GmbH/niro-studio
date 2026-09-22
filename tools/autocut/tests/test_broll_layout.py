@@ -6,14 +6,24 @@ import json
 import pytest
 
 from niro_autocut import broll_layout as L
+from niro_autocut import telemetrie as TM
 from niro_autocut.charge import AutoCutError
 from niro_autocut.cutlist import Beat, Cut, Cutlist
 
+# telemetrie: wie defaults.yaml (Fix-Runde 1 zu Task 3) — cfg_broll allein trägt diesen Geschwister-Schlüssel in
+# Produktion nie; ohne ihn im Test-CFG griff cfg.get("telemetrie") in broll_layout.py unbemerkt immer ins Leere.
+CFG_TELEMETRIE = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_max_px": 0.15, "stativ_max_grad_s": 0.3,
+                  "stativ_max_px": 0.02, "schwenk_min_grad_s": 3.0, "schwenk_min_px": 1.0, "hf_grenze_hz": 3.0,
+                  "hand_hf_anteil_min": 0.15, "pitch_klassen_grad": [-60, -8, 8], "achsen": {"schwenk": 1, "tilt": 0},
+                  "vorzeichen": {"schwenk": 1, "tilt": -1, "pitch": 1}, "px_faktor": {"FX3": 0.60, "a7IV": 0.69},
+                  "optisch_fuer": [], "optisch_breite": 480, "parallel": 2, "zoom_min_proz": 3.0, "zoom_rausch_proz_s": 1.0,
+                  "zoom_schnell_proz_s": 100.0, "zoom_ruck_max": 1.0, "zoom_stocken_anteil": 0.0, "zoom_sprung_proz": 12.0,
+                  "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20, "digitalzoom_faktor": 1.25, "digitalzoom_max": 1.5}
 CFG = {"face_share": [0.15, 0.20], "face_share_hard": [0.12, 0.23], "window_first_s": 2.5, "window_s": 2.0, "window_min_s": 1.5,
        "window_max_s": 4.0, "full_face_beat_max_s": 3.0, "full_face_keywords": ["Gehaltenes Gesicht", "Bookend"],
        "shot_len_s": [2.0, 5.0], "shot_len_slow_max_s": 6.0, "montage_len_s": [1.5, 3.0], "fast_cuts_len_s": [1.0, 2.0],
        "scene_min_shots": 3, "scene_short_stretch_s": 6.0, "setup_hash_min_distance": 10, "max_exceptions_warn": 3,
-       "forbidden_maengel": ["Blick in Kamera", "Crew im Bild", "Logo/Marke"]}
+       "forbidden_maengel": ["Blick in Kamera", "Crew im Bild", "Logo/Marke"], "telemetrie": CFG_TELEMETRIE}
 FX = "/nas/Interviews/Anna/FX3_1.MP4"
 # Beats: 1 Hook 2,3 s | Pause 1 s | 2 VO 6 s | Pause | 3 O-Ton Anna 8 s | Pause | 4 O-Ton Bea 10 s (Bookend-Wort nicht) | Pause | 5 Grafik 4 s
 TP = {"fps": 25, "total_frames": 875, "beats": [
@@ -394,3 +404,17 @@ def test_verify_layout_brennweitenfolge_ohne_telemetrie_still():
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, None)
     assert not any("KB" in e for e in r.errors)
     assert any("keine Telemetrie" in w for w in r.warnings)
+
+
+def test_verify_layout_brennweitenfolge_frische_telemetrie_ohne_schwellen_warnung():
+    """Fix-Runde 1: cfg["telemetrie"] muss der echte Geschwister-Block sein (siehe CFG_TELEMETRIE oben), sonst
+    hasht telemetrie_hinweise() innerhalb von verify_layout gegen config_hash({}) statt gegen den echten Hash —
+    die Warnung „… mit anderen Telemetrie-Schwellen gemessen" würde dann auch bei frischer, mit den aktuellen
+    Schwellen gemessener Telemetrie immer feuern (und der empfohlene Neulauf sie nie beheben)."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    h = TM.config_hash(CFG["telemetrie"])
+    tele = [{**_tele("FX3_1.MP4", 25.0), "config_hash": h}, {**_tele("FX3_2.MP4", 40.0), "config_hash": h},
+            {**_tele("FX3_3.MP4", 70.0), "config_hash": h}]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("Telemetrie-Schwellen" in w for w in r.warnings)

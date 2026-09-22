@@ -279,7 +279,10 @@ def main(argv: list[str] | None = None) -> int:
               f"{sum(len(st.szenen) for st in plan.strecken)} Szenen, {len(plan.all_shots())} Shots\n")
 
         tele = TM.laden(ch.autocut)
-        res = verify_layout(plan, tp_dict, index, cl, cfg_broll, fps, tele)
+        # cfg_broll ist nur der broll:-Block (effective_broll_cfg); telemetrie: liegt in defaults.yaml/config.yaml
+        # als Geschwister-Schlüssel daneben und muss für die Brennweitenfolge in verify_layout extra rein — mit
+        # Chargen-Override, wie ch.config["telemetrie"] ihn auch autocut_telemetrie.py liefert.
+        res = verify_layout(plan, tp_dict, index, cl, {**cfg_broll, "telemetrie": ch.config["telemetrie"]}, fps, tele)
         if any(e.startswith("Config:") for e in res.errors):
             # cfg_broll fehlt ein Pflichtschlüssel — verify_layout hat das schon als Fehler gemeldet; die
             # Neuberechnung hier (nur um `placed` fürs Bauen/check_shot_files zu bekommen) würde mit demselben
