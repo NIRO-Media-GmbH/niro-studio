@@ -68,10 +68,11 @@ Stufe 3, nicht die Auswahl des Feinschnitts. `tempo50` wird nur für den Bericht
    `_stabilized` enthält (Avata-Exporte, wie in 6d).
 2. Glättungs-Preset aus der Telemetrie ableiten (Abschnitt 2), als `--preset` mit JSON-Inhalt direkt übergeben.
 3. `gyroflow "<clip>" --export-project 2 --preset "<json>" -f` — schreibt `<clip>.gyroflow` neben die Mediendatei.
-4. Zusätzlich `--export-project 3` in eine temporäre Datei: deren `gyro_source.adaptive_zoom_fovs` enthält den
-   tatsächlich gerechneten Zoom je Frame (kodiert). Daraus `zoom_ist` = Maximum über die genutzten Frames. Gelingt das
-   Dekodieren nicht, gilt `zoom_ist` = `max_zoom` aus dem Preset — der Deckel aus Abschnitt 4 hält den Haushalt auch
-   dann ein, der Bericht meldet den Wert nur als „Obergrenze statt Messwert".
+4. `zoom_ist` = `max_zoom` aus dem Preset, `zoom_gedeckelt` = wahr. **Kein zweiter Export.** Ursprünglich war hier ein
+   `--export-project 3` vorgesehen, aus dem der tatsächlich gerechnete Zoom je Frame kommen sollte; Befund 1, Punkt 6
+   zeigt, dass dessen Normierung ungeklärt ist und ein geratener Umrechnungsfaktor schlechter wäre als der Rückfall.
+   Der Deckel aus Abschnitt 4 hält den Haushalt ohnehin per Konstruktion; der Bericht weist den Wert als Obergrenze
+   statt als Messwert aus.
 
 **Ausgabe:** `_intern/autocut/gyroflow.json` — je Clip Pfad der Sidecar-Datei, verwendetes Preset, erkannte Kamera und
 Objektiv, `zoom_ist` und `zoom_gedeckelt` (ob der Deckel gegriffen hat). Dazu ein Bericht: welche Clips ein Sidecar
@@ -109,9 +110,13 @@ Fremd-Plugin müsste dieselbe Reverse-Engineering-Runde noch einmal gedreht werd
 neue Timeline mitten in der 6d-Kette, `feinschnitt.json` und der Readback würden ungültig, 6e–6i müssten neu verdrahtet
 werden.
 
-**Der Weg.** Je V3-Clip `TimelineItem.AddFusionComp()`, darin das Gyroflow-OFX-Tool über `Composition.AddTool()`, dann
-`SetInput` auf den Projektdatei-Parameter mit dem Pfad der Sidecar-Datei. Der Effekt sitzt *im Clip*: keine neue
-Timeline, keine Reimport-Runde, die Readback-Kette bleibt gültig.
+**Der Weg** (am 22.09. in Resolve nachgemessen, Befund 1). Je V3-Clip `TimelineItem.AddFusionComp()`, darin
+`Composition.AddTool("ofx.nl.smslv.gyroflowofx.fisheyestab_v1")`, dann `SetInput("gyrodata", <Pfad der Sidecar-Datei>)`.
+Der Effekt sitzt *im Clip*: keine neue Timeline, keine Reimport-Runde, die Readback-Kette bleibt gültig.
+
+Dazu je Clip **immer** `SetInput("Smoothness", …)` und `SetInput("FOV", …)` aus denselben Werten wie das Preset, weil
+die OFX-Parameter das Sidecar überschreiben (Befund 1, Punkt 5) — und bei Zeitlupen-Shots `SetInput("VideoSpeed", 50)`
+statt der Vorgabe 100 (Punkt 3).
 
 **Preis:** Fusion-Comps kosten Abspielleistung, und Gyroflow empfiehlt für Tempo eigentlich die Edit/Color-Seite. Bei der
 Shot-Zahl eines Reels vertretbar; wird es spürbar, ist der Ausweg ein Render-Cache auf den betroffenen Clips.
@@ -147,12 +152,11 @@ Mac in der GUI; Claude kann ihn nicht abnehmen. Danach prüfen: Resolve → Eins
 
 ## Fehler und Randfälle
 
-- **Zeitlupe auf V3 (offen, siehe unten).** Gyroflow ordnet jedem Bild einen Gyro-Zeitstempel zu. Die Doku warnt bei
-  abweichenden Frameraten zwischen Timeline und Quelle ausdrücklich vor kaputter Stabilisierung. 6d hängt B-Roll bei
-  100 % an und setzt danach `RetimeProcess` Nearest → `SetSpeed` 50 %; der Effekt ließe sich davor setzen. Immerhin:
-  das Projekt kennt `stabilization.video_speed_affects_zooming` — Gyroflow hat den Begriff Tempoänderung also, die
-  Frage ist nur, ob das OFX ihn vom Host erfährt. Welche Shots betroffen sind, steht in der `BROLL`-Tabelle der
-  6d-Vorlage.
+- **Zeitlupe auf V3 — entschärft.** Gyroflow ordnet jedem Bild einen Gyro-Zeitstempel zu, und die Doku warnt bei
+  abweichenden Frameraten vor kaputter Stabilisierung. Das OFX hat dafür aber einen eigenen Eingang `VideoSpeed`
+  (Prozent, Vorgabe 100; Befund 1, Punkt 3): Shots mit `tempo50` bekommen 50. Welche das sind, steht in der
+  `BROLL`-Tabelle der 6d-Vorlage. Die Sichtprüfung am echten Bau steht noch aus — sie gehört in den Bau-Schritt von
+  6d, nicht in ein eigenes Gate.
 - **Clips ohne Gyrospur.** In Wurst & Liebe 193 FX3- und 54 ZV-E10-Clips mit `quelle: keine`. Kein Sidecar, kein
   Gyroflow, heutiger Weg unverändert.
 - **DJI (Mavic, Avata).** Die Telemetrie misst sie optisch, weil sie nur Sony-rtmd liest. Gyroflow unterstützt DJI aber
@@ -166,26 +170,48 @@ Mac in der GUI; Claude kann ihn nicht abnehmen. Danach prüfen: Resolve → Eins
   Profildatenbank ist. Unkritisch, solange Sony eigene Verzeichnungsdaten mitliefert (`distortion_model: "sony"`) — der
   Sidecar-Lauf soll es trotzdem protokollieren.
 
-## Offene Punkte — zuerst zu klären, mit laufendem Resolve
+## Befund 1 — Verifikation am 22.09.2026 (Resolve 21.1, Projekt „MCP MEK Test")
 
-Diese drei entscheiden über die Form der Umsetzung und gehören als erster Schritt in den Plan, vor allem anderen:
+Gemessen mit laufendem Resolve im Testprojekt, das der User freigegeben hat; Test-Timeline und Fusion-Comps danach
+gelöscht, Timeline und Bin des Users wiederhergestellt.
 
-1. **Tempo-Verhalten.** Bekommt das Gyroflow-OFX bei einem auf 50 % gesetzten Clip den richtigen Zeitbezug? Test: ein
-   Shot zweimal, 100 % und 50 %, beide mit demselben Sidecar, Sichtvergleich. **Fällt er negativ aus**, behalten
-   Zeitlupen-Shots den heutigen Weg und Gyroflow greift nur bei 100-%-B-Roll — der Rest der Spec bleibt gültig.
-2. **Tool-Kennung.** Wie heißt das Gyroflow-OFX in `Fusion.GetToolList()`, und nimmt `Composition.AddTool()` es an?
-3. **Parameter.** Nimmt `SetInput` den Projektdatei-Parameter an, und welche weiteren Parameter (FOV, Smoothness,
-   Horizon Lock) überschreiben das Sidecar zur Laufzeit? Falls FOV zur Laufzeit setzbar ist, ließe sich der Deckel aus
-   Abschnitt 4 ohne Neu-Export nachjustieren.
+**1. Tool-Kennung — geklärt.** In `Fusion.GetToolList()` (506 Werkzeuge) steht das Plugin als
+`ofx.nl.smslv.gyroflowofx.fisheyestab_v1`, angezeigt als „Gyroflow". Es registriert sich **auch als Version 1.3.0 mit
+gesetztem Quarantäne-Flag** — die Erneuerung aus Abschnitt 5 bleibt empfohlen, ist aber kein Blocker für die
+Automatisierung.
 
-Dazu zwei Messungen, die ohne Resolve laufen und in denselben ersten Schritt gehören:
+**2. Anwendung per Skript — geklärt und tragfähig.** `TimelineItem.AddFusionComp()` liefert einen Comp,
+`Composition.AddTool("ofx.nl.smslv.gyroflowofx.fisheyestab_v1")` legt das Werkzeug an (`TOOLS_Name` „Gyroflow1"), und
+`SetInput` nimmt den Projektdatei-Pfad an. Der Parameter heißt **`gyrodata`**; der Readback liefert den gesetzten Pfad
+zurück. Der Weg aus Abschnitt 3 steht damit.
 
-4. **Dekodierung von `adaptive_zoom_fovs`** aus dem Typ-3-Projekt (Abschnitt 1, Punkt 4). Gelingt sie nicht, greift der
-   dokumentierte Rückfall auf den Deckelwert — kein Blocker.
-5. **DJI-Gyro.** Ein Mavic- und ein Avata-Clip durch `--export-project 2`; findet Gyroflow deren Gyro, kommen sie in den
-   Umfang, sonst nicht.
+**3. Tempo — entschärft.** Das Werkzeug hat 78 Eingänge, darunter einen ausdrücklichen **`VideoSpeed`** (Prozent,
+Vorgabe 100). Die Zeitlupe ist damit kein Ratespiel, sondern eine Einstellung: B-Roll auf 50 % bekommt `VideoSpeed` 50.
+Offen bleibt allein die Sichtprüfung am echten Bau — sie gehört in den Bau-Schritt von Baustein 6d, nicht mehr in ein
+eigenes Gate.
 
-Vorher wird nichts gebaut.
+**4. Weitere nutzbare Eingänge:** `FOV`, `Smoothness`, `LensCorrectionStrength`, `HorizonLockAmount`, `HorizonLockRoll`,
+`PositionX`/`PositionY`, `InputRotation`, `Rotation`, `DisableStretch`, `UseGyroflowsKeyframes`, `IncludeProjectData`,
+`Status`.
+
+**5. Vorrang der Parameter — neue Erkenntnis mit Folgen.** Nach `SetInput("gyrodata", …)` lieferte der Readback
+`Smoothness` 0,5 und `FOV` 1,0 — die **Vorgaben des Plugins**, nicht die Werte aus dem Sidecar (dort 0,7 bzw.
+`max_zoom` 120). Die OFX-Parameter überschreiben das Projekt also offenbar.
+
+**Folge:** Baustein 6d setzt beim Bau **zusätzlich** `Smoothness` und `FOV` je Clip aus denselben Werten, aus denen auch
+das Preset gebaut wird. Damit ist der Vorrang gleichgültig. `max_zoom` hat keine OFX-Entsprechung und bleibt im Sidecar
+— die Garantie aus Abschnitt 4 hängt daran und bleibt unberührt.
+
+**6. Zoom-Readback — Zugriffsweg steht, Umrechnung nicht.** `adaptive_zoom_fovs` im Typ-3-Projekt ist basE91 über den
+ganzen String (inklusive `q:`-Präfix), darunter zlib; entpackt ein Binärarray von 4743 Byte, weder durch 4 noch durch 8
+teilbar — Struktur ungeklärt, Rückbau lohnt nicht. Sauberer Weg stattdessen: `--export-metadata 3:<datei>` liefert eine
+Liste mit genau einem Eintrag je Frame (gemessen 528 bei 528 Frames), Felder `fov_scale` und `minimal_fov_scale`.
+**Ungeklärt bleibt die Normierung:** `fov_scale` lag bei 0,459 für einen hochkant gedrehten 4K-Clip, ist also nicht auf
+„1,0 = volles Bild" bezogen — Rotation und Seitenverhältnis stecken darin. Das ohne Kalibrierung über mehrere Clips zu
+raten wäre schlechter als der Rückfall. **Es bleibt beim Rückfall:** `zoom_ist` ist der Deckelwert, im Bericht als
+Obergrenze statt als Messwert ausgewiesen. Der Rand-Haushalt hängt nicht daran (Abschnitt 4 hält per Konstruktion).
+
+**7. DJI — ungeprüft.** Bonus, gatet nichts. Clips ohne `quelle: rtmd` bleiben ausgeschlossen.
 
 ## Umgebung
 
