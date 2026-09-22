@@ -350,7 +350,7 @@ def main(argv: list[str] | None = None) -> int:
                         "gebaut_am": _dt.datetime.now().isoformat(timespec="seconds"), "verify_warnings": res.warnings})
             r_bericht = raster(tp_dict, cl, cfg_broll, plan)
             md_path = write_report(ch, f"{vk}-broll.md", render_layout_md(plan, placed, r_bericht, index, cl,
-                                                                           warnings=res.warnings, build=out))
+                                                                           warnings=res.warnings, build=out, tele=tele))
             out.update({"items": [i.to_dict() for i in items], "markers": [m.to_dict() for m in markers], "placed": placed})
             try:
                 out["bau_readback"] = str(RB.schreiben(ch, session, session.find_timeline(name)))

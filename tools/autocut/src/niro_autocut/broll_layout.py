@@ -812,7 +812,7 @@ def _md(s) -> str:
 
 
 def render_layout_md(plan: LayoutPlan, placed: list[dict], r: dict, index: dict, cl: Cutlist, warnings: list[str] | None = None,
-                     build: dict | None = None) -> str:
+                     build: dict | None = None, tele: list[dict] | None = None) -> str:
     fps = float(r["fps"])
     lines = [f"# B-Roll-Layout — {plan.video or cl.video}", ""]
     if build:
@@ -824,12 +824,14 @@ def render_layout_md(plan: LayoutPlan, placed: list[dict], r: dict, index: dict,
     for st in r["strecken"]:
         rows = [p for p in placed if p["strecke"] == st["nr"]]
         lines += [f"## Strecke {st['nr']}: {st['von_s']}–{st['bis_s']} s ({st['dauer_s']} s) · Beats {', '.join('#' + b['nr'] for b in st['beats'])}", "",
-                  "| Szene | Position | Clip | Bereich | Tempo | Länge | Einstellung | Perspektive | Brennweite | Grund | Abweichung |",
-                  "|---|---|---|---|---|---|---|---|---|---|---|"]
+                  "| Szene | Position | Clip | Bereich | Tempo | Länge | Einstellung | Perspektive | Brennweite | KB | Grund | Abweichung |",
+                  "|---|---|---|---|---|---|---|---|---|---|---|---|"]
         for p in rows:
+            kb = _kb_am_schnitt(p, tele, fps, "anfang")
+            kb_txt = "–" if kb is None else f"{kb:g} mm".replace(".", ",")
             lines.append(f"| {p['szene_i']} {_md(p['szene_ordner'])}{' (Ausnahme)' if p['ausnahme'] else ''} | {p['rec_in_f'] / fps:.2f} s | {_md(p['name'])} | "
                          f"{p['in_s']:g}–{p['out_s']:g} s | {p['tempo']}× | {_s((p['rec_out_f'] - p['rec_in_f']) / fps)} | {_md(p['einstellung'])} | "
-                         f"{_md(p['perspektive'])} | {_md(p['brennweite'])} | {_md(p['grund'])} | {('JA: ' + _md(p['abweichung_grund'])) if p['abweichung'] else ''} |")
+                         f"{_md(p['perspektive'])} | {_md(p['brennweite'])} | {kb_txt} | {_md(p['grund'])} | {('JA: ' + _md(p['abweichung_grund'])) if p['abweichung'] else ''} |")
         lines.append("")
     lines += ["## Fenster", "", "| Beat | von | bis | Dauer |", "|---|---|---|---|"]
     for w in r["fenster"]:

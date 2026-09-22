@@ -554,3 +554,27 @@ def test_verify_layout_bewegungsspitze_grundniveau_null_warnt_trotzdem():
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
     assert any("Bewegungsspitze" in w for w in r.warnings)
     assert not any("Bewegungsspitze" in e for e in r.errors)     # NIE ein Fehler: Schwellen unkalibriert
+
+
+# --------------------------------------------------------------------------- #
+# Task 6: Bericht — KB-Spalte in render_layout_md
+# --------------------------------------------------------------------------- #
+
+def test_render_layout_md_zeigt_kb_brennweite():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [_tele("FX3_1.MP4", 25.4), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    placed, _ = L.place_shots(plan, TP, idx, CFG, 25, cl=CL)
+    r = L.raster(TP, CL, CFG, plan)
+    md = L.render_layout_md(plan, placed, r, idx, CL, tele=tele)
+    assert "| KB |" in md and "25,4 mm" in md
+
+
+def test_render_layout_md_ohne_telemetrie_zeigt_gedankenstrich():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    placed, _ = L.place_shots(plan, TP, idx, CFG, 25, cl=CL)
+    r = L.raster(TP, CL, CFG, plan)
+    md = L.render_layout_md(plan, placed, r, idx, CL)
+    assert "| KB |" in md
+    assert " – | " in md                        # kein Absturz und keine „None"-Anzeige ohne tele
