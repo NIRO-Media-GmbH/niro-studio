@@ -50,8 +50,17 @@ Der naheliegende Gyroflow-Weg — jeden Clip rendern und als `_stabilized.mov` a
 Ein Werkzeug mit einer Aufgabe. Es liest Video und schreibt Sidecars. Es rendert nie und schreibt nichts nach Resolve —
 dadurch ist es ohne laufendes Resolve testbar.
 
-**Eingabe:** `broll_einsatz.json` (die im Schnitt genutzten B-Roll-Shots samt 50-%-Kennzeichnung) plus `telemetrie.json`
-derselben Charge. Gearbeitet wird je **Quelldatei**, nicht je Shot — mehrfach genutzte Clips bekommen ein Sidecar.
+**Eingabe:** `_intern/autocut/gyroflow_clips.json`, geschrieben vom **Probelauf** von `feinschnitt_bauen.py`. Dort — und
+nur dort — liegen beide Hälften zusammen: die `BROLL`-Tabelle mit den tatsächlich genutzten Shots und
+`broll_auswahl.json`, das je Shot `datei` auflöst. Der Probelauf schreibt je genutztem Shot `{datei, tempo50}`; das
+Werkzeug fasst auf **Quelldatei** zusammen, ein Sidecar je Datei, auch bei Mehrfachnutzung. Dazu `telemetrie.json`
+derselben Charge für `haltung` und `wackeln`.
+
+Damit ist die Reihenfolge aus Abschnitt 3 erzwungen statt nur empfohlen: ohne ausgefüllte `BROLL`-Tabelle gibt es keine
+Clipliste, und ohne Clipliste läuft kein Export.
+
+(`broll_einsatz.json` führt nur Zählwerte je Spur und taugt nicht als Quelle; `broll_plan.json` trägt die Zuordnung aus
+Stufe 3, nicht die Auswahl des Feinschnitts. `tempo50` wird nur für den Bericht gebraucht, nicht für den Export.)
 
 **Je Clip:**
 
@@ -68,8 +77,15 @@ derselben Charge. Gearbeitet wird je **Quelldatei**, nicht je Shot — mehrfach 
 Objektiv, `zoom_ist` und `zoom_gedeckelt` (ob der Deckel gegriffen hat). Dazu ein Bericht: welche Clips ein Sidecar
 bekamen, welche warum nicht, und bei welchen der Deckel griff (dort glättet Gyroflow schwächer als es könnte).
 
-**Cache:** wie die Telemetrie je Clip über den Fingerprint plus Preset-Hash. Ein unveränderter Clip mit unverändertem
-Preset wird nicht neu exportiert.
+**Cache:** wie die Telemetrie je Clip über den Fingerprint plus Preset-Hash, unter `_intern/autocut/gyroflow/`. Ein
+unveränderter Clip mit unverändertem Preset wird nicht neu exportiert.
+
+**Schreibschutz.** `Charge.assert_writable` erlaubt nur `_intern/autocut/`, `Ergebnisse/Rohschnitt/` und das Protokoll —
+ein Sidecar neben der Mediendatei fällt nicht darunter. Der Schreibschutz wird dafür nicht aufgeweicht; stattdessen
+bekommt dieser eine Fall eine eigene, enge Regel (`sidecar_pfad()`): geschrieben wird ausschließlich eine Datei mit
+der Endung `.gyroflow`, deren Stamm dem einer **existierenden** Mediendatei entspricht, die in `telemetrie.json` mit
+genau diesem Pfad geführt ist. Alles andere wirft `AutoCutError`. Cache und `gyroflow.json` laufen weiter über
+`assert_writable`.
 
 ## 2 — Glättung aus der Telemetrie
 
@@ -135,7 +151,8 @@ Mac in der GUI; Claude kann ihn nicht abnehmen. Danach prüfen: Resolve → Eins
   abweichenden Frameraten zwischen Timeline und Quelle ausdrücklich vor kaputter Stabilisierung. 6d hängt B-Roll bei
   100 % an und setzt danach `RetimeProcess` Nearest → `SetSpeed` 50 %; der Effekt ließe sich davor setzen. Immerhin:
   das Projekt kennt `stabilization.video_speed_affects_zooming` — Gyroflow hat den Begriff Tempoänderung also, die
-  Frage ist nur, ob das OFX ihn vom Host erfährt. Welche Shots betroffen sind, steht in `broll_einsatz.json`.
+  Frage ist nur, ob das OFX ihn vom Host erfährt. Welche Shots betroffen sind, steht in der `BROLL`-Tabelle der
+  6d-Vorlage.
 - **Clips ohne Gyrospur.** In Wurst & Liebe 193 FX3- und 54 ZV-E10-Clips mit `quelle: keine`. Kein Sidecar, kein
   Gyroflow, heutiger Weg unverändert.
 - **DJI (Mavic, Avata).** Die Telemetrie misst sie optisch, weil sie nur Sony-rtmd liest. Gyroflow unterstützt DJI aber
