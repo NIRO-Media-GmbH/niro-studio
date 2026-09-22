@@ -346,3 +346,23 @@ def test_raster_ok_stays_free_of_errors_on_the_default_mek_fixture():
     weder die neue Kurz-Strecken- noch die Gesichtsanteil-Prüfung schlägt hier grundlos an."""
     r = L.raster(TP, CL, CFG)
     assert r["fehler"] == []
+
+
+def test_compact_index_v2_reicht_telemetriewerte_durch():
+    idx = _idx()
+    a = idx["clips"][0]["abschnitte"][0]
+    a.update(brennweite_mm=71.6, zoom="langsam", bewegungsart="schwenk_links", haltung="gimbal",
+             bewegung_spitzen=[[1.0, 3.0]])
+    cx = L.compact_index_v2(idx)
+    ab = cx[0]["abschnitte"][0]
+    assert ab["brennweite_mm"] == 71.6 and ab["zoom"] == "langsam"
+    assert ab["bewegungsart"] == "schwenk_links" and ab["haltung"] == "gimbal"
+    assert ab["bewegung_spitzen"] == [[1.0, 3.0]]
+    assert ab["brennweite"] == "weit"          # Claudes Klasse bleibt erhalten
+
+
+def test_compact_index_v2_ohne_telemetrie_liefert_none():
+    cx = L.compact_index_v2(_idx())
+    ab = cx[0]["abschnitte"][0]
+    assert ab["brennweite_mm"] is None and ab["zoom"] is None
+    assert ab["bewegungsart"] is None and ab["haltung"] is None and ab["bewegung_spitzen"] == []

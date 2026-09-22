@@ -722,7 +722,11 @@ def compact_index_v2(index: dict) -> list[dict]:
     for c in index.get("clips") or []:
         abschnitte = [{"von_s": a["von_s"], "bis_s": a["bis_s"], "kurz": a.get("beschreibung", ""), "q": a.get("qualitaet"),
                        "einstellung": a.get("einstellung"), "perspektive": _perspektive(a), "brennweite": a.get("brennweite"),
-                       "richtung": a.get("bewegungsrichtung"), "motiv": a.get("hauptmotiv")}
+                       "richtung": a.get("bewegungsrichtung"), "motiv": a.get("hauptmotiv"),
+                       # gemessen (Spec 2026-09-22): die Auswahl plant auf diesen Werten, nicht auf den Klassen
+                       "brennweite_mm": a.get("brennweite_mm"), "zoom": a.get("zoom"),
+                       "bewegungsart": a.get("bewegungsart"), "haltung": a.get("haltung"),
+                       "bewegung_spitzen": a.get("bewegung_spitzen") or []}
                       for a in (c.get("abschnitte") or []) if a.get("verwendbar")]
         out.append({"ref": clip_ref(c), "datei": c.get("datei"), "ordner": c.get("ordner") or "", "standort": c.get("standort"),
                     "dauer_s": c.get("dauer_s"), "fps": c.get("fps"), "kurz": c.get("beschreibung_kurz", ""),
