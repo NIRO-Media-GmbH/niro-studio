@@ -385,7 +385,8 @@ def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samp
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------
 
 # Schlüssel ohne Einfluss auf die Messung: Parallelität und die Brennweitenfolge der Vorlagen 3a/6d
-OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max")
+OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max",
+                    "bewegung_rand_s", "bewegung_spitze_faktor")
 
 
 def config_hash(cfg: dict) -> str:
@@ -691,6 +692,13 @@ def bewegung_spitzen(rec: dict | None, von_s: float, bis_s: float) -> list[list[
             continue
         out.append([t, round(bw, 3)])
     return out
+
+
+def bewegung_grundniveau(rec: dict | None, t_s: float, abstand_s: float = 3.0) -> float | None:
+    """Median der ``bewegung`` aller Fenster, die mindestens ``abstand_s`` von ``t_s`` entfernt liegen — das
+    Grundniveau des Clips ohne die Spitze selbst. None ohne solche Fenster (Spec 2026-09-22)."""
+    fern = [float(f[2]) for f in ((rec or {}).get("fenster") or []) if abs(float(f[0]) - t_s) >= abstand_s]
+    return float(np.median(fern)) if fern else None
 
 
 def genutzter_quellbereich_s(src_in_f: int, n_f: int, clip_fps: float, langsam: bool,

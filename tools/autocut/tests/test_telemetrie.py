@@ -1184,3 +1184,22 @@ def test_bewegung_spitzen_plateau_am_rand():
                         [2.0, 0.1, 2.5, "fahrt", None],       # Maximum (2.5 >= 1.0 && 2.5 >= 2.5)
                         [3.0, 0.1, 2.5, "fahrt", None]]}      # Maximum (2.5 >= 2.5, nur links)
     assert T.bewegung_spitzen(rec2, 0.0, 4.0) == [[2.0, 2.5], [3.0, 2.5]]
+
+
+def test_neue_schluessel_aendern_den_config_hash_nicht():
+    """Sonst gälte jede vorhandene telemetrie.json als veraltet und würde neu gemessen."""
+    import yaml
+    from pathlib import Path
+    cfg = yaml.safe_load((Path(__file__).resolve().parents[1] / "defaults.yaml").read_text())["telemetrie"]
+    vorher = T.config_hash({k: v for k, v in cfg.items()
+                            if k not in ("bewegung_rand_s", "bewegung_spitze_faktor")})
+    assert T.config_hash(cfg) == vorher
+
+
+def test_bewegung_grundniveau_nimmt_nur_entfernte_fenster():
+    rec = {"fenster": [[0.0, 0.1, 0.4, "fahrt", None],
+                       [1.0, 0.1, 0.6, "fahrt", None],
+                       [4.0, 0.1, 9.0, "schwenk_links", None],   # die Spitze selbst
+                       [8.0, 0.1, 0.5, "fahrt", None]]}
+    assert T.bewegung_grundniveau(rec, 4.0, 3.0) == 0.5          # Median von 0,4 / 0,6 / 0,5
+    assert T.bewegung_grundniveau({"fenster": []}, 4.0, 3.0) is None

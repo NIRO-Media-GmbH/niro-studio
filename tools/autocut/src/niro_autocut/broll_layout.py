@@ -662,6 +662,17 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 for z in TM.zooms_im_bereich(rec, von, bis):
                     r.errors.append(f"{tag}: schneller Zoom im genutzten Bereich ({z['von_mm']:g} → {z['bis_mm']:g} mm, "
                                     f"Spitze {z['tempo_max']:.0f} %/s) — anderen Bereich wählen oder `abweichung` mit Grund.")
+        if rec and von is not None:
+            tcfg = cfg.get("telemetrie") or {}
+            rand = float(tcfg.get("bewegung_rand_s", 0.5))
+            faktor = float(tcfg.get("bewegung_spitze_faktor", 3.0))
+            for t_s, bw in TM.bewegung_spitzen(rec, von - rand, bis + rand):
+                if min(abs(t_s - von), abs(t_s - bis)) > rand:
+                    continue
+                grund_px = TM.bewegung_grundniveau(rec, t_s)
+                if grund_px and bw >= faktor * grund_px:
+                    r.warnings.append(f"{tag}: Schnittgrenze bei {t_s:g} s liegt in einer Bewegungsspitze "
+                                      f"({bw:g} gegen Grundniveau {grund_px:g}) — Hinweis, Schwellen unkalibriert.")
         if not p["grund"].strip():
             r.warnings.append(f"{tag}: ohne grund.")
         if p["tempo"] == 4:

@@ -18,7 +18,8 @@ CFG_TELEMETRIE = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_
                   "vorzeichen": {"schwenk": 1, "tilt": -1, "pitch": 1}, "px_faktor": {"FX3": 0.60, "a7IV": 0.69},
                   "optisch_fuer": [], "optisch_breite": 480, "parallel": 2, "zoom_min_proz": 3.0, "zoom_rausch_proz_s": 1.0,
                   "zoom_schnell_proz_s": 100.0, "zoom_ruck_max": 1.0, "zoom_stocken_anteil": 0.0, "zoom_sprung_proz": 12.0,
-                  "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20, "digitalzoom_faktor": 1.25, "digitalzoom_max": 1.5}
+                  "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20, "digitalzoom_faktor": 1.25, "digitalzoom_max": 1.5,
+                  "bewegung_rand_s": 0.5, "bewegung_spitze_faktor": 3.0}
 CFG = {"face_share": [0.15, 0.20], "face_share_hard": [0.12, 0.23], "window_first_s": 2.5, "window_s": 2.0, "window_min_s": 1.5,
        "window_max_s": 4.0, "full_face_beat_max_s": 3.0, "full_face_keywords": ["Gehaltenes Gesicht", "Bookend"],
        "shot_len_s": [2.0, 5.0], "shot_len_slow_max_s": 6.0, "montage_len_s": [1.5, 3.0], "fast_cuts_len_s": [1.0, 2.0],
@@ -504,3 +505,15 @@ def test_verify_layout_schneller_zoom_ohne_zeitlupe_voller_bereich_gemeldet():
     tele = [{**_tele("FX3_5.MP4", 35.0, schnell), "fps": 50.0}]
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
     assert any("schneller Zoom" in e and "FX3_5" in e for e in r.errors)
+
+
+def test_verify_layout_bewegungsspitze_an_der_schnittgrenze_warnt_nur():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    # Shot 1 endet bei 3,0 s; Spitze bei 3,0 s mit 9,0 gegen Grundniveau 0,5 = Faktor 18
+    fen = [[0.0, 0.1, 0.4, "fahrt", None], [1.0, 0.1, 0.6, "fahrt", None],
+           [3.0, 0.1, 9.0, "schwenk_links", None], [8.0, 0.1, 0.5, "fahrt", None]]
+    tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("Bewegungsspitze" in w for w in r.warnings)
+    assert not any("Bewegungsspitze" in e for e in r.errors)     # NIE ein Fehler: Schwellen unkalibriert
