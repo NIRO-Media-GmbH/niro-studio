@@ -85,8 +85,8 @@ Alle drei setzen Telemetrie voraus und werden je Shot übersprungen, wenn der Cl
 Zahl der ungeprüften Shots mit Grund („keine Telemetrie", „alte Telemetrie ohne Brennweitenverlauf", „mit anderen
 Telemetrie-Schwellen gemessen") — wie die Vorlagen 3a und 6d es seit 21.09. tun.
 
-**3a — KB-Brennweitenfolge (Fehler).** Für in der Timeline direkt aufeinanderfolgende Shots (Reihenfolge nach
-`rec_in_f`, **über Szenen- und Streckengrenzen hinweg** — der Schnitt ist auch dort ein Schnitt) die scheinbare KB-Brennweite am
+**3a — KB-Brennweitenfolge (Fehler).** Für Shots, die in der Timeline **wirklich aneinanderstoßen**, die
+scheinbare KB-Brennweite am
 Schnitt: `kb_am(rec_A, out_A, seite="ende")` und `kb_am(rec_B, in_B, seite="anfang")`. Liegt `max/min − 1` unter
 `telemetrie.brennweite_gleich_max` (0,2), ist es ein Fehler mit Nennung beider Werte. Kalibriert und seit 21.09. in
 3a/6d produktiv.
@@ -187,11 +187,11 @@ Der Plan entstand blind für die Telemetrie.
 
 | | Paare | prüfbar | Verstöße |
 |---|---|---|---|
-| alle aufeinanderfolgenden B-Roll-Shots | 67 | 67 | **9 (13 %)** |
-| nur direkte Schnitte (A endet, B beginnt) | 43 | 43 | **5 (12 %)** |
+| alle aufeinanderfolgenden B-Roll-Shots | 67 | 67 | 9 (13 %) |
+| **nur echte Schnitte (A endet, B beginnt)** | **43** | **43** | **5 (12 %)** |
 
-Drei Paare liegen bei **0,0 % Abstand** — identische KB-Brennweite gegeneinander geschnitten (25,4 → 25,4 mm;
-74,1 → 74,1 mm zweimal). Die Klassenprüfung sah das nicht, weil beide Werte „normal" heißen.
+**Maßgeblich ist die zweite Zeile.** Bei 24 der 67 Paare liegt das Sprecher-Fenster dazwischen (A-Roll) — dort stoßen
+die Shots nicht aneinander. Drei der fünf Paare liegen bei **0,0 % Abstand** — identische KB-Brennweite gegeneinander geschnitten (25,4 → 25,4 mm; 74,1 → 74,1 mm). Die Klassenprüfung sah das nicht, weil beide Werte „normal" heißen.
 
 **Regel 3b — schneller Zoom im genutzten Bereich:** **mindestens 7 von 68 Shots (10 %)**, Spitzen 94–242 %/s. Der
 94er ist über `ruck` 1,19 > `zoom_ruck_max` 1,0 schnell, nicht über das Tempo.
