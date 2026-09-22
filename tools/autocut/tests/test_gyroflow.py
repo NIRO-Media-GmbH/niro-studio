@@ -210,3 +210,24 @@ def test_clip_export_retry_nach_fehler_benoetigt_neu_export(tmp_path: Path):
     assert aus_cache is False
     assert rec2["fehler"] is None
     assert rec2["sidecar"] is not None
+
+
+def test_zoom_ist_faellt_auf_den_deckel_zurueck():
+    wert, gedeckelt = G.zoom_ist_lesen({"gyro_source": {}}, 120.0)
+    assert wert == pytest.approx(1.20)
+    assert gedeckelt is True
+
+
+def test_zoom_ist_rechnet_prozent_in_faktor_um():
+    # adaptive_zoom_fovs liegen als dekodierte Liste vor; Maximum zählt
+    projekt = {"gyro_source": {"adaptive_zoom_fovs_dekodiert": [1.02, 1.11, 1.07]}}
+    wert, gedeckelt = G.zoom_ist_lesen(projekt, 120.0)
+    assert wert == pytest.approx(1.11)
+    assert gedeckelt is False
+
+
+def test_zoom_ist_meldet_wenn_der_deckel_griff():
+    projekt = {"gyro_source": {"adaptive_zoom_fovs_dekodiert": [1.19, 1.20]}}
+    wert, gedeckelt = G.zoom_ist_lesen(projekt, 120.0)
+    assert wert == pytest.approx(1.20)
+    assert gedeckelt is True

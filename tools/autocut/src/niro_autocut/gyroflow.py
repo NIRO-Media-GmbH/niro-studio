@@ -133,3 +133,16 @@ def clip_export(ch, video, rec: dict, cfg: dict, erlaubte_pfade: set[str],
     teil.write_text(json.dumps(datensatz, ensure_ascii=False, indent=1), encoding="utf-8")
     os.replace(teil, cache)
     return datensatz, False
+
+
+def zoom_ist_lesen(projekt: dict, max_zoom: float) -> tuple[float, bool]:
+    """Tatsächlich verbrauchter Zoom als Faktor ≥ 1,0 und ob der Deckel griff.
+
+    Gyroflow rechnet in Prozent (100 = kein Beschnitt). Ohne dekodierte Werte gilt der Deckel als Obergrenze — der
+    Haushalt hält dadurch ohnehin, der Bericht nennt den Wert dann als Obergrenze statt als Messwert."""
+    deckel = float(max_zoom) / 100.0
+    werte = (projekt.get("gyro_source") or {}).get("adaptive_zoom_fovs_dekodiert")
+    if not werte:
+        return deckel, True
+    wert = max(float(w) for w in werte)
+    return wert, wert >= deckel - 1e-9
