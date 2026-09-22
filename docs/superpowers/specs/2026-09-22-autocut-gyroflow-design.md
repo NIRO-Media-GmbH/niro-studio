@@ -185,10 +185,25 @@ Automatisierung.
 `SetInput` nimmt den Projektdatei-Pfad an. Der Parameter heißt **`gyrodata`**; der Readback liefert den gesetzten Pfad
 zurück. Der Weg aus Abschnitt 3 steht damit.
 
-**3. Tempo — entschärft.** Das Werkzeug hat 78 Eingänge, darunter einen ausdrücklichen **`VideoSpeed`** (Prozent,
-Vorgabe 100). Die Zeitlupe ist damit kein Ratespiel, sondern eine Einstellung: B-Roll auf 50 % bekommt `VideoSpeed` 50.
-Offen bleibt allein die Sichtprüfung am echten Bau — sie gehört in den Bau-Schritt von Baustein 6d, nicht mehr in ein
-eigenes Gate.
+**3. Tempo — geklärt und am Bild belegt.** Das Werkzeug hat 78 Eingänge, darunter einen ausdrücklichen **`VideoSpeed`**
+(Prozent, Vorgabe 100). Gegenprobe am 23.09. an einem FX3-Shot, zweimal auf einer Probe-Timeline: einmal 100 %, einmal
+`SetSpeed({"Percentage": 50.0})` plus `RETIME_NEAREST`, beide mit demselben Sidecar, `Smoothness` 0,7, `VideoSpeed` 100
+bzw. 50. Gerendert und die Frames verglichen (RMSE):
+
+| Vergleich | RMSE |
+|---|---|
+| 100 % bei Quellframe 20 ↔ **50 % bei Quellframe 20** | **201 (0,31 %)** |
+| 100 % bei Quellframe 20 ↔ 100 % bei Quellframe 40 (Gegenprobe) | 2467 (3,76 %) |
+| 100 % bei Quellframe 40 ↔ 50 % an derselben Timeline-Position | 2469 (3,77 %) |
+
+Die Zeitlupen-Instanz zeigt an ihrer Position denselben Quellframe wie die 100-%-Instanz, pixelgleich bis auf
+Codec-Rauschen — und nicht den Frame, den sie zeigen würde, wenn `VideoSpeed` wirkungslos wäre. **Das Risiko aus der
+ursprünglichen Fassung dieser Spec ist damit erledigt.**
+
+Nebenbefund: Die Probe-Timeline war 3840×2160 quer, der Clip 2160×3840 hochkant — das Bild saß dann klein in der Mitte
+(Pillarbox). Artefakt des Testaufbaus, kein Plugin-Fehler; im echten 6d-Bau stimmen Timeline und Clips überein. Die
+Warnung der Gyroflow-Doku vor abweichenden Seitenverhältnissen ist aber real: **Timeline-Auflösung und Clip-Auflösung
+müssen zusammenpassen**, sonst skaliert der Fusion-Comp das Bild.
 
 **4. Weitere nutzbare Eingänge:** `FOV`, `Smoothness`, `LensCorrectionStrength`, `HorizonLockAmount`, `HorizonLockRoll`,
 `PositionX`/`PositionY`, `InputRotation`, `Rotation`, `DisableStretch`, `UseGyroflowsKeyframes`, `IncludeProjectData`,
