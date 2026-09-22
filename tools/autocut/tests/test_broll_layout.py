@@ -448,3 +448,59 @@ def test_verify_layout_schneller_zoom_mit_abweichung_erlaubt():
     tele = [_tele("FX3_1.MP4", 25.0, schnell), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
     assert not any("schneller Zoom" in e for e in r.errors)
+
+
+def test_verify_layout_schneller_zoom_zeitlupe_halbiert_genutzten_bereich():
+    """Fix-Runde 1 (Coordinator-Review zu Task 4): beide bisherigen Zoom-Tests nutzten nur tempo=1 —
+    der Zeitlupen-Zweig `langsam=(p.get("tempo") or 1) > 1` beim Aufruf von TM.genutzter_quellbereich_s()
+    in verify_layout() (broll_layout.py) war dadurch ungeprüft. Shot 0 ist wörtlich aus
+    test_place_shots_tempo_conform_and_invalid_fps übernommen (Flur/FX3_5.MP4, 50 fps laut _idx(),
+    tempo=2 -> rec_in_f=58, rec_out_f=158, src_in_f=0, src_out_f=100 sind dort bereits geprüft).
+
+    Handrechnung TM.genutzter_quellbereich_s(src_in_f=0, n_f=rec_out_f-rec_in_f=100, clip_fps=50,
+    langsam=True, ziel_fps=25):
+        ende_f = 0 + 100 * 50/25 * 0,5 = 0 + 100 * 2 * 0,5 = 100
+        von_s  = 0 / 50 = 0,0
+        bis_s  = 100 / 50 = 2,0
+    Genutzter Quellbereich also [0,0 - 2,0] s (deckt sich mit src_out_f/clip_fps = 100/50 = 2,0 s).
+    Fiele `langsam=` weg (Regression auf den Faktor 1,0 wie bei tempo=1), ergäbe dieselbe Rechnung
+    ende_f = 0 + 100 * 2 * 1,0 = 200 -> bis_s = 4,0 — die Zoomfahrt unten (2,5-3,5 s) läge dann fälschlich
+    im Bereich und der Test unten (ohne Zeitlupe) würde nicht mehr zwischen beiden Fällen unterscheiden.
+    """
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_5.MP4", 0.0, 2.0, 2), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 2.5, "bis_s": 3.5, "von_mm": 70.0, "bis_mm": 24.0, "tempo_max": 210.0,
+                "tempo_mittel": 160.0, "urteil": "schnell"}]
+    tele = [{**_tele("FX3_5.MP4", 35.0, schnell), "fps": 50.0}]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    # Zoomfahrt (2,5-3,5 s) liegt vollständig außerhalb des bei tempo=2 tatsächlich genutzten Bereichs (0,0-2,0 s).
+    assert not any("schneller Zoom" in e and "FX3_5" in e for e in r.errors)
+
+
+def test_verify_layout_schneller_zoom_ohne_zeitlupe_voller_bereich_gemeldet():
+    """Gegenstück zum Zeitlupentest oben: derselbe Clip und dieselbe Zoomfahrt, aber tempo=1 mit doppelter
+    Plandauer (4,0 statt 2,0 s) — das ergibt denselben Timeline-Frame-Count n_f=100 wie im Zeitlupentest,
+    aber `langsam=False` lässt TM.genutzter_quellbereich_s() diesmal den vollen (nicht halbierten)
+    Quellbereich berechnen, der die Zoomfahrt trifft. Erst im Zusammenspiel mit dem Test oben trennt das
+    wirklich den `langsam`-Zweig, statt nur zufällig grün zu sein (siehe Auftrag Fix-Runde 1).
+
+    Handrechnung place_shots() für Shot 0 (Flur/FX3_5.MP4, in_s=0,0, out_s=4,0, tempo=1, clip_fps=50,
+    Strecke 1 beginnt bei Frame 58, wie im Zeitlupentest oben):
+        n_tl     = seconds_to_frames(4,0 - 0,0, fps=25) * 1 = 100 * 1 = 100
+        rec_in_f = 58, rec_out_f = 58 + 100 = 158                       (n_f = 100 - wie im Zeitlupentest)
+        src_n    = round(n_tl * clip_fps/fps) = round(100 * 50/25) = 200
+        src_in_f = 0, src_out_f = 0 + 200 = 200 -> out_s = 200/50 = 4,0 (unverändert, kein Kürzen)
+
+    Handrechnung TM.genutzter_quellbereich_s(src_in_f=0, n_f=100, clip_fps=50, langsam=False, ziel_fps=25):
+        ende_f = 0 + 100 * 50/25 * 1,0 = 200
+        von_s  = 0 / 50 = 0,0
+        bis_s  = 200 / 50 = 4,0
+    Genutzter Quellbereich [0,0 - 4,0] s enthält die Zoomfahrt (2,5-3,5 s) diesmal vollständig.
+    """
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_5.MP4", 0.0, 4.0), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 2.5, "bis_s": 3.5, "von_mm": 70.0, "bis_mm": 24.0, "tempo_max": 210.0,
+                "tempo_mittel": 160.0, "urteil": "schnell"}]
+    tele = [{**_tele("FX3_5.MP4", 35.0, schnell), "fps": 50.0}]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("schneller Zoom" in e and "FX3_5" in e for e in r.errors)
