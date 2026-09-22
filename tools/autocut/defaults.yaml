@@ -141,3 +141,13 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   brennweite_gleich_max: 0.20   # Abstand größere/kleinere KB-Brennweite − 1: darunter gilt die Brennweite als gleich
   digitalzoom_faktor: 1.25      # Zoom für den Shot mit der längeren scheinbaren Brennweite (der kürzere braucht mehr)
   digitalzoom_max: 1.5          # Obergrenze für das Produkt aller Zooms eines Shots (4K: bewusst leicht hochskaliert)
+gyroflow:                   # Gyroflow-Stabilisierung für B-Roll (Spec 2026-09-22): Sidecar neben der Mediendatei,
+                            # angewendet per OFX im Schnitt — kein Render, keine zweite Medienhaltung.
+  cli: "/Applications/Gyroflow.app/Contents/MacOS/gyroflow"
+  zeitueberschreitung_s: 300   # je Clip; Lesen der Gyrospur kostet die ganze Datei (≈ 300 MB/s übers NAS)
+  # Glättung je Haltung aus telemetrie.json. Startwerte 22.09., am ersten echten Durchlauf zu prüfen.
+  glaettung: {stativ: 0.2, gimbal: 0.4, hand: 0.7}
+  # Gyroflows eigene Zoom-Obergrenze in Prozent (100 = kein Beschnitt). Muss die Ungleichung
+  # max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100 einhalten (1,5 / 1,25 × 100 = 120),
+  # damit der Brennweitenregel ihre 1,25× garantiert bleiben. pruefe_deckel() bricht sonst ab.
+  max_zoom: {stativ: 105, gimbal: 110, hand: 120}
