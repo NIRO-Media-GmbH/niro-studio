@@ -18,7 +18,8 @@ Nur neue Objekte: neue Timeline, Importe in den eigenen Bin AutoCut/<video-kurz>
 wiederhergestellt. Schreibt _intern/autocut/feinschnitt.json.
 
 Eingaben: _intern/autocut/timeline.json (roh-Timeline aus AutoCut), _intern/autocut/probe.json (scripts/resolve_probe.py),
-_intern/autocut/broll_auswahl.json (Auswahl-Timeline des Users; darf ohne BROLL fehlen), Render der Grafikebene (GRAFIK),
+_intern/autocut/broll_auswahl.json (Auswahl-Timeline des Users; darf ohne BROLL fehlen), _intern/autocut/gyroflow.json
+(scripts/autocut_gyroflow.py; fehlt die Datei, bleibt jeder Shot beim Stabilize()-Weg), Render der Grafikebene (GRAFIK),
 Remotion-Datei mit der TIMELINE der Grafik-Elemente (GRAFIK_TSX), Musik-WAVs aus Material/Musik.
 Messungen (ffmpeg, einmal je Render): _intern/grafik/alpha_<Render>.json (Deckkraft je Frame), alpha_<Render>_ymax.txt (Sichtbarkeit).
 
@@ -55,6 +56,7 @@ sys.path.insert(0, str(STUDIO / "tools" / "autocut" / "src"))
 from niro_autocut import resolve_api as RA  # noqa: E402
 from niro_autocut.timeline_model import Item, MarkerSpec  # noqa: E402
 from niro_autocut import telemetrie as TM  # noqa: E402
+from niro_autocut import gyroflow as GF  # noqa: E402
 from niro_autocut.charge import load_config  # noqa: E402
 
 RA.TRACK_INDEX["A3"] = 3  # dritte Tonspur für Musik-Überblendungen (nur in diesem Skript)
@@ -64,7 +66,16 @@ AC = CH / "_intern" / "autocut"
 MUSIK = CH / "Material" / "Musik"
 FPS = 25  # Standard (15.09.): Timeline 25 fps — musik/mischung_pruefen.py und weitere Vorlagen rechnen fest mit 25
 TELE = TM.laden(AC)  # _intern/autocut/telemetrie.json (autocut_telemetrie.py); leer = Standard stabilisieren
-TCFG = load_config(CH)["telemetrie"]
+CFG = load_config(CH)
+TCFG = CFG["telemetrie"]
+
+# Gyroflow-OFX (Spec 2026-09-22, Befund 1 — Resolve 21.1, gemessen 22./23.09.2026): ersetzt in 6d Stabilize() für
+# B-Roll-Shots, für deren Quelldatei ein Sidecar vorliegt (gyroflow.json, scripts/autocut_gyroflow.py). Tool-Kennung
+# und Parametername stammen aus Fusion.GetToolList() bzw. dem Readback von SetInput im offenen Testprojekt —
+# keine geratenen Werte.
+GYRO_TOOL_ID = "ofx.nl.smslv.gyroflowofx.fisheyestab_v1"  # Fusion.GetToolList(), angezeigt als „Gyroflow"
+GYRO_PARAM_PROJEKT = "gyrodata"  # SetInput-Name für den Pfad der .gyroflow-Datei
+GYRO_BEI_ZEITLUPE = True  # VideoSpeed wirkt nachweislich (Gegenprobe 23.09.2026, RMSE-Vergleich der Frames)
 
 # ── ANPASSEN je Charge ─────────────────────────────
 PROJEKT = "<Resolve-Projekt>"  # Name des in dieser Session freigegebenen Resolve-Projekts (Abgleich vor jedem Schreiben)
@@ -100,6 +111,9 @@ A_ABSCHNITTE: list[tuple[int, int]] = [
 # 7. Spalte optional: True/False erzwingt Stabilize() bzw. lässt es aus; weggelassen oder None = Vorschlag aus
 # telemetrie.json (hand und wackeln > telemetrie.ruhig_max_px → stabilisieren; stativ/gimbal → nicht; ohne Telemetrie →
 # stabilisieren). True bei einer _stabilized-Datei (Avata-Export) ist ein Plan-Fehler: Avata nie in Resolve stabilisieren.
+# Gyroflow (gyroflow.json) ersetzt beim Bau Stabilize() unabhängig von dieser Spalte, sobald für die Quelldatei ein
+# Sidecar vorliegt (Spec 2026-09-22: alle genutzten B-Roll-Shots, nicht nur die mit stabil=True) — siehe die
+# GYRO_*-Konstanten oben und den V3-Abschnitt in bauen().
 # 8. Spalte optional (Spec 2026-09-21): Zahl = digitaler Zoom des Shots fest (1.0 = keiner); weggelassen = Automatik der
 # Brennweitenregel aus telemetrie.json — nie zweimal dieselbe KB-Brennweite direkt hintereinander (Abstand unter
 # telemetrie.brennweite_gleich_max), sonst Zoom auf einen der beiden Shots (1,25×, Grenze telemetrie.digitalzoom_max).
@@ -495,7 +509,17 @@ def bauen(p: dict) -> dict:
         # --- Nachbearbeitung ---
         by_start = lambda kind, idx: {int(x.GetStart()) - start: x for x in (tl.GetItemListInTrack(kind, idx) or [])}
         v3_items = by_start("video", 3)
-        speed_ok, stab = 0, {}
+        v3_plan = {it.rec_in_f: it for it in p["V3"]}  # Quelldatei je Shot, gleicher Schlüssel wie v3_items
+        # Gyroflow-Sidecars (Spec 2026-09-22, scripts/autocut_gyroflow.py). Schlüssel ist der volle aufgelöste Pfad,
+        # nicht der Clip-Stamm — Kartennummern setzen pro Karte/Dreh neu auf, zwei Quelldateien können denselben
+        # Stamm tragen (wie in gyroflow_bericht.py). Fehlerhafte oder fehlende Einträge bleiben außen vor.
+        GYRO = {}
+        gf_pfad = AC / "gyroflow.json"
+        if gf_pfad.exists():
+            GYRO = {str(Path(c["path"]).expanduser().resolve()): c["sidecar"]
+                    for c in json.loads(gf_pfad.read_text(encoding="utf-8"))["clips"]
+                    if c.get("sidecar") and not c.get("fehler")}
+        speed_ok, stab, gyroflow_gesetzt, gyroflow_abweichungen = 0, {}, 0, []
         for m in p["v3_meta"]:
             x = v3_items[m["rec_in_f"]]
             if m["langsam"]:  # 50p-Quelle bei 50 %: jedes Quellbild genau einmal, daher „Nearest" statt Frame-Blending
@@ -503,17 +527,46 @@ def bauen(p: dict) -> dict:
                 # Standard (15.09.): Zeitlupe 50 %, Timeline-Dauer bleibt, der genutzte Quellbereich halbiert sich
                 speed_ok += int(bool(RA._safe(x.SetSpeed, False, {"Percentage": 50.0, "RippleTimeline": False})))
         out["speed_gesetzt"] = speed_ok
-        # Stabilisieren nach dem Tempo (Analyse über den tatsächlich genutzten Quellbereich) — nur wo der Plan es
-        # vorsieht (Telemetrie)
+        # Stabilisieren: Gyroflow ersetzt Stabilize() für B-Roll-Shots mit Sidecar — Spec 2026-09-22 will alle
+        # genutzten Shots, nicht nur die mit stabil-Flag (auch ruhige Aufnahmen profitieren von der
+        # Rolling-Shutter-Korrektur). Nur ohne nutzbaren Sidecar gilt weiter der bisherige, telemetriebasierte Weg
+        # (Analyse über den tatsächlich genutzten Quellbereich).
         for n_, m in enumerate(p["v3_meta"], 1):
             t0, shot = dt.datetime.now(), f"S{m['shot']:02d}"
+            x = v3_items[m["rec_in_f"]]
+            pfad = v3_plan[m["rec_in_f"]].clip
+            sidecar = GYRO.get(str(Path(pfad).expanduser().resolve()))
+            if sidecar:
+                comp = RA._safe(x.AddFusionComp, None)
+                werkzeug = RA._safe(comp.AddTool, None, GYRO_TOOL_ID) if comp else None
+                if werkzeug is None:
+                    gyroflow_abweichungen.append({"shot": m["shot"], "grund": "OFX-Tool nicht verfügbar"})
+                    stab[shot] = bool(RA._safe(x.Stabilize, False))          # Rückfall auf den bisherigen Weg
+                    print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: OFX-Tool nicht verfügbar — "
+                          f"Stabilize() als Rückfall ({stab[shot]})", flush=True)
+                else:
+                    # Haltung wie preset_fuer() (gyroflow.py): Telemetrie-Wert, ohne Eintrag die vorsichtigste Stufe.
+                    haltung = (TM.finden(TELE, pfad) or {}).get("haltung") or GF.HALTUNG_VORSICHTIG
+                    RA._safe(werkzeug.SetInput, False, GYRO_PARAM_PROJEKT, sidecar)
+                    # Smoothness/FOV explizit setzen: die OFX-Parameter überschreiben sonst das Sidecar (Befund 1, Punkt 5).
+                    RA._safe(werkzeug.SetInput, False, "Smoothness", float(CFG["gyroflow"]["glaettung"][haltung]))
+                    RA._safe(werkzeug.SetInput, False, "FOV", 1.0)
+                    video_speed = 50.0 if (m["langsam"] and GYRO_BEI_ZEITLUPE) else 100.0
+                    RA._safe(werkzeug.SetInput, False, "VideoSpeed", video_speed)
+                    gyroflow_gesetzt += 1
+                    stab[shot] = None  # Stabilize() bewusst nicht gerufen — Gyroflow ersetzt es für diesen Shot
+                    print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: Haltung {haltung}, VideoSpeed {video_speed:g} "
+                          f"({(dt.datetime.now() - t0).total_seconds():.1f} s)", flush=True)
+                continue
             if not m["stabil"]:
                 stab[shot] = None
                 print(f"  Stabilisierung {n_}/{len(p['v3_meta'])} {shot}: übersprungen ({m['stabil_grund']})", flush=True)
                 continue
-            stab[shot] = bool(RA._safe(v3_items[m["rec_in_f"]].Stabilize, False))
+            stab[shot] = bool(RA._safe(x.Stabilize, False))
             print(f"  Stabilisiert {n_}/{len(p['v3_meta'])} {shot}: {stab[shot]} ({(dt.datetime.now() - t0).total_seconds():.1f} s)", flush=True)
         out["stabilisiert"] = stab
+        out["gyroflow_gesetzt"] = gyroflow_gesetzt
+        out["gyroflow_abweichungen"] = gyroflow_abweichungen
         # Digitaler Zoom der Brennweitenregel (Spec 2026-09-21): auf die Bildmitte, Pan/Tilt bleiben 0
         zoom_ok = {}
         for m in p["v3_meta"]:
