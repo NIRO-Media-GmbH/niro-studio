@@ -9,6 +9,11 @@
 
 .DS_Store
 
+# Python-Bytecode entsteht bei jedem Lauf neu (Review-Werkzeug, LaunchAgent de.niro.review); getrackte .pyc ließen
+# Worktrees geändert zurück (git worktree remove nur mit --force).
+__pycache__/
+*.pyc
+
 # Arbeitsspuren der Session-Werkzeuge
 .superpowers/
 .claude/settings.local.json
