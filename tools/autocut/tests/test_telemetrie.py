@@ -1155,3 +1155,32 @@ def test_bewegung_spitzen_liefert_lokale_maxima_im_bereich():
     assert T.bewegung_spitzen(rec, 2.5, 5.0) == [[3.0, 1.2]]     # Bereich grenzt ein
     assert T.bewegung_spitzen({"fenster": []}, 0.0, 5.0) == []
     assert T.bewegung_spitzen(None, 0.0, 5.0) == []
+
+
+def test_bewegung_spitzen_plateau_in_der_mitte():
+    """Gleichstand in der Mitte: drei benachbarte Fenster mit bewegung=3.0 (Plateau).
+    Jedes Fenster des Plateaus ist ein lokales Maximum und erscheint in der Ausgabe.
+    Spec: 'bewegung erreicht die beider Nachbarn' → >= auf beiden Seiten."""
+    rec = {"fenster": [[0.0, 0.1, 0.5, "fahrt", None],
+                       [1.0, 0.1, 3.0, "schwenk_links", None],   # Maximum (3.0 >= 0.5 && 3.0 >= 3.0)
+                       [2.0, 0.1, 3.0, "fahrt", None],           # Maximum (3.0 >= 3.0 && 3.0 >= 3.0)
+                       [3.0, 0.1, 3.0, "fahrt", None],           # Maximum (3.0 >= 3.0 && 3.0 >= 0.3)
+                       [4.0, 0.1, 0.3, "fahrt", None]]}
+    assert T.bewegung_spitzen(rec, 0.0, 5.0) == [[1.0, 3.0], [2.0, 3.0], [3.0, 3.0]]
+
+
+def test_bewegung_spitzen_plateau_am_rand():
+    """Plateaus am Rand: Fenster an Position 0 oder am Ende sind Maxima, wenn sie >=
+    ihrem einzigen vorhandenen Nachbarn sind (Spec: 'am Rand zählt der vorhandene Nachbar')."""
+    # Plateau am Anfang: [2.0, 2.0]
+    rec1 = {"fenster": [[0.0, 0.1, 2.0, "fahrt", None],       # Maximum (2.0 >= 2.0, nur rechts)
+                        [1.0, 0.1, 2.0, "fahrt", None],       # Maximum (2.0 >= 2.0 && 2.0 >= 0.5)
+                        [2.0, 0.1, 0.5, "fahrt", None]]}
+    assert T.bewegung_spitzen(rec1, 0.0, 3.0) == [[0.0, 2.0], [1.0, 2.0]]
+
+    # Plateau am Ende: [2.5, 2.5]
+    rec2 = {"fenster": [[0.0, 0.1, 0.5, "fahrt", None],
+                        [1.0, 0.1, 1.0, "fahrt", None],
+                        [2.0, 0.1, 2.5, "fahrt", None],       # Maximum (2.5 >= 1.0 && 2.5 >= 2.5)
+                        [3.0, 0.1, 2.5, "fahrt", None]]}      # Maximum (2.5 >= 2.5, nur links)
+    assert T.bewegung_spitzen(rec2, 0.0, 4.0) == [[2.0, 2.5], [3.0, 2.5]]
