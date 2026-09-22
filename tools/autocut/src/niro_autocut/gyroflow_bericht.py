@@ -9,11 +9,14 @@ from pathlib import Path
 def bericht_md(erg: dict, clips: list[dict]) -> str:
     clips_ = erg.get("clips") or []
     uebersprungen = erg.get("uebersprungen") or []
-    tempo50 = {Path(c["datei"]).stem for c in (clips or []) if c.get("tempo50")}
+    # Join über den vollen aufgelösten Pfad wie in gyroflow_charge — der Clip-Stamm allein ist nicht eindeutig:
+    # Kartennummern setzen pro Karte/Dreh neu auf, zwei Quelldateien können denselben Stamm tragen.
+    tempo50 = {str(Path(c["datei"]).expanduser().resolve()) for c in (clips or []) if c.get("tempo50")}
     fehler = [c for c in clips_ if c.get("fehler")]
     gedeckelt = [c for c in clips_ if c.get("zoom_gedeckelt")]
+    sidecars = [c for c in clips_ if c.get("sidecar")]
 
-    z = [f"# Gyroflow — {len(clips_)} Sidecars ({erg.get('stand', '')})", ""]
+    z = [f"# Gyroflow — {len(sidecars)} Sidecars ({erg.get('stand', '')})", ""]
     z.append(f"{len(clips_) - len(fehler)} von {len(clips_)} Clips stabilisiert, "
              f"{len(uebersprungen)} übersprungen, {len(fehler)} mit Fehler.")
     z += ["", "| Clip | Kamera | Haltung | Zoom | Tempo |", "|---|---|---|---|---|"]
@@ -22,7 +25,7 @@ def bericht_md(erg: dict, clips: list[dict]) -> str:
         if c.get("zoom_gedeckelt"):
             zoom += " (gedeckelt)"
         z.append(f"| {c.get('clip')} | {c.get('kamera') or '—'} | {c.get('haltung') or '—'} | {zoom} | "
-                 f"{'50 %' if c.get('clip') in tempo50 else '100 %'} |")
+                 f"{'50 %' if c.get('path') in tempo50 else '100 %'} |")
 
     if gedeckelt:
         z += ["", "## Deckel griff", "",
