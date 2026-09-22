@@ -614,3 +614,22 @@ if __name__ == "__main__":
         e = bauen(p)
         (AC / "feinschnitt.json").write_text(json.dumps({**e, "plan_v3": p["v3_meta"]}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         print(json.dumps({k: v for k, v in e.items() if k not in ("v3", "normalisierung_a1_db", "musik_readback")}, ensure_ascii=False, indent=1, default=str))
+    else:
+        # Gyroflow-Sidecars (Spec 2026-09-22): die im Feinschnitt genutzten B-Roll-Quelldateien für
+        # scripts/autocut_gyroflow.py. Nur im Probelauf liegen BROLL (was benutzt wird) und die per broll_auswahl.json
+        # aufgelösten shots (welche Datei das ist) zusammen vor. Auflösung wie oben in plan() (shots.get(nr), Zeile 369);
+        # tempo50 ist die 6. BROLL-Spalte "50 %" (s. Kommentar über BROLL) — nicht geraten, sondern dort nachgelesen.
+        gyro_clips, gesehen = [], set()
+        for zeile in BROLL:
+            s = shots.get(zeile[0])
+            if s is None:
+                continue  # fehlender Shot wäre oben schon als FEHLER gemeldet, dieser Zweig liefe dann nicht
+            datei = s["datei"]
+            if datei in gesehen:
+                continue
+            gesehen.add(datei)
+            gyro_clips.append({"datei": datei, "tempo50": bool(zeile[5])})
+        ziel = AC / "gyroflow_clips.json"
+        ziel.write_text(json.dumps(gyro_clips, ensure_ascii=False, indent=1), encoding="utf-8")
+        print(f"{len(gyro_clips)} B-Roll-Quelldateien für Gyroflow → {ziel}")
+        print('  weiter mit: tools/autocut/venv/bin/python tools/autocut/scripts/autocut_gyroflow.py "<Charge>"')
