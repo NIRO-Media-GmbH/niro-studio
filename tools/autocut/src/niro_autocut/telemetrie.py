@@ -675,6 +675,24 @@ def abschnitt_werte(rec: dict | None, von_s: float, bis_s: float, fenster_s: flo
     return {"bewegungsart": mehrheit([f[3] for f in fen]) if fen else None, "haltung": rec.get("haltung")}
 
 
+def bewegung_spitzen(rec: dict | None, von_s: float, bis_s: float) -> list[list[float]]:
+    """Lokale Maxima der Fenster-Reihe im Bereich [von_s, bis_s] als ``[t_s, bewegung]`` (Spec 2026-09-22).
+    Ein Fenster ist Maximum, wenn seine ``bewegung`` die beider Nachbarn erreicht; am Rand der Reihe zählt der
+    vorhandene Nachbar. Leer ohne ``fenster`` — die Auswahl nutzt die Liste nur als Hinweis, nie als Sperre."""
+    fen = (rec or {}).get("fenster") or []
+    out: list[list[float]] = []
+    for i, f in enumerate(fen):
+        t, bw = float(f[0]), float(f[2])
+        if t < von_s or t > bis_s:
+            continue
+        if i > 0 and bw < float(fen[i - 1][2]):
+            continue
+        if i < len(fen) - 1 and bw < float(fen[i + 1][2]):
+            continue
+        out.append([t, round(bw, 3)])
+    return out
+
+
 def genutzter_quellbereich_s(src_in_f: int, n_f: int, clip_fps: float, langsam: bool,
                              ziel_fps: float = ZIEL_FPS) -> tuple[float, float]:
     """Start und Ende (s) des Quellbereichs, den n_f Timeline-Frames (bei ziel_fps) ab Quellframe src_in_f bei

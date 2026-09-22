@@ -20,7 +20,7 @@ from PIL import Image, ImageDraw
 
 from .broll_index import API_ATTEMPTS, CACHE_DIR, RETRY_ERRORS, _font, _image_block, _make_client
 from .charge import TOOL_ROOT, AutoCutError
-from .telemetrie import abschnitt_brennweite, abschnitt_werte, brennweite_text, finden, laden as telemetrie_laden
+from .telemetrie import abschnitt_brennweite, abschnitt_werte, bewegung_spitzen, brennweite_text, finden, laden as telemetrie_laden
 
 PROMPT_FILE = TOOL_ROOT / "prompts" / "index-sections.md"
 EINSTELLUNG5 = ["Totale", "Halbtotale", "Halbnah", "Nah", "Detail"]
@@ -216,7 +216,10 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) ->
             b["claude"] = claude
         von, bis = float(b.get("von_s", 0)), float(b.get("bis_s", 0))
         w = {**abschnitt_werte(tele, von, bis, fenster_s), **abschnitt_brennweite(tele, von, bis)}
-        for k in ("bewegungsart", "haltung", "brennweite_mm", "zoom"):
+        spitzen = bewegung_spitzen(tele, von, bis)
+        if spitzen:
+            w["bewegung_spitzen"] = spitzen
+        for k in ("bewegungsart", "haltung", "brennweite_mm", "zoom", "bewegung_spitzen"):
             if w.get(k) is not None:
                 geaendert |= b.get(k) != w[k]
                 b[k] = w[k]

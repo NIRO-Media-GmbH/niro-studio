@@ -1143,3 +1143,15 @@ def test_kalibrierung_zoom_an_echten_reihen():
         kb25 = T.kb_je_frame(fall["kb_mm"], fall["kb_index"], fall["fps"], fall["samples"])
         treffer = [z for z in T.zoomfahrten(kb25, cfg) if z["von_s"] < fall["bis_s"] and z["bis_s"] > fall["von_s"]]
         assert treffer and all(z["urteil"] == fall["erwartet"] for z in treffer), (fall["clip"], treffer)
+
+
+def test_bewegung_spitzen_liefert_lokale_maxima_im_bereich():
+    rec = {"fenster": [[0.0, 0.1, 0.5, "fahrt", None],
+                       [1.0, 0.1, 3.0, "schwenk_links", None],   # lokales Maximum
+                       [2.0, 0.1, 0.4, "fahrt", None],
+                       [3.0, 0.1, 1.2, "fahrt", None],
+                       [4.0, 0.1, 0.3, "fahrt", None]]}          # 3.0 ist Maximum, 4.0 nicht
+    assert T.bewegung_spitzen(rec, 0.0, 5.0) == [[1.0, 3.0], [3.0, 1.2]]
+    assert T.bewegung_spitzen(rec, 2.5, 5.0) == [[3.0, 1.2]]     # Bereich grenzt ein
+    assert T.bewegung_spitzen({"fenster": []}, 0.0, 5.0) == []
+    assert T.bewegung_spitzen(None, 0.0, 5.0) == []
