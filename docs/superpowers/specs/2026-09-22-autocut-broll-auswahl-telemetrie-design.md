@@ -69,7 +69,14 @@ Fenster ist lokales Maximum, wenn sein `bewegung` ≥ dem der beiden Nachbarn is
 `felder_quelle` führt das Feld wie die übrigen; Cache-Treffer bekommen es ohne API-Aufruf (bestehender Zweig in
 `index_sections_clip`).
 
-Damit betritt die Telemetrie den Index an **genau einer Stelle**; alles Weitere liest nur noch `broll_index.json`.
+Damit betritt die Telemetrie den Index an **genau einer Stelle**. Der Index versorgt das **Planen** (Abschnittsebene:
+was im kompakten Index steht, Abschnitt 2).
+
+Das **Prüfen** braucht zusätzlich den Telemetrie-Datensatz selbst: `kb_am()` liest `kb_verlauf` und
+`zooms_im_bereich()` liest `zooms`, beide in `telemetrie.json` und nicht im Index — am Schnitt zählt der Wert an der
+exakten Stelle, nicht der Abschnitts-Median. `verify_layout()` bekommt die Datensätze deshalb als Parameter, geladen
+vom Skript über `telemetrie.laden()` / `telemetrie.finden()` — derselbe Weg, den die Vorlagen 3a und 6d seit 21.09.
+gehen. Zwei Abnehmer mit verschiedenem Bedarf, nicht zwei Quellen.
 
 ## 2 — `compact_index_v2()` (`broll_layout.py`): durchreichen statt filtern
 
