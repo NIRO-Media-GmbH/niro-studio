@@ -726,8 +726,8 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 # Wer das kalibriert, muss das wissen: der Wert 0,15 ist hier nicht hergeleitet.
                 basis = max(grund_px, ruhig)
                 if bw >= faktor * basis:
-                    grenze = von if abs(t_s - von) <= abs(t_s - bis) else bis
-                    r.warnings.append(f"{tag}: Schnittgrenze bei {grenze:g} s im Clip liegt in einer Bewegungsspitze — "
+                    schnittgrenze = von if abs(t_s - von) <= abs(t_s - bis) else bis
+                    r.warnings.append(f"{tag}: Schnittgrenze bei {schnittgrenze:g} s im Clip liegt in einer Bewegungsspitze — "
                                       f"gemessen im Fenster {t_s:g}–{t_s + fen_s:g} s (Bewegung {bw:g} gegen Basis "
                                       f"{basis:g}, Sockel ruhig_max_px {ruhig:g}) — Hinweis, Schwellen unkalibriert.")
         if not p["grund"].strip():
