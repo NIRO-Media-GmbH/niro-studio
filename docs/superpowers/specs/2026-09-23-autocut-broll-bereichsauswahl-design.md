@@ -233,7 +233,7 @@ Abnahme: jeder Bereich liegt in einem Kandidaten. Nachgerechnet trifft das zu:
 | FX3_8636 | 4,5–7,5 s | 0–11,5 s |
 | FX3_8641 | 1,5–4,0 s | 0–4,8 s |
 | FX3_8660 | 12,5–15,5 s | 12–18,7 s |
-| FX3_8663 | 9–12 s · 63,5–66,5 s | 8–19 s · 62–71 s |
+| FX3_8663 | 9–12 s · 63,5–66,5 s | 8–15 s · 63–71 s (von acht Kandidaten) |
 
 **Unit-Tests:**
 
