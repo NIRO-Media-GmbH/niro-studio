@@ -758,13 +758,19 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 r.warnings.append(f"{tag}: alle Shots in Einstellung {einst[0]} — Einstellungswechsel fehlt.")
     if n_exc > int(cfg["max_exceptions_warn"]):
         r.warnings.append(f"{n_exc} Ausnahmen von der Szenen-Regel — mehr als {cfg['max_exceptions_warn']}.")
-    # Cut-Flow über aufeinanderfolgende Shots (nur innerhalb einer Strecke — dazwischen liegt ein Fenster)
+    # Cut-Flow zwischen zwei B-Roll-Shots, die in der Timeline WIRKLICH aneinanderstoßen (a endet exakt dort, wo
+    # b beginnt) — nicht zwischen irgendwelchen zwei Shots derselben Strecke. Die frühere Annahme, B-Roll-Shots
+    # stießen innerhalb einer Strecke immer lückenlos aneinander und nur zwischen zwei Strecken liege ein
+    # Sprecher-Fenster, war falsch: an echten Daten (Charge MEK, Abnahme 23.09.) lagen 8 von 24 Lücken INNERHALB
+    # einer Strecke (1,0–1,48 s), mit A-Roll dazwischen — die beiden Shots bilden dort gar keinen Schnitt, also darf
+    # keine der drei Regeln (Brennweite, Dublette, Setup-Hash) sie vergleichen. Echte Nachbarschaft in der Timeline
+    # (rec_out_f == rec_in_f) schließt „gleiche Strecke" automatisch ein — der alte Streckenvergleich entfällt.
     seq = sorted(placed, key=lambda p: p["rec_in_f"])
     min_dist = int(cfg["setup_hash_min_distance"])
     grenze = float(tcfg["brennweite_gleich_max"])
     ungeprueft = 0
     for a, b in zip(seq, seq[1:]):
-        if a["strecke"] != b["strecke"] or a["nachlauf_fehlt"] or b["nachlauf_fehlt"]:
+        if a["rec_out_f"] != b["rec_in_f"] or a["nachlauf_fehlt"] or b["nachlauf_fehlt"]:
             continue
         kb_a, kb_b = _kb_am_schnitt(a, tele, fps, "ende"), _kb_am_schnitt(b, tele, fps, "anfang")
         gleiche_kb = None

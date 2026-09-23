@@ -301,8 +301,11 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
 4. **Prüfen** — `autocut_place_broll.py "$CHARGE" --verify-only` → `broll_verify.json`. Fehler beheben
    (Tabelle in `prompts/place-broll.md`), erneut prüfen. Mit `telemetrie.json` zusätzlich drei Regeln (Spec
    22.09.2026): **Brennweitenfolge** (Fehler) — direkt aneinanderstoßende Shots dürfen am Schnitt nicht dieselbe
-   scheinbare KB-Brennweite haben, Abstand unter `brennweite_gleich_max` (0,2) gilt als gleich; geprüft wird nur
-   innerhalb einer Strecke, zwischen zwei Strecken liegt das Sprecher-Fenster, dort stoßen die Shots nicht aneinander.
+   scheinbare KB-Brennweite haben, Abstand unter `brennweite_gleich_max` (0,2) gilt als gleich; geprüft wird nur,
+   wo zwei B-Roll-Shots in der Timeline wirklich aneinanderstoßen (Rec-Out von A = Rec-In von B) — nicht schon,
+   weil sie zur selben Strecke gehören: an echten Daten (Charge MEK, Abnahme 23.09.) lag in 8 von 24 Lücken
+   zwischen aufeinanderfolgenden B-Roll-Shots A-Roll dazwischen, obwohl beide Shots derselben Strecke
+   zugerechnet waren — dort ist es kein Schnitt, an Streckengrenzen sowieso nicht.
    **Schneller Zoom im genutzten Bereich** (Fehler) — Ausweg `abweichung` mit Grund. **Schnittgrenze in einer
    Bewegungsspitze** (nur Warnung) — die Spitze muss mindestens **das `bewegung_spitze_faktor`-Fache (3,0) der
    Basis** erreichen (Basis = Grundniveau des Clips, nach unten gedeckelt bei `ruhig_max_px` 0,15). Dieser Sockel

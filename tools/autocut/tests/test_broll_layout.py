@@ -490,6 +490,43 @@ def test_verify_layout_gleiche_kb_meldet_das_paar_nur_einmal():
     assert len(paar) == 1 and "dieselbe Einstellung" in paar[0], paar
 
 
+def test_verify_layout_cutflow_nur_bei_echter_nachbarschaft_in_der_timeline(monkeypatch):
+    """Abnahme-Fund (Charge MEK, 23.09.): der Cut-Flow-Wächter verglich bisher nur die Streckennummer — in der
+    Annahme, B-Roll-Shots stießen innerhalb einer Strecke immer lückenlos aneinander und nur zwischen zwei Strecken
+    liege ein Sprecher-Fenster. An echten Daten widerlegt: von 24 Lücken zwischen aufeinanderfolgenden B-Roll-Shots
+    lagen nur 16 an einer Streckengrenze, 8 INNERHALB einer Strecke (1,0–1,48 s, A-Roll dazwischen) — dort bilden
+    zwei Shots gar keinen Schnitt. `place_shots()` selbst platziert innerhalb einer Strecke immer lückenlos (siehe
+    andere Tests), darum wird die Lücke hier nachträglich in ein echtes `placed`-Ergebnis eingebaut — wie eine der
+    echten Lücken aus der Abnahme (Strecke 17: FX3_0076 → FX3_0060, 31 Frames)."""
+    idx = _idx()
+    tp = {"fps": 25, "total_frames": 100, "beats": [{"nr": "1", "typ": "vo", "rec_in_f": 0, "rec_out_f": 100, "person": None}]}
+    cl = Cutlist("v.md", None, 25, "16:9", 1.0, [Beat("1", "VO", "vo", platzhalter_s=4.0)])
+    plan = L.LayoutPlan("v.md", [], [L.Strecke(1, [L.Szene("Standort 1/Flur", [
+        L.Shot("Flur/FX3_1.MP4", 0.0, 2.0), L.Shot("Flur/FX3_2.MP4", 0.0, 2.0)],
+        ausnahme="Test: Lücke innerhalb der Strecke, keine Szenen-Regel hier")])])
+    tele = [_tele("FX3_1.MP4", 25.0), _tele("FX3_2.MP4", 25.0)]   # identische KB — ohne Fix ein Fehlalarm
+    echtes_place_shots = L.place_shots
+
+    def _place_shots_mit_luecke(*args, **kwargs):
+        # place_shots() selbst füllt eine Strecke immer lückenlos (pos rückt exakt um n_tl vor, der letzte Shot
+        # füllt zwangsläufig bis ans Streckenende) — eine Lücke INNERHALB einer Strecke entsteht dort nie. An
+        # echten Daten (Abnahme) entsteht sie erst später; hier wird das reale Ergebnis nachträglich verschoben,
+        # um genau das nachzustellen, ohne die Geometrie der übrigen Felder (in_s/out_s/src_*) zu verfälschen.
+        placed, errs = echtes_place_shots(*args, **kwargs)
+        luecke_f = 25   # 1,0 s @ 25 fps — innerhalb des an echten Daten gemessenen Bereichs (1,00–1,48 s)
+        placed[-1]["rec_in_f"] += luecke_f
+        placed[-1]["rec_out_f"] += luecke_f
+        placed[-1]["roh_out_f"] += luecke_f
+        return placed, errs
+
+    monkeypatch.setattr(L, "place_shots", _place_shots_mit_luecke)
+    r = L.verify_layout(plan, tp, idx, cl, CFG, 25, tele)
+    # Alle drei Prüfungen der Schleife dürfen für dieses Paar schweigen — es ist kein Schnitt.
+    assert not any("KB-Brennweite" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors
+    assert not any("dieselbe Einstellung" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors
+    assert not any("fast gleich aus" in w and "FX3_1" in w and "FX3_2" in w for w in r.warnings), r.warnings
+
+
 # --------------------------------------------------------------------------- #
 # Task 4: Regel 3b — kein schneller Zoom im genutzten Bereich
 # --------------------------------------------------------------------------- #

@@ -204,8 +204,18 @@ Der Plan entstand blind für die Telemetrie.
 | alle aufeinanderfolgenden B-Roll-Shots | 67 | 67 | 9 (13 %) |
 | **nur echte Schnitte (A endet, B beginnt)** | **43** | **43** | **5 (12 %)** |
 
-**Maßgeblich ist die zweite Zeile.** Bei 24 der 67 Paare liegt das Sprecher-Fenster dazwischen (A-Roll) — dort stoßen
-die Shots nicht aneinander. Drei der fünf Paare liegen bei **0,0 % Abstand** — identische KB-Brennweite gegeneinander geschnitten (25,4 → 25,4 mm; 74,1 → 74,1 mm). Die Klassenprüfung sah das nicht, weil beide Werte „normal" heißen.
+**Maßgeblich ist die zweite Zeile.** Bei 24 der 67 Paare liegt A-Roll dazwischen — dort stoßen die Shots nicht
+aneinander, kein Schnitt. Drei der fünf Paare liegen bei **0,0 % Abstand** — identische KB-Brennweite gegeneinander
+geschnitten (25,4 → 25,4 mm; 74,1 → 74,1 mm). Die Klassenprüfung sah das nicht, weil beide Werte „normal" heißen.
+
+**Korrektur Abnahme (23.09.2026):** Die 24 Nicht-Schnitte sind NICHT alle Streckengrenzen, wie hier ursprünglich
+angenommen. Nachgezählt an denselben 68 B-Roll-Items: nur 16 der 24 Lücken liegen an einer Streckengrenze
+(Sprecher-Fenster im technischen Sinn), die übrigen 8 liegen INNERHALB einer Strecke (1,0–1,48 s, ebenfalls
+A-Roll, aber ohne dass ein Fenster im Plan dazwischenliegt). `verify_layout()` verglich bis dahin für den
+Cut-Flow (3a, Dublette, Setup-Hash) nur die Streckennummer der beiden Shots und meldete für genau diese acht
+Paare fälschlich Brennweitenfehler — u. a. für FX3_0006→FX3_0005 (Strecke 1), FX3_0076→FX3_0060 und
+FX3_0019→FX3_0020 (beide Strecke 17). Seither behoben: der Wächter prüft `rec_out_f`(A) `== rec_in_f`(B), also
+echte Nachbarschaft in der Timeline, nicht mehr die Streckennummer.
 
 **Regel 3b — schneller Zoom im genutzten Bereich:** **mindestens 7 von 68 Shots (10 %)**, Spitzen 94–242 %/s. Der
 94er ist über `ruck` 1,19 > `zoom_ruck_max` 1,0 schnell, nicht über das Tempo.
