@@ -32,7 +32,7 @@ Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" 
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe aus der roh-Timeline |
 | „Feinschnitt" | 6 | neue Feinschnitt-Timeline: A/B-Wechsel, B-Roll-Tempo/Stabilisierung, Grafik V4, Ton, Musik, SFX, danach Grading, Begradigen, Kopfposition (Vorlagen) |
 | „Kanten" | – | Kantenprüfung am Export (Schwarzbild, Schnipsel, Knackser, Tonloch, Wort angeschnitten) + Schnittbilder; Resolve nur lesend |
-| „Telemetrie" | – | Gyro, Beschleunigung, Brennweite je Clip aus der Sony-rtmd-Spur (optischer Rückfall) → `telemetrie.json`, `telemetrie.md`: wackeln, ruhige Fenster, Haltung, Bewegungsart, Brennweite in mm und Zoomfahrten, Perspektivklasse; Abnehmer Sichtung/Aftermovie, Stufe 2b, 3a, 6d |
+| „Telemetrie" | – | Gyro, Beschleunigung, Brennweite je Clip aus der Sony-rtmd-Spur (optischer Rückfall) → `telemetrie.json`, `telemetrie.md`: wackeln, ruhige Fenster, Haltung, Bewegungsart, Brennweite in mm und Zoomfahrten, Perspektivklasse; Abnehmer Sichtung/Aftermovie, Stufe 2b, 3 (Brennweitenfolge, Zoom, Bewegungsspitzen), 3a, 6d |
 | „Review" (Pflicht nach jedem Bau) | – | Timeline über die Render-Queue rendern (≤ 1920 px) und als Version in NIRO Review ablegen (`autocut_review.py`, http://localhost:4711) |
 | „Replay" (nur Kundenrunden) | – | Timeline nach Dropbox Replay hochladen (Vorschau, Upload nach OK), einsortieren in `Autocut/<Kunde>/<Projekt>` |
 | „Kommentare" | – | Replay-Kommentare holen (`kommentare.md` im Feedback-Ordner), Umsetzung in neuer Timeline-Version |

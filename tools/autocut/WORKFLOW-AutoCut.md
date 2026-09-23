@@ -304,13 +304,20 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    scheinbare KB-Brennweite haben, Abstand unter `brennweite_gleich_max` (0,2) gilt als gleich; geprüft wird nur
    innerhalb einer Strecke, zwischen zwei Strecken liegt das Sprecher-Fenster, dort stoßen die Shots nicht aneinander.
    **Schneller Zoom im genutzten Bereich** (Fehler) — Ausweg `abweichung` mit Grund. **Schnittgrenze in einer
-   Bewegungsspitze** (nur Warnung) — Spitze mindestens `bewegung_spitze_faktor` (3,0) über der Basis (Grundniveau
-   des Clips, nach unten gedeckelt bei `ruhig_max_px` 0,15, darunter gilt das Bild ohnehin als ruhig);
-   `bewegung_rand_s` (0,5) und `bewegung_spitze_faktor` sind unkalibriert, die Regel blockiert deshalb nie. Ohne
+   Bewegungsspitze** (nur Warnung) — die Spitze muss mindestens **das `bewegung_spitze_faktor`-Fache (3,0) der
+   Basis** erreichen (Basis = Grundniveau des Clips, nach unten gedeckelt bei `ruhig_max_px` 0,15). Dieser Sockel
+   ist **vorläufig und ohne eigenen Beleg**: `ruhig_max_px` ist überall sonst eine Schwelle für `wackeln`
+   (Zittern), verglichen wird hier aber `bewegung` (Schwenkweg) — zwei verschiedene Größen, der Sockel greift
+   praktisch nur auf Stativmaterial. Die Meldung nennt die Schnittgrenze und getrennt davon das Messfenster (die
+   Spitzen sind Fenster-Startzeiten, das Fenster deckt `fenster_s` ab). `bewegung_rand_s` (0,5) und
+   `bewegung_spitze_faktor` sind unkalibriert, die Regel blockiert deshalb nie. Ohne
    Telemetrie entfallen alle drei, und der Bericht sagt das in **einer** Warnung mit der Zahl der Shots. Fehlt sie
    nur einzelnen Clips (Teil-Lauf, Material von NAS auf SSD gewandert, `telemetrie.json` unlesbar), nennt er
    getrennt, wie viele Shots ohne verwertbaren Datensatz blieben (Zoom- und Bewegungsregel) und wie viele Schnitte
-   ohne Brennweitenverlauf (Brennweitenregel).
+   ohne Brennweitenverlauf (Brennweitenregel). Ist die Telemetrie **mit anderen Schwellen gemessen** (abweichender
+   Config-Hash), werden Zoom- und Bewegungsregel für diese Clips **übersprungen** und gezählt — ihre Urteile
+   stammen aus den Schwellen zur Messzeit; die Brennweitenregel gilt weiter, sie rechnet auf Rohdaten. Dann
+   `autocut_telemetrie.py` neu laufen lassen.
 5. **Dem User vorlegen** — Gesichtsanteil, Zahl der Strecken/Szenen/Shots/Zeitlupen, Ausnahmen und
    Abweichungen mit Grund, offene Motive. Erst nach Freigabe bauen.
 6. **Bauen** — `autocut_place_broll.py "$CHARGE"`: V3 in die roh-Timeline (Bin `AutoCut/<Video>/B-Roll`,
@@ -776,7 +783,8 @@ Clip-Medians. Die Klassen entfallen seit 21.09.2026 (Spec Zoomfahrten): Stufe 2b
 **Kalibrierwerte Umschwenken (22.09.2026, negatives Ergebnis):** gesucht war die Grenze für Umschwenken zwischen zwei
 Ausrichtungen (Ausschuss) gegenüber gewollter Bewegung, zwei Runden mit 12 und 18 Beispielen aus MEK, 30 Urteile des
 Users. Zwei Kandidatenmuster (`wackeln` > 0,5 oder Umschwenk-Signatur; waagerechter Schwenk) trafen je 10 von 18
-(56 %), die triviale Konstante „immer ungewollt" traf 15 von 18 (83 %) — beide Muster sind schlechter als raten.
+(56 %), die triviale Konstante „immer ungewollt" traf 15 von 18 (83 %) — beide Muster sind schlechter als die
+triviale Konstante (einen Münzwurf schlagen 56 % dagegen).
 Damit tragen `spitze`, `verhaeltnis`, `wackeln` und `bewegungsart` keine Grenze. Tragender Befund: der User urteilt
 über **Teilbereiche**, nicht über Clips („brauchbarer Teil in der Mitte", „gewollt bis auf den Shake am Ende"), und
 die Absicht hängt am Bildinhalt, nicht an der Bewegung. Folge: kein Vorfilter vor dem kostenpflichtigen
