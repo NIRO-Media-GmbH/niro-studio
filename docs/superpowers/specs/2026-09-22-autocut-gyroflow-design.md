@@ -1,6 +1,7 @@
 # AutoCut — Gyroflow-Stabilisierung für B-Roll (Spec)
 
-Datum: 2026-09-22 · Status: entworfen, nicht umgesetzt. Baut auf der Kamera-Telemetrie
+Datum: 2026-09-22 · Status: umgesetzt (Tasks 1–9, Branch `autocut-gyroflow`, 23.09.2026); die Sichtprüfung am
+echten Chargen-Bau steht aus. Abschnitt 4 trägt eine Korrektur vom 23.09. Baut auf der Kamera-Telemetrie
 (`docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`) und der Brennweitenregel
 (`docs/superpowers/specs/2026-09-21-autocut-zoom-brennweite-design.md`) auf, beide umgesetzt und auf main.
 
