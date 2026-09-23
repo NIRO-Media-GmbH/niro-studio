@@ -38,7 +38,7 @@ Der naheliegende Gyroflow-Weg — jeden Clip rendern und als `_stabilized.mov` a
 | Frage | Entscheidung |
 |---|---|
 | Umfang | **Alle genutzten B-Roll-Shots**, nicht nur die mit `stabil`-Flag. Nur die, die im Feinschnitt-Plan vorkommen — nie das ganze Rohmaterial. |
-| Rand-Haushalt | **Gyroflow zuerst**, aber über einen Deckel statt über eine Rückkopplung (Abschnitt 4): Gyroflows `max_zoom` wird so gesetzt, dass der Brennweitenregel ihre 1,25× garantiert bleiben. `digitalzoom_max` (1,5) bleibt unverändert. |
+| Rand-Haushalt | **Gyroflow zuerst**, gedeckelt über `max_zoom` statt über eine Rückkopplung (Abschnitt 4). `digitalzoom_max` (1,5) bleibt unverändert. **Korrektur 23.09.:** Der Deckel begrenzt nur Gyroflows eigenen Beschnitt; der digitale Zoom der Brennweitenregel kommt obendrauf (heute bis 1,2 × 1,5 = 1,8× gesamt). Die Rückkopplung ist damit doch nötig und als eigener Zyklus vereinbart. |
 | Ablage | **Neben der Mediendatei** (`<clip>.gyroflow` im selben Ordner wie die MP4). Reist mit dem Footage auf SSD und NAS; das Plugin findet sie per „Load for current file" auch bei Handarbeit. Läuft nicht über `studio_abgleich.sh`. |
 | Export-Typ | **2 (mit Gyrodaten).** Typ 1 wäre 130× kleiner, müsste aber bei jedem Projektöffnen und Render die Gyrospur aus dem Original nachlesen — bei 8-GB-FX3-Dateien übers NAS der teure Weg. 0,27 % ist keine Doppelhaltung, die zählt. |
 | Anwendung in Resolve | **Fusion-Comp je Clip**, nicht DRT-Roundtrip (Begründung unten, Abschnitt 3). |
@@ -71,8 +71,8 @@ Stufe 3, nicht die Auswahl des Feinschnitts. `tempo50` wird nur für den Bericht
 4. `zoom_ist` = `max_zoom` aus dem Preset, `zoom_gedeckelt` = wahr. **Kein zweiter Export.** Ursprünglich war hier ein
    `--export-project 3` vorgesehen, aus dem der tatsächlich gerechnete Zoom je Frame kommen sollte; Befund 1, Punkt 6
    zeigt, dass dessen Normierung ungeklärt ist und ein geratener Umrechnungsfaktor schlechter wäre als der Rückfall.
-   Der Deckel aus Abschnitt 4 hält den Haushalt ohnehin per Konstruktion; der Bericht weist den Wert als Obergrenze
-   statt als Messwert aus.
+   Der Deckel aus Abschnitt 4 begrenzt Gyroflows Beschnitt ohnehin nach oben; der Bericht weist den Wert als
+   Obergrenze statt als Messwert aus (Deckelwert, nicht gemessen).
 
 **Ausgabe:** `_intern/autocut/gyroflow.json` — je Clip Pfad der Sidecar-Datei, verwendetes Preset, erkannte Kamera und
 Objektiv, `zoom_ist` und `zoom_gedeckelt` (ob der Deckel gegriffen hat). Dazu ein Bericht: welche Clips ein Sidecar
@@ -128,19 +128,31 @@ durch Gyroflow, der es nicht in den Schnitt schafft.
 ## 4 — Rand-Haushalt
 
 Gyroflow drückt seinen Zoom in **Prozent** aus (100 = kein Beschnitt) und kennt mit `stabilization.max_zoom` eine eigene
-Obergrenze — gemessen im Projekt-Export, Standard 130. Damit braucht es keine Rückkopplung zwischen beiden Beschnitten,
-sondern nur einen richtig gewählten Deckel:
+Obergrenze — gemessen im Projekt-Export, Standard 130. `max_zoom` deckelt **nur Gyroflows eigenen Beschnitt**; die
+Werte aus Abschnitt 2 (105/110/120) begrenzen ihn auf 1,05× bis 1,2×.
 
-    max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100 = 1,5 / 1,25 × 100 = 120
+**Keine Garantie gegenüber der Brennweitenregel** (Korrektur 23.09.2026). Die ursprüngliche Fassung dieser Spec
+behauptete hier, `max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100 = 1,5 / 1,25 × 100 = 120` mache beide
+Beschnitte per Konstruktion verträglich, weil die Brennweitenregel höchstens `digitalzoom_faktor` (1,25×) nehme. Diese
+Prämisse ist falsch: `telemetrie.digitalzoom()` rechnet `gesamt = zoom × faktor × längere / kürzere` und lässt jeden
+Kandidaten bis `digitalzoom_max` (1,5) zu. Der Shot mit der kürzeren scheinbaren Brennweite braucht regelmäßig mehr als
+1,25× — bis zu 1,5×, wie die Regel selbst zulässt.
 
-Bei `max_zoom` 120 kann Gyroflow höchstens 1,2× nehmen, und der Brennweitenregel bleiben garantiert 1,25× — ihr voller
-Sollwert. Die Priorität „Gyroflow zuerst" bleibt damit gewahrt, ohne dass die Brennweitenregel je zurückstecken muss.
-Die Werte in Abschnitt 2 liegen darunter oder darauf; ändert jemand `digitalzoom_faktor` oder `digitalzoom_max`, muss
-`max_zoom` mitgezogen werden — `gyroflow_sidecars.py` prüft die Ungleichung beim Start und bricht sonst ab.
+    heutiger schlimmster Fall:  Gyroflow 1,2×  ×  Brennweitenregel 1,5×  =  1,8× gesamt
 
-6d rechnet den digitalen Zoom der Brennweitenregel dann wie bisher (`SetProperty` `ZoomX`/`ZoomY`, Bildmitte), ohne
-Änderung. Es liest `gyroflow.json` nur für den Bericht: bei welchen Shots der Deckel griff, also Gyroflow schwächer
-glättete als es könnte. Das ist der Punkt, an dem der User entscheiden kann, `digitalzoom_max` anzuheben.
+Timelines und Quellen sind beide 4K, jeder Zoom über 1,0 skaliert also hoch. 1,5× war bewusst als „leicht" abgenommen,
+1,8× nie. Der digitale Zoom kommt heute **obendrauf**, ungeprüft.
+
+**Vereinbarter nächster Schritt (noch nicht umgesetzt):** Gyroflows Beschnitt als bereits vorhandenen Zoom des Shots in
+die Brennweitenregel geben, damit deren Prüfung gegen `digitalzoom_max` wieder ehrlich das Gesamtergebnis misst. Das
+ändert eine kalibrierte, von einer anderen Pipeline-Stufe mitbenutzte Funktion und bekommt einen eigenen Zyklus.
+
+Bis dahin bleibt der Deckel trotzdem sinnvoll — Gyroflows Beschnitt zu begrenzen ist für sich genommen richtig, und
+`gyroflow.py` (`pruefe_deckel`) prüft die Ungleichung weiter beim Start und bricht sonst ab. Sie ist nur keine
+Gesamtzusage, sondern die Regel, an der die Startwerte aus Abschnitt 2 gewählt wurden.
+
+6d rechnet den digitalen Zoom der Brennweitenregel wie bisher (`SetProperty` `ZoomX`/`ZoomY`, Bildmitte), ohne
+Änderung. Es liest `gyroflow.json` nur für den Bericht.
 
 Shots ohne Sidecar (keine Gyrospur) haben `zoom_ist` = 1,0 und damit das volle Budget.
 
@@ -215,7 +227,7 @@ müssen zusammenpassen**, sonst skaliert der Fusion-Comp das Bild.
 
 **Folge:** Baustein 6d setzt beim Bau **zusätzlich** `Smoothness` und `FOV` je Clip aus denselben Werten, aus denen auch
 das Preset gebaut wird. Damit ist der Vorrang gleichgültig. `max_zoom` hat keine OFX-Entsprechung und bleibt im Sidecar
-— die Garantie aus Abschnitt 4 hängt daran und bleibt unberührt.
+— Gyroflows eigener Beschnitt bleibt also gedeckelt wie in Abschnitt 4 beschrieben (was er nicht leistet, steht dort).
 
 **6. Zoom-Readback — Zugriffsweg steht, Umrechnung nicht.** `adaptive_zoom_fovs` im Typ-3-Projekt ist basE91 über den
 ganzen String (inklusive `q:`-Präfix), darunter zlib; entpackt ein Binärarray von 4743 Byte, weder durch 4 noch durch 8
@@ -224,7 +236,9 @@ Liste mit genau einem Eintrag je Frame (gemessen 528 bei 528 Frames), Felder `fo
 **Ungeklärt bleibt die Normierung:** `fov_scale` lag bei 0,459 für einen hochkant gedrehten 4K-Clip, ist also nicht auf
 „1,0 = volles Bild" bezogen — Rotation und Seitenverhältnis stecken darin. Das ohne Kalibrierung über mehrere Clips zu
 raten wäre schlechter als der Rückfall. **Es bleibt beim Rückfall:** `zoom_ist` ist der Deckelwert, im Bericht als
-Obergrenze statt als Messwert ausgewiesen. Der Rand-Haushalt hängt nicht daran (Abschnitt 4 hält per Konstruktion).
+Obergrenze statt als Messwert ausgewiesen („≤ 1,20× (Deckelwert, nicht gemessen)"). Wie viel Gyroflow tatsächlich
+nimmt, weiß die Pipeline damit nicht — für die offene Frage aus Abschnitt 4 (Gesamtzoom über 1,5×) ist genau das die
+fehlende Messung.
 
 **7. DJI — ungeprüft.** Bonus, gatet nichts. Clips ohne `quelle: rtmd` bleiben ausgeschlossen.
 

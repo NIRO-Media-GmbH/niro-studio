@@ -147,7 +147,10 @@ gyroflow:                   # Gyroflow-Stabilisierung für B-Roll (Spec 2026-09-
   zeitueberschreitung_s: 300   # je Clip; Lesen der Gyrospur kostet die ganze Datei (≈ 300 MB/s übers NAS)
   # Glättung je Haltung aus telemetrie.json. Startwerte 22.09., am ersten echten Durchlauf zu prüfen.
   glaettung: {stativ: 0.2, gimbal: 0.4, hand: 0.7}
-  # Gyroflows eigene Zoom-Obergrenze in Prozent (100 = kein Beschnitt). Muss die Ungleichung
-  # max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100 einhalten (1,5 / 1,25 × 100 = 120),
-  # damit der Brennweitenregel ihre 1,25× garantiert bleiben. pruefe_deckel() bricht sonst ab.
+  # Gyroflows eigene Zoom-Obergrenze in Prozent (100 = kein Beschnitt) — deckelt NUR Gyroflows Beschnitt.
+  # Muss die Ungleichung max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100 einhalten (1,5 / 1,25 × 100 = 120);
+  # pruefe_deckel() bricht sonst ab. ACHTUNG: das ist KEINE Zusage über den Gesamtzoom. Der digitale Zoom der
+  # Brennweitenregel kommt obendrauf und geht bis digitalzoom_max (1,5) — heutiger schlimmster Fall also
+  # 1,2 × 1,5 = 1,8× auf einer 4K-Quelle. Gyroflows Beschnitt in die Brennweitenregel einzuspeisen ist vereinbart,
+  # aber noch nicht umgesetzt (Spec 2026-09-22, Abschnitt 4).
   max_zoom: {stativ: 105, gimbal: 110, hand: 120}

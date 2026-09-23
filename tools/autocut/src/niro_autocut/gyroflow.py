@@ -2,8 +2,8 @@
 angewendet per OFX im Schnitt. Kein Render, keine zweite Medienhaltung.
 
 Das Glättungs-Preset kommt aus der Telemetrie (``haltung``), nicht aus einem Festwert. Gyroflows eigener Zoom wird über
-``max_zoom`` (Prozent, 100 = kein Beschnitt) so gedeckelt, dass der Brennweitenregel ihre ``digitalzoom_faktor``
-garantiert bleiben — deshalb braucht es keine Rückkopplung zwischen beiden Beschnitten.
+``max_zoom`` (Prozent, 100 = kein Beschnitt) gedeckelt — das begrenzt **nur Gyroflows Beschnitt**. Der digitale Zoom
+der Brennweitenregel kommt obendrauf; die beiden sind heute nicht verrechnet (Spec 2026-09-22, Abschnitt 4).
 """
 from __future__ import annotations
 
@@ -22,10 +22,18 @@ HALTUNG_VORSICHTIG = "stativ"   # Rückfall ohne Telemetrie: wenig glätten, wen
 
 
 def pruefe_deckel(cfg: dict) -> None:
-    """Bricht ab, wenn ein ``max_zoom`` der Brennweitenregel ihren Sollzoom nehmen würde.
+    """Hält Gyroflows eigenen Beschnitt unter ``max_zoom`` ≤ ``digitalzoom_max`` / ``digitalzoom_faktor`` × 100.
 
-    ``max_zoom`` ≤ ``digitalzoom_max`` / ``digitalzoom_faktor`` × 100. Wer ``digitalzoom_*`` ändert, muss ``max_zoom``
-    mitziehen — sonst stecken beide Beschnitte zusammen über ``digitalzoom_max``."""
+    **Was das garantiert:** nur, dass Gyroflow je Haltung höchstens den hier eingetragenen Anteil vom Rand nimmt
+    (Standard 1,05× bis 1,2×). Wer ``digitalzoom_*`` ändert, muss ``max_zoom`` mitziehen, sonst wird der Deckel
+    stillschweigend großzügiger als gedacht.
+
+    **Was das NICHT garantiert:** einen Gesamtzoom unter ``digitalzoom_max``. Die Brennweitenregel
+    (``telemetrie.digitalzoom``) rechnet ``zoom × faktor × längere / kürzere`` und lässt bis ``digitalzoom_max``
+    (1,5) zu — nicht bloß ``digitalzoom_faktor`` (1,25), wie die erste Fassung der Spec annahm. Ihr digitaler Zoom
+    kommt auf Gyroflows Beschnitt obendrauf: heute im schlimmsten Fall 1,2 × 1,5 = 1,8× auf einer 4K-Quelle.
+    Gyroflows Beschnitt als vorhandenen Zoom in die Brennweitenregel zu geben ist vereinbart, aber noch nicht
+    umgesetzt (Spec 2026-09-22, Abschnitt 4)."""
     tele = cfg.get("telemetrie") or {}
     faktor, obergrenze = tele.get("digitalzoom_faktor"), tele.get("digitalzoom_max")
     if not faktor or not obergrenze:
@@ -36,6 +44,8 @@ def pruefe_deckel(cfg: dict) -> None:
             raise AutoCutError(
                 f"gyroflow.max_zoom[{haltung}] = {wert} überschreitet {grenze:.0f} "
                 f"(= digitalzoom_max {obergrenze} / digitalzoom_faktor {faktor} × 100).\n"
+                f"Die Grenze deckelt allein Gyroflows Beschnitt — der digitale Zoom der Brennweitenregel kommt "
+                f"obendrauf (bis digitalzoom_max {obergrenze}).\n"
                 f"Entweder max_zoom senken oder telemetrie.digitalzoom_max anheben.")
 
 
@@ -138,8 +148,11 @@ def clip_export(ch, video, rec: dict, cfg: dict, erlaubte_pfade: set[str],
 def zoom_ist_lesen(projekt: dict, max_zoom: float) -> tuple[float, bool]:
     """Tatsächlich verbrauchter Zoom als Faktor ≥ 1,0 und ob der Deckel griff.
 
-    Gyroflow rechnet in Prozent (100 = kein Beschnitt). Ohne dekodierte Werte gilt der Deckel als Obergrenze — der
-    Haushalt hält dadurch ohnehin, der Bericht nennt den Wert dann als Obergrenze statt als Messwert."""
+    ``max_zoom`` kommt in Prozent (100 = kein Beschnitt) und wird hier in einen Faktor umgerechnet; dekodierte Werte
+    in ``adaptive_zoom_fovs_dekodiert`` werden dagegen **schon als Faktor ≥ 1,0 erwartet**, nicht in Prozent. Diesen
+    Schlüssel schreibt heute niemand — die Dekodierung ist ungeklärt (Spec Befund 1, Punkt 6), der Zweig ist der Haken
+    dafür. In der Praxis greift also immer der Rückfall: Rückgabe ist dann der Deckelwert, kein Messwert, und der
+    Bericht muss ihn als Obergrenze ausweisen."""
     deckel = float(max_zoom) / 100.0
     werte = (projekt.get("gyro_source") or {}).get("adaptive_zoom_fovs_dekodiert")
     if not werte:

@@ -528,9 +528,14 @@ dem Probelauf, sobald `BROLL` feststeht, und vor dem Bauen. Eingaben: `_intern/a
 (schreibt der Probelauf, `{datei, tempo50}` je genutztem Shot) und `_intern/autocut/telemetrie.json` (`haltung`,
 `quelle`). Ausgaben: `<clip>.gyroflow` neben der Mediendatei (eine je Quelldatei, auch bei Mehrfachnutzung),
 `_intern/autocut/gyroflow.json` und der Bericht `Ergebnisse/Rohschnitt/gyroflow.md` (Sidecars, Übersprungene mit
-Grund, wo der Zoom-Deckel griff). Vor dem ersten Export prüft der Lauf die Deckel-Ungleichung
+Grund, Deckelwerte). Vor dem ersten Export prüft der Lauf die Deckel-Ungleichung
 `max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100` (Standard je Haltung 105/110/120 ≤ 120 = 1,5 / 1,25 × 100)
-und bricht sonst mit `AutoCutError` ab. Clips ohne Gyrospur (`quelle` ≠ `rtmd`) und `_stabilized`-Exporte (Avata)
+und bricht sonst mit `AutoCutError` ab. **Diese Grenze deckelt allein Gyroflows eigenen Beschnitt** (1,05× bis 1,2×) —
+sie ist *keine* Zusage über den Gesamtzoom. Der digitale Zoom der Brennweitenregel kommt obendrauf und geht bis
+`digitalzoom_max` (1,5), heutiger schlimmster Fall also 1,2 × 1,5 = **1,8× gesamt** auf einer 4K-Quelle (Timeline und
+Quelle sind beide 4K, jeder Zoom über 1,0 skaliert hoch). Gyroflows Beschnitt als bereits vorhandenen Zoom in die
+Brennweitenregel zu geben, damit sie wieder ehrlich gegen 1,5 prüft, ist vereinbart, aber **noch nicht umgesetzt**
+(Spec 2026-09-22, Abschnitt 4). Clips ohne Gyrospur (`quelle` ≠ `rtmd`) und `_stabilized`-Exporte (Avata)
 bekommen keinen Sidecar und bleiben beim `Stabilize()`-Weg oben (Punkt V3) — Gyroflow tritt daneben, ersetzt ihn
 nicht. Die Anwendung des Sidecars in Resolve (Fusion-Comp je Clip, Spec Abschnitt 3) passiert im Bau selbst, siehe
 oben unter V3.
