@@ -1,6 +1,8 @@
 """gyroflow_bericht.py — Bericht über Sidecars, Überspringungen und gedeckelte Clips (Spec 2026-09-22)."""
 from __future__ import annotations
 
+import unicodedata
+
 from niro_autocut.gyroflow_bericht import bericht_md
 
 
@@ -52,3 +54,19 @@ def test_tempo50_wird_ueber_den_pfad_nicht_ueber_den_clip_stamm_gematcht():
     assert len(zeilen) == 2
     assert sum("50 %" in z for z in zeilen) == 1
     assert sum("100 %" in z for z in zeilen) == 1
+
+
+def test_tempo50_matcht_auch_ueber_abweichende_unicode_form():
+    """Shot-Liste und gyroflow.json können denselben Pfad in verschiedener Unicode-Form tragen (macOS liefert
+    Dateinamen teils in NFD). Ohne NFC-Normalisierung stünde die Zeile fälschlich auf 100 % (Review-Fund)."""
+    nfc = "/medien/Drehort Grünwald/FX3_0001.MP4"
+    nfd = unicodedata.normalize("NFD", nfc)
+    assert nfc != nfd
+    erg = {"clips": [{"clip": "FX3_0001", "path": nfc, "kamera": "FX3", "haltung": "hand", "zoom_ist": 1.20,
+                      "zoom_gedeckelt": True, "sidecar": nfc[:-4] + ".gyroflow", "fehler": None}],
+           "uebersprungen": [], "stand": "2026-09-22T21:00:00"}
+
+    md = bericht_md(erg, [{"datei": nfd, "tempo50": True}])
+
+    zeile = next(z for z in md.splitlines() if z.startswith("| FX3_0001"))
+    assert "50 %" in zeile

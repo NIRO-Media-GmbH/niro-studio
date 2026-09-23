@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 import subprocess
+import unicodedata
 from pathlib import Path
 
 from .charge import AutoCutError
@@ -19,6 +20,17 @@ from .media import fingerprint
 
 CLI_STANDARD = "/Applications/Gyroflow.app/Contents/MacOS/gyroflow"
 HALTUNG_VORSICHTIG = "stativ"   # Rückfall ohne Telemetrie: wenig glätten, wenig Rand nehmen
+
+
+def norm_pfad(p) -> str:
+    """Einheitlicher Schlüssel für jeden Join über Medienpfade: aufgelöst **und** Unicode-NFC.
+
+    Begründung wie ``resolve_api._norm``: macOS liefert Dateinamen teils in NFD, und ``Path.resolve()`` rechnet die
+    Unicode-Form nicht um — es löst nur Mount-Aliase, ``~`` und Symlinks auf. Ohne NFC greift der Join still daneben,
+    sobald ein Kunden- oder Ortsordner ein Nicht-ASCII-Zeichen trägt; sichtbar wird das als „kein Telemetrie-Eintrag"
+    bei Clips, die offensichtlich Telemetrie haben. Alle Pfad-Joins rund um Gyroflow laufen über diese Funktion —
+    auch der in der 6d-Vorlage (dort als ``GF.norm_pfad``)."""
+    return unicodedata.normalize("NFC", str(Path(p).expanduser().resolve()))
 
 
 def pruefe_deckel(cfg: dict) -> None:
@@ -74,8 +86,8 @@ def sidecar_pfad(video: str | Path, erlaubte_pfade: set[str]) -> Path:
     Enge Regel statt aufgeweichtem ``Charge.assert_writable``: geschrieben wird nur neben eine **existierende**
     Mediendatei, die unter genau diesem Pfad in ``telemetrie.json`` geführt ist. Die Endung ist immer ``.gyroflow``,
     der Stamm entspricht dem der Mediendatei — damit wird ein Überschreiben von Material garantiert ausgeschlossen."""
-    p = Path(video).expanduser().resolve()
-    if str(p) not in {str(Path(e).expanduser().resolve()) for e in erlaubte_pfade}:
+    p = Path(norm_pfad(video))
+    if str(p) not in {norm_pfad(e) for e in erlaubte_pfade}:
         raise AutoCutError(f"Sidecar verweigert: {p} ist nicht in telemetrie.json geführt.")
     if not p.is_file():
         raise AutoCutError(f"Sidecar verweigert: {p} nicht gefunden. Ist das NAS gemountet?")
@@ -173,12 +185,12 @@ def gyroflow_charge(ch, clips: list[dict], telemetrie: list[dict], cfg: dict, fo
     Einträge bleiben bei ``None``. Läuft absichtlich sequenziell statt parallel wie ``telemetrie_charge``: der
     Cache-Tempname in ``clip_export`` enthält keine Thread-Id."""
     pruefe_deckel(cfg)
-    nach_pfad = {str(Path(r["path"]).expanduser().resolve()): r for r in telemetrie if r.get("path")}
+    nach_pfad = {norm_pfad(r["path"]): r for r in telemetrie if r.get("path")}
     erlaubte = set(nach_pfad)
 
     ergebnisse, uebersprungen, gesehen = [], [], set()
     for eintrag in clips:
-        p = str(Path(eintrag["datei"]).expanduser().resolve())
+        p = norm_pfad(eintrag["datei"])
         if p in gesehen:
             continue
         gesehen.add(p)

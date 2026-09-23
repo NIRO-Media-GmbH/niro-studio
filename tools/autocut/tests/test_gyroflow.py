@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import unicodedata
 from pathlib import Path
 
 import pytest
@@ -322,3 +323,56 @@ def test_charge_lauf_fuellt_zoom_ist_aus_dem_deckel_rueckfall(tmp_path: Path):
     rec = erg["clips"][0]
     assert rec["zoom_ist"] == pytest.approx(1.20)
     assert rec["zoom_gedeckelt"] is True
+
+
+# --- Unicode-Normalisierung der Pfad-Joins (Review-Fund, 23.09.2026) ----------------------------------------
+
+def test_norm_pfad_fasst_nfd_und_nfc_zusammen():
+    """macOS liefert Dateinamen teils in NFD; Path.resolve() rechnet die Unicode-Form nicht um. Ohne NFC greift
+    jeder Join über den Pfad still daneben, sobald ein Kunden- oder Ortsordner einen Umlaut trägt."""
+    nfc = "/medien/Grünwald/FX3_0001.MP4"
+    nfd = unicodedata.normalize("NFD", nfc)
+    assert nfd != nfc                                  # die Strings sind wirklich verschieden
+    assert G.norm_pfad(nfd) == G.norm_pfad(nfc)
+    assert G.norm_pfad(nfc) == unicodedata.normalize("NFC", str(Path(nfc).resolve()))
+
+
+def test_charge_lauf_findet_telemetrie_auch_bei_abweichender_unicode_form(tmp_path: Path):
+    """Shot-Liste in NFD, telemetrie.json in NFC (oder umgekehrt) — derselbe Clip. Ohne NFC-Normalisierung
+    meldete der Lauf „kein Telemetrie-Eintrag" für einen Clip, der offensichtlich Telemetrie hat."""
+    ch = _charge(tmp_path)
+    medien = tmp_path / "Drehort Grünwald"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+
+    nfc = unicodedata.normalize("NFC", str(v))
+    nfd = unicodedata.normalize("NFD", str(v))
+    assert nfc != nfd
+    tele = [{"path": nfc, "clip": "FX3_0001", "kamera": "FX3", "haltung": "hand", "quelle": "rtmd"}]
+
+    erg = G.gyroflow_charge(ch, [{"datei": nfd, "tempo50": False}], tele, cfg)
+
+    assert erg["uebersprungen"] == []
+    assert len(erg["clips"]) == 1 and erg["clips"][0]["fehler"] is None
+
+
+def test_charge_lauf_dedupliziert_ueber_die_unicode_form_hinweg(tmp_path: Path):
+    """Dieselbe Datei einmal in NFC und einmal in NFD in der Shot-Liste ist ein Clip, nicht zwei."""
+    ch = _charge(tmp_path)
+    medien = tmp_path / "Drehort Grünwald"
+    medien.mkdir()
+    v = medien / "FX3_0001.MP4"
+    v.write_bytes(b"videodaten")
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+    nfc, nfd = unicodedata.normalize("NFC", str(v)), unicodedata.normalize("NFD", str(v))
+    tele = [{"path": nfc, "clip": "FX3_0001", "kamera": "FX3", "haltung": "hand", "quelle": "rtmd"}]
+
+    erg = G.gyroflow_charge(ch, [{"datei": nfc, "tempo50": False}, {"datei": nfd, "tempo50": True}], tele, cfg)
+
+    assert erg["uebersprungen"] == []
+    assert len(erg["clips"]) == 1
+    assert (medien / "aufrufe.log").read_text(encoding="utf-8").count("--export-project") == 1

@@ -5,13 +5,16 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .gyroflow import norm_pfad
+
 
 def bericht_md(erg: dict, clips: list[dict]) -> str:
     clips_ = erg.get("clips") or []
     uebersprungen = erg.get("uebersprungen") or []
     # Join über den vollen aufgelösten Pfad wie in gyroflow_charge — der Clip-Stamm allein ist nicht eindeutig:
     # Kartennummern setzen pro Karte/Dreh neu auf, zwei Quelldateien können denselben Stamm tragen.
-    tempo50 = {str(Path(c["datei"]).expanduser().resolve()) for c in (clips or []) if c.get("tempo50")}
+    # norm_pfad auf beiden Seiten: Path.resolve() allein lässt NFD ≠ NFC stehen (siehe dessen Docstring).
+    tempo50 = {norm_pfad(c["datei"]) for c in (clips or []) if c.get("tempo50")}
     fehler = [c for c in clips_ if c.get("fehler")]
     gedeckelt = [c for c in clips_ if c.get("zoom_gedeckelt")]
     sidecars = [c for c in clips_ if c.get("sidecar")]
@@ -24,8 +27,8 @@ def bericht_md(erg: dict, clips: list[dict]) -> str:
         zoom = "—" if c.get("zoom_ist") is None else f"{c['zoom_ist']:.2f}×"
         if c.get("zoom_gedeckelt"):
             zoom += " (gedeckelt)"
-        z.append(f"| {c.get('clip')} | {c.get('kamera') or '—'} | {c.get('haltung') or '—'} | {zoom} | "
-                 f"{'50 %' if c.get('path') in tempo50 else '100 %'} |")
+        tempo = "50 %" if c.get("path") and norm_pfad(c["path"]) in tempo50 else "100 %"
+        z.append(f"| {c.get('clip')} | {c.get('kamera') or '—'} | {c.get('haltung') or '—'} | {zoom} | {tempo} |")
 
     if gedeckelt:
         z += ["", "## Deckel griff", "",

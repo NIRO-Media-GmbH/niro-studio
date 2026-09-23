@@ -511,9 +511,10 @@ def bauen(p: dict) -> dict:
         v3_items = by_start("video", 3)
         v3_plan = {it.rec_in_f: it for it in p["V3"]}  # Quelldatei je Shot, gleicher Schlüssel wie v3_items
         speed_ok, stab, gyroflow_gesetzt, gyroflow_abweichungen = 0, {}, 0, []
-        # Gyroflow-Sidecars (Spec 2026-09-22, scripts/autocut_gyroflow.py). Schlüssel ist der volle aufgelöste Pfad,
-        # nicht der Clip-Stamm — Kartennummern setzen pro Karte/Dreh neu auf, zwei Quelldateien können denselben
-        # Stamm tragen (wie in gyroflow_bericht.py). Fehlerhafte oder fehlende Einträge bleiben außen vor.
+        # Gyroflow-Sidecars (Spec 2026-09-22, scripts/autocut_gyroflow.py). Schlüssel ist GF.norm_pfad — der volle
+        # aufgelöste Pfad in NFC, nicht der Clip-Stamm: Kartennummern setzen pro Karte/Dreh neu auf, zwei Quelldateien
+        # können denselben Stamm tragen, und macOS liefert Umlaute in Pfaden teils in NFD (wie in gyroflow_bericht.py
+        # und broll_auswahl.py). Fehlerhafte oder fehlende Einträge bleiben außen vor.
         # Die Datei ist optional wie telemetrie.json (TM.laden): kaputt/unlesbar darf hier nicht raisen — wir sind
         # schon mitten im Bau (nach append_items), ein Absturz hier liefe nie in die Stabilisierungsschleife unten
         # und ließe jeden V3-Shot ohne Stabilize() und ohne Gyroflow zurück.
@@ -524,7 +525,7 @@ def bauen(p: dict) -> dict:
                 gyro_clips = json.loads(gf_pfad.read_text(encoding="utf-8"))["clips"]
                 if not isinstance(gyro_clips, list):
                     raise TypeError(f"'clips' ist {type(gyro_clips).__name__}, keine Liste")
-                GYRO = {str(Path(c["path"]).expanduser().resolve()): c["sidecar"]
+                GYRO = {GF.norm_pfad(c["path"]): c["sidecar"]
                         for c in gyro_clips if isinstance(c, dict) and c.get("sidecar") and not c.get("fehler")}
             except (json.JSONDecodeError, UnicodeDecodeError, OSError, KeyError, TypeError) as e:
                 grund = f"gyroflow.json kaputt/unlesbar ({type(e).__name__}: {e}) — alle Shots bleiben beim Stabilize()-Weg"
@@ -545,7 +546,7 @@ def bauen(p: dict) -> dict:
             t0, shot = dt.datetime.now(), f"S{m['shot']:02d}"
             x = v3_items[m["rec_in_f"]]
             pfad = v3_plan[m["rec_in_f"]].clip
-            sidecar = GYRO.get(str(Path(pfad).expanduser().resolve()))
+            sidecar = GYRO.get(GF.norm_pfad(pfad))
             if sidecar:
                 comp = RA._safe(x.AddFusionComp, None)
                 werkzeug = RA._safe(comp.AddTool, None, GYRO_TOOL_ID) if comp else None
