@@ -19,7 +19,11 @@ Gilt für „AutoCut: <Kunde>/<Projekt>[/<Charge>] B-Roll" nach `autocut_build.p
 
 - `cutlist.json` (Beats, Bild-Spalte, Kommentare, Sperren), `timeline.json` (Beat-Positionen), `raster.json` (Fenster und
   Strecken mit den Beats darunter, O-Ton-Texten und Hinweisen), `broll_index_kompakt.json` (je Clip `ref`, `fps`, verwendbare
-  `abschnitte[{von_s,bis_s,kurz,q,einstellung,perspektive,brennweite,richtung,motiv}]`), `profile/default.md` + `.yaml`, Plankopf.
+  `abschnitte[{von_s,bis_s,kurz,q,einstellung,perspektive,brennweite,richtung,motiv,brennweite_mm,zoom,bewegungsart,haltung,bewegung_spitzen}]`
+  — die letzten fünf sind **gemessen**, nicht Claudes Einschätzung: `brennweite_mm` (KB-Median im Abschnitt), `zoom`
+  (keiner/langsam/schnell), `bewegungsart`, `haltung` und `bewegung_spitzen` (`[t_s, bewegung]` der lokalen
+  Bewegungs-Maxima, `t_s` = Fenster-Start); ohne Telemetrie `None`/leer, Claudes Klasse `brennweite` bleibt daneben
+  bestehen), `profile/default.md` + `.yaml`, Plankopf.
 
 ## Aufbau von broll_plan.json (v2)
 
@@ -66,9 +70,10 @@ erster Auftritt 2,5 s; sonst 2,0 s).
    statt `dauer_s` setzen, dann erneut `--raster`.
 3. **Je Strecke** Szenen bauen: Thema aus den Beats darunter (Bild-Spalte zuerst, Plan-Regeln „Nur S1!", Sperren, Tabus),
    Ordner wählen, 3+ Shots mit Einstellungswechsel und Cut-Flow (nie Einstellung + Perspektive + Brennweite gleich, keine
-   fast gleichen Kadragen), Längen nach Profil, `tempo` nach Kriterien. Die Shot-Summe soll die Strecke etwa füllen; der
-   letzte Shot wird vom Code auf die Reststrecke gesetzt (bleibt in seinen Längen-Grenzen: lieber einen Shot mehr planen).
-   Kein Clip zweimal im Video. Ausnahmen nur mit Text.
+   fast gleichen Kadragen; mit Telemetrie zusätzlich: kein Schnitt auf dieselbe KB-Brennweite und keine schnelle Zoomfahrt
+   im genutzten Bereich anschneiden), Längen nach Profil, `tempo` nach Kriterien. Die Shot-Summe soll die Strecke etwa
+   füllen; der letzte Shot wird vom Code auf die Reststrecke gesetzt (bleibt in seinen Längen-Grenzen: lieber einen Shot
+   mehr planen). Kein Clip zweimal im Video. Ausnahmen nur mit Text.
 4. **Schreiben** (`ensure_ascii=False`, `indent=1`).
 5. **Prüfen** (`--verify-only`), Fehler beheben (Tabelle unten), erneut prüfen.
 6. **Dem User vorlegen:** Gesichtsanteil, Zahl der Strecken/Szenen/Shots/Zeitlupen, Ausnahmen und Abweichungen mit Grund,
@@ -82,6 +87,8 @@ erster Auftritt 2,5 s; sonst 2,0 s).
 | `Gesichtsanteil … außerhalb` | Fenster kürzen/verlängern oder Peak-Fenster streichen; `--raster` neu |
 | `tempo 2 braucht 50 fps` | nur Clips mit passender `fps` verlangsamen |
 | `dieselbe Einstellung …, Perspektive … und Brennweite` | Shot tauschen (andere Einstellung oder Perspektive) |
+| `schneiden dieselbe KB-Brennweite` (nur mit Telemetrie) | anderen Shot oder Bereich wählen — direkt aneinanderstoßende Shots brauchen unterschiedliche KB |
+| `schneller Zoom im genutzten Bereich` (nur mit Telemetrie) | anderen Bereich wählen oder `abweichung` mit Grund setzen |
 | `nur k Shots — eine Szene braucht mindestens 3` | Shot ergänzen oder `ausnahme` mit Grund |
 | `Shots aus verschiedenen Ordnern` | Szene teilen oder `ausnahme` (Wechselschnitt) |
 | `Abschnittsfelder fehlen` | `autocut_index_sections.py` laufen lassen |

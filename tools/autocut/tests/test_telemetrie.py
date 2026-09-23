@@ -1143,3 +1143,63 @@ def test_kalibrierung_zoom_an_echten_reihen():
         kb25 = T.kb_je_frame(fall["kb_mm"], fall["kb_index"], fall["fps"], fall["samples"])
         treffer = [z for z in T.zoomfahrten(kb25, cfg) if z["von_s"] < fall["bis_s"] and z["bis_s"] > fall["von_s"]]
         assert treffer and all(z["urteil"] == fall["erwartet"] for z in treffer), (fall["clip"], treffer)
+
+
+def test_bewegung_spitzen_liefert_lokale_maxima_im_bereich():
+    rec = {"fenster": [[0.0, 0.1, 0.5, "fahrt", None],
+                       [1.0, 0.1, 3.0, "schwenk_links", None],   # lokales Maximum
+                       [2.0, 0.1, 0.4, "fahrt", None],
+                       [3.0, 0.1, 1.2, "fahrt", None],
+                       [4.0, 0.1, 0.3, "fahrt", None]]}          # 3.0 ist Maximum, 4.0 nicht
+    assert T.bewegung_spitzen(rec, 0.0, 5.0) == [[1.0, 3.0], [3.0, 1.2]]
+    assert T.bewegung_spitzen(rec, 2.5, 5.0) == [[3.0, 1.2]]     # Bereich grenzt ein
+    assert T.bewegung_spitzen({"fenster": []}, 0.0, 5.0) == []
+    assert T.bewegung_spitzen(None, 0.0, 5.0) == []
+
+
+def test_bewegung_spitzen_plateau_in_der_mitte():
+    """Gleichstand in der Mitte: drei benachbarte Fenster mit bewegung=3.0 (Plateau).
+    Jedes Fenster des Plateaus ist ein lokales Maximum und erscheint in der Ausgabe.
+    Spec: 'bewegung erreicht die beider Nachbarn' → >= auf beiden Seiten."""
+    rec = {"fenster": [[0.0, 0.1, 0.5, "fahrt", None],
+                       [1.0, 0.1, 3.0, "schwenk_links", None],   # Maximum (3.0 >= 0.5 && 3.0 >= 3.0)
+                       [2.0, 0.1, 3.0, "fahrt", None],           # Maximum (3.0 >= 3.0 && 3.0 >= 3.0)
+                       [3.0, 0.1, 3.0, "fahrt", None],           # Maximum (3.0 >= 3.0 && 3.0 >= 0.3)
+                       [4.0, 0.1, 0.3, "fahrt", None]]}
+    assert T.bewegung_spitzen(rec, 0.0, 5.0) == [[1.0, 3.0], [2.0, 3.0], [3.0, 3.0]]
+
+
+def test_bewegung_spitzen_plateau_am_rand():
+    """Plateaus am Rand: Fenster an Position 0 oder am Ende sind Maxima, wenn sie >=
+    ihrem einzigen vorhandenen Nachbarn sind (Spec: 'am Rand zählt der vorhandene Nachbar')."""
+    # Plateau am Anfang: [2.0, 2.0]
+    rec1 = {"fenster": [[0.0, 0.1, 2.0, "fahrt", None],       # Maximum (2.0 >= 2.0, nur rechts)
+                        [1.0, 0.1, 2.0, "fahrt", None],       # Maximum (2.0 >= 2.0 && 2.0 >= 0.5)
+                        [2.0, 0.1, 0.5, "fahrt", None]]}
+    assert T.bewegung_spitzen(rec1, 0.0, 3.0) == [[0.0, 2.0], [1.0, 2.0]]
+
+    # Plateau am Ende: [2.5, 2.5]
+    rec2 = {"fenster": [[0.0, 0.1, 0.5, "fahrt", None],
+                        [1.0, 0.1, 1.0, "fahrt", None],
+                        [2.0, 0.1, 2.5, "fahrt", None],       # Maximum (2.5 >= 1.0 && 2.5 >= 2.5)
+                        [3.0, 0.1, 2.5, "fahrt", None]]}      # Maximum (2.5 >= 2.5, nur links)
+    assert T.bewegung_spitzen(rec2, 0.0, 4.0) == [[2.0, 2.5], [3.0, 2.5]]
+
+
+def test_neue_schluessel_aendern_den_config_hash_nicht():
+    """Sonst gälte jede vorhandene telemetrie.json als veraltet und würde neu gemessen."""
+    import yaml
+    from pathlib import Path
+    cfg = yaml.safe_load((Path(__file__).resolve().parents[1] / "defaults.yaml").read_text())["telemetrie"]
+    vorher = T.config_hash({k: v for k, v in cfg.items()
+                            if k not in ("bewegung_rand_s", "bewegung_spitze_faktor")})
+    assert T.config_hash(cfg) == vorher
+
+
+def test_bewegung_grundniveau_nimmt_nur_entfernte_fenster():
+    rec = {"fenster": [[0.0, 0.1, 0.4, "fahrt", None],
+                       [1.0, 0.1, 0.6, "fahrt", None],
+                       [4.0, 0.1, 9.0, "schwenk_links", None],   # die Spitze selbst
+                       [8.0, 0.1, 0.5, "fahrt", None]]}
+    assert T.bewegung_grundniveau(rec, 4.0, 3.0) == 0.5          # Median von 0,4 / 0,6 / 0,5
+    assert T.bewegung_grundniveau({"fenster": []}, 4.0, 3.0) is None

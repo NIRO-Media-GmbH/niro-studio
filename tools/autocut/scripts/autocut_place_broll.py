@@ -52,6 +52,7 @@ from niro_autocut.media import proxy_for  # noqa: E402
 from niro_autocut import readback as RB  # noqa: E402
 from niro_autocut import replay  # noqa: E402
 from niro_autocut.report import write_report  # noqa: E402
+from niro_autocut import telemetrie as TM  # noqa: E402
 
 PLAN_FILE = "broll_plan.json"
 RASTER_FILE = "raster.json"
@@ -277,7 +278,11 @@ def main(argv: list[str] | None = None) -> int:
               f"Beat-Positionen: {quelle}\nProfil: {args.profile} · B-Roll-Plan: {len(plan.strecken)} Strecken, "
               f"{sum(len(st.szenen) for st in plan.strecken)} Szenen, {len(plan.all_shots())} Shots\n")
 
-        res = verify_layout(plan, tp_dict, index, cl, cfg_broll, fps)
+        tele = TM.laden(ch.autocut)
+        # cfg_broll ist nur der broll:-Block (effective_broll_cfg); telemetrie: liegt in defaults.yaml/config.yaml
+        # als Geschwister-Schlüssel daneben und muss für die Brennweitenfolge in verify_layout extra rein — mit
+        # Chargen-Override, wie ch.config["telemetrie"] ihn auch autocut_telemetrie.py liefert.
+        res = verify_layout(plan, tp_dict, index, cl, {**cfg_broll, "telemetrie": ch.config["telemetrie"]}, fps, tele)
         if any(e.startswith("Config:") for e in res.errors):
             # cfg_broll fehlt ein Pflichtschlüssel — verify_layout hat das schon als Fehler gemeldet; die
             # Neuberechnung hier (nur um `placed` fürs Bauen/check_shot_files zu bekommen) würde mit demselben
@@ -345,7 +350,7 @@ def main(argv: list[str] | None = None) -> int:
                         "gebaut_am": _dt.datetime.now().isoformat(timespec="seconds"), "verify_warnings": res.warnings})
             r_bericht = raster(tp_dict, cl, cfg_broll, plan)
             md_path = write_report(ch, f"{vk}-broll.md", render_layout_md(plan, placed, r_bericht, index, cl,
-                                                                           warnings=res.warnings, build=out))
+                                                                           warnings=res.warnings, build=out, tele=tele))
             out.update({"items": [i.to_dict() for i in items], "markers": [m.to_dict() for m in markers], "placed": placed})
             try:
                 out["bau_readback"] = str(RB.schreiben(ch, session, session.find_timeline(name)))

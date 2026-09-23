@@ -135,10 +135,17 @@ Vorlagen-Schlüsseln der Brennweitenfolge.
 
 ## Fehler und Randfälle
 
-- **Charge ohne `telemetrie.json`**: alle drei Regeln entfallen, der Bericht sagt „keine Telemetrie — Brennweiten- und
-  Zoomregel nicht geprüft". Kein Fehler, kein Abbruch.
+- **Charge ohne `telemetrie.json`**: alle drei Regeln entfallen, der Bericht sagt „keine Telemetrie — Brennweiten-,
+  Zoom- und Bewegungsregel für alle N Shots nicht geprüft; autocut_telemetrie.py laufen lassen." Eine Meldung je
+  Sachverhalt: ohne jede Telemetrie sind „Schnitte ohne Brennweitenverlauf" und „Shots ohne Datensatz" dieselbe
+  Aussage. Kein Fehler, kein Abbruch.
 - **Clip ohne `kb_verlauf`** (Mavic, Avata, alte Telemetrie): 3a und 3b entfallen für diesen Shot und werden gezählt.
-- **Telemetrie mit anderem Config-Hash**: wie in 3a/6d gemeldet, Regeln für diese Clips als ungeprüft gezählt.
+- **Telemetrie mit anderem Config-Hash**: **3b und 3c** entfallen für diese Clips und werden gezählt; die Warnung
+  nennt den Grund und rät zum Neumessen. **3a läuft weiter.** Abweichung von der ursprünglichen Fassung dieses
+  Abschnitts (Schluss-Review 23.09., Entscheidung des Users): pauschal alle drei zu überspringen wäre zu grob — 3a
+  liest `kb_verlauf`, also Rohdaten, und `brennweite_gleich_max` steht in `OHNE_MESSWIRKUNG`, die Schwellen zur
+  Messzeit berühren sie nicht; 3b und 3c hängen dagegen an `zoom_schnell_proz_s` und Verwandten, die **nicht** in
+  `OHNE_MESSWIRKUNG` stehen, und würden Fehler melden, die die heutige Konfiguration gar nicht erzeugt.
 - **Abschnitt ohne `bewegung_spitzen`**: 3c entfällt.
 - **Erster Shot einer Strecke**: 3a braucht einen Vorgänger; der erste Shot der Timeline wird übersprungen.
 - **Shot mit `tempo > 1` (Zeitlupe)**: der genutzte Quellbereich ist kürzer als die Timeline-Dauer;
@@ -197,8 +204,18 @@ Der Plan entstand blind für die Telemetrie.
 | alle aufeinanderfolgenden B-Roll-Shots | 67 | 67 | 9 (13 %) |
 | **nur echte Schnitte (A endet, B beginnt)** | **43** | **43** | **5 (12 %)** |
 
-**Maßgeblich ist die zweite Zeile.** Bei 24 der 67 Paare liegt das Sprecher-Fenster dazwischen (A-Roll) — dort stoßen
-die Shots nicht aneinander. Drei der fünf Paare liegen bei **0,0 % Abstand** — identische KB-Brennweite gegeneinander geschnitten (25,4 → 25,4 mm; 74,1 → 74,1 mm). Die Klassenprüfung sah das nicht, weil beide Werte „normal" heißen.
+**Maßgeblich ist die zweite Zeile.** Bei 24 der 67 Paare liegt A-Roll dazwischen — dort stoßen die Shots nicht
+aneinander, kein Schnitt. Drei der fünf Paare liegen bei **0,0 % Abstand** — identische KB-Brennweite gegeneinander
+geschnitten (25,4 → 25,4 mm; 74,1 → 74,1 mm). Die Klassenprüfung sah das nicht, weil beide Werte „normal" heißen.
+
+**Korrektur Abnahme (23.09.2026):** Die 24 Nicht-Schnitte sind NICHT alle Streckengrenzen, wie hier ursprünglich
+angenommen. Nachgezählt an denselben 68 B-Roll-Items: nur 16 der 24 Lücken liegen an einer Streckengrenze
+(Sprecher-Fenster im technischen Sinn), die übrigen 8 liegen INNERHALB einer Strecke (1,0–1,48 s, ebenfalls
+A-Roll, aber ohne dass ein Fenster im Plan dazwischenliegt). `verify_layout()` verglich bis dahin für den
+Cut-Flow (3a, Dublette, Setup-Hash) nur die Streckennummer der beiden Shots und meldete für genau diese acht
+Paare fälschlich Brennweitenfehler — u. a. für FX3_0006→FX3_0005 (Strecke 1), FX3_0076→FX3_0060 und
+FX3_0019→FX3_0020 (beide Strecke 17). Seither behoben: der Wächter prüft `rec_out_f`(A) `== rec_in_f`(B), also
+echte Nachbarschaft in der Timeline, nicht mehr die Streckennummer.
 
 **Regel 3b — schneller Zoom im genutzten Bereich:** **mindestens 7 von 68 Shots (10 %)**, Spitzen 94–242 %/s. Der
 94er ist über `ruck` 1,19 > `zoom_ruck_max` 1,0 schnell, nicht über das Tempo.

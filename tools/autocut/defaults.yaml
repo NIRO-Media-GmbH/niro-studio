@@ -141,6 +141,8 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   brennweite_gleich_max: 0.20   # Abstand größere/kleinere KB-Brennweite − 1: darunter gilt die Brennweite als gleich
   digitalzoom_faktor: 1.25      # Zoom für den Shot mit der längeren scheinbaren Brennweite (der kürzere braucht mehr)
   digitalzoom_max: 1.5          # Obergrenze für das Produkt aller Zooms eines Shots (4K: bewusst leicht hochskaliert)
+  bewegung_rand_s: 0.5          # Abstand einer Schnittgrenze zu einer Bewegungsspitze (UNKALIBRIERT, nur Warnung)
+  bewegung_spitze_faktor: 3.0   # ab dem Vielfachen des Grundniveaus zählt eine Spitze (UNKALIBRIERT, nur Warnung)
 gyroflow:                   # Gyroflow-Stabilisierung für B-Roll (Spec 2026-09-22): Sidecar neben der Mediendatei,
                             # angewendet per OFX im Schnitt — kein Render, keine zweite Medienhaltung.
   cli: "/Applications/Gyroflow.app/Contents/MacOS/gyroflow"

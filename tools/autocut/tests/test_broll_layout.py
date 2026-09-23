@@ -6,14 +6,25 @@ import json
 import pytest
 
 from niro_autocut import broll_layout as L
+from niro_autocut import telemetrie as TM
 from niro_autocut.charge import AutoCutError
 from niro_autocut.cutlist import Beat, Cut, Cutlist
 
+# telemetrie: wie defaults.yaml (Fix-Runde 1 zu Task 3) — cfg_broll allein trägt diesen Geschwister-Schlüssel in
+# Produktion nie; ohne ihn im Test-CFG griff cfg.get("telemetrie") in broll_layout.py unbemerkt immer ins Leere.
+CFG_TELEMETRIE = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_max_px": 0.15, "stativ_max_grad_s": 0.3,
+                  "stativ_max_px": 0.02, "schwenk_min_grad_s": 3.0, "schwenk_min_px": 1.0, "hf_grenze_hz": 3.0,
+                  "hand_hf_anteil_min": 0.15, "pitch_klassen_grad": [-60, -8, 8], "achsen": {"schwenk": 1, "tilt": 0},
+                  "vorzeichen": {"schwenk": 1, "tilt": -1, "pitch": 1}, "px_faktor": {"FX3": 0.60, "a7IV": 0.69},
+                  "optisch_fuer": [], "optisch_breite": 480, "parallel": 2, "zoom_min_proz": 3.0, "zoom_rausch_proz_s": 1.0,
+                  "zoom_schnell_proz_s": 100.0, "zoom_ruck_max": 1.0, "zoom_stocken_anteil": 0.0, "zoom_sprung_proz": 12.0,
+                  "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20, "digitalzoom_faktor": 1.25, "digitalzoom_max": 1.5,
+                  "bewegung_rand_s": 0.5, "bewegung_spitze_faktor": 3.0}
 CFG = {"face_share": [0.15, 0.20], "face_share_hard": [0.12, 0.23], "window_first_s": 2.5, "window_s": 2.0, "window_min_s": 1.5,
        "window_max_s": 4.0, "full_face_beat_max_s": 3.0, "full_face_keywords": ["Gehaltenes Gesicht", "Bookend"],
        "shot_len_s": [2.0, 5.0], "shot_len_slow_max_s": 6.0, "montage_len_s": [1.5, 3.0], "fast_cuts_len_s": [1.0, 2.0],
        "scene_min_shots": 3, "scene_short_stretch_s": 6.0, "setup_hash_min_distance": 10, "max_exceptions_warn": 3,
-       "forbidden_maengel": ["Blick in Kamera", "Crew im Bild", "Logo/Marke"]}
+       "forbidden_maengel": ["Blick in Kamera", "Crew im Bild", "Logo/Marke"], "telemetrie": CFG_TELEMETRIE}
 FX = "/nas/Interviews/Anna/FX3_1.MP4"
 # Beats: 1 Hook 2,3 s | Pause 1 s | 2 VO 6 s | Pause | 3 O-Ton Anna 8 s | Pause | 4 O-Ton Bea 10 s (Bookend-Wort nicht) | Pause | 5 Grafik 4 s
 TP = {"fps": 25, "total_frames": 875, "beats": [
@@ -346,3 +357,488 @@ def test_raster_ok_stays_free_of_errors_on_the_default_mek_fixture():
     weder die neue Kurz-Strecken- noch die Gesichtsanteil-Prüfung schlägt hier grundlos an."""
     r = L.raster(TP, CL, CFG)
     assert r["fehler"] == []
+
+
+def test_compact_index_v2_reicht_telemetriewerte_durch():
+    idx = _idx()
+    a = idx["clips"][0]["abschnitte"][0]
+    a.update(brennweite_mm=71.6, zoom="langsam", bewegungsart="schwenk_links", haltung="gimbal",
+             bewegung_spitzen=[[1.0, 3.0]])
+    cx = L.compact_index_v2(idx)
+    ab = cx[0]["abschnitte"][0]
+    assert ab["brennweite_mm"] == 71.6 and ab["zoom"] == "langsam"
+    assert ab["bewegungsart"] == "schwenk_links" and ab["haltung"] == "gimbal"
+    assert ab["bewegung_spitzen"] == [[1.0, 3.0]]
+    assert ab["brennweite"] == "weit"          # Claudes Klasse bleibt erhalten
+
+
+def test_compact_index_v2_ohne_telemetrie_liefert_none():
+    cx = L.compact_index_v2(_idx())
+    ab = cx[0]["abschnitte"][0]
+    assert ab["brennweite_mm"] is None and ab["zoom"] is None
+    assert ab["bewegungsart"] is None and ab["haltung"] is None and ab["bewegung_spitzen"] == []
+
+
+# --------------------------------------------------------------------------- #
+# Task 3: Telemetrie in verify_layout() — Regel 3a (Brennweitenfolge)
+# --------------------------------------------------------------------------- #
+
+def _tele(datei, kb_mm, zooms=None, fenster=None):
+    """Telemetrie-Datensatz wie in telemetrie.json; konstante Brennweite = ein kb_verlauf-Eintrag.
+
+    ``config_hash`` trägt den Hash der Test-Config: produktiv setzt ihn clip_messen() bei jeder Messung, und
+    seit Fund I4 überspringen Regel 3b und 3c Datensätze mit abweichendem Hash. Ein Datensatz ohne Hash ist
+    damit ausdrücklich „mit anderen Schwellen gemessen" (siehe eigener Test)."""
+    return {"path": f"/nas/Standort 1/Sortiert/B-Roll/Flur/{datei}", "clip": datei.split(".")[0],
+            "quelle": "rtmd", "fps": 25.0, "dauer_s": 12.0, "fenster_s": 2.0, "config_hash": TM.config_hash(CFG_TELEMETRIE),
+            "kb_verlauf": [[0.0, kb_mm]], "zooms": zooms or [], "fenster": fenster or []}
+
+
+def test_verify_layout_brennweitenfolge_meldet_gleiche_kb_am_schnitt():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [_tele("FX3_1.MP4", 25.0), _tele("FX3_2.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("KB" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors)   # 25,0 → 25,0 mm
+    assert not any("KB" in e and "FX3_3" in e for e in r.errors)                # 25,0 → 70,0 mm ist weit genug
+
+
+def test_verify_layout_brennweitenfolge_ohne_telemetrie_still():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, None)
+    assert not any("KB" in e for e in r.errors)
+    assert any("keine Telemetrie" in w for w in r.warnings)
+
+
+def test_verify_layout_brennweitenfolge_frische_telemetrie_ohne_schwellen_warnung():
+    """Fix-Runde 1: cfg["telemetrie"] muss der echte Geschwister-Block sein (siehe CFG_TELEMETRIE oben), sonst
+    hasht telemetrie_hinweise() innerhalb von verify_layout gegen config_hash({}) statt gegen den echten Hash —
+    die Warnung „… mit anderen Telemetrie-Schwellen gemessen" würde dann auch bei frischer, mit den aktuellen
+    Schwellen gemessener Telemetrie immer feuern (und der empfohlene Neulauf sie nie beheben)."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    h = TM.config_hash(CFG["telemetrie"])
+    tele = [{**_tele("FX3_1.MP4", 25.0), "config_hash": h}, {**_tele("FX3_2.MP4", 40.0), "config_hash": h},
+            {**_tele("FX3_3.MP4", 70.0), "config_hash": h}]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("Telemetrie-Schwellen" in w for w in r.warnings)
+
+
+def test_verify_layout_meldet_shots_ohne_telemetrie_datensatz():
+    """Fix-Welle, Fund I2: Shots, für die finden() keinen Datensatz liefert, wurden bei 3b und 3c stumm
+    übersprungen — der einzige Zähler zählte Schnittpaare und nannte ausdrücklich nur die Brennweitenregel.
+    Hier hat nur FX3_1 einen Datensatz; für FX3_2 und FX3_3 muss der Bericht sagen, dass Zoom- und
+    Bewegungsregel nicht geprüft wurden, getrennt von der Schnittpaar-Zählung."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    ohne = [w for w in r.warnings if "ohne verwertbaren Telemetrie-Datensatz" in w]
+    assert len(ohne) == 1 and ohne[0].startswith("2 von 3 Shots"), r.warnings
+    assert "Zoom- und Bewegungsregel" in ohne[0]
+    # getrennt davon die Schnittpaar-Zählung für die Brennweitenregel
+    assert any("Schnitte ohne Brennweitenverlauf" in w and "Brennweitenregel" in w for w in r.warnings), r.warnings
+    # Gegenprobe: mit Datensatz für alle drei Clips schweigt die Meldung
+    tele = [_tele("FX3_1.MP4", 25.0), _tele("FX3_2.MP4", 40.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("ohne verwertbaren Telemetrie-Datensatz" in w for w in r.warnings), r.warnings
+
+
+def test_verify_layout_datensatz_mit_fehler_zaehlt_als_ungeprueft():
+    """Ein Datensatz mit ``fehler`` trägt weder ``zooms`` noch ``fenster`` — 3b und 3c würden still
+    durchwinken. Er zählt deshalb wie ein fehlender Datensatz."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [{**_tele("FX3_1.MP4", 25.0), "fehler": "rtmd nicht lesbar"},
+            _tele("FX3_2.MP4", 40.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any(w.startswith("1 von 3 Shots ohne verwertbaren Telemetrie-Datensatz") for w in r.warnings), r.warnings
+
+
+def test_verify_layout_ohne_telemetrie_nur_eine_meldung():
+    """Fix-Welle, Fund I2: ohne jede Telemetrie meldeten „N Schnitte ohne Brennweitenverlauf" und
+    „keine Telemetrie" denselben Sachverhalt zweimal. Jetzt bleibt genau eine Meldung, die alle drei
+    Regeln und die Zahl der Shots nennt."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, None)
+    tele_w = [w for w in r.warnings if "Telemetrie" in w or "Brennweitenverlauf" in w]
+    assert len(tele_w) == 1, tele_w
+    assert tele_w[0].startswith("keine Telemetrie") and "alle 3 Shots" in tele_w[0]
+    assert "Brennweiten-, Zoom- und Bewegungsregel" in tele_w[0]
+
+
+def test_verify_layout_gleiche_kb_meldet_das_paar_nur_einmal():
+    """Fix-Welle, Fund M1: feuerte Regel 3a (gleiche KB), meldete die Dublettenprüfung direkt darunter dasselbe
+    Paar noch einmal mit anderem Abhilfetext. Da 3a immer feuert, sobald ``gleiche_kb`` wahr ist, war die
+    Dublettenbedingung eine echte Teilmenge. FX3_1 und FX3_4 sind im Index dasselbe Setup (Totale / ohne
+    Person / weit) — vor dem Fix gab es für dieses Paar zwei Fehler."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_4.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [_tele("FX3_1.MP4", 25.0), _tele("FX3_4.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    paar = [e for e in r.errors if "FX3_1.MP4 → FX3_4.MP4" in e]
+    assert len(paar) == 1, paar
+    assert "KB-Brennweite" in paar[0], paar
+    # Rückfall auf den Klassenvergleich bleibt unverändert: ohne Telemetrie meldet die Dublettenprüfung weiter
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, None)
+    paar = [e for e in r.errors if "FX3_1.MP4 → FX3_4.MP4" in e]
+    assert len(paar) == 1 and "dieselbe Einstellung" in paar[0], paar
+    # und ebenso, wenn nur eine der beiden KB-Brennweiten bekannt ist
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    paar = [e for e in r.errors if "FX3_1.MP4 → FX3_4.MP4" in e]
+    assert len(paar) == 1 and "dieselbe Einstellung" in paar[0], paar
+
+
+def test_verify_layout_cutflow_nur_bei_echter_nachbarschaft_in_der_timeline(monkeypatch):
+    """Abnahme-Fund (Charge MEK, 23.09.): der Cut-Flow-Wächter verglich bisher nur die Streckennummer — in der
+    Annahme, B-Roll-Shots stießen innerhalb einer Strecke immer lückenlos aneinander und nur zwischen zwei Strecken
+    liege ein Sprecher-Fenster. An echten Daten widerlegt: von 24 Lücken zwischen aufeinanderfolgenden B-Roll-Shots
+    lagen nur 16 an einer Streckengrenze, 8 INNERHALB einer Strecke (1,0–1,48 s, A-Roll dazwischen) — dort bilden
+    zwei Shots gar keinen Schnitt. `place_shots()` selbst platziert innerhalb einer Strecke immer lückenlos (siehe
+    andere Tests), darum wird die Lücke hier nachträglich in ein echtes `placed`-Ergebnis eingebaut — wie eine der
+    echten Lücken aus der Abnahme (Strecke 17: FX3_0076 → FX3_0060, 31 Frames)."""
+    idx = _idx()
+    tp = {"fps": 25, "total_frames": 100, "beats": [{"nr": "1", "typ": "vo", "rec_in_f": 0, "rec_out_f": 100, "person": None}]}
+    cl = Cutlist("v.md", None, 25, "16:9", 1.0, [Beat("1", "VO", "vo", platzhalter_s=4.0)])
+    plan = L.LayoutPlan("v.md", [], [L.Strecke(1, [L.Szene("Standort 1/Flur", [
+        L.Shot("Flur/FX3_1.MP4", 0.0, 2.0), L.Shot("Flur/FX3_2.MP4", 0.0, 2.0)],
+        ausnahme="Test: Lücke innerhalb der Strecke, keine Szenen-Regel hier")])])
+    tele = [_tele("FX3_1.MP4", 25.0), _tele("FX3_2.MP4", 25.0)]   # identische KB — ohne Fix ein Fehlalarm
+    echtes_place_shots = L.place_shots
+
+    def _place_shots_mit_luecke(*args, **kwargs):
+        # place_shots() selbst füllt eine Strecke immer lückenlos (pos rückt exakt um n_tl vor, der letzte Shot
+        # füllt zwangsläufig bis ans Streckenende) — eine Lücke INNERHALB einer Strecke entsteht dort nie. An
+        # echten Daten (Abnahme) entsteht sie erst später; hier wird das reale Ergebnis nachträglich verschoben,
+        # um genau das nachzustellen, ohne die Geometrie der übrigen Felder (in_s/out_s/src_*) zu verfälschen.
+        placed, errs = echtes_place_shots(*args, **kwargs)
+        luecke_f = 25   # 1,0 s @ 25 fps — innerhalb des an echten Daten gemessenen Bereichs (1,00–1,48 s)
+        placed[-1]["rec_in_f"] += luecke_f
+        placed[-1]["rec_out_f"] += luecke_f
+        placed[-1]["roh_out_f"] += luecke_f
+        return placed, errs
+
+    monkeypatch.setattr(L, "place_shots", _place_shots_mit_luecke)
+    r = L.verify_layout(plan, tp, idx, cl, CFG, 25, tele)
+    # Alle drei Prüfungen der Schleife dürfen für dieses Paar schweigen — es ist kein Schnitt.
+    assert not any("KB-Brennweite" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors
+    assert not any("dieselbe Einstellung" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors
+    assert not any("fast gleich aus" in w and "FX3_1" in w and "FX3_2" in w for w in r.warnings), r.warnings
+
+
+# --------------------------------------------------------------------------- #
+# Task 4: Regel 3b — kein schneller Zoom im genutzten Bereich
+# --------------------------------------------------------------------------- #
+
+
+def test_verify_layout_schneller_zoom_im_genutzten_bereich():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    langsam = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 30.0, "bis_mm": 35.0, "tempo_max": 28.0,
+                "tempo_mittel": 20.0, "urteil": "langsam"}]
+    tele = [_tele("FX3_1.MP4", 25.0, schnell), _tele("FX3_2.MP4", 70.0, langsam), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("schneller Zoom" in e and "FX3_1" in e for e in r.errors)
+    assert not any("schneller Zoom" in e and "FX3_2" in e for e in r.errors)
+
+
+def test_verify_layout_schneller_zoom_mit_abweichung_erlaubt():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    plan.strecken[0].szenen[0].shots[0].abweichung = True
+    plan.strecken[0].szenen[0].shots[0].abweichung_grund = "Plan verlangt genau diese Fahrt"
+    schnell = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    tele = [_tele("FX3_1.MP4", 25.0, schnell), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("schneller Zoom" in e for e in r.errors)
+
+
+def test_verify_layout_abweichung_ohne_grund_ist_ein_fehler():
+    """Seit Regel 3b ist `abweichung` der einzige Ausweg aus einer HARTEN Regel; dass ein Grund zwingend
+    dazugehört, hängt allein an einer Zeile in verify_layout(). Ohne sie könnte jeder Shot die Zoomregel
+    wortlos aushebeln. Ein Grund aus Leerzeichen zählt nicht (``.strip()``)."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    shot = plan.strecken[0].szenen[0].shots[0]
+    shot.abweichung = True
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25)
+    assert any("abweichung=true ohne abweichung_grund" in e and "FX3_1" in e for e in r.errors), r.errors
+    shot.abweichung_grund = "   "
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25)
+    assert any("abweichung=true ohne abweichung_grund" in e for e in r.errors), r.errors
+    shot.abweichung_grund = "Plan verlangt genau diese Fahrt"
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25)
+    assert not any("abweichung_grund" in e for e in r.errors), r.errors
+
+
+def test_verify_layout_schneller_zoom_zeitlupe_halbiert_genutzten_bereich():
+    """Fix-Runde 1 (Coordinator-Review zu Task 4): beide bisherigen Zoom-Tests nutzten nur tempo=1 —
+    der Zeitlupen-Zweig `langsam=(p.get("tempo") or 1) > 1` beim Aufruf von TM.genutzter_quellbereich_s()
+    in verify_layout() (broll_layout.py) war dadurch ungeprüft. Shot 0 ist wörtlich aus
+    test_place_shots_tempo_conform_and_invalid_fps übernommen (Flur/FX3_5.MP4, 50 fps laut _idx(),
+    tempo=2 -> rec_in_f=58, rec_out_f=158, src_in_f=0, src_out_f=100 sind dort bereits geprüft).
+
+    Handrechnung TM.genutzter_quellbereich_s(src_in_f=0, n_f=rec_out_f-rec_in_f=100, clip_fps=50,
+    langsam=True, ziel_fps=25):
+        ende_f = 0 + 100 * 50/25 * 0,5 = 0 + 100 * 2 * 0,5 = 100
+        von_s  = 0 / 50 = 0,0
+        bis_s  = 100 / 50 = 2,0
+    Genutzter Quellbereich also [0,0 - 2,0] s (deckt sich mit src_out_f/clip_fps = 100/50 = 2,0 s).
+    Fiele `langsam=` weg (Regression auf den Faktor 1,0 wie bei tempo=1), ergäbe dieselbe Rechnung
+    ende_f = 0 + 100 * 2 * 1,0 = 200 -> bis_s = 4,0 — die Zoomfahrt unten (2,5-3,5 s) läge dann fälschlich
+    im Bereich und der Test unten (ohne Zeitlupe) würde nicht mehr zwischen beiden Fällen unterscheiden.
+    """
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_5.MP4", 0.0, 2.0, 2), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 2.5, "bis_s": 3.5, "von_mm": 70.0, "bis_mm": 24.0, "tempo_max": 210.0,
+                "tempo_mittel": 160.0, "urteil": "schnell"}]
+    tele = [{**_tele("FX3_5.MP4", 35.0, schnell), "fps": 50.0}]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    # Zoomfahrt (2,5-3,5 s) liegt vollständig außerhalb des bei tempo=2 tatsächlich genutzten Bereichs (0,0-2,0 s).
+    assert not any("schneller Zoom" in e and "FX3_5" in e for e in r.errors)
+
+
+def test_verify_layout_schneller_zoom_ohne_zeitlupe_voller_bereich_gemeldet():
+    """Gegenstück zum Zeitlupentest oben: derselbe Clip und dieselbe Zoomfahrt, aber tempo=1 mit doppelter
+    Plandauer (4,0 statt 2,0 s) — das ergibt denselben Timeline-Frame-Count n_f=100 wie im Zeitlupentest,
+    aber `langsam=False` lässt TM.genutzter_quellbereich_s() diesmal den vollen (nicht halbierten)
+    Quellbereich berechnen, der die Zoomfahrt trifft. Erst im Zusammenspiel mit dem Test oben trennt das
+    wirklich den `langsam`-Zweig, statt nur zufällig grün zu sein (siehe Auftrag Fix-Runde 1).
+
+    Handrechnung place_shots() für Shot 0 (Flur/FX3_5.MP4, in_s=0,0, out_s=4,0, tempo=1, clip_fps=50,
+    Strecke 1 beginnt bei Frame 58, wie im Zeitlupentest oben):
+        n_tl     = seconds_to_frames(4,0 - 0,0, fps=25) * 1 = 100 * 1 = 100
+        rec_in_f = 58, rec_out_f = 58 + 100 = 158                       (n_f = 100 - wie im Zeitlupentest)
+        src_n    = round(n_tl * clip_fps/fps) = round(100 * 50/25) = 200
+        src_in_f = 0, src_out_f = 0 + 200 = 200 -> out_s = 200/50 = 4,0 (unverändert, kein Kürzen)
+
+    Handrechnung TM.genutzter_quellbereich_s(src_in_f=0, n_f=100, clip_fps=50, langsam=False, ziel_fps=25):
+        ende_f = 0 + 100 * 50/25 * 1,0 = 200
+        von_s  = 0 / 50 = 0,0
+        bis_s  = 200 / 50 = 4,0
+    Genutzter Quellbereich [0,0 - 4,0] s enthält die Zoomfahrt (2,5-3,5 s) diesmal vollständig.
+    """
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_5.MP4", 0.0, 4.0), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 2.5, "bis_s": 3.5, "von_mm": 70.0, "bis_mm": 24.0, "tempo_max": 210.0,
+                "tempo_mittel": 160.0, "urteil": "schnell"}]
+    tele = [{**_tele("FX3_5.MP4", 35.0, schnell), "fps": 50.0}]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("schneller Zoom" in e and "FX3_5" in e for e in r.errors)
+
+
+def test_verify_layout_meldet_fehlenden_telemetrie_configblock():
+    """Fix-Welle, Fund M7: jeder fehlende broll.*-Schlüssel ist laut ein Config-Fehler, ein fehlender
+    telemetrie:-Block fiel dagegen still auf Code-Defaults zurück — eine spätere Kalibrierung bliebe dann
+    wirkungslos, ohne dass es jemand merkt. Fehlende Telemetrie-DATEN bleiben erlaubt (eigener Test),
+    ein fehlender CONFIG-Block nicht."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    ohne = {k: v for k, v in CFG.items() if k != "telemetrie"}
+    r = L.verify_layout(plan, TP, idx, CL, ohne, 25)
+    assert any(e.startswith("Config: telemetrie fehlt") for e in r.errors), r.errors
+    luecke = {**CFG, "telemetrie": {k: v for k, v in CFG_TELEMETRIE.items() if k != "bewegung_rand_s"}}
+    r = L.verify_layout(plan, TP, idx, CL, luecke, 25)
+    assert any("Config: telemetrie.bewegung_rand_s fehlt" in e for e in r.errors), r.errors
+    # Gegenprobe: mit vollständigem Block meldet die Prüfung keinen Config-Fehler
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25)
+    assert not any(e.startswith("Config:") for e in r.errors), r.errors
+
+
+def test_verify_layout_zoom_tempo_4_nur_im_wirklich_genutzten_bereich():
+    """Fix-Welle, Fund I3: der Quellbereich kommt aus ``src_in_f``/``src_out_f`` (place_shots), nicht aus
+    ``TM.genutzter_quellbereich_s()``. Die kennt nur „langsam" (Faktor 0,5) und stimmt damit allein bei tempo 2;
+    bei tempo 4 lieferte sie den doppelten Bereich und meldete Zoomfahrten, die in der Timeline nie zu sehen sind.
+
+    Handrechnung place_shots() für Shot 0 (FX3_5.MP4 auf 100 fps gesetzt, tempo 4, in_s 0,0, out_s 1,0,
+    Strecke 1 beginnt bei Frame 58):
+        n_tl     = seconds_to_frames(1,0 - 0,0, fps=25) * 4 = 25 * 4 = 100   (4,0 s Timeline, O-Ton 2,0-6,0 s ok)
+        src_n    = n_tl = 100   (tempo > 1: Quellframes = Timeline-Frames)
+        src_in_f = 0, src_out_f = 100 -> genutzt 0/100 bis 100/100 = 0,0-1,0 s im Clip
+    Der alte Weg TM.genutzter_quellbereich_s(0, n_f=100, clip_fps=100, langsam=True, ziel_fps=25):
+        ende_f = 0 + 100 * 100/25 * 0,5 = 200 -> 0,0-2,0 s — doppelt so lang.
+    Die Fahrt bei 1,3-1,8 s liegt genau dazwischen: im alten Bereich drin (harter Fehler), im echten draußen.
+    """
+    idx = _idx()
+    for c in idx["clips"]:
+        if c["datei"] == "FX3_5.MP4":
+            c["fps"] = 100.0
+    plan = _plan({1: [("Flur/FX3_5.MP4", 0.0, 1.0, 4), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    def _zoom(von_s, bis_s):
+        return [{"von_s": von_s, "bis_s": bis_s, "von_mm": 70.0, "bis_mm": 24.0, "tempo_max": 210.0,
+                 "tempo_mittel": 160.0, "urteil": "schnell"}]
+    # 1,3-1,8 s: außerhalb der genutzten 0,0-1,0 s -> kein Fehler (mit dem alten Helfer war es einer)
+    tele = [{**_tele("FX3_5.MP4", 35.0, _zoom(1.3, 1.8)), "fps": 100.0},
+            _tele("FX3_1.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("schneller Zoom" in e and "FX3_5" in e for e in r.errors), r.errors
+    # Gegenprobe im selben Test: dieselbe Fahrt bei 0,3-0,7 s liegt im genutzten Bereich und muss melden —
+    # sonst wäre die Zusicherung oben auch mit einem leeren Bereich grün.
+    tele = [{**_tele("FX3_5.MP4", 35.0, _zoom(0.3, 0.7)), "fps": 100.0},
+            _tele("FX3_1.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("schneller Zoom" in e and "FX3_5" in e for e in r.errors), r.errors
+
+
+def test_verify_layout_brennweitenfolge_tempo_4_liest_das_wirkliche_shot_ende():
+    """Fund I3 für Regel 3a: `_kb_am_schnitt()` liest die KB am Ende des Shots. Bei tempo 4 endet Shot 0
+    bei 1,0 s im Clip (Rechnung wie im Test darüber), nicht bei 2,0 s. Der Verlauf springt bei 1,5 s von
+    30 auf 60 mm: am wirklichen Ende (kb_am über 0,5-1,0 s) sind es 30 mm — gleich wie die 30 mm des
+    Folgeshots, also ein Fehler. Mit dem alten, doppelten Bereich läse die Regel bei 2,0 s (1,5-2,0 s)
+    60 mm und schwiege (60/30 - 1 = 1,0 > brennweite_gleich_max)."""
+    idx = _idx()
+    for c in idx["clips"]:
+        if c["datei"] == "FX3_5.MP4":
+            c["fps"] = 100.0
+    plan = _plan({1: [("Flur/FX3_5.MP4", 0.0, 1.0, 4), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [{**_tele("FX3_5.MP4", 30.0), "fps": 100.0, "kb_verlauf": [[0.0, 30.0], [1.4, 30.0], [1.5, 60.0], [6.0, 60.0]]},
+            _tele("FX3_1.MP4", 30.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("KB" in e and "FX3_5" in e and "FX3_1" in e for e in r.errors), r.errors
+
+
+def test_verify_layout_alte_schwellen_ueberspringt_zoom_und_bewegung_nicht_die_brennweite():
+    """Fix-Welle, Fund I4 (Entscheidung des Users): Datensätze mit anderem ``config_hash`` tragen Zoom-Urteile
+    und Fenster aus den Schwellen zur Messzeit — ``zoom_schnell_proz_s`` und Verwandte stehen NICHT in
+    ``OHNE_MESSWIRKUNG``. Regel 3b und 3c würden damit Fehler melden, die die heutige Konfiguration gar nicht
+    erzeugt: beide entfallen für solche Clips und werden gezählt. Regel 3a läuft weiter (``kb_verlauf`` ist roh,
+    ``brennweite_gleich_max`` steht in ``OHNE_MESSWIRKUNG``).
+
+    FX3_1 trägt beides: eine schnelle Zoomfahrt im genutzten Bereich (0,0-3,0 s) UND dieselbe KB wie FX3_2 am
+    Schnitt. Mit veraltetem Hash muss genau der Zoomfehler verschwinden und der KB-Fehler bleiben."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    fen = [[0.0, 0.1, 0.4, "fahrt", None], [3.0, 0.1, 9.0, "schwenk_links", None], [8.0, 0.1, 0.5, "fahrt", None]]
+    frisch = [_tele("FX3_1.MP4", 25.0, schnell, fen), _tele("FX3_2.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, frisch)
+    assert any("schneller Zoom" in e and "FX3_1" in e for e in r.errors), r.errors
+    assert any("Bewegungsspitze" in w and "FX3_1" in w for w in r.warnings), r.warnings
+    assert any("KB" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors
+
+    alt = [{**frisch[0], "config_hash": "aaaaaaaaaaaa"}, frisch[1], frisch[2]]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, alt)
+    assert not any("schneller Zoom" in e for e in r.errors), r.errors          # 3b übersprungen
+    assert not any("Bewegungsspitze" in w for w in r.warnings), r.warnings     # 3c übersprungen
+    assert any("KB" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors   # 3a läuft weiter
+    hinweis = [w for w in r.warnings if "anderen Schwellen gemessen" in w]
+    assert len(hinweis) == 1 and hinweis[0].startswith("1 von 3 Shots"), r.warnings
+    assert "autocut_telemetrie.py neu laufen lassen" in hinweis[0]
+    # eine Meldung je Sachverhalt: der allgemeine Hinweis aus telemetrie_hinweise() entfällt daneben
+    assert not any(TM.HINWEIS_SCHWELLEN in w for w in r.warnings), r.warnings
+
+
+def test_verify_layout_datensatz_ohne_config_hash_gilt_als_alt_gemessen():
+    """Ein Datensatz ohne ``config_hash`` ist von unbekannter Herkunft — clip_messen() setzt ihn bei jeder
+    Messung. Er wird wie ein veralteter behandelt (3b/3c übersprungen), damit die Prüfung nicht still auf
+    Urteilen aus unbekannten Schwellen aufbaut."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    tele = [{k: v for k, v in _tele("FX3_1.MP4", 25.0, schnell).items() if k != "config_hash"},
+            _tele("FX3_2.MP4", 40.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("schneller Zoom" in e for e in r.errors), r.errors
+    assert any("anderen Schwellen gemessen" in w for w in r.warnings), r.warnings
+
+
+def test_verify_layout_bewegungsspitze_an_der_schnittgrenze_warnt_nur():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    # Shot 1 endet bei 3,0 s; Spitze bei 3,0 s mit 9,0 gegen Grundniveau 0,45 = Faktor 20 (Fix-Runde 1: das
+    # Fenster bei t=1,0 liegt nur 2,0 s entfernt und fällt NICHT aus dem 3,0-s-Ausschluss; Median von
+    # [0,4 @ 0,0s; 0,5 @ 8,0s] = 0,45, nicht 0,5)
+    fen = [[0.0, 0.1, 0.4, "fahrt", None], [1.0, 0.1, 0.6, "fahrt", None],
+           [3.0, 0.1, 9.0, "schwenk_links", None], [8.0, 0.1, 0.5, "fahrt", None]]
+    tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("Bewegungsspitze" in w for w in r.warnings)
+    assert not any("Bewegungsspitze" in e for e in r.errors)     # NIE ein Fehler: Schwellen unkalibriert
+
+
+def test_verify_layout_bewegungsspitze_nennt_schnittgrenze_und_messfenster_getrennt():
+    """Fix-Welle, Fund M3: die Meldung nannte die Fenster-STARTzeit als „Schnittgrenze" — das Fenster deckt
+    2 s ab, der Versatz geht bis rund 2 s. Ein Editor springt diese Sekunde in Resolve an, also müssen beide
+    Zeiten getrennt und benannt dastehen.
+
+    Handrechnung: Shot 1 (FX3_1, 0,0-2,0 s, tempo 1) nutzt 0,0-2,0 s im Clip. Die Spitze liegt im Fenster ab
+    1,5 s (2,0 s lang, also 1,5-3,5 s) und damit genau ``bewegung_rand_s`` (0,5 s) von der Schnittgrenze bei
+    2,0 s entfernt. Grundniveau = Median der Fenster mit Abstand >= 3,0 s von 1,5 s = Median([0,5 @ 5,0s]) = 0,5;
+    Basis = max(0,5; ruhig_max_px 0,15) = 0,5; 9,0 >= 3,0 × 0,5 -> Warnung."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    fen = [[0.0, 0.1, 0.4, "fahrt", None], [1.5, 0.1, 9.0, "schwenk_links", None], [5.0, 0.1, 0.5, "fahrt", None]]
+    tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    w = [x for x in r.warnings if "Bewegungsspitze" in x]
+    assert len(w) == 1, r.warnings
+    assert "Schnittgrenze bei 2 s im Clip" in w[0], w[0]      # die Grenze, nicht der Fensterstart 1,5 s
+    assert "Fenster 1.5–3.5 s" in w[0], w[0]                   # und getrennt davon das Messfenster
+    assert not any("Bewegungsspitze" in e for e in r.errors)
+
+
+def test_verify_layout_bewegungsspitze_unter_ruhig_max_px_warnt_nicht():
+    """Fix-Runde 1 (Review, Fund 2): rein multiplikativer Vergleich hätte auf Stativmaterial schon bei
+    winzigen Ausreißern deutlich unterhalb ruhig_max_px gefeuert. Handrechnung:
+    grund_px = bewegung_grundniveau(rec, 3.0, 3.0) = Median der Fenster mit Abstand >= 3,0 s von t=3,0 s
+             = Median([0,019 @ 6,0s]) = 0,019       (nur ein Fenster fern genug -> Median = der Wert selbst)
+    Ohne Untergrenze: Faktor = 0,08 / 0,019 ≈ 4,21 >= bewegung_spitze_faktor (3,0) -> hätte gewarnt.
+    Mit Untergrenze:  basis = max(grund_px, ruhig_max_px) = max(0,019; 0,15) = 0,15
+                      bewegung_spitze_faktor * basis = 3,0 * 0,15 = 0,45
+                      bw (0,08) >= 0,45 ist False -> keine Warnung.
+    ruhig_max_px ist hier ein vorläufiger Sockel ohne eigenen Beleg, von der wackeln-Schwelle geborgt (dort
+    misst er Zittern, hier steht ihm der Schwenkweg `bewegung` gegenüber) — er greift praktisch nur auf
+    Stativmaterial, genau wie in diesem Fall."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    fen = [[3.0, 0.1, 0.08, "schwenk_links", None], [6.0, 0.1, 0.019, "fahrt", None]]
+    tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("Bewegungsspitze" in w for w in r.warnings)
+
+
+def test_verify_layout_bewegungsspitze_grundniveau_null_warnt_trotzdem():
+    """Fix-Runde 1 (Review, Fund 1): grund_px = 0,0 ist falsy — ``if grund_px and …`` hätte jede noch so
+    extreme Spitze übergangen (der Faktor wäre rechnerisch unendlich). Handrechnung:
+    grund_px = bewegung_grundniveau(rec, 3.0, 3.0) = Median([0,0 @ 6,0s]) = 0,0
+    Mit explizitem ``is None``-Check (0,0 ist nicht None) und Untergrenze:
+                      basis = max(grund_px, ruhig_max_px) = max(0,0; 0,15) = 0,15
+                      bewegung_spitze_faktor * basis = 3,0 * 0,15 = 0,45
+                      bw (5,0) >= 0,45 ist True -> die Warnung muss kommen."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    fen = [[3.0, 0.1, 5.0, "schwenk_links", None], [6.0, 0.1, 0.0, "fahrt", None]]
+    tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("Bewegungsspitze" in w for w in r.warnings)
+    assert not any("Bewegungsspitze" in e for e in r.errors)     # NIE ein Fehler: Schwellen unkalibriert
+
+
+# --------------------------------------------------------------------------- #
+# Task 6: Bericht — KB-Spalte in render_layout_md
+# --------------------------------------------------------------------------- #
+
+def test_render_layout_md_zeigt_kb_brennweite():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [_tele("FX3_1.MP4", 25.4), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    placed, _ = L.place_shots(plan, TP, idx, CFG, 25, cl=CL)
+    r = L.raster(TP, CL, CFG, plan)
+    md = L.render_layout_md(plan, placed, r, idx, CL, tele=tele)
+    assert "| KB |" in md and "25,4 mm" in md
+
+
+def test_render_layout_md_ohne_telemetrie_zeigt_gedankenstrich():
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    placed, _ = L.place_shots(plan, TP, idx, CFG, 25, cl=CL)
+    r = L.raster(TP, CL, CFG, plan)
+    md = L.render_layout_md(plan, placed, r, idx, CL)
+    assert "| KB |" in md
+    assert " – | " in md                        # kein Absturz und keine „None"-Anzeige ohne tele

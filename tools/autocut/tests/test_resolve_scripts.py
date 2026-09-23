@@ -10,6 +10,7 @@ import pytest
 
 from fake_resolve import FakeProject, FakeResolve, FakeTimeline
 from niro_autocut import resolve_api as RA
+from niro_autocut import telemetrie as TM
 from niro_autocut.charge import AutoCutError, Charge
 from niro_autocut.cutlist import cutlist_hash
 
@@ -450,6 +451,51 @@ def test_place_v2_raster_verify_build(charge_dir, tmp_path, monkeypatch, capsys)
     assert t.tracks["video"] == 3 and len(t.items) == 3
     assert (ch.ergebnisse / "video-1-test-broll.md").exists()
     assert "B-Roll-Layout v2 auf V3" in ch.protokoll.read_text(encoding="utf-8")
+
+
+def _place_telemetrie(ch: Charge, tmp_path: Path, kb: dict, zooms: dict | None = None) -> None:
+    """telemetrie.json für die Flur-Clips der Stufe-3-Fixture, genau dort, wo TM.laden() sie sucht
+    (`_intern/autocut/`). Der ``config_hash`` ist der der Charge — seit der Fix-Welle überspringen Regel 3b
+    und 3c Datensätze, die mit anderen Schwellen gemessen wurden."""
+    h = TM.config_hash(ch.config["telemetrie"])
+    recs = []
+    for name, mm in kb.items():
+        p = tmp_path / "nas" / "B-Roll" / "Flur" / name
+        recs.append({"path": str(p), "clip": p.stem, "quelle": "rtmd", "fps": 25.0, "dauer_s": 12.0,
+                     "fenster_s": 2.0, "config_hash": h, "kb_verlauf": [[0.0, mm]],
+                     "zooms": (zooms or {}).get(name, []), "fenster": []})
+    ch.write_json("telemetrie.json", recs)
+
+
+def test_place_v2_verify_only_laesst_telemetrie_regeln_wirklich_anschlagen(charge_dir, tmp_path, capsys):
+    """Fix-Welle, Fund I1: die Produktionsverdrahtung — autocut_place_broll.py lädt telemetrie.json und gibt
+    sie zusammen mit dem telemetrie:-Config-Block an verify_layout — war von keinem Test gedeckt. Die
+    Stufe-3-Fixture hatte kein telemetrie.json, TM.laden() lieferte [] und alle drei Regeln waren in jedem
+    End-to-End-Test wirkungslos: man konnte `tele` an der Aufrufstelle streichen, ohne dass die Suite es merkte.
+
+    FX3_1 und FX3_2 tragen hier dieselbe KB-Brennweite und stoßen in Strecke 1 direkt aneinander; FX3_2 trägt
+    zusätzlich eine schnelle Zoomfahrt im genutzten Bereich (1,0-4,0 s). --verify-only muss beides melden und
+    mit Exit 1 enden."""
+    ch, _ = _place_setup(charge_dir, tmp_path)
+    schnell = [{"von_s": 2.0, "bis_s": 3.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    _place_telemetrie(ch, tmp_path, {"FX3_1.MP4": 25.0, "FX3_2.MP4": 25.0, "FX3_3.MP4": 70.0},
+                      zooms={"FX3_2.MP4": schnell})
+    rc = place.main([str(charge_dir), "--verify-only"])
+    out = capsys.readouterr().out
+    assert rc == 1, out
+    v = ch.read_json("broll_verify.json")
+    assert v["ok"] is False
+    assert any("dieselbe KB-Brennweite" in e and "FX3_1.MP4" in e and "FX3_2.MP4" in e for e in v["errors"]), v["errors"]
+    assert any("schneller Zoom" in e and "FX3_2.MP4" in e for e in v["errors"]), v["errors"]
+    assert "dieselbe KB-Brennweite" in out
+    # Gegenprobe: mit auseinanderliegenden Brennweiten und ohne Zoomfahrt läuft dieselbe Charge wieder durch —
+    # der Exit 1 oben kommt wirklich von den Telemetrie-Regeln, nicht von der Fixture.
+    _place_telemetrie(ch, tmp_path, {"FX3_1.MP4": 25.0, "FX3_2.MP4": 50.0, "FX3_3.MP4": 100.0})
+    rc = place.main([str(charge_dir), "--verify-only"])
+    out = capsys.readouterr().out
+    assert rc == 0, out
+    assert ch.read_json("broll_verify.json")["ok"] is True
 
 
 def test_place_v2_build_names_v3_when_user_has_another_timeline_open(charge_dir, tmp_path, monkeypatch, capsys):

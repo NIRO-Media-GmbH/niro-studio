@@ -608,3 +608,25 @@ def test_telemetrie_anwenden_brennweite_mm_und_zoom_je_abschnitt():
     ohne, _ = S.telemetrie_anwenden(rec, alt)
     assert all("brennweite_mm" not in a and "zoom" not in a for a in ohne["abschnitte"])
     assert "KB 71,6 mm" in S.telemetrie_text(alt, rec["abschnitte"])
+
+
+def test_telemetrie_anwenden_schreibt_bewegung_spitzen():
+    rec = {"fingerprint": "abc", "abschnitte": [{"von_s": 0, "bis_s": 5, "einstellung": "Totale",
+                                                 "perspektive_hoehe": "Augenhöhe"}]}
+    tele = {"quelle": "rtmd", "perspektive_hoehe": "Augenhöhe", "haltung": "gimbal", "fenster_s": 2.0,
+            "fenster": [[0.0, 0.1, 0.5, "fahrt", None],
+                        [1.0, 0.1, 3.0, "schwenk_links", None],
+                        [2.0, 0.1, 0.4, "fahrt", None]]}
+    neu, geaendert = S.telemetrie_anwenden(rec, tele, 2.0)
+    assert geaendert is True
+    assert neu["abschnitte"][0]["bewegung_spitzen"] == [[1.0, 3.0]]
+    # idempotent: zweiter Lauf ändert nichts mehr
+    neu2, geaendert2 = S.telemetrie_anwenden(neu, tele, 2.0)
+    assert geaendert2 is False and neu2["abschnitte"][0]["bewegung_spitzen"] == [[1.0, 3.0]]
+
+
+def test_telemetrie_anwenden_ohne_fenster_setzt_kein_feld():
+    rec = {"fingerprint": "abc", "abschnitte": [{"von_s": 0, "bis_s": 5, "perspektive_hoehe": "Augenhöhe"}]}
+    tele = {"quelle": "rtmd", "perspektive_hoehe": "Augenhöhe", "fenster": [], "fenster_s": 2.0}
+    neu, _ = S.telemetrie_anwenden(rec, tele, 2.0)
+    assert "bewegung_spitzen" not in neu["abschnitte"][0]

@@ -385,7 +385,8 @@ def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samp
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------
 
 # Schlüssel ohne Einfluss auf die Messung: Parallelität und die Brennweitenfolge der Vorlagen 3a/6d
-OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max")
+OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max",
+                    "bewegung_rand_s", "bewegung_spitze_faktor")
 
 
 def config_hash(cfg: dict) -> str:
@@ -675,6 +676,31 @@ def abschnitt_werte(rec: dict | None, von_s: float, bis_s: float, fenster_s: flo
     return {"bewegungsart": mehrheit([f[3] for f in fen]) if fen else None, "haltung": rec.get("haltung")}
 
 
+def bewegung_spitzen(rec: dict | None, von_s: float, bis_s: float) -> list[list[float]]:
+    """Lokale Maxima der Fenster-Reihe im Bereich [von_s, bis_s] als ``[t_s, bewegung]`` (Spec 2026-09-22).
+    Ein Fenster ist Maximum, wenn seine ``bewegung`` die beider Nachbarn erreicht; am Rand der Reihe zählt der
+    vorhandene Nachbar. Leer ohne ``fenster`` — die Auswahl nutzt die Liste nur als Hinweis, nie als Sperre."""
+    fen = (rec or {}).get("fenster") or []
+    out: list[list[float]] = []
+    for i, f in enumerate(fen):
+        t, bw = float(f[0]), float(f[2])
+        if t < von_s or t > bis_s:
+            continue
+        if i > 0 and bw < float(fen[i - 1][2]):
+            continue
+        if i < len(fen) - 1 and bw < float(fen[i + 1][2]):
+            continue
+        out.append([t, round(bw, 3)])
+    return out
+
+
+def bewegung_grundniveau(rec: dict | None, t_s: float, abstand_s: float = 3.0) -> float | None:
+    """Median der ``bewegung`` aller Fenster, die mindestens ``abstand_s`` von ``t_s`` entfernt liegen — das
+    Grundniveau des Clips ohne die Spitze selbst. None ohne solche Fenster (Spec 2026-09-22)."""
+    fern = [float(f[2]) for f in ((rec or {}).get("fenster") or []) if abs(float(f[0]) - t_s) >= abstand_s]
+    return float(np.median(fern)) if fern else None
+
+
 def genutzter_quellbereich_s(src_in_f: int, n_f: int, clip_fps: float, langsam: bool,
                              ziel_fps: float = ZIEL_FPS) -> tuple[float, float]:
     """Start und Ende (s) des Quellbereichs, den n_f Timeline-Frames (bei ziel_fps) ab Quellframe src_in_f bei
@@ -809,6 +835,11 @@ def zoom_hinweise(sid: str, rec: dict | None, von_s: float, bis_s: float,
     return out
 
 
+#: Wortlaut des Hinweises zu veralteten Schwellen — Aufrufer, die denselben Sachverhalt bereits selbst und
+#: genauer melden (Stufe 3 nennt die betroffenen Shots und die übersprungenen Regeln), filtern ihn darüber weg.
+HINWEIS_SCHWELLEN = "mit anderen Telemetrie-Schwellen gemessen"
+
+
 def telemetrie_hinweise(recs: list[dict | None], cfg: dict) -> list[str]:
     """Probelauf-Hinweise (3a/6d) zu veralteten Datensätzen der tatsächlich genutzten Clips (je Clip einmal, nach Pfad):
     rtmd-Datensätze ohne ``kb_verlauf`` (vor der Umstellung gemessen — Brennweite dort „unbekannt", die Regel schwiege)
@@ -821,7 +852,7 @@ def telemetrie_hinweise(recs: list[dict | None], cfg: dict) -> list[str]:
     anders = {k for k, r in je_clip.items() if k not in alt and r.get("config_hash") != h}
     out = []
     for n, text in ((len(alt), "ohne Brennweitenverlauf (alte Telemetrie)"),
-                    (len(anders), "mit anderen Telemetrie-Schwellen gemessen")):
+                    (len(anders), HINWEIS_SCHWELLEN)):
         if n:
             out.append(f"{n} {'Clip' if n == 1 else 'Clips'} {text} — autocut_telemetrie.py neu laufen lassen")
     return out

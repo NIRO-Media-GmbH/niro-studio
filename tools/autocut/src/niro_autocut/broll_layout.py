@@ -14,6 +14,7 @@ import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from . import telemetrie as TM
 from .broll_plan import _index_by_path, _section_quality, _standort_nr, _usable_spans, clip_ref, resolve_clip_ref
 from .charge import AutoCutError
 from .cutlist import Beat, Cutlist, VerifyResult
@@ -547,7 +548,8 @@ def place_shots(plan: LayoutPlan, tp_dict: dict, index: dict, cfg: dict, fps: fl
             mid = section_for(c, (sh.in_s + out_s) / 2)
             placed.append({"strecke": st.nr, "szene_i": i, "shot_i": j, "clip": path, "name": c["datei"],
                            "ordner": f"{c.get('standort') or ''}/{c.get('ordner') or ''}".strip("/"), "standort": c.get("standort"),
-                           "in_s": sh.in_s, "out_s": out_s, "out_s_plan": sh.out_s, "tempo": sh.tempo, "rec_in_f": pos, "rec_out_f": pos + n_tl,
+                           "in_s": sh.in_s, "out_s": out_s, "out_s_plan": sh.out_s, "tempo": sh.tempo, "clip_fps": cfps,
+                           "rec_in_f": pos, "rec_out_f": pos + n_tl,
                            "src_in_f": src_in, "src_out_f": src_in + src_n, "roh_out_f": pos + n_tl // sh.tempo, "letzter": last,
                            "grund": sh.grund, "abweichung": sh.abweichung, "abweichung_grund": sh.abweichung_grund,
                            "ausnahme": sz.ausnahme, "szene_ordner": sz.ordner, "szene_grund": sz.grund,
@@ -558,7 +560,34 @@ def place_shots(plan: LayoutPlan, tp_dict: dict, index: dict, cfg: dict, fps: fl
     return placed, errs
 
 
-def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg: dict, fps: float) -> VerifyResult:
+def _quellbereich_s(p: dict, fps: float) -> tuple[float, float]:
+    """Der Quellbereich (Sekunden im Clip), den ein platzierter Shot wirklich nutzt: die Quellframes aus
+    ``place_shots`` (``src_in_f``/``src_out_f``), geteilt durch die Bildrate des Clips.
+
+    Bewusst nicht ``TM.genutzter_quellbereich_s()``: die kennt nur das boolesche ``langsam`` (Faktor 0,5) und
+    trifft damit allein ``tempo`` 2 (``clip_fps`` = 2 × ``ziel_fps``). Bei ``tempo`` 4 — 100-fps-Clip in 25 fps,
+    ``place_shots`` setzt dort ``src_n = n_tl`` — liefert sie den doppelten Bereich: ein Shot, der 0,0–1,0 s
+    nutzt, würde als 0,0–2,0 s geprüft, und eine Zoomfahrt, die in der Timeline nie zu sehen ist, käme als
+    harter Fehler zurück. Der Helfer selbst bleibt unverändert; er hat andere Aufrufer (Vorlage 6d).
+    """
+    cfps = float(p.get("clip_fps") or fps)
+    return p["src_in_f"] / cfps, p["src_out_f"] / cfps
+
+
+def _kb_am_schnitt(p: dict, tele: list[dict] | None, fps: float, seite: str) -> float | None:
+    """Scheinbare KB-Brennweite am Anfang bzw. Ende eines platzierten Shots; None ohne Verlauf.
+    Bei Zeitlupe zählt der tatsächlich genutzte Quellbereich (wie 6d)."""
+    if not tele:
+        return None
+    rec = TM.finden(tele, p["clip"])
+    if not rec:
+        return None
+    von, bis = _quellbereich_s(p, fps)
+    return TM.kb_am(rec, bis if seite == "ende" else von, seite=seite)
+
+
+def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg: dict, fps: float,
+                  tele: list[dict] | None = None) -> VerifyResult:
     """Harte Prüfung nach Spec v2 Abschnitt 3.3."""
     r = VerifyResult()
     fps = float(fps or tp_dict.get("fps") or 0)
@@ -570,6 +599,18 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 "scene_short_stretch_s", "setup_hash_min_distance", "max_exceptions_warn", "forbidden_maengel"):
         if key not in cfg:
             r.errors.append(f"Config: broll.{key} fehlt — profile/default.yaml (v2) prüfen.")
+    # Der telemetrie:-Block liegt in defaults.yaml neben broll:, nicht darunter — das Skript mischt ihn dazu.
+    # Fehlt er oder eine seiner Schwellen, fielen die drei Telemetrie-Regeln still auf Code-Defaults zurück
+    # (genau die Fehlerklasse, die in diesem Zweig schon einmal zugeschlagen hat: eine Kalibrierung bliebe
+    # wirkungslos, ohne dass es jemand merkt). Fehlende Telemetrie-DATEN bleiben erlaubt, ein fehlender
+    # CONFIG-Block nicht.
+    tcfg = cfg.get("telemetrie")
+    if not isinstance(tcfg, dict):
+        r.errors.append("Config: telemetrie fehlt — defaults.yaml prüfen (der Block liegt neben broll:, nicht darunter).")
+    else:
+        for key in ("brennweite_gleich_max", "bewegung_rand_s", "bewegung_spitze_faktor", "ruhig_max_px", "fenster_s"):
+            if key not in tcfg:
+                r.errors.append(f"Config: telemetrie.{key} fehlt — defaults.yaml prüfen.")
     if r.errors:
         return r
     total = int(tp_dict["total_frames"])
@@ -595,6 +636,9 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     forbidden = set(cfg["forbidden_maengel"])
     uses: dict[str, list[str]] = {}
     n_exc = 0
+    ohne_datensatz = 0          # Shots, für die 3b/3c gar nicht laufen konnten (Fix-Welle, Fund I2)
+    alte_schwellen = 0          # Shots, für die 3b/3c übersprungen wurden (Fix-Welle, Fund I4)
+    hash_heute = TM.config_hash(tcfg)
     for p in placed:
         tag = f"Strecke {p['strecke']} Szene {p['szene_i']} Shot {p['shot_i']} ({p['name']} {p['in_s']:g}–{p['out_s']:g}s)"
         c = by_path[p["clip"]]
@@ -635,6 +679,57 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 r.errors.append(f"{tag}: überschneidet die Sperre {sp.von_s:g}–{sp.bis_s:g}s ({sp.grund or 'ohne Grund'}).")
         if p["abweichung"] and not p["abweichung_grund"].strip():
             r.errors.append(f"{tag}: abweichung=true ohne abweichung_grund.")
+        rec = TM.finden(tele, p["clip"]) if tele else None
+        if rec is not None and rec.get("fehler"):
+            rec = None          # Messfehler: zooms und fenster sind leer, beide Regeln würden still durchwinken
+        if rec is None:
+            # Kein verwertbarer Datensatz — Teil-Lauf der Telemetrie, Material von NAS auf SSD gewandert
+            # (finden() fällt auf den Dateinamen zurück und schweigt bei Mehrdeutigkeit) oder telemetrie.json
+            # unlesbar (laden() gibt dann []). Bisher entfielen 3b und 3c hier spurlos: der einzige Zähler
+            # zählte Schnittpaare und nannte nur die Brennweitenregel (Fix-Welle, Fund I2).
+            ohne_datensatz += 1
+        # Mit anderen Schwellen gemessen: `zoom_schnell_proz_s` und Verwandte stehen NICHT in
+        # TM.OHNE_MESSWIRKUNG, das Urteil „schnell" und die Fenster-Reihe stammen also aus den Schwellen zur
+        # Messzeit. 3b und 3c würden dann Fehler melden, die die heutige Konfiguration gar nicht erzeugt — beide
+        # entfallen für diesen Shot und werden gezählt (Fix-Welle, Fund I4; Entscheidung des Users, bewusst
+        # genauer als die Spec, die pauschal alle drei Regeln übersprang). Regel 3a läuft weiter: sie liest
+        # `kb_verlauf`, also Rohdaten, und `brennweite_gleich_max` steht in OHNE_MESSWIRKUNG.
+        veraltet = rec is not None and rec.get("config_hash") != hash_heute
+        if veraltet:
+            alte_schwellen += 1
+        if rec is not None and not veraltet:
+            # außerhalb der abweichung-Bedingung: Regel 3c rechnet auf denselben Grenzen weiter
+            von, bis = _quellbereich_s(p, fps)
+            if not p["abweichung"]:
+                for z in TM.zooms_im_bereich(rec, von, bis):
+                    r.errors.append(f"{tag}: schneller Zoom im genutzten Bereich ({z['von_mm']:g} → {z['bis_mm']:g} mm, "
+                                    f"Spitze {z['tempo_max']:.0f} %/s) — anderen Bereich wählen oder `abweichung` mit Grund.")
+            rand = float(tcfg["bewegung_rand_s"])
+            faktor = float(tcfg["bewegung_spitze_faktor"])
+            ruhig = float(tcfg["ruhig_max_px"])
+            fen_s = float(rec.get("fenster_s") or tcfg["fenster_s"])
+            # Der geweitete Bereich ist nur lückenlos, solange schritt_s (1,0) <= 2 × bewegung_rand_s (1,0) gilt —
+            # aktuell exakt der Grenzfall. Ein kleineres bewegung_rand_s als schritt_s / 2 ließe zwischen zwei
+            # Fenster-Startzeiten stille Lücken, in denen eine Spitze nie geprüft würde.
+            for t_s, bw in TM.bewegung_spitzen(rec, von - rand, bis + rand):
+                if min(abs(t_s - von), abs(t_s - bis)) > rand:
+                    continue
+                grund_px = TM.bewegung_grundniveau(rec, t_s)
+                if grund_px is None:
+                    continue
+                # Untergrenze bei ruhig_max_px: VORLÄUFIGER SOCKEL OHNE EIGENEN BELEG, von der wackeln-Schwelle
+                # geborgt. ruhig_max_px ist überall sonst eine Schwelle für `wackeln` (Zittern), hier steht ihr
+                # aber `bewegung` (Schwenkweg) gegenüber — zwei verschiedene Größen. Auf bewegtem Material greift
+                # der Sockel deshalb kaum; er wirkt praktisch nur auf Stativmaterial, wo er den rein
+                # multiplikativen Vergleich davor bewahrt, schon bei winzigen Ausreißern zu feuern (Fix-Runde 1
+                # zu Task 5), und den Fall Grundniveau exakt 0,0 abfängt (der Faktor wäre unendlich).
+                # Wer das kalibriert, muss das wissen: der Wert 0,15 ist hier nicht hergeleitet.
+                basis = max(grund_px, ruhig)
+                if bw >= faktor * basis:
+                    schnittgrenze = von if abs(t_s - von) <= abs(t_s - bis) else bis
+                    r.warnings.append(f"{tag}: Schnittgrenze bei {schnittgrenze:g} s im Clip liegt in einer Bewegungsspitze — "
+                                      f"gemessen im Fenster {t_s:g}–{t_s + fen_s:g} s (Bewegung {bw:g} gegen Basis "
+                                      f"{basis:g}, Sockel ruhig_max_px {ruhig:g}) — Hinweis, Schwellen unkalibriert.")
         if not p["grund"].strip():
             r.warnings.append(f"{tag}: ohne grund.")
         if p["tempo"] == 4:
@@ -663,18 +758,65 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 r.warnings.append(f"{tag}: alle Shots in Einstellung {einst[0]} — Einstellungswechsel fehlt.")
     if n_exc > int(cfg["max_exceptions_warn"]):
         r.warnings.append(f"{n_exc} Ausnahmen von der Szenen-Regel — mehr als {cfg['max_exceptions_warn']}.")
-    # Cut-Flow über aufeinanderfolgende Shots (nur innerhalb einer Strecke — dazwischen liegt ein Fenster)
+    # Cut-Flow zwischen zwei B-Roll-Shots, die in der Timeline WIRKLICH aneinanderstoßen (a endet exakt dort, wo
+    # b beginnt) — nicht zwischen irgendwelchen zwei Shots derselben Strecke. Die frühere Annahme, B-Roll-Shots
+    # stießen innerhalb einer Strecke immer lückenlos aneinander und nur zwischen zwei Strecken liege ein
+    # Sprecher-Fenster, war falsch: an echten Daten (Charge MEK, Abnahme 23.09.) lagen 8 von 24 Lücken INNERHALB
+    # einer Strecke (1,0–1,48 s), mit A-Roll dazwischen — die beiden Shots bilden dort gar keinen Schnitt, also darf
+    # keine der drei Regeln (Brennweite, Dublette, Setup-Hash) sie vergleichen. Echte Nachbarschaft in der Timeline
+    # (rec_out_f == rec_in_f) schließt „gleiche Strecke" automatisch ein — der alte Streckenvergleich entfällt.
     seq = sorted(placed, key=lambda p: p["rec_in_f"])
     min_dist = int(cfg["setup_hash_min_distance"])
+    grenze = float(tcfg["brennweite_gleich_max"])
+    ungeprueft = 0
     for a, b in zip(seq, seq[1:]):
-        if a["strecke"] != b["strecke"] or a["nachlauf_fehlt"] or b["nachlauf_fehlt"]:
+        if a["rec_out_f"] != b["rec_in_f"] or a["nachlauf_fehlt"] or b["nachlauf_fehlt"]:
             continue
-        if a["einstellung"] == b["einstellung"] and a["perspektive"] == b["perspektive"] and a["brennweite"] == b["brennweite"]:
-            r.errors.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} haben dieselbe Einstellung ({a['einstellung']}), Perspektive "
-                            f"({a['perspektive']}) und Brennweite ({a['brennweite']}) — anderer Shot.")
+        kb_a, kb_b = _kb_am_schnitt(a, tele, fps, "ende"), _kb_am_schnitt(b, tele, fps, "anfang")
+        gleiche_kb = None
+        if kb_a is not None and kb_b is not None:
+            # NICHT selbst rechnen: brennweite_abstand() rundet auf vier Stellen, damit 60/50 genau 0,2 ergibt
+            # (float: 1.2 - 1 = 0.19999999999999996 wäre sonst fälschlich „gleich")
+            gleiche_kb = TM.gleiche_brennweite(kb_a, kb_b, grenze)
+            if gleiche_kb:
+                r.errors.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} schneiden dieselbe KB-Brennweite "
+                                f"({kb_a:g} → {kb_b:g} mm, Abstand {TM.brennweite_abstand(kb_a, kb_b):.0%}) — anderen Shot wählen.")
+        else:
+            ungeprueft += 1
+        # Shot-Doppel nur noch als Rückfall auf die Klassen, wenn mindestens eine KB-Brennweite fehlt. Sind beide
+        # bekannt und gleich, hat Regel 3a dasselbe Paar eine Zeile darüber schon gemeldet (mit anderem
+        # Abhilfetext) — die Dublettenbedingung ist dann eine echte Teilmenge und kann nichts beitragen; sind
+        # beide bekannt und verschieden, sind es ohnehin zwei Setups (Fix-Welle, Fund M1).
+        if gleiche_kb is None and a["einstellung"] == b["einstellung"] and a["perspektive"] == b["perspektive"] \
+                and a["brennweite"] == b["brennweite"]:
+            r.errors.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} haben dieselbe Einstellung ({a['einstellung']}) "
+                            f"und Perspektive ({a['perspektive']}) bei gleicher Brennweite — anderer Shot.")
         if a["setup_hash"] and b["setup_hash"] and _hamming(a["setup_hash"], b["setup_hash"]) < min_dist:
             r.warnings.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} sehen fast gleich aus (Setup-Abstand "
                               f"{_hamming(a['setup_hash'], b['setup_hash'])}).")
+    # Eine Meldung je Sachverhalt (Fix-Welle, Fund I2): ohne jede Telemetrie sind „Schnitte ohne
+    # Brennweitenverlauf" und „Shots ohne Datensatz" dieselbe Aussage — sie entfallen dann zugunsten einer
+    # einzigen Meldung, die alle drei Regeln und die Zahl der Shots nennt.
+    if not tele:
+        r.warnings.append(f"keine Telemetrie — Brennweiten-, Zoom- und Bewegungsregel für alle {len(placed)} Shots "
+                          f"nicht geprüft; autocut_telemetrie.py laufen lassen.")
+    else:
+        if ungeprueft:
+            r.warnings.append(f"{ungeprueft} Schnitte ohne Brennweitenverlauf — Brennweitenregel dort nicht geprüft "
+                              f"(Datensatz fehlt oder stammt von vor der Umstellung).")
+        if ohne_datensatz:
+            r.warnings.append(f"{ohne_datensatz} von {len(placed)} Shots ohne verwertbaren Telemetrie-Datensatz — "
+                              f"Zoom- und Bewegungsregel dort nicht geprüft (Telemetrie nur teilweise gelaufen, Clip "
+                              f"verschoben oder telemetrie.json unlesbar).")
+        if alte_schwellen:
+            r.warnings.append(f"{alte_schwellen} von {len(placed)} Shots mit anderen Schwellen gemessen — Zoom- und "
+                              f"Bewegungsregel dort übersprungen, die Urteile stammen aus den Schwellen zur Messzeit; "
+                              f"autocut_telemetrie.py neu laufen lassen. Die Brennweitenregel gilt weiter (Rohdaten).")
+        # veraltete Datensätze der genutzten Clips melden, wie es die Vorlagen 3a/6d tun
+        for hinweis in TM.telemetrie_hinweise([TM.finden(tele, p["clip"]) for p in seq], tcfg):
+            if alte_schwellen and TM.HINWEIS_SCHWELLEN in hinweis:
+                continue        # derselbe Sachverhalt — oben schon mit Shots und übersprungenen Regeln genannt
+            r.warnings.append(hinweis)
     return r
 
 
@@ -722,7 +864,11 @@ def compact_index_v2(index: dict) -> list[dict]:
     for c in index.get("clips") or []:
         abschnitte = [{"von_s": a["von_s"], "bis_s": a["bis_s"], "kurz": a.get("beschreibung", ""), "q": a.get("qualitaet"),
                        "einstellung": a.get("einstellung"), "perspektive": _perspektive(a), "brennweite": a.get("brennweite"),
-                       "richtung": a.get("bewegungsrichtung"), "motiv": a.get("hauptmotiv")}
+                       "richtung": a.get("bewegungsrichtung"), "motiv": a.get("hauptmotiv"),
+                       # gemessen (Spec 2026-09-22): die Auswahl plant auf diesen Werten, nicht auf den Klassen
+                       "brennweite_mm": a.get("brennweite_mm"), "zoom": a.get("zoom"),
+                       "bewegungsart": a.get("bewegungsart"), "haltung": a.get("haltung"),
+                       "bewegung_spitzen": a.get("bewegung_spitzen") or []}
                       for a in (c.get("abschnitte") or []) if a.get("verwendbar")]
         out.append({"ref": clip_ref(c), "datei": c.get("datei"), "ordner": c.get("ordner") or "", "standort": c.get("standort"),
                     "dauer_s": c.get("dauer_s"), "fps": c.get("fps"), "kurz": c.get("beschreibung_kurz", ""),
@@ -738,7 +884,7 @@ def _md(s) -> str:
 
 
 def render_layout_md(plan: LayoutPlan, placed: list[dict], r: dict, index: dict, cl: Cutlist, warnings: list[str] | None = None,
-                     build: dict | None = None) -> str:
+                     build: dict | None = None, tele: list[dict] | None = None) -> str:
     fps = float(r["fps"])
     lines = [f"# B-Roll-Layout — {plan.video or cl.video}", ""]
     if build:
@@ -750,12 +896,14 @@ def render_layout_md(plan: LayoutPlan, placed: list[dict], r: dict, index: dict,
     for st in r["strecken"]:
         rows = [p for p in placed if p["strecke"] == st["nr"]]
         lines += [f"## Strecke {st['nr']}: {st['von_s']}–{st['bis_s']} s ({st['dauer_s']} s) · Beats {', '.join('#' + b['nr'] for b in st['beats'])}", "",
-                  "| Szene | Position | Clip | Bereich | Tempo | Länge | Einstellung | Perspektive | Brennweite | Grund | Abweichung |",
-                  "|---|---|---|---|---|---|---|---|---|---|---|"]
+                  "| Szene | Position | Clip | Bereich | Tempo | Länge | Einstellung | Perspektive | Brennweite | KB | Grund | Abweichung |",
+                  "|---|---|---|---|---|---|---|---|---|---|---|---|"]
         for p in rows:
+            kb = _kb_am_schnitt(p, tele, fps, "anfang")
+            kb_txt = "–" if kb is None else f"{kb:g} mm".replace(".", ",")
             lines.append(f"| {p['szene_i']} {_md(p['szene_ordner'])}{' (Ausnahme)' if p['ausnahme'] else ''} | {p['rec_in_f'] / fps:.2f} s | {_md(p['name'])} | "
                          f"{p['in_s']:g}–{p['out_s']:g} s | {p['tempo']}× | {_s((p['rec_out_f'] - p['rec_in_f']) / fps)} | {_md(p['einstellung'])} | "
-                         f"{_md(p['perspektive'])} | {_md(p['brennweite'])} | {_md(p['grund'])} | {('JA: ' + _md(p['abweichung_grund'])) if p['abweichung'] else ''} |")
+                         f"{_md(p['perspektive'])} | {_md(p['brennweite'])} | {kb_txt} | {_md(p['grund'])} | {('JA: ' + _md(p['abweichung_grund'])) if p['abweichung'] else ''} |")
         lines.append("")
     lines += ["## Fenster", "", "| Beat | von | bis | Dauer |", "|---|---|---|---|"]
     for w in r["fenster"]:

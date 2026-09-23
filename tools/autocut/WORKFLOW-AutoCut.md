@@ -280,10 +280,11 @@ KB-Brennweite in mm („KB 71,6 mm", bei Zoomfahrten „KB 24–70 mm, langsamer
 Abschnitt; nach der Antwort setzt der Code `perspektive_hoehe` aus den Metadaten fest (`felder_quelle` im Datensatz)
 und ergänzt je Abschnitt `brennweite_mm` (Median der **KB**-Brennweite im Abschnitt, mit Crop und Klarbild-Zoom — anders
 als `brennweite_mm` im Clip-Datensatz von `telemetrie.json`, dort die echte Objektivbrennweite; der Name bleibt wie im
-Spec), `zoom` (keiner/langsam/schnell), `bewegungsart` und `haltung`. Claudes Klasse `brennweite` bleibt unangetastet
-(seit 21.09.2026, Spec Zoomfahrten). `claude` je Abschnitt hält Claudes Originalwert der überschriebenen Perspektive;
-der Bericht `telemetrie.md` vergleicht dagegen. Cache-Treffer bekommen die Felder ohne API-Aufruf. Ohne Telemetrie
-bleibt alles wie bisher; `--dry-run` zeigt die Zahl.
+Spec), `zoom` (keiner/langsam/schnell), `bewegungsart`, `haltung` und `bewegung_spitzen` (Liste `[t_s, bewegung]` der
+lokalen Maxima der Fenster-Reihe im Abschnitt — `t_s` ist die Startzeit des 2-s-Fensters, nicht der Zeitpunkt der
+Spitze selbst). Claudes Klasse `brennweite` bleibt unangetastet (seit 21.09.2026, Spec Zoomfahrten). `claude` je
+Abschnitt hält Claudes Originalwert der überschriebenen Perspektive; der Bericht `telemetrie.md` vergleicht dagegen.
+Cache-Treffer bekommen die Felder ohne API-Aufruf. Ohne Telemetrie bleibt alles wie bisher; `--dry-run` zeigt die Zahl.
 
 ## Ablauf Stufe 3 — „B-Roll" (v2)
 
@@ -298,7 +299,28 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    mit `tempo > 1` muss `resolve_probe_xml.py "$CHARGE"` einmal in dieser Resolve-Umgebung gelaufen sein
    (`probe_xml.json` mit `speed_import_ok`) — sonst ist der Zeitlupen-Import dort nicht belegt (Stufe 5).
 4. **Prüfen** — `autocut_place_broll.py "$CHARGE" --verify-only` → `broll_verify.json`. Fehler beheben
-   (Tabelle in `prompts/place-broll.md`), erneut prüfen.
+   (Tabelle in `prompts/place-broll.md`), erneut prüfen. Mit `telemetrie.json` zusätzlich drei Regeln (Spec
+   22.09.2026): **Brennweitenfolge** (Fehler) — direkt aneinanderstoßende Shots dürfen am Schnitt nicht dieselbe
+   scheinbare KB-Brennweite haben, Abstand unter `brennweite_gleich_max` (0,2) gilt als gleich; geprüft wird nur,
+   wo zwei B-Roll-Shots in der Timeline wirklich aneinanderstoßen (Rec-Out von A = Rec-In von B) — nicht schon,
+   weil sie zur selben Strecke gehören: an echten Daten (Charge MEK, Abnahme 23.09.) lag in 8 von 24 Lücken
+   zwischen aufeinanderfolgenden B-Roll-Shots A-Roll dazwischen, obwohl beide Shots derselben Strecke
+   zugerechnet waren — dort ist es kein Schnitt, an Streckengrenzen sowieso nicht.
+   **Schneller Zoom im genutzten Bereich** (Fehler) — Ausweg `abweichung` mit Grund. **Schnittgrenze in einer
+   Bewegungsspitze** (nur Warnung) — die Spitze muss mindestens **das `bewegung_spitze_faktor`-Fache (3,0) der
+   Basis** erreichen (Basis = Grundniveau des Clips, nach unten gedeckelt bei `ruhig_max_px` 0,15). Dieser Sockel
+   ist **vorläufig und ohne eigenen Beleg**: `ruhig_max_px` ist überall sonst eine Schwelle für `wackeln`
+   (Zittern), verglichen wird hier aber `bewegung` (Schwenkweg) — zwei verschiedene Größen, der Sockel greift
+   praktisch nur auf Stativmaterial. Die Meldung nennt die Schnittgrenze und getrennt davon das Messfenster (die
+   Spitzen sind Fenster-Startzeiten, das Fenster deckt `fenster_s` ab). `bewegung_rand_s` (0,5) und
+   `bewegung_spitze_faktor` sind unkalibriert, die Regel blockiert deshalb nie. Ohne
+   Telemetrie entfallen alle drei, und der Bericht sagt das in **einer** Warnung mit der Zahl der Shots. Fehlt sie
+   nur einzelnen Clips (Teil-Lauf, Material von NAS auf SSD gewandert, `telemetrie.json` unlesbar), nennt er
+   getrennt, wie viele Shots ohne verwertbaren Datensatz blieben (Zoom- und Bewegungsregel) und wie viele Schnitte
+   ohne Brennweitenverlauf (Brennweitenregel). Ist die Telemetrie **mit anderen Schwellen gemessen** (abweichender
+   Config-Hash), werden Zoom- und Bewegungsregel für diese Clips **übersprungen** und gezählt — ihre Urteile
+   stammen aus den Schwellen zur Messzeit; die Brennweitenregel gilt weiter, sie rechnet auf Rohdaten. Dann
+   `autocut_telemetrie.py` neu laufen lassen.
 5. **Dem User vorlegen** — Gesichtsanteil, Zahl der Strecken/Szenen/Shots/Zeitlupen, Ausnahmen und
    Abweichungen mit Grund, offene Motive. Erst nach Freigabe bauen.
 6. **Bauen** — `autocut_place_broll.py "$CHARGE"`: V3 in die roh-Timeline (Bin `AutoCut/<Video>/B-Roll`,
@@ -771,15 +793,18 @@ des Bildinhalts je 25-fps-Frame in px @480 — `wackeln` (Zittern) und `bewegung
 Clip-Quelle: `--ordner`, sonst `broll_index.json`, `inventar.json`, B-Roll-Wurzeln des Transkript-Index, `media.json`.
 Cache je Clip unter `_intern/autocut/telemetrie/<fingerprint>.json`; Lesen der Datenspur kostet die ganze Datei (≈ 300 MB/s
 übers NAS). Nach einer Änderung unter `telemetrie:` (`defaults.yaml` oder Chargen-`config.yaml`) misst der nächste Lauf die
-betroffenen Clips neu (der Cache trägt je Clip einen Config-Hash, ohne `parallel` und ohne die Vorlagen-Schlüssel der
-Brennweitenfolge `brennweite_gleich_max`, `digitalzoom_faktor`, `digitalzoom_max`); `--force` misst alles neu.
+betroffenen Clips neu (der Cache trägt je Clip einen Config-Hash, ohne `parallel`, ohne die Vorlagen-Schlüssel der
+Brennweitenfolge `brennweite_gleich_max`, `digitalzoom_faktor`, `digitalzoom_max` und ohne die unkalibrierten
+Bewegungsspitzen-Schwellen `bewegung_rand_s`, `bewegung_spitze_faktor` — keine dieser Schwellen ändert die Messung,
+nur die Regel darauf); `--force` misst alles neu.
 Felder je Clip: `quelle` (rtmd/optisch/keine), `kamera`, `kb_mm` (Median; Verlauf und Zoomfahrten unten),
 `pitch_grad`/`perspektive_hoehe`, `roll_grad`, `haltung` (stativ/gimbal/hand), `bewegungsart` (statisch, schwenk_links/rechts,
 tilt_auf/ab, fahrt, gemischt — `schwenk_links` = Kamera dreht nach links), `wackeln`, `bewegung`, `fenster` (2 s, Schritt 1 s),
 `ruhige_fenster` (wackeln ≤ `telemetrie.ruhig_max_px`). `ruhige_fenster` sind Fenster-Startzeiten in s (Fensterlänge `fenster_s`
 im Datensatz); das letzte Fenster kann kürzer sein. Schwellen und Kamerafaktoren in `defaults.yaml` unter `telemetrie:`.
 Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b (Perspektive aus Metadaten, Brennweite in mm und Zoom je Abschnitt,
-`bewegungsart`/`haltung` je Abschnitt), 3a (Brennweitenregel) und 6d (Stabilisieren nur bei Bedarf, Brennweitenregel). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
+`bewegungsart`/`haltung` je Abschnitt), Stufe 3 (Brennweitenfolge, Zoom, Bewegungsspitzen), 3a (Brennweitenregel) und 6d
+(Stabilisieren nur bei Bedarf, Brennweitenregel). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
 Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
 
 **Zoomfahrten (seit 21.09.2026, Spec `docs/superpowers/specs/2026-09-21-autocut-zoom-brennweite-design.md`):** aus der
@@ -812,6 +837,17 @@ dämpfen), Spearman 0,76/0,71 → beide belastbar, `optisch_fuer` leer. Der opti
 (0,107) und P25 der a7-IV-Handclips (0,191). MEK (463 Clips) gegen den Stufe-2b-Index: Perspektive Höhe 76 % gleich (Pitch-Vorzeichen
 bestätigt), Brennweite nur 47 % — Claude nennt bis etwa 75 mm KB „normal", und Zoomfahrten (157 Clips) bekommen die Klasse des
 Clip-Medians. Die Klassen entfallen seit 21.09.2026 (Spec Zoomfahrten): Stufe 2b trägt `brennweite_mm` und `zoom`.
+
+**Kalibrierwerte Umschwenken (22.09.2026, negatives Ergebnis):** gesucht war die Grenze für Umschwenken zwischen zwei
+Ausrichtungen (Ausschuss) gegenüber gewollter Bewegung, zwei Runden mit 12 und 18 Beispielen aus MEK, 30 Urteile des
+Users. Zwei Kandidatenmuster (`wackeln` > 0,5 oder Umschwenk-Signatur; waagerechter Schwenk) trafen je 10 von 18
+(56 %), die triviale Konstante „immer ungewollt" traf 15 von 18 (83 %) — beide Muster sind schlechter als die
+triviale Konstante (einen Münzwurf schlagen 56 % dagegen).
+Damit tragen `spitze`, `verhaeltnis`, `wackeln` und `bewegungsart` keine Grenze. Tragender Befund: der User urteilt
+über **Teilbereiche**, nicht über Clips („brauchbarer Teil in der Mitte", „gewollt bis auf den Shake am Ende"), und
+die Absicht hängt am Bildinhalt, nicht an der Bewegung. Folge: kein Vorfilter vor dem kostenpflichtigen
+B-Roll-Index — die Telemetrie liefert Bereichs-Hinweise, keine Urteile über Absicht. Die 30 Urteile liegen als
+Testsatz in `projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schwenks/`; jeder künftige Versuch muss 83 % schlagen.
 
 ## Kantenprüfung — „Kanten" (seit 16.09.2026)
 
