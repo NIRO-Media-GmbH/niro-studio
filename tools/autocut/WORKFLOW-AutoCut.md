@@ -498,17 +498,31 @@ oder einen Zwischenstand.
      `Smoothness` (aus `cfg.gyroflow.glaettung[haltung]`, derselben Quelle wie das Sidecar-Preset) und `FOV` (`1.0`) —
      die OFX-Parameter überschreiben sonst das Sidecar (Befund 1, Punkt 5) — sowie `VideoSpeed` `50` statt `100` bei
      Zeitlupen-Shots (`GYRO_BEI_ZEITLUPE`, Standard `True`: am 23.09. am Bild belegt, dass `VideoSpeed` den richtigen
-     Quellframe trifft, siehe Spec Befund 1 Punkt 3). Die drei Konstanten der Vorlage: `GYRO_TOOL_ID` (Fusion-Kennung
-     des OFX, `Fusion.GetToolList()`), `GYRO_PARAM_PROJEKT` (`SetInput`-Name für den Sidecar-Pfad, `"gyrodata"`) und
-     `GYRO_BEI_ZEITLUPE` (siehe oben). Schlägt `AddTool` fehl (Plugin nicht verfügbar), fällt genau dieser Shot auf
-     `Stabilize()` zurück und der Grund landet in `gyroflow_abweichungen`. **Alle Shots ohne nutzbaren Sidecar**
-     (kein Eintrag, `fehler` gesetzt, oder `sidecar` leer) **behalten den bisherigen Weg unverändert:** `Stabilize()`
-     nur für Shots mit `stabil` (Vorschlag aus `telemetrie.json`, Spalte 7 in `BROLL` überstimmt; Dateien mit
-     `_stabilized` im Namen — Avata-Exporte — nie). Deren Stabilisierungs-Modus bleibt Sache des DRT-Roundtrips der
-     Charge (User-Standard Translation, Smooth 0,25; `drt_stabilisierung.py` in WTN/Wurst & Liebe/Assenheimer, noch
-     kein gemeinsames Werkzeug) — `Stabilize()` allein nimmt Perspective. Readback dazu in `feinschnitt.json`:
-     `gyroflow_gesetzt` (Zahl der Shots mit gesetztem Gyroflow-OFX) und `gyroflow_abweichungen` (Liste
-     `{shot, grund}`). Danach der digitale Zoom der Brennweitenregel (`SetProperty` `ZoomX`/`ZoomY`, Bildmitte);
+     Quellframe trifft, siehe Spec Befund 1 Punkt 3). Die `haltung` kommt aus **demselben Datensatz in
+     `gyroflow.json`**, der auch den Sidecar-Pfad liefert — kein zweiter Join über `telemetrie.json` (der
+     normalisierte anders und machte aus einer Handkamera still ein Stativ). Die drei Konstanten der Vorlage:
+     `GYRO_TOOL_ID` (Fusion-Kennung des OFX, `Fusion.GetToolList()`), `GYRO_PARAM_PROJEKT` (`SetInput`-Name für den
+     Sidecar-Pfad, `"gyrodata"`) und `GYRO_BEI_ZEITLUPE` (siehe oben). Vor dem Setzen prüft der Bau, dass die
+     Sidecar-Datei noch existiert (sie laufen nicht über `studio_abgleich.sh` und können nach einem NAS-Umzug fehlen);
+     nach dem Setzen liest er `gyrodata` zurück und zählt nur, was wirklich steht. **Alle Shots ohne nutzbaren
+     Sidecar** (kein Eintrag, `fehler` gesetzt, `sidecar` leer, Datei verschwunden) **behalten den bisherigen Weg
+     unverändert:** `Stabilize()` nur für Shots mit `stabil` (Vorschlag aus `telemetrie.json`, Spalte 7 in `BROLL`
+     überstimmt; Dateien mit `_stabilized` im Namen — Avata-Exporte — nie). Deren Stabilisierungs-Modus bleibt Sache
+     des DRT-Roundtrips der Charge (User-Standard Translation, Smooth 0,25; `drt_stabilisierung.py` in
+     WTN/Wurst & Liebe/Assenheimer, noch kein gemeinsames Werkzeug) — `Stabilize()` allein nimmt Perspective.
+     Readback dazu in `feinschnitt.json`: `gyroflow_gesetzt` (Shots mit **zurückgelesenem** Gyroflow-OFX, nicht bloß
+     versuchten) und `gyroflow_abweichungen` (Liste `{shot, grund}`) mit diesen Gründen:
+
+     | `shot` | `grund` | Bedeutung |
+     |---|---|---|
+     | `null` | `gyroflow.json kaputt/unlesbar (…)` | Datei da, aber nicht lesbar → **alle** Shots auf dem `Stabilize()`-Weg. Fehlt die Datei ganz, steht hier nichts (normaler Fall ohne Gyroflow). |
+     | Shot-Nr. | `kein Sidecar` | `gyroflow.json` war lesbar, führt diesen Clip aber nicht. Meist veraltet: `BROLL` geändert und `--bauen` ohne neuen `autocut_gyroflow.py`-Lauf. Sonst steht der Clip dort unter `uebersprungen` (keine Gyrospur, Avata-Export). |
+     | Shot-Nr. | `Sidecar fehlt: <Pfad>` | Eintrag da, Datei weg (NAS-Umzug, Relink) → `Stabilize()`-Weg. |
+     | Shot-Nr. | `OFX-Tool nicht verfügbar` | `AddFusionComp`/`AddTool` schlug fehl (Plugin nicht installiert oder inaktiv, siehe Spec Abschnitt 5) → `Stabilize()` als Rückfall. |
+     | Shot-Nr. | `gyrodata nicht gesetzt (ist: …)` | Readback stimmt nicht mit dem gesetzten Pfad überein → `Stabilize()` als Rückfall. |
+     | Shot-Nr. | `Haltung '…' fehlt in cfg.gyroflow.glaettung` | Config zwischen Sidecar-Lauf und Bau geändert; gesetzt wird die vorsichtigste Stufe. |
+
+     Danach der digitale Zoom der Brennweitenregel (`SetProperty` `ZoomX`/`ZoomY`, Bildmitte);
      Readback `zoom_gesetzt` und `zoom_abweichungen` (Liste `{shot, soll, ist}`, gepaart über den Record-In) in
      `feinschnitt.json`.
    - **V4** Grafik je Element, auf sichtbare Frames getrimmt.

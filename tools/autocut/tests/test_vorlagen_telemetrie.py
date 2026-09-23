@@ -294,3 +294,61 @@ def test_grafik_review_legt_die_grafik_ueber_den_gezoomten_ausschnitt():
     assert gr.schichten(10, tl, broll) == [("V3", "/ssd/A.MP4", 1.4, 1.25), ("V1", "/ssd/FX3.MP4", 0.4, 1.0)]
     assert gr.schichten(60, tl, broll)[0] == ("V3", "/ssd/B.MP4", 0.4, 1.0)
     assert '"-vf", bild_filter(zoom)' in GRAFIK_REVIEW.read_text(encoding="utf-8")
+
+
+# --- 6d Gyroflow-Verdrahtung (Spec 2026-09-22, Gesamtprüfung 23.09.2026) ------------------------------------
+# Der Bau braucht Resolve und ist nicht ausführbar zu testen. Geprüft wird darum der Quelltext genau der
+# Stabilisierungs-Schleife — eng genug, dass ein Rückfall in die alten Muster auffällt.
+
+def _gyro_schleife() -> str:
+    """Quelltext der Stabilisierungs-Schleife (Gyroflow-Zweig und Stabilize()-Rückfall) aus der 6d-Vorlage."""
+    text = VORLAGE.read_text(encoding="utf-8")
+    i = text.index('for n_, m in enumerate(p["v3_meta"], 1):')
+    return text[i:text.index('out["stabilisiert"] = stab', i)]
+
+
+def test_gyroflow_block_nimmt_die_haltung_aus_dem_gyroflow_datensatz():
+    """Ein zweiter Join über TM.finden (exakter String, sonst Dateiname) griff bei zwei Karten mit FX3_0001.MP4
+    ins Leere und machte aus einer Handkamera still ein Stativ — Smoothness 0,2 statt 0,7, und das überstimmt
+    laut Befund 1 Punkt 5 auch das Sidecar. haltung steht im selben Datensatz wie der Sidecar-Pfad."""
+    block = _gyro_schleife()
+    assert 'eintrag.get("haltung")' in block
+    assert "TM.finden(" not in block
+
+
+def test_gyroflow_block_prueft_ob_der_sidecar_noch_existiert():
+    """Sidecars laufen nicht über studio_abgleich.sh. Fehlt die Datei nach einem NAS-Umzug, nimmt SetInput den
+    toten Pfad klaglos an — ohne Prüfung wäre der Shot weder per Gyroflow noch per Stabilize() stabilisiert."""
+    block = _gyro_schleife()
+    assert "Path(sidecar).is_file()" in block
+    assert "Sidecar fehlt" in block
+
+
+def test_gyroflow_block_zaehlt_erst_nach_dem_readback():
+    """Hausregel wie bei zoom_abweichungen/speed_gesetzt: setzen, zurücklesen, dann zählen. Vorher zählte
+    gyroflow_gesetzt die Versuche, nicht die Erfolge."""
+    block = _gyro_schleife()
+    assert "GetInput" in block
+    assert block.index("GetInput") < block.index("gyroflow_gesetzt += 1")
+    assert "gyrodata nicht gesetzt" in block
+
+
+def test_gyroflow_block_meldet_shots_ganz_ohne_eintrag():
+    """Häufigster echter Fall: veraltete gyroflow.json (BROLL geändert, --bauen ohne neuen Sidecar-Lauf).
+    Ohne Diagnose nähmen genau die neuen Shots still den alten Weg."""
+    assert '"grund": "kein Sidecar"' in _gyro_schleife()
+
+
+def test_gyroflow_block_greift_nicht_mit_harter_klammer_auf_die_config():
+    """Der Block darf nicht raisen (er läuft nach append_items, mitten im Bau)."""
+    block = _gyro_schleife()
+    assert 'CFG["gyroflow"]' not in block
+    assert '(CFG.get("gyroflow") or {}).get("glaettung")' in block
+
+
+def test_gyroflow_joins_laufen_ueber_norm_pfad():
+    """Alle Pfad-Joins rund um Gyroflow über GF.norm_pfad (aufgelöst + NFC) — Path.resolve() allein lässt
+    NFD ≠ NFC stehen, und macOS liefert Umlaute teils in NFD."""
+    text = VORLAGE.read_text(encoding="utf-8")
+    assert text.count("GF.norm_pfad(") >= 2
+    assert "expanduser().resolve()" not in text

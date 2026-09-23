@@ -518,15 +518,21 @@ def bauen(p: dict) -> dict:
         # Die Datei ist optional wie telemetrie.json (TM.laden): kaputt/unlesbar darf hier nicht raisen — wir sind
         # schon mitten im Bau (nach append_items), ein Absturz hier liefe nie in die Stabilisierungsschleife unten
         # und ließe jeden V3-Shot ohne Stabilize() und ohne Gyroflow zurück.
-        GYRO = {}
+        # Wert ist der ganze Datensatz, nicht nur der Sidecar-Pfad: haltung steht dort schon drin (clip_export
+        # schreibt sie), und ein zweiter Join über TM.finden würde anders normalisieren — exakter Stringvergleich,
+        # dann Rückfall auf Eindeutigkeit des Dateinamens. Der greift bei zwei Karten mit FX3_0001.MP4 ins Leere,
+        # und der Shot bekäme still „stativ" (Smoothness 0,2 statt 0,7) — was laut Befund 1 Punkt 5 auch das
+        # Sidecar überstimmt: eine Handkamera mit Stativ-Glättung, gemeldet als Erfolg.
+        GYRO, gyro_geladen = {}, False
         gf_pfad = AC / "gyroflow.json"
         if gf_pfad.exists():
             try:
                 gyro_clips = json.loads(gf_pfad.read_text(encoding="utf-8"))["clips"]
                 if not isinstance(gyro_clips, list):
                     raise TypeError(f"'clips' ist {type(gyro_clips).__name__}, keine Liste")
-                GYRO = {GF.norm_pfad(c["path"]): c["sidecar"]
+                GYRO = {GF.norm_pfad(c["path"]): c
                         for c in gyro_clips if isinstance(c, dict) and c.get("sidecar") and not c.get("fehler")}
+                gyro_geladen = True
             except (json.JSONDecodeError, UnicodeDecodeError, OSError, KeyError, TypeError) as e:
                 grund = f"gyroflow.json kaputt/unlesbar ({type(e).__name__}: {e}) — alle Shots bleiben beim Stabilize()-Weg"
                 gyroflow_abweichungen.append({"shot": None, "grund": grund})
@@ -546,7 +552,21 @@ def bauen(p: dict) -> dict:
             t0, shot = dt.datetime.now(), f"S{m['shot']:02d}"
             x = v3_items[m["rec_in_f"]]
             pfad = v3_plan[m["rec_in_f"]].clip
-            sidecar = GYRO.get(GF.norm_pfad(pfad))
+            eintrag = GYRO.get(GF.norm_pfad(pfad))
+            sidecar = (eintrag or {}).get("sidecar")
+            # Sidecars liegen bei den Medien und laufen nicht über studio_abgleich.sh — nach einem NAS-Umzug und
+            # Relink kann die Datei fehlen. SetInput nähme den toten Pfad klaglos an, das continue unten überspränge
+            # Stabilize(), und der Shot wäre auf KEINEM der beiden Wege stabilisiert. Darum hier prüfen.
+            if sidecar and not Path(sidecar).is_file():
+                gyroflow_abweichungen.append({"shot": m["shot"], "grund": f"Sidecar fehlt: {sidecar}"})
+                print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: Sidecar fehlt ({sidecar}) — "
+                      f"zurück auf den Stabilize()-Weg", flush=True)
+                sidecar = None
+            elif sidecar is None and gyro_geladen:
+                # Häufigste echte Ursache: veraltete gyroflow.json — BROLL geändert, --bauen ohne neuen Lauf von
+                # autocut_gyroflow.py. Dann nähmen genau die neuen Shots still den alten Weg. Zweite Ursache: der
+                # Clip steht in gyroflow.json unter „uebersprungen" (keine Gyrospur, Avata-Export) — dort nachsehen.
+                gyroflow_abweichungen.append({"shot": m["shot"], "grund": "kein Sidecar"})
             if sidecar:
                 comp = RA._safe(x.AddFusionComp, None)
                 werkzeug = RA._safe(comp.AddTool, None, GYRO_TOOL_ID) if comp else None
@@ -556,18 +576,37 @@ def bauen(p: dict) -> dict:
                     print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: OFX-Tool nicht verfügbar — "
                           f"Stabilize() als Rückfall ({stab[shot]})", flush=True)
                 else:
-                    # Haltung wie preset_fuer() (gyroflow.py): Telemetrie-Wert, ohne Eintrag die vorsichtigste Stufe.
-                    haltung = (TM.finden(TELE, pfad) or {}).get("haltung") or GF.HALTUNG_VORSICHTIG
+                    # Haltung aus demselben Datensatz, der auch den Sidecar-Pfad liefert (clip_export schreibt sie
+                    # aus der Telemetrie, wie preset_fuer); ohne Wert die vorsichtigste Stufe.
+                    haltung = eintrag.get("haltung") or GF.HALTUNG_VORSICHTIG
+                    # .get() statt harter Klammer: die Charge kann ihre glaettung zwischen Sidecar-Lauf und Bau
+                    # geändert haben, und dieser Block darf nicht raisen (siehe Kommentar über GYRO).
+                    glaettung = (CFG.get("gyroflow") or {}).get("glaettung") or {}
+                    if haltung not in glaettung:
+                        gyroflow_abweichungen.append(
+                            {"shot": m["shot"], "grund": f"Haltung {haltung!r} fehlt in cfg.gyroflow.glaettung"})
+                        haltung = GF.HALTUNG_VORSICHTIG
                     RA._safe(werkzeug.SetInput, False, GYRO_PARAM_PROJEKT, sidecar)
                     # Smoothness/FOV explizit setzen: die OFX-Parameter überschreiben sonst das Sidecar (Befund 1, Punkt 5).
-                    RA._safe(werkzeug.SetInput, False, "Smoothness", float(CFG["gyroflow"]["glaettung"][haltung]))
+                    RA._safe(werkzeug.SetInput, False, "Smoothness", float(glaettung.get(haltung, 0.2)))
                     RA._safe(werkzeug.SetInput, False, "FOV", 1.0)
                     video_speed = 50.0 if (m["langsam"] and GYRO_BEI_ZEITLUPE) else 100.0
                     RA._safe(werkzeug.SetInput, False, "VideoSpeed", video_speed)
-                    gyroflow_gesetzt += 1
-                    stab[shot] = None  # Stabilize() bewusst nicht gerufen — Gyroflow ersetzt es für diesen Shot
-                    print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: Haltung {haltung}, VideoSpeed {video_speed:g} "
-                          f"({(dt.datetime.now() - t0).total_seconds():.1f} s)", flush=True)
+                    # Set-then-Readback wie bei zoom_abweichungen/speed_gesetzt: SetInput meldet auch dann Erfolg,
+                    # wenn der Parameter nicht ankam. Der Readback von gyrodata liefert den gesetzten Pfad
+                    # zurück (Befund 1, Punkt 2) — gezählt wird nur, was wirklich steht.
+                    ist = RA._safe(werkzeug.GetInput, None, GYRO_PARAM_PROJEKT)
+                    if isinstance(ist, str) and ist and GF.norm_pfad(ist) == GF.norm_pfad(sidecar):
+                        gyroflow_gesetzt += 1
+                        stab[shot] = None  # Stabilize() bewusst nicht gerufen — Gyroflow ersetzt es für diesen Shot
+                        print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: Haltung {haltung}, "
+                              f"VideoSpeed {video_speed:g} ({(dt.datetime.now() - t0).total_seconds():.1f} s)",
+                              flush=True)
+                    else:
+                        gyroflow_abweichungen.append({"shot": m["shot"], "grund": f"gyrodata nicht gesetzt (ist: {ist!r})"})
+                        stab[shot] = bool(RA._safe(x.Stabilize, False))      # Rückfall auf den bisherigen Weg
+                        print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: gyrodata nicht gesetzt — "
+                              f"Stabilize() als Rückfall ({stab[shot]})", flush=True)
                 continue
             if not m["stabil"]:
                 stab[shot] = None
