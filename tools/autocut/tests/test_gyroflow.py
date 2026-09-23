@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from niro_autocut import gyroflow as G
-from niro_autocut.charge import AutoCutError
+from niro_autocut.charge import AutoCutError, load_config
 
 CFG = {
     "gyroflow": {
@@ -23,6 +23,19 @@ CFG = {
 
 def test_deckel_haelt_die_ungleichung_ein():
     G.pruefe_deckel(CFG)   # 120 ≤ 1.5 / 1.25 × 100 = 120 — Gleichheit ist erlaubt
+
+
+def test_echte_defaults_halten_den_deckel_ein():
+    """Stolperdraht auf die echten Zahlen: die CFG-Attrappe oben muss von Hand nachgezogen werden, defaults.yaml
+    nicht. Vorbild: tests/test_telemetrie.py::test_defaults_haben_brennweitenregel. Wer max_zoom oder
+    telemetrie.digitalzoom_* ändert, soll es hier merken und nicht erst am ersten echten Chargenlauf."""
+    cfg = load_config(Path("/nirgendwo"))
+    assert cfg["gyroflow"]["max_zoom"] == {"stativ": 105, "gimbal": 110, "hand": 120}
+    assert cfg["gyroflow"]["glaettung"] == {"stativ": 0.2, "gimbal": 0.4, "hand": 0.7}
+    assert cfg["telemetrie"]["digitalzoom_faktor"] == 1.25 and cfg["telemetrie"]["digitalzoom_max"] == 1.5
+    G.pruefe_deckel(cfg)
+    # Jede Haltung in glaettung braucht ein max_zoom und umgekehrt — sonst wirft preset_fuer beim ersten Clip.
+    assert set(cfg["gyroflow"]["glaettung"]) == set(cfg["gyroflow"]["max_zoom"])
 
 
 def test_deckel_zu_hoch_bricht_ab():

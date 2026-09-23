@@ -93,3 +93,28 @@ def test_fehlerhafter_clip_liefert_exit_1_und_bericht_nennt_fehler(basis_charge,
     md = (basis_charge / "Ergebnisse" / "Rohschnitt" / "gyroflow.md").read_text(encoding="utf-8")
     assert "## Fehler" in md and "gyroflow.cli" in md
     assert not v.with_suffix(".gyroflow").exists()
+
+
+def test_kaputte_gyroflow_clips_json_meldet_deutsch_statt_traceback(basis_charge, capsys):
+    """Ein roher JSONDecodeError-Traceback ist keine Meldung, die dem Operator sagt, was zu tun ist."""
+    ac = _autocut(basis_charge)
+    (ac / "gyroflow_clips.json").write_text("{kaputt", encoding="utf-8")
+    skript = _lade()
+
+    assert skript.main([str(basis_charge)]) == 1
+
+    err = capsys.readouterr().err
+    assert "gyroflow_clips.json ist nicht lesbar" in err and "JSONDecodeError" in err
+    assert "feinschnitt_bauen.py" in err
+
+
+def test_kaputte_telemetrie_json_meldet_deutsch_statt_traceback(basis_charge, capsys):
+    ac = _autocut(basis_charge)
+    (ac / "gyroflow_clips.json").write_text("[]", encoding="utf-8")
+    (ac / "telemetrie.json").write_text("nicht json", encoding="utf-8")
+    skript = _lade()
+
+    assert skript.main([str(basis_charge)]) == 1
+
+    err = capsys.readouterr().err
+    assert "telemetrie.json ist nicht lesbar" in err and "autocut_telemetrie.py" in err

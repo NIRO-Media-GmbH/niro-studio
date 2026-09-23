@@ -537,7 +537,12 @@ oder einen Zwischenstand.
    - Zwei Bauten in derselben Minute brechen ab (gleicher Name).
    - Die TSX-Regex übergeht andere Schreibweisen still — Elementzahl im Probelauf gegen die Komposition prüfen.
 
-**Gyroflow-Sidecars** (`scripts/autocut_gyroflow.py "<Charge>" [--force] [--dry-run]`, Spec 2026-09-22): läuft nach
+**Gyroflow-Sidecars** (`scripts/autocut_gyroflow.py "<Charge>" [--force] [--dry-run]`, Spec 2026-09-22):
+**Voraussetzung je Mac** — Gyroflow 1.6.1 muss unter dem Pfad aus `cfg.gyroflow.cli` installiert sein (Standard
+`/Applications/Gyroflow.app/Contents/MacOS/gyroflow`), und für den Bau muss das **Gyroflow-OFX-Plugin in Resolve
+installiert und aktiv** sein. Letzteres ist ein einmaliger Handgriff in der Gyroflow-GUI (Panel „Video editor
+plugins"), den Claude nicht abnehmen kann; Einzelheiten in Spec 2026-09-22, Abschnitt 5. Fehlt das Plugin, meldet der
+Bau für **jeden** Shot `OFX-Tool nicht verfügbar` und fällt auf `Stabilize()` zurück. Der Lauf selbst läuft nach
 dem Probelauf, sobald `BROLL` feststeht, und vor dem Bauen. Eingaben: `_intern/autocut/gyroflow_clips.json`
 (schreibt der Probelauf, `{datei, tempo50}` je genutztem Shot) und `_intern/autocut/telemetrie.json` (`haltung`,
 `quelle`). Ausgaben: `<clip>.gyroflow` neben der Mediendatei (eine je Quelldatei, auch bei Mehrfachnutzung),

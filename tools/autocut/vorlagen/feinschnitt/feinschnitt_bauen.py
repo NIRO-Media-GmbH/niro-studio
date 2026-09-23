@@ -16,6 +16,9 @@ Aufbau (Frames = Timeline-Frames, 25 fps; O-Ton-Positionen wie in der roh-Timeli
   A1 FX3-Ton (True Peak −3 dBTP je Clip, Voice Isolation), A2/A3 Musik mit Überblendungen, A4/A5 leer für SFX
 Nur neue Objekte: neue Timeline, Importe in den eigenen Bin AutoCut/<video-kurz>. Timeline und Bin des Users werden
 wiederhergestellt. Schreibt _intern/autocut/feinschnitt.json.
+Der **Probelauf** schreibt zusätzlich _intern/autocut/gyroflow_clips.json (die genutzten B-Roll-Quelldateien mit
+tempo50) — nur dort liegen BROLL und broll_auswahl.json zusammen vor. scripts/autocut_gyroflow.py liest diese Datei;
+ohne einen Probelauf nach der letzten BROLL-Änderung arbeitet der Sidecar-Lauf auf einem veralteten Stand.
 
 Eingaben: _intern/autocut/timeline.json (roh-Timeline aus AutoCut), _intern/autocut/probe.json (scripts/resolve_probe.py),
 _intern/autocut/broll_auswahl.json (Auswahl-Timeline des Users; darf ohne BROLL fehlen), _intern/autocut/gyroflow.json
@@ -720,7 +723,7 @@ if __name__ == "__main__":
     else:
         # Gyroflow-Sidecars (Spec 2026-09-22): die im Feinschnitt genutzten B-Roll-Quelldateien für
         # scripts/autocut_gyroflow.py. Nur im Probelauf liegen BROLL (was benutzt wird) und die per broll_auswahl.json
-        # aufgelösten shots (welche Datei das ist) zusammen vor. Auflösung wie oben in plan() (shots.get(nr), Zeile 369);
+        # aufgelösten shots (welche Datei das ist) zusammen vor. Auflösung wie oben in plan() (shots.get(nr));
         # tempo50 ist die 6. BROLL-Spalte "50 %" (s. Kommentar über BROLL) — nicht geraten, sondern dort nachgelesen.
         gyro_clips, gesehen = [], set()
         for zeile in BROLL:

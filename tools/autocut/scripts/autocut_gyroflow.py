@@ -21,6 +21,17 @@ from niro_autocut.gyroflow import gyroflow_charge  # noqa: E402
 from niro_autocut.gyroflow_bericht import bericht_md  # noqa: E402
 
 
+def _json_laden(pfad: Path, erzeuger: str):
+    """Zwischendatei lesen; eine kaputte gibt eine deutsche Meldung statt eines rohen Tracebacks."""
+    if not pfad.exists():
+        raise AutoCutError(f"{pfad} fehlt.\n{erzeuger}")
+    try:
+        return json.loads(pfad.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError, OSError) as e:
+        raise AutoCutError(f"{pfad} ist nicht lesbar ({type(e).__name__}: {e}).\n"
+                           f"Datei löschen und neu erzeugen: {erzeuger}")
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="AutoCut: Gyroflow-Sidecars für die genutzten B-Roll-Shots.")
     ap.add_argument("charge", help="Chargen-Ordner (projects/<Kunde>/<Projekt>/<Charge>)")
@@ -30,16 +41,13 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         ch = Charge.open_basis(a.charge)
-        clips_datei = ch.autocut / "gyroflow_clips.json"
-        if not clips_datei.exists():
-            raise AutoCutError(
-                f"{clips_datei} fehlt.\nZuerst den Probelauf von _intern/feinschnitt_bauen.py laufen lassen — "
-                f"er schreibt die genutzten B-Roll-Shots aus der BROLL-Tabelle.")
-        clips = json.loads(clips_datei.read_text(encoding="utf-8"))
-        tele_datei = ch.autocut / "telemetrie.json"
-        if not tele_datei.exists():
-            raise AutoCutError(f"{tele_datei} fehlt.\nZuerst scripts/autocut_telemetrie.py für diese Charge laufen lassen.")
-        telemetrie = json.loads(tele_datei.read_text(encoding="utf-8"))
+        clips = _json_laden(
+            ch.autocut / "gyroflow_clips.json",
+            "Zuerst den Probelauf von _intern/feinschnitt_bauen.py laufen lassen — "
+            "er schreibt die genutzten B-Roll-Shots aus der BROLL-Tabelle.")
+        telemetrie = _json_laden(
+            ch.autocut / "telemetrie.json",
+            "Zuerst scripts/autocut_telemetrie.py für diese Charge laufen lassen.")
 
         if a.dry_run:
             print(f"{len(clips)} genutzte Shots, {len({c['datei'] for c in clips})} Quelldateien.")

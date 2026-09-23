@@ -108,6 +108,11 @@ die Charge wird dann automatisch gefunden.
   vorinjiziert, Rückgabe über `result`), `search_scripting_api`, `get_scripting_docs`;
   Stubs und README lokal unter `/Library/Application Support/Blackmagic Design/DaVinci
   Resolve/Developer/Scripting/`. AutoCut nutzt weiter `tools/autocut/venv/bin/python`.
+- **Gyroflow (autocut 6d):** Gyroflow 1.6.1 unter `/Applications/Gyroflow.app/Contents/MacOS/gyroflow` (Pfad in
+  `tools/autocut/defaults.yaml` unter `gyroflow.cli`); dazu das **Gyroflow-OFX-Plugin in Resolve**, installiert und
+  aktiv — einmaliger Handgriff je Mac in der Gyroflow-GUI („Video editor plugins"), Claude kann ihn nicht abnehmen.
+  Stand 23.09.2026 liegt hier noch v1.3.0 mit Quarantäne-Flag. Ohne das Plugin meldet der Bau für jeden B-Roll-Shot
+  „OFX-Tool nicht verfügbar" und fällt auf `Stabilize()` zurück (Spec `docs/superpowers/specs/2026-09-22-autocut-gyroflow-design.md`, Abschnitt 5).
 - **Review (review):** `python3 tools/review/review.py` (Standardbibliothek + ffmpeg); Server als LaunchAgent
   `de.niro.review` auf Port 4711 (`installieren` einmal je Mac; nach `git pull` mit Änderungen an `tools/review`
   `launchctl kickstart -k gui/$(id -u)/de.niro.review`); Ablage `<NAS>/08_Claude Tools/NIRO Studio/review/`, Cache
