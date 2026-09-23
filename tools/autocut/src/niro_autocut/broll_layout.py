@@ -599,6 +599,18 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 "scene_short_stretch_s", "setup_hash_min_distance", "max_exceptions_warn", "forbidden_maengel"):
         if key not in cfg:
             r.errors.append(f"Config: broll.{key} fehlt — profile/default.yaml (v2) prüfen.")
+    # Der telemetrie:-Block liegt in defaults.yaml neben broll:, nicht darunter — das Skript mischt ihn dazu.
+    # Fehlt er oder eine seiner Schwellen, fielen die drei Telemetrie-Regeln still auf Code-Defaults zurück
+    # (genau die Fehlerklasse, die in diesem Zweig schon einmal zugeschlagen hat: eine Kalibrierung bliebe
+    # wirkungslos, ohne dass es jemand merkt). Fehlende Telemetrie-DATEN bleiben erlaubt, ein fehlender
+    # CONFIG-Block nicht.
+    tcfg = cfg.get("telemetrie")
+    if not isinstance(tcfg, dict):
+        r.errors.append("Config: telemetrie fehlt — defaults.yaml prüfen (der Block liegt neben broll:, nicht darunter).")
+    else:
+        for key in ("brennweite_gleich_max", "bewegung_rand_s", "bewegung_spitze_faktor", "ruhig_max_px"):
+            if key not in tcfg:
+                r.errors.append(f"Config: telemetrie.{key} fehlt — defaults.yaml prüfen.")
     if r.errors:
         return r
     total = int(tp_dict["total_frames"])
@@ -673,10 +685,9 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                     r.errors.append(f"{tag}: schneller Zoom im genutzten Bereich ({z['von_mm']:g} → {z['bis_mm']:g} mm, "
                                     f"Spitze {z['tempo_max']:.0f} %/s) — anderen Bereich wählen oder `abweichung` mit Grund.")
         if rec:
-            tcfg = cfg.get("telemetrie") or {}
-            rand = float(tcfg.get("bewegung_rand_s", 0.5))
-            faktor = float(tcfg.get("bewegung_spitze_faktor", 3.0))
-            ruhig = float(tcfg.get("ruhig_max_px", 0.15))
+            rand = float(tcfg["bewegung_rand_s"])
+            faktor = float(tcfg["bewegung_spitze_faktor"])
+            ruhig = float(tcfg["ruhig_max_px"])
             for t_s, bw in TM.bewegung_spitzen(rec, von - rand, bis + rand):
                 if min(abs(t_s - von), abs(t_s - bis)) > rand:
                     continue
@@ -723,7 +734,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     # Cut-Flow über aufeinanderfolgende Shots (nur innerhalb einer Strecke — dazwischen liegt ein Fenster)
     seq = sorted(placed, key=lambda p: p["rec_in_f"])
     min_dist = int(cfg["setup_hash_min_distance"])
-    grenze = float((cfg.get("telemetrie") or {}).get("brennweite_gleich_max", 0.2))
+    grenze = float(tcfg["brennweite_gleich_max"])
     ungeprueft = 0
     for a, b in zip(seq, seq[1:]):
         if a["strecke"] != b["strecke"] or a["nachlauf_fehlt"] or b["nachlauf_fehlt"]:
@@ -753,7 +764,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         r.warnings.append("keine Telemetrie — Brennweiten- und Zoomregel nicht geprüft.")
     else:
         # veraltete Datensätze der genutzten Clips melden, wie es die Vorlagen 3a/6d tun
-        for hinweis in TM.telemetrie_hinweise([TM.finden(tele, p["clip"]) for p in seq], cfg.get("telemetrie") or {}):
+        for hinweis in TM.telemetrie_hinweise([TM.finden(tele, p["clip"]) for p in seq], tcfg):
             r.warnings.append(hinweis)
     return r
 

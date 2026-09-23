@@ -507,6 +507,24 @@ def test_verify_layout_schneller_zoom_ohne_zeitlupe_voller_bereich_gemeldet():
     assert any("schneller Zoom" in e and "FX3_5" in e for e in r.errors)
 
 
+def test_verify_layout_meldet_fehlenden_telemetrie_configblock():
+    """Fix-Welle, Fund M7: jeder fehlende broll.*-Schlüssel ist laut ein Config-Fehler, ein fehlender
+    telemetrie:-Block fiel dagegen still auf Code-Defaults zurück — eine spätere Kalibrierung bliebe dann
+    wirkungslos, ohne dass es jemand merkt. Fehlende Telemetrie-DATEN bleiben erlaubt (eigener Test),
+    ein fehlender CONFIG-Block nicht."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    ohne = {k: v for k, v in CFG.items() if k != "telemetrie"}
+    r = L.verify_layout(plan, TP, idx, CL, ohne, 25)
+    assert any(e.startswith("Config: telemetrie fehlt") for e in r.errors), r.errors
+    luecke = {**CFG, "telemetrie": {k: v for k, v in CFG_TELEMETRIE.items() if k != "bewegung_rand_s"}}
+    r = L.verify_layout(plan, TP, idx, CL, luecke, 25)
+    assert any("Config: telemetrie.bewegung_rand_s fehlt" in e for e in r.errors), r.errors
+    # Gegenprobe: mit vollständigem Block meldet die Prüfung keinen Config-Fehler
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25)
+    assert not any(e.startswith("Config:") for e in r.errors), r.errors
+
+
 def test_verify_layout_zoom_tempo_4_nur_im_wirklich_genutzten_bereich():
     """Fix-Welle, Fund I3: der Quellbereich kommt aus ``src_in_f``/``src_out_f`` (place_shots), nicht aus
     ``TM.genutzter_quellbereich_s()``. Die kennt nur „langsam" (Faktor 0,5) und stimmt damit allein bei tempo 2;
