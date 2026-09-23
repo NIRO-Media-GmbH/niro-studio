@@ -135,8 +135,10 @@ Vorlagen-Schlüsseln der Brennweitenfolge.
 
 ## Fehler und Randfälle
 
-- **Charge ohne `telemetrie.json`**: alle drei Regeln entfallen, der Bericht sagt „keine Telemetrie — Brennweiten- und
-  Zoomregel nicht geprüft". Kein Fehler, kein Abbruch.
+- **Charge ohne `telemetrie.json`**: alle drei Regeln entfallen, der Bericht sagt „keine Telemetrie — Brennweiten-,
+  Zoom- und Bewegungsregel für alle N Shots nicht geprüft; autocut_telemetrie.py laufen lassen." Eine Meldung je
+  Sachverhalt: ohne jede Telemetrie sind „Schnitte ohne Brennweitenverlauf" und „Shots ohne Datensatz" dieselbe
+  Aussage. Kein Fehler, kein Abbruch.
 - **Clip ohne `kb_verlauf`** (Mavic, Avata, alte Telemetrie): 3a und 3b entfallen für diesen Shot und werden gezählt.
 - **Telemetrie mit anderem Config-Hash**: **3b und 3c** entfallen für diese Clips und werden gezählt; die Warnung
   nennt den Grund und rät zum Neumessen. **3a läuft weiter.** Abweichung von der ursprünglichen Fassung dieses
