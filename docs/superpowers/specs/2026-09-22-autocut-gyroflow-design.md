@@ -250,3 +250,47 @@ fehlende Messung.
 Keine neue Abhängigkeit. Gyroflow 1.6.1 und das OFX-Plugin sind installiert (Plugin-Update: Abschnitt 5).
 `gyroflow_sidecars.py` läuft im AutoCut-venv (`tools/autocut/venv/bin/python`) und ruft die CLI per `subprocess`.
 Resolve nur beim Bau, nur im freigegebenen Projekt, nur anhängend — wie alle 6d-Bausteine.
+
+## Befund 2 — Rand-Haushalt: Messung vom 23.09.2026
+
+Der User hat am 23.09. entschieden, den Gyroflow-Beschnitt in die Brennweitenregel einzuspeisen, und zwar mit einem
+**festen** Beschnitt je Haltung, damit der eingespeiste Wert exakt statt geschätzt ist. Die Umsetzung scheitert vorerst
+an der Messung; hier der Stand, damit niemand sie wiederholen muss.
+
+**Warum es überhaupt einen festen Beschnitt bräuchte.** `brennweitenfolge` rechnet mit `schein = kb × zoom` — der Zoom
+verändert die scheinbare Brennweite, nach der die Regel entscheidet. Gyroflows Beschnitt tut dasselbe. Einspeisen heißt
+also nicht nur „Budget abziehen", sondern die Regel würde endlich mit dem rechnen, was man sieht. Dafür muss der Wert
+aber bekannt sein — und der adaptive Zoom ist nicht auslesbar (Befund 1, Punkt 6).
+
+**Gemessen (CLI, `--export-metadata 3`, FX3-Clip, 216 Frames):**
+
+| Einstellung | `fov_scale` | konstant |
+|---|---|---|
+| adaptiv an, `max_zoom` 110 | 0,437–0,496 | nein |
+| adaptiv an, `max_zoom` 130 (Standard) | 0,412–0,478 | nein |
+| adaptiv an, `max_zoom` 200 | 0,324–0,399 | nein |
+| **`adaptive_zoom_window: 0`** | **1,00000** | **ja** |
+
+- **`max_zoom` greift** über `--preset`: die drei Werte erzeugen monoton verschiedene Beschnitte, und der Wert landet
+  im Projekt. Die Deckelung ist also wirksam.
+- **Der Absolutwert bleibt unübersetzbar.** Bei Deckel 110 liegt `1/fov_scale` bei 2,0–2,3, nicht bei 1,10; kein
+  konstanter Faktor bringt die drei Messreihen zur Deckung. In `fov_scale` stecken Rotation und Seitenverhältnis mit
+  drin. Ein daraus geschätzter Umrechnungsfaktor wäre schlechter als gar keiner.
+- **`adaptive_zoom_window: 0` ist ein sauber bekannter Zustand:** Beschnitt exakt 1,0, und der Render ist einwandfrei
+  (geprüft an einem Standbild: stabilisiert, vollflächig, keine schwarzen Ränder).
+
+**Woran es scheitert.** Der feste Beschnitt müsste dann über den OFX-Eingang `FOV` kommen. Gegenprobe in Resolve,
+derselbe Clip zweimal auf einer Timeline in Quellauflösung, Sidecar mit `adaptive_zoom_window: 0`, einmal `FOV` 1,0 und
+einmal 0,8333 (= 1/1,2), gerendert und die Standbilder verglichen:
+
+- `FOV` 1,0 → **sauberes Bild**.
+- `FOV` 0,8333 → **kaputtes Bild**: ein ausgewaschenes Band quer durch die Bildmitte. Kein Beschnitt, sondern ein
+  Darstellungsfehler. Keine der drei Vergleichshypothesen (A unverändert, A × 1,2, A × 0,833) passte auf B
+  (RMSE 0,196 / 0,212 / 0,343 — alle weit von den 0,003 der gelungenen Tempo-Messung entfernt).
+
+**Stand.** Der feste Beschnitt ist mit diesem Wissen nicht baubar. Offen ist, was `FOV` tatsächlich erwartet
+(Wertebereich, Richtung, Zusammenspiel mit abgeschaltetem adaptivem Zoom) — das gehört gemessen, nicht geraten, und
+am besten am erneuerten Plugin (Abschnitt 5), denn die installierte 1.3.0 ist von November 2023.
+
+**Bis dahin gilt Abschnitt 4 unverändert:** `max_zoom` deckelt nur Gyroflows eigenen Beschnitt, der digitale Zoom der
+Brennweitenregel kommt obendrauf, Gesamtzoom bis 1,8×. Das ist dokumentiert und nicht behauptet.
