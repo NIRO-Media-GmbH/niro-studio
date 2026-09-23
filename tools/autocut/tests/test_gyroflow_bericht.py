@@ -22,8 +22,39 @@ def test_bericht_nennt_sidecars_ueberspringungen_und_deckel():
     assert "2 Sidecars" in md
     assert "FX3_0001" in md and "FX3_0002" in md
     assert "keine Gyrospur" in md and "ZV_0001" in md
-    assert "gedeckelt" in md.lower()
     assert "50 %" in md            # Zeitlupen-Shots werden eigens genannt
+
+
+def test_bericht_weist_den_zoom_als_obergrenze_aus_nicht_als_messwert():
+    """zoom_ist_lesen liefert in der Praxis immer den Deckel zurück (adaptive_zoom_fovs_dekodiert schreibt niemand,
+    Spec Befund 1 Punkt 6). „1,20×" läse sich wie eine Messung, ist aber nur der Deckelwert — Spec Abschnitt 1
+    Punkt 4 verlangt ausdrücklich die Obergrenze."""
+    erg = {"clips": [{"clip": "FX3_0001", "path": "/m/FX3_0001.MP4", "kamera": "FX3", "haltung": "hand",
+                      "zoom_ist": 1.20, "zoom_gedeckelt": True, "sidecar": "/m/FX3_0001.gyroflow", "fehler": None}],
+           "uebersprungen": [], "stand": "2026-09-22T21:00:00"}
+
+    md = bericht_md(erg, [])
+
+    zeile = next(z for z in md.splitlines() if z.startswith("| FX3_0001"))
+    assert "≤ 1,20×" in zeile and "nicht gemessen" in zeile
+    # Kein Abschnitt, der den Deckelwert als Befund ausgibt: er träfe auf jeden exportierten Clip zu.
+    assert "## Deckel griff" not in md
+    assert "der Rand ist ausgereizt" not in md
+    # Stattdessen der Hinweis, dass der digitale Zoom der Brennweitenregel obendrauf kommt (Review-Fund 1).
+    assert "digitalzoom_max" in md and "1,8" in md
+
+
+def test_bericht_behauptet_keine_stabilisierung_sondern_sidecars():
+    """Ein Sidecar ist noch keine Stabilisierung — die passiert erst im 6d-Bau. Die Kopfzeile sagte „N von M Clips
+    stabilisiert" und versprach damit mehr, als der Lauf tut."""
+    erg = {"clips": [{"clip": "FX3_0001", "path": "/m/FX3_0001.MP4", "kamera": "FX3", "haltung": "hand",
+                      "zoom_ist": 1.20, "zoom_gedeckelt": True, "sidecar": "/m/FX3_0001.gyroflow", "fehler": None}],
+           "uebersprungen": [], "stand": "2026-09-22T21:00:00"}
+
+    md = bericht_md(erg, [])
+
+    assert "stabilisiert," not in md
+    assert "1 von 1 Clips mit Sidecar" in md
 
 
 def test_bericht_nennt_fehler_je_clip():

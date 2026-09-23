@@ -542,7 +542,10 @@ dem Probelauf, sobald `BROLL` feststeht, und vor dem Bauen. Eingaben: `_intern/a
 (schreibt der Probelauf, `{datei, tempo50}` je genutztem Shot) und `_intern/autocut/telemetrie.json` (`haltung`,
 `quelle`). Ausgaben: `<clip>.gyroflow` neben der Mediendatei (eine je Quelldatei, auch bei Mehrfachnutzung),
 `_intern/autocut/gyroflow.json` und der Bericht `Ergebnisse/Rohschnitt/gyroflow.md` (Sidecars, Übersprungene mit
-Grund, Deckelwerte). Vor dem ersten Export prüft der Lauf die Deckel-Ungleichung
+Grund). Der Bericht zählt **Sidecars, keine Stabilisierungen** — angewendet werden sie erst beim Bau. Seine
+Zoom-Spalte nennt den Deckelwert als Obergrenze („≤ 1,20× (Deckelwert, nicht gemessen)"): Gyroflows tatsächlichen
+Beschnitt liest die Pipeline nicht zurück, die Normierung der Zoom-Werte in der Projektdatei ist ungeklärt (Spec
+Befund 1 Punkt 6). Vor dem ersten Export prüft der Lauf die Deckel-Ungleichung
 `max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100` (Standard je Haltung 105/110/120 ≤ 120 = 1,5 / 1,25 × 100)
 und bricht sonst mit `AutoCutError` ab. **Diese Grenze deckelt allein Gyroflows eigenen Beschnitt** (1,05× bis 1,2×) —
 sie ist *keine* Zusage über den Gesamtzoom. Der digitale Zoom der Brennweitenregel kommt obendrauf und geht bis

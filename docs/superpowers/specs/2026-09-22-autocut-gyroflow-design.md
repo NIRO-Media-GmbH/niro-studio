@@ -75,8 +75,10 @@ Stufe 3, nicht die Auswahl des Feinschnitts. `tempo50` wird nur für den Bericht
    Obergrenze statt als Messwert aus (Deckelwert, nicht gemessen).
 
 **Ausgabe:** `_intern/autocut/gyroflow.json` — je Clip Pfad der Sidecar-Datei, verwendetes Preset, erkannte Kamera und
-Objektiv, `zoom_ist` und `zoom_gedeckelt` (ob der Deckel gegriffen hat). Dazu ein Bericht: welche Clips ein Sidecar
-bekamen, welche warum nicht, und bei welchen der Deckel griff (dort glättet Gyroflow schwächer als es könnte).
+Objektiv, `zoom_ist` und `zoom_gedeckelt` (heute immer wahr: der Wert ist der Deckel, keine Messung). Dazu ein
+Bericht: welche Clips ein Sidecar bekamen und welche warum nicht. Der Zoom steht dort als Obergrenze
+(„≤ 1,20× (Deckelwert, nicht gemessen)"), nicht als Befund — ein Abschnitt „Deckel griff" hätte jeden exportierten
+Clip aufgeführt und über jeden dasselbe Ungemessene behauptet.
 
 **Cache:** wie die Telemetrie je Clip über den Fingerprint plus Preset-Hash, unter `_intern/autocut/gyroflow/`. Ein
 unveränderter Clip mit unverändertem Preset wird nicht neu exportiert.
