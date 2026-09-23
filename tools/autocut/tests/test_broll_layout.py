@@ -384,9 +384,13 @@ def test_compact_index_v2_ohne_telemetrie_liefert_none():
 # --------------------------------------------------------------------------- #
 
 def _tele(datei, kb_mm, zooms=None, fenster=None):
-    """Telemetrie-Datensatz wie in telemetrie.json; konstante Brennweite = ein kb_verlauf-Eintrag."""
+    """Telemetrie-Datensatz wie in telemetrie.json; konstante Brennweite = ein kb_verlauf-Eintrag.
+
+    ``config_hash`` trägt den Hash der Test-Config: produktiv setzt ihn clip_messen() bei jeder Messung, und
+    seit Fund I4 überspringen Regel 3b und 3c Datensätze mit abweichendem Hash. Ein Datensatz ohne Hash ist
+    damit ausdrücklich „mit anderen Schwellen gemessen" (siehe eigener Test)."""
     return {"path": f"/nas/Standort 1/Sortiert/B-Roll/Flur/{datei}", "clip": datei.split(".")[0],
-            "quelle": "rtmd", "fps": 25.0, "dauer_s": 12.0, "fenster_s": 2.0,
+            "quelle": "rtmd", "fps": 25.0, "dauer_s": 12.0, "fenster_s": 2.0, "config_hash": TM.config_hash(CFG_TELEMETRIE),
             "kb_verlauf": [[0.0, kb_mm]], "zooms": zooms or [], "fenster": fenster or []}
 
 
@@ -618,6 +622,53 @@ def test_verify_layout_brennweitenfolge_tempo_4_liest_das_wirkliche_shot_ende():
             _tele("FX3_1.MP4", 30.0), _tele("FX3_3.MP4", 70.0)]
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
     assert any("KB" in e and "FX3_5" in e and "FX3_1" in e for e in r.errors), r.errors
+
+
+def test_verify_layout_alte_schwellen_ueberspringt_zoom_und_bewegung_nicht_die_brennweite():
+    """Fix-Welle, Fund I4 (Entscheidung des Users): Datensätze mit anderem ``config_hash`` tragen Zoom-Urteile
+    und Fenster aus den Schwellen zur Messzeit — ``zoom_schnell_proz_s`` und Verwandte stehen NICHT in
+    ``OHNE_MESSWIRKUNG``. Regel 3b und 3c würden damit Fehler melden, die die heutige Konfiguration gar nicht
+    erzeugt: beide entfallen für solche Clips und werden gezählt. Regel 3a läuft weiter (``kb_verlauf`` ist roh,
+    ``brennweite_gleich_max`` steht in ``OHNE_MESSWIRKUNG``).
+
+    FX3_1 trägt beides: eine schnelle Zoomfahrt im genutzten Bereich (0,0-3,0 s) UND dieselbe KB wie FX3_2 am
+    Schnitt. Mit veraltetem Hash muss genau der Zoomfehler verschwinden und der KB-Fehler bleiben."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    fen = [[0.0, 0.1, 0.4, "fahrt", None], [3.0, 0.1, 9.0, "schwenk_links", None], [8.0, 0.1, 0.5, "fahrt", None]]
+    frisch = [_tele("FX3_1.MP4", 25.0, schnell, fen), _tele("FX3_2.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, frisch)
+    assert any("schneller Zoom" in e and "FX3_1" in e for e in r.errors), r.errors
+    assert any("Bewegungsspitze" in w and "FX3_1" in w for w in r.warnings), r.warnings
+    assert any("KB" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors
+
+    alt = [{**frisch[0], "config_hash": "aaaaaaaaaaaa"}, frisch[1], frisch[2]]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, alt)
+    assert not any("schneller Zoom" in e for e in r.errors), r.errors          # 3b übersprungen
+    assert not any("Bewegungsspitze" in w for w in r.warnings), r.warnings     # 3c übersprungen
+    assert any("KB" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors   # 3a läuft weiter
+    hinweis = [w for w in r.warnings if "anderen Schwellen gemessen" in w]
+    assert len(hinweis) == 1 and hinweis[0].startswith("1 von 3 Shots"), r.warnings
+    assert "autocut_telemetrie.py neu laufen lassen" in hinweis[0]
+    # eine Meldung je Sachverhalt: der allgemeine Hinweis aus telemetrie_hinweise() entfällt daneben
+    assert not any(TM.HINWEIS_SCHWELLEN in w for w in r.warnings), r.warnings
+
+
+def test_verify_layout_datensatz_ohne_config_hash_gilt_als_alt_gemessen():
+    """Ein Datensatz ohne ``config_hash`` ist von unbekannter Herkunft — clip_messen() setzt ihn bei jeder
+    Messung. Er wird wie ein veralteter behandelt (3b/3c übersprungen), damit die Prüfung nicht still auf
+    Urteilen aus unbekannten Schwellen aufbaut."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    schnell = [{"von_s": 1.0, "bis_s": 2.0, "von_mm": 74.1, "bis_mm": 25.4, "tempo_max": 242.0,
+                "tempo_mittel": 180.0, "urteil": "schnell"}]
+    tele = [{k: v for k, v in _tele("FX3_1.MP4", 25.0, schnell).items() if k != "config_hash"},
+            _tele("FX3_2.MP4", 40.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("schneller Zoom" in e for e in r.errors), r.errors
+    assert any("anderen Schwellen gemessen" in w for w in r.warnings), r.warnings
 
 
 def test_verify_layout_bewegungsspitze_an_der_schnittgrenze_warnt_nur():

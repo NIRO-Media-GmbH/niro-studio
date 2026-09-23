@@ -138,7 +138,12 @@ Vorlagen-Schlüsseln der Brennweitenfolge.
 - **Charge ohne `telemetrie.json`**: alle drei Regeln entfallen, der Bericht sagt „keine Telemetrie — Brennweiten- und
   Zoomregel nicht geprüft". Kein Fehler, kein Abbruch.
 - **Clip ohne `kb_verlauf`** (Mavic, Avata, alte Telemetrie): 3a und 3b entfallen für diesen Shot und werden gezählt.
-- **Telemetrie mit anderem Config-Hash**: wie in 3a/6d gemeldet, Regeln für diese Clips als ungeprüft gezählt.
+- **Telemetrie mit anderem Config-Hash**: **3b und 3c** entfallen für diese Clips und werden gezählt; die Warnung
+  nennt den Grund und rät zum Neumessen. **3a läuft weiter.** Abweichung von der ursprünglichen Fassung dieses
+  Abschnitts (Schluss-Review 23.09., Entscheidung des Users): pauschal alle drei zu überspringen wäre zu grob — 3a
+  liest `kb_verlauf`, also Rohdaten, und `brennweite_gleich_max` steht in `OHNE_MESSWIRKUNG`, die Schwellen zur
+  Messzeit berühren sie nicht; 3b und 3c hängen dagegen an `zoom_schnell_proz_s` und Verwandten, die **nicht** in
+  `OHNE_MESSWIRKUNG` stehen, und würden Fehler melden, die die heutige Konfiguration gar nicht erzeugt.
 - **Abschnitt ohne `bewegung_spitzen`**: 3c entfällt.
 - **Erster Shot einer Strecke**: 3a braucht einen Vorgänger; der erste Shot der Timeline wird übersprungen.
 - **Shot mit `tempo > 1` (Zeitlupe)**: der genutzte Quellbereich ist kürzer als die Timeline-Dauer;

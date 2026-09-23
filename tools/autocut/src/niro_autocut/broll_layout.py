@@ -637,6 +637,8 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     uses: dict[str, list[str]] = {}
     n_exc = 0
     ohne_datensatz = 0          # Shots, für die 3b/3c gar nicht laufen konnten (Fix-Welle, Fund I2)
+    alte_schwellen = 0          # Shots, für die 3b/3c übersprungen wurden (Fix-Welle, Fund I4)
+    hash_heute = TM.config_hash(tcfg)
     for p in placed:
         tag = f"Strecke {p['strecke']} Szene {p['szene_i']} Shot {p['shot_i']} ({p['name']} {p['in_s']:g}–{p['out_s']:g}s)"
         c = by_path[p["clip"]]
@@ -686,7 +688,16 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
             # unlesbar (laden() gibt dann []). Bisher entfielen 3b und 3c hier spurlos: der einzige Zähler
             # zählte Schnittpaare und nannte nur die Brennweitenregel (Fix-Welle, Fund I2).
             ohne_datensatz += 1
-        if rec is not None:
+        # Mit anderen Schwellen gemessen: `zoom_schnell_proz_s` und Verwandte stehen NICHT in
+        # TM.OHNE_MESSWIRKUNG, das Urteil „schnell" und die Fenster-Reihe stammen also aus den Schwellen zur
+        # Messzeit. 3b und 3c würden dann Fehler melden, die die heutige Konfiguration gar nicht erzeugt — beide
+        # entfallen für diesen Shot und werden gezählt (Fix-Welle, Fund I4; Entscheidung des Users, bewusst
+        # genauer als die Spec, die pauschal alle drei Regeln übersprang). Regel 3a läuft weiter: sie liest
+        # `kb_verlauf`, also Rohdaten, und `brennweite_gleich_max` steht in OHNE_MESSWIRKUNG.
+        veraltet = rec is not None and rec.get("config_hash") != hash_heute
+        if veraltet:
+            alte_schwellen += 1
+        if rec is not None and not veraltet:
             # außerhalb der abweichung-Bedingung: Regel 3c rechnet auf denselben Grenzen weiter
             von, bis = _quellbereich_s(p, fps)
             if not p["abweichung"]:
@@ -779,8 +790,14 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
             r.warnings.append(f"{ohne_datensatz} von {len(placed)} Shots ohne verwertbaren Telemetrie-Datensatz — "
                               f"Zoom- und Bewegungsregel dort nicht geprüft (Telemetrie nur teilweise gelaufen, Clip "
                               f"verschoben oder telemetrie.json unlesbar).")
+        if alte_schwellen:
+            r.warnings.append(f"{alte_schwellen} von {len(placed)} Shots mit anderen Schwellen gemessen — Zoom- und "
+                              f"Bewegungsregel dort übersprungen, die Urteile stammen aus den Schwellen zur Messzeit; "
+                              f"autocut_telemetrie.py neu laufen lassen. Die Brennweitenregel gilt weiter (Rohdaten).")
         # veraltete Datensätze der genutzten Clips melden, wie es die Vorlagen 3a/6d tun
         for hinweis in TM.telemetrie_hinweise([TM.finden(tele, p["clip"]) for p in seq], tcfg):
+            if alte_schwellen and TM.HINWEIS_SCHWELLEN in hinweis:
+                continue        # derselbe Sachverhalt — oben schon mit Shots und übersprungenen Regeln genannt
             r.warnings.append(hinweis)
     return r
 

@@ -835,6 +835,11 @@ def zoom_hinweise(sid: str, rec: dict | None, von_s: float, bis_s: float,
     return out
 
 
+#: Wortlaut des Hinweises zu veralteten Schwellen — Aufrufer, die denselben Sachverhalt bereits selbst und
+#: genauer melden (Stufe 3 nennt die betroffenen Shots und die übersprungenen Regeln), filtern ihn darüber weg.
+HINWEIS_SCHWELLEN = "mit anderen Telemetrie-Schwellen gemessen"
+
+
 def telemetrie_hinweise(recs: list[dict | None], cfg: dict) -> list[str]:
     """Probelauf-Hinweise (3a/6d) zu veralteten Datensätzen der tatsächlich genutzten Clips (je Clip einmal, nach Pfad):
     rtmd-Datensätze ohne ``kb_verlauf`` (vor der Umstellung gemessen — Brennweite dort „unbekannt", die Regel schwiege)
@@ -847,7 +852,7 @@ def telemetrie_hinweise(recs: list[dict | None], cfg: dict) -> list[str]:
     anders = {k for k, r in je_clip.items() if k not in alt and r.get("config_hash") != h}
     out = []
     for n, text in ((len(alt), "ohne Brennweitenverlauf (alte Telemetrie)"),
-                    (len(anders), "mit anderen Telemetrie-Schwellen gemessen")):
+                    (len(anders), HINWEIS_SCHWELLEN)):
         if n:
             out.append(f"{n} {'Clip' if n == 1 else 'Clips'} {text} — autocut_telemetrie.py neu laufen lassen")
     return out
