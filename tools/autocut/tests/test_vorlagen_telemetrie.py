@@ -331,6 +331,10 @@ def test_gyroflow_block_zaehlt_erst_nach_dem_readback():
     assert "GetInput" in block
     assert block.index("GetInput") < block.index("gyroflow_gesetzt += 1")
     assert "gyrodata nicht gesetzt" in block
+    # Ein leerer Readback ist der Fehlschlag; ein anders geschriebener Pfad wird gemeldet, gilt aber als gesetzt —
+    # sonst legte ein PathMap-Unterschied auf jedem Shot zusätzlich Stabilize() über den Gyroflow-Comp.
+    assert "gesetzt_ok = isinstance(ist, str) and bool(ist)" in block
+    assert "gyrodata anders zurückgelesen" in block
 
 
 def test_gyroflow_block_meldet_shots_ganz_ohne_eintrag():

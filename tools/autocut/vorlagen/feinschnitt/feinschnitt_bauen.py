@@ -565,7 +565,7 @@ def bauen(p: dict) -> dict:
                 print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: Sidecar fehlt ({sidecar}) — "
                       f"zurück auf den Stabilize()-Weg", flush=True)
                 sidecar = None
-            elif sidecar is None and gyro_geladen:
+            elif eintrag is None and gyro_geladen:
                 # Häufigste echte Ursache: veraltete gyroflow.json — BROLL geändert, --bauen ohne neuen Lauf von
                 # autocut_gyroflow.py. Dann nähmen genau die neuen Shots still den alten Weg. Zweite Ursache: der
                 # Clip steht in gyroflow.json unter „uebersprungen" (keine Gyrospur, Avata-Export) — dort nachsehen.
@@ -596,17 +596,24 @@ def bauen(p: dict) -> dict:
                     video_speed = 50.0 if (m["langsam"] and GYRO_BEI_ZEITLUPE) else 100.0
                     RA._safe(werkzeug.SetInput, False, "VideoSpeed", video_speed)
                     # Set-then-Readback wie bei zoom_abweichungen/speed_gesetzt: SetInput meldet auch dann Erfolg,
-                    # wenn der Parameter nicht ankam. Der Readback von gyrodata liefert den gesetzten Pfad
-                    # zurück (Befund 1, Punkt 2) — gezählt wird nur, was wirklich steht.
+                    # wenn der Parameter nicht ankam. Der Readback von gyrodata liefert den gesetzten Pfad zurück
+                    # (Befund 1, Punkt 2) — gezählt wird nur, was wirklich steht. Als Erfolg zählt ein nicht leerer
+                    # Pfad: schreibt Resolve ihn anders (PathMap, andere Schreibweise), ist das eine Meldung wert,
+                    # aber kein Grund, zusätzlich Stabilize() über einen laufenden Gyroflow-Comp zu legen.
                     ist = RA._safe(werkzeug.GetInput, None, GYRO_PARAM_PROJEKT)
-                    if isinstance(ist, str) and ist and GF.norm_pfad(ist) == GF.norm_pfad(sidecar):
+                    gesetzt_ok = isinstance(ist, str) and bool(ist)
+                    if gesetzt_ok and RA._safe(GF.norm_pfad, None, ist) != GF.norm_pfad(sidecar):
+                        gyroflow_abweichungen.append(
+                            {"shot": m["shot"], "grund": f"gyrodata anders zurückgelesen: {ist!r}"})
+                    if gesetzt_ok:
                         gyroflow_gesetzt += 1
                         stab[shot] = None  # Stabilize() bewusst nicht gerufen — Gyroflow ersetzt es für diesen Shot
                         print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: Haltung {haltung}, "
                               f"VideoSpeed {video_speed:g} ({(dt.datetime.now() - t0).total_seconds():.1f} s)",
                               flush=True)
                     else:
-                        gyroflow_abweichungen.append({"shot": m["shot"], "grund": f"gyrodata nicht gesetzt (ist: {ist!r})"})
+                        gyroflow_abweichungen.append(
+                            {"shot": m["shot"], "grund": f"gyrodata nicht gesetzt (Readback: {ist!r})"})
                         stab[shot] = bool(RA._safe(x.Stabilize, False))      # Rückfall auf den bisherigen Weg
                         print(f"  Gyroflow {n_}/{len(p['v3_meta'])} {shot}: gyrodata nicht gesetzt — "
                               f"Stabilize() als Rückfall ({stab[shot]})", flush=True)
@@ -731,10 +738,11 @@ if __name__ == "__main__":
             if s is None:
                 continue  # fehlender Shot wäre oben schon als FEHLER gemeldet, dieser Zweig liefe dann nicht
             datei = s["datei"]
-            eintrag = nach_datei.get(GF.norm_pfad(datei))
+            schluessel = GF.norm_pfad(datei)
+            eintrag = nach_datei.get(schluessel)
             if eintrag is None:
                 eintrag = {"datei": datei, "tempo50": False}
-                nach_datei[GF.norm_pfad(datei)] = eintrag
+                nach_datei[schluessel] = eintrag
                 gyro_clips.append(eintrag)
             # ODER über alle Verwendungen statt „erste gewinnt": eine Datei, die einmal mit 100 % und einmal mit
             # 50 % im Schnitt steht, ist im Bericht sonst falsch ausgewiesen. Reine Anzeige — VideoSpeed leitet

@@ -519,7 +519,8 @@ oder einen Zwischenstand.
      | Shot-Nr. | `kein Sidecar` | `gyroflow.json` war lesbar, führt diesen Clip aber nicht. Meist veraltet: `BROLL` geändert und `--bauen` ohne neuen `autocut_gyroflow.py`-Lauf. Sonst steht der Clip dort unter `uebersprungen` (keine Gyrospur, Avata-Export). |
      | Shot-Nr. | `Sidecar fehlt: <Pfad>` | Eintrag da, Datei weg (NAS-Umzug, Relink) → `Stabilize()`-Weg. |
      | Shot-Nr. | `OFX-Tool nicht verfügbar` | `AddFusionComp`/`AddTool` schlug fehl (Plugin nicht installiert oder inaktiv, siehe Spec Abschnitt 5) → `Stabilize()` als Rückfall. |
-     | Shot-Nr. | `gyrodata nicht gesetzt (ist: …)` | Readback stimmt nicht mit dem gesetzten Pfad überein → `Stabilize()` als Rückfall. |
+     | Shot-Nr. | `gyrodata nicht gesetzt (Readback: …)` | Der Readback lieferte keinen Pfad → `Stabilize()` als Rückfall, nicht als Erfolg gezählt. |
+     | Shot-Nr. | `gyrodata anders zurückgelesen: …` | Ein Pfad steht, aber anders geschrieben (PathMap o. ä.). Gilt als gesetzt — kein zusätzliches `Stabilize()` über einen laufenden Gyroflow-Comp —, ist aber eine Meldung wert. |
      | Shot-Nr. | `Haltung '…' fehlt in cfg.gyroflow.glaettung` | Config zwischen Sidecar-Lauf und Bau geändert; gesetzt wird die vorsichtigste Stufe. |
 
      Danach der digitale Zoom der Brennweitenregel (`SetProperty` `ZoomX`/`ZoomY`, Bildmitte);
