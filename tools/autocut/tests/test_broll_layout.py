@@ -707,6 +707,27 @@ def test_verify_layout_bewegungsspitze_an_der_schnittgrenze_warnt_nur():
     assert not any("Bewegungsspitze" in e for e in r.errors)     # NIE ein Fehler: Schwellen unkalibriert
 
 
+def test_verify_layout_bewegungsspitze_nennt_schnittgrenze_und_messfenster_getrennt():
+    """Fix-Welle, Fund M3: die Meldung nannte die Fenster-STARTzeit als „Schnittgrenze" — das Fenster deckt
+    2 s ab, der Versatz geht bis rund 2 s. Ein Editor springt diese Sekunde in Resolve an, also müssen beide
+    Zeiten getrennt und benannt dastehen.
+
+    Handrechnung: Shot 1 (FX3_1, 0,0-2,0 s, tempo 1) nutzt 0,0-2,0 s im Clip. Die Spitze liegt im Fenster ab
+    1,5 s (2,0 s lang, also 1,5-3,5 s) und damit genau ``bewegung_rand_s`` (0,5 s) von der Schnittgrenze bei
+    2,0 s entfernt. Grundniveau = Median der Fenster mit Abstand >= 3,0 s von 1,5 s = Median([0,5 @ 5,0s]) = 0,5;
+    Basis = max(0,5; ruhig_max_px 0,15) = 0,5; 9,0 >= 3,0 × 0,5 -> Warnung."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    fen = [[0.0, 0.1, 0.4, "fahrt", None], [1.5, 0.1, 9.0, "schwenk_links", None], [5.0, 0.1, 0.5, "fahrt", None]]
+    tele = [_tele("FX3_1.MP4", 25.0, None, fen), _tele("FX3_2.MP4", 70.0), _tele("FX3_3.MP4", 35.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    w = [x for x in r.warnings if "Bewegungsspitze" in x]
+    assert len(w) == 1, r.warnings
+    assert "Schnittgrenze bei 2 s im Clip" in w[0], w[0]      # die Grenze, nicht der Fensterstart 1,5 s
+    assert "Fenster 1.5–3.5 s" in w[0], w[0]                   # und getrennt davon das Messfenster
+    assert not any("Bewegungsspitze" in e for e in r.errors)
+
+
 def test_verify_layout_bewegungsspitze_unter_ruhig_max_px_warnt_nicht():
     """Fix-Runde 1 (Review, Fund 2): rein multiplikativer Vergleich hätte auf Stativmaterial schon bei
     winzigen Ausreißern deutlich unterhalb ruhig_max_px gefeuert. Handrechnung:
@@ -715,8 +736,10 @@ def test_verify_layout_bewegungsspitze_unter_ruhig_max_px_warnt_nicht():
     Ohne Untergrenze: Faktor = 0,08 / 0,019 ≈ 4,21 >= bewegung_spitze_faktor (3,0) -> hätte gewarnt.
     Mit Untergrenze:  basis = max(grund_px, ruhig_max_px) = max(0,019; 0,15) = 0,15
                       bewegung_spitze_faktor * basis = 3,0 * 0,15 = 0,45
-                      bw (0,08) >= 0,45 ist False -> keine Warnung, weil das System dieses Bild an
-                      anderer Stelle (ruhig_max_px) ohnehin als ruhig einstuft."""
+                      bw (0,08) >= 0,45 ist False -> keine Warnung.
+    ruhig_max_px ist hier ein vorläufiger Sockel ohne eigenen Beleg, von der wackeln-Schwelle geborgt (dort
+    misst er Zittern, hier steht ihm der Schwenkweg `bewegung` gegenüber) — er greift praktisch nur auf
+    Stativmaterial, genau wie in diesem Fall."""
     idx = _idx()
     plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     fen = [[3.0, 0.1, 0.08, "schwenk_links", None], [6.0, 0.1, 0.019, "fahrt", None]]

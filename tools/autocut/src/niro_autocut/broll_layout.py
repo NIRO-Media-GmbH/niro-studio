@@ -608,7 +608,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     if not isinstance(tcfg, dict):
         r.errors.append("Config: telemetrie fehlt — defaults.yaml prüfen (der Block liegt neben broll:, nicht darunter).")
     else:
-        for key in ("brennweite_gleich_max", "bewegung_rand_s", "bewegung_spitze_faktor", "ruhig_max_px"):
+        for key in ("brennweite_gleich_max", "bewegung_rand_s", "bewegung_spitze_faktor", "ruhig_max_px", "fenster_s"):
             if key not in tcfg:
                 r.errors.append(f"Config: telemetrie.{key} fehlt — defaults.yaml prüfen.")
     if r.errors:
@@ -707,21 +707,29 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
             rand = float(tcfg["bewegung_rand_s"])
             faktor = float(tcfg["bewegung_spitze_faktor"])
             ruhig = float(tcfg["ruhig_max_px"])
+            fen_s = float(rec.get("fenster_s") or tcfg["fenster_s"])
+            # Der geweitete Bereich ist nur lückenlos, solange schritt_s (1,0) <= 2 × bewegung_rand_s (1,0) gilt —
+            # aktuell exakt der Grenzfall. Ein kleineres bewegung_rand_s als schritt_s / 2 ließe zwischen zwei
+            # Fenster-Startzeiten stille Lücken, in denen eine Spitze nie geprüft würde.
             for t_s, bw in TM.bewegung_spitzen(rec, von - rand, bis + rand):
                 if min(abs(t_s - von), abs(t_s - bis)) > rand:
                     continue
                 grund_px = TM.bewegung_grundniveau(rec, t_s)
                 if grund_px is None:
                     continue
-                # Untergrenze bei ruhig_max_px: darunter gilt das Bild ohnehin als ruhig (dieselbe Schwelle wie
-                # bei den ruhigen Fenstern). Ohne sie würde die Regel auf Stativmaterial schon bei Ausreißern
-                # weit unterhalb dieser Schwelle feuern (rein multiplikativer Vergleich, Fix-Runde 1) und bei
-                # einem Grundniveau von exakt 0,0 nie (der Faktor wäre unendlich).
+                # Untergrenze bei ruhig_max_px: VORLÄUFIGER SOCKEL OHNE EIGENEN BELEG, von der wackeln-Schwelle
+                # geborgt. ruhig_max_px ist überall sonst eine Schwelle für `wackeln` (Zittern), hier steht ihr
+                # aber `bewegung` (Schwenkweg) gegenüber — zwei verschiedene Größen. Auf bewegtem Material greift
+                # der Sockel deshalb kaum; er wirkt praktisch nur auf Stativmaterial, wo er den rein
+                # multiplikativen Vergleich davor bewahrt, schon bei winzigen Ausreißern zu feuern (Fix-Runde 1
+                # zu Task 5), und den Fall Grundniveau exakt 0,0 abfängt (der Faktor wäre unendlich).
+                # Wer das kalibriert, muss das wissen: der Wert 0,15 ist hier nicht hergeleitet.
                 basis = max(grund_px, ruhig)
                 if bw >= faktor * basis:
-                    r.warnings.append(f"{tag}: Schnittgrenze bei {t_s:g} s liegt in einer Bewegungsspitze "
-                                      f"({bw:g} gegen Grundniveau {basis:g}, mind. ruhig_max_px {ruhig:g}) — "
-                                      f"Hinweis, Schwellen unkalibriert.")
+                    grenze = von if abs(t_s - von) <= abs(t_s - bis) else bis
+                    r.warnings.append(f"{tag}: Schnittgrenze bei {grenze:g} s im Clip liegt in einer Bewegungsspitze — "
+                                      f"gemessen im Fenster {t_s:g}–{t_s + fen_s:g} s (Bewegung {bw:g} gegen Basis "
+                                      f"{basis:g}, Sockel ruhig_max_px {ruhig:g}) — Hinweis, Schwellen unkalibriert.")
         if not p["grund"].strip():
             r.warnings.append(f"{tag}: ohne grund.")
         if p["tempo"] == 4:
