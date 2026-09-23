@@ -548,7 +548,8 @@ def place_shots(plan: LayoutPlan, tp_dict: dict, index: dict, cfg: dict, fps: fl
             mid = section_for(c, (sh.in_s + out_s) / 2)
             placed.append({"strecke": st.nr, "szene_i": i, "shot_i": j, "clip": path, "name": c["datei"],
                            "ordner": f"{c.get('standort') or ''}/{c.get('ordner') or ''}".strip("/"), "standort": c.get("standort"),
-                           "in_s": sh.in_s, "out_s": out_s, "out_s_plan": sh.out_s, "tempo": sh.tempo, "rec_in_f": pos, "rec_out_f": pos + n_tl,
+                           "in_s": sh.in_s, "out_s": out_s, "out_s_plan": sh.out_s, "tempo": sh.tempo, "clip_fps": cfps,
+                           "rec_in_f": pos, "rec_out_f": pos + n_tl,
                            "src_in_f": src_in, "src_out_f": src_in + src_n, "roh_out_f": pos + n_tl // sh.tempo, "letzter": last,
                            "grund": sh.grund, "abweichung": sh.abweichung, "abweichung_grund": sh.abweichung_grund,
                            "ausnahme": sz.ausnahme, "szene_ordner": sz.ordner, "szene_grund": sz.grund,
@@ -559,6 +560,20 @@ def place_shots(plan: LayoutPlan, tp_dict: dict, index: dict, cfg: dict, fps: fl
     return placed, errs
 
 
+def _quellbereich_s(p: dict, fps: float) -> tuple[float, float]:
+    """Der Quellbereich (Sekunden im Clip), den ein platzierter Shot wirklich nutzt: die Quellframes aus
+    ``place_shots`` (``src_in_f``/``src_out_f``), geteilt durch die Bildrate des Clips.
+
+    Bewusst nicht ``TM.genutzter_quellbereich_s()``: die kennt nur das boolesche ``langsam`` (Faktor 0,5) und
+    trifft damit allein ``tempo`` 2 (``clip_fps`` = 2 × ``ziel_fps``). Bei ``tempo`` 4 — 100-fps-Clip in 25 fps,
+    ``place_shots`` setzt dort ``src_n = n_tl`` — liefert sie den doppelten Bereich: ein Shot, der 0,0–1,0 s
+    nutzt, würde als 0,0–2,0 s geprüft, und eine Zoomfahrt, die in der Timeline nie zu sehen ist, käme als
+    harter Fehler zurück. Der Helfer selbst bleibt unverändert; er hat andere Aufrufer (Vorlage 6d).
+    """
+    cfps = float(p.get("clip_fps") or fps)
+    return p["src_in_f"] / cfps, p["src_out_f"] / cfps
+
+
 def _kb_am_schnitt(p: dict, tele: list[dict] | None, fps: float, seite: str) -> float | None:
     """Scheinbare KB-Brennweite am Anfang bzw. Ende eines platzierten Shots; None ohne Verlauf.
     Bei Zeitlupe zählt der tatsächlich genutzte Quellbereich (wie 6d)."""
@@ -567,9 +582,7 @@ def _kb_am_schnitt(p: dict, tele: list[dict] | None, fps: float, seite: str) -> 
     rec = TM.finden(tele, p["clip"])
     if not rec:
         return None
-    clip_fps = float(rec.get("fps") or fps)
-    von, bis = TM.genutzter_quellbereich_s(p["src_in_f"], p["rec_out_f"] - p["rec_in_f"], clip_fps,
-                                           langsam=(p.get("tempo") or 1) > 1, ziel_fps=fps)
+    von, bis = _quellbereich_s(p, fps)
     return TM.kb_am(rec, bis if seite == "ende" else von, seite=seite)
 
 
@@ -652,17 +665,14 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         if p["abweichung"] and not p["abweichung_grund"].strip():
             r.errors.append(f"{tag}: abweichung=true ohne abweichung_grund.")
         rec = TM.finden(tele, p["clip"]) if tele else None
-        von = bis = None
+        # außerhalb der abweichung-Bedingung: Regel 3c rechnet auf denselben Grenzen weiter
+        von, bis = _quellbereich_s(p, fps)
         if rec:
-            clip_fps = float(rec.get("fps") or fps)
-            # außerhalb der abweichung-Bedingung: Task 5 rechnet auf denselben Grenzen weiter
-            von, bis = TM.genutzter_quellbereich_s(p["src_in_f"], p["rec_out_f"] - p["rec_in_f"], clip_fps,
-                                                   langsam=(p.get("tempo") or 1) > 1, ziel_fps=fps)
             if not p["abweichung"]:
                 for z in TM.zooms_im_bereich(rec, von, bis):
                     r.errors.append(f"{tag}: schneller Zoom im genutzten Bereich ({z['von_mm']:g} → {z['bis_mm']:g} mm, "
                                     f"Spitze {z['tempo_max']:.0f} %/s) — anderen Bereich wählen oder `abweichung` mit Grund.")
-        if rec and von is not None:
+        if rec:
             tcfg = cfg.get("telemetrie") or {}
             rand = float(tcfg.get("bewegung_rand_s", 0.5))
             faktor = float(tcfg.get("bewegung_spitze_faktor", 3.0))

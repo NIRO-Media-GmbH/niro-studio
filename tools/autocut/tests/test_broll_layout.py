@@ -507,6 +507,58 @@ def test_verify_layout_schneller_zoom_ohne_zeitlupe_voller_bereich_gemeldet():
     assert any("schneller Zoom" in e and "FX3_5" in e for e in r.errors)
 
 
+def test_verify_layout_zoom_tempo_4_nur_im_wirklich_genutzten_bereich():
+    """Fix-Welle, Fund I3: der Quellbereich kommt aus ``src_in_f``/``src_out_f`` (place_shots), nicht aus
+    ``TM.genutzter_quellbereich_s()``. Die kennt nur „langsam" (Faktor 0,5) und stimmt damit allein bei tempo 2;
+    bei tempo 4 lieferte sie den doppelten Bereich und meldete Zoomfahrten, die in der Timeline nie zu sehen sind.
+
+    Handrechnung place_shots() für Shot 0 (FX3_5.MP4 auf 100 fps gesetzt, tempo 4, in_s 0,0, out_s 1,0,
+    Strecke 1 beginnt bei Frame 58):
+        n_tl     = seconds_to_frames(1,0 - 0,0, fps=25) * 4 = 25 * 4 = 100   (4,0 s Timeline, O-Ton 2,0-6,0 s ok)
+        src_n    = n_tl = 100   (tempo > 1: Quellframes = Timeline-Frames)
+        src_in_f = 0, src_out_f = 100 -> genutzt 0/100 bis 100/100 = 0,0-1,0 s im Clip
+    Der alte Weg TM.genutzter_quellbereich_s(0, n_f=100, clip_fps=100, langsam=True, ziel_fps=25):
+        ende_f = 0 + 100 * 100/25 * 0,5 = 200 -> 0,0-2,0 s — doppelt so lang.
+    Die Fahrt bei 1,3-1,8 s liegt genau dazwischen: im alten Bereich drin (harter Fehler), im echten draußen.
+    """
+    idx = _idx()
+    for c in idx["clips"]:
+        if c["datei"] == "FX3_5.MP4":
+            c["fps"] = 100.0
+    plan = _plan({1: [("Flur/FX3_5.MP4", 0.0, 1.0, 4), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    def _zoom(von_s, bis_s):
+        return [{"von_s": von_s, "bis_s": bis_s, "von_mm": 70.0, "bis_mm": 24.0, "tempo_max": 210.0,
+                 "tempo_mittel": 160.0, "urteil": "schnell"}]
+    # 1,3-1,8 s: außerhalb der genutzten 0,0-1,0 s -> kein Fehler (mit dem alten Helfer war es einer)
+    tele = [{**_tele("FX3_5.MP4", 35.0, _zoom(1.3, 1.8)), "fps": 100.0},
+            _tele("FX3_1.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("schneller Zoom" in e and "FX3_5" in e for e in r.errors), r.errors
+    # Gegenprobe im selben Test: dieselbe Fahrt bei 0,3-0,7 s liegt im genutzten Bereich und muss melden —
+    # sonst wäre die Zusicherung oben auch mit einem leeren Bereich grün.
+    tele = [{**_tele("FX3_5.MP4", 35.0, _zoom(0.3, 0.7)), "fps": 100.0},
+            _tele("FX3_1.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("schneller Zoom" in e and "FX3_5" in e for e in r.errors), r.errors
+
+
+def test_verify_layout_brennweitenfolge_tempo_4_liest_das_wirkliche_shot_ende():
+    """Fund I3 für Regel 3a: `_kb_am_schnitt()` liest die KB am Ende des Shots. Bei tempo 4 endet Shot 0
+    bei 1,0 s im Clip (Rechnung wie im Test darüber), nicht bei 2,0 s. Der Verlauf springt bei 1,5 s von
+    30 auf 60 mm: am wirklichen Ende (kb_am über 0,5-1,0 s) sind es 30 mm — gleich wie die 30 mm des
+    Folgeshots, also ein Fehler. Mit dem alten, doppelten Bereich läse die Regel bei 2,0 s (1,5-2,0 s)
+    60 mm und schwiege (60/30 - 1 = 1,0 > brennweite_gleich_max)."""
+    idx = _idx()
+    for c in idx["clips"]:
+        if c["datei"] == "FX3_5.MP4":
+            c["fps"] = 100.0
+    plan = _plan({1: [("Flur/FX3_5.MP4", 0.0, 1.0, 4), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [{**_tele("FX3_5.MP4", 30.0), "fps": 100.0, "kb_verlauf": [[0.0, 30.0], [1.4, 30.0], [1.5, 60.0], [6.0, 60.0]]},
+            _tele("FX3_1.MP4", 30.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any("KB" in e and "FX3_5" in e and "FX3_1" in e for e in r.errors), r.errors
+
+
 def test_verify_layout_bewegungsspitze_an_der_schnittgrenze_warnt_nur():
     idx = _idx()
     plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
