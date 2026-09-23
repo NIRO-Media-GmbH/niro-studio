@@ -384,9 +384,10 @@ def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samp
 
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------
 
-# Schlüssel ohne Einfluss auf die Messung: Parallelität und die Brennweitenfolge der Vorlagen 3a/6d
+# Schlüssel ohne Einfluss auf die Messung: Parallelität, die Brennweitenfolge der Vorlagen 3a/6d und die
+# Ableitung der stabilen Bereiche (Spec 2026-09-23; sie rechnet auf fenster, das die Messung schon enthält)
 OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max",
-                    "bewegung_rand_s", "bewegung_spitze_faktor")
+                    "bewegung_rand_s", "bewegung_spitze_faktor", "bewegung_max", "stabil_min_s")
 
 
 def config_hash(cfg: dict) -> str:
@@ -699,6 +700,56 @@ def bewegung_grundniveau(rec: dict | None, t_s: float, abstand_s: float = 3.0) -
     Grundniveau des Clips ohne die Spitze selbst. None ohne solche Fenster (Spec 2026-09-22)."""
     fern = [float(f[2]) for f in ((rec or {}).get("fenster") or []) if abs(float(f[0]) - t_s) >= abstand_s]
     return float(np.median(fern)) if fern else None
+
+
+def stabile_bereiche(rec: dict | None, cfg: dict) -> list[list[float]]:
+    """Bereiche, die ruhig genug zum Schneiden sind, als ``[von_s, bis_s, wackeln_max, bewegung_max]``
+    (Spec 2026-09-23). Reine Ableitung aus einem vorhandenen Datensatz — keine Messung, keine Mediendatei.
+
+    Grundlage sind die Fenster, deren Startzeit in ``ruhige_fenster`` steht: damit gilt ``wackeln <= ruhig_max_px``
+    **und** der Ausschluss schneller Zoomfahrten aus ``ruhige_ohne_schnelle_zooms`` ohne zweite Rechnung.
+    Zusätzlich muss ``bewegung`` des Fensters unter ``bewegung_max`` liegen — ``wackeln`` misst Zittern, nicht
+    Tempo, und ein glatter schneller Schwenk taugt als kurzer Einsetzer nicht. Benachbarte Fenster (Abstand
+    höchstens ``schritt_s``) bilden einen Lauf; er reicht bis zum Ende seines letzten Fensters, gekappt an
+    ``dauer_s``. Läufe unter ``stabil_min_s`` fallen weg. Ohne ``fenster`` oder ohne ruhige Fenster leer.
+
+    Die Bereichsgrenzen sind auf die Fensterauflösung genau (``fenster_s`` 2,0 / ``schritt_s`` 1,0 ⇒ ±1 s).
+    Die Liste ist ein Vorschlag, nie eine Sperre: was davon geschnitten wird, entscheidet der Bildinhalt."""
+    fen = (rec or {}).get("fenster") or []
+    if not fen:
+        return []
+    ruhig = {float(t) for t in (rec.get("ruhige_fenster") or [])}
+    bew_max = float(cfg["bewegung_max"])
+    schritt = float(cfg["schritt_s"])
+    w = float(rec.get("fenster_s") or cfg["fenster_s"])
+    dauer = rec.get("dauer_s")
+    laeufe: list[list[tuple[float, float, float]]] = []
+    for f in fen:
+        t, wk, bw = float(f[0]), float(f[1]), float(f[2])
+        if t not in ruhig or bw > bew_max:
+            continue
+        if laeufe and t - laeufe[-1][-1][0] <= schritt + 1e-6:
+            laeufe[-1].append((t, wk, bw))
+        else:
+            laeufe.append([(t, wk, bw)])
+    out = []
+    for lauf in laeufe:
+        von = lauf[0][0]
+        bis = lauf[-1][0] + w
+        if dauer is not None:
+            bis = min(bis, float(dauer))
+        if bis - von < float(cfg["stabil_min_s"]) - 1e-6:
+            continue
+        out.append([round(von, 2), round(bis, 2),
+                    round(max(x[1] for x in lauf), 3), round(max(x[2] for x in lauf), 3)])
+    return out
+
+
+def bewegung_max_im_bereich(rec: dict | None, von_s: float, bis_s: float, fenster_s: float = 2.0) -> float | None:
+    """Höchste ``bewegung`` der Fenster im Bereich; None ohne Fenster. Für die Meldung des Prüfers, wenn ein
+    Shot außerhalb jedes stabilen Bereichs liegt (Spec 2026-09-23)."""
+    fen = _fenster_im_bereich(rec, von_s, bis_s, fenster_s) if rec and rec.get("fenster") else []
+    return max((float(f[2]) for f in fen), default=None)
 
 
 def genutzter_quellbereich_s(src_in_f: int, n_f: int, clip_fps: float, langsam: bool,
