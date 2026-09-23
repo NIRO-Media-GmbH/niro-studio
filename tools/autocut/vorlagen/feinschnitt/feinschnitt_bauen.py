@@ -725,16 +725,21 @@ if __name__ == "__main__":
         # scripts/autocut_gyroflow.py. Nur im Probelauf liegen BROLL (was benutzt wird) und die per broll_auswahl.json
         # aufgelösten shots (welche Datei das ist) zusammen vor. Auflösung wie oben in plan() (shots.get(nr));
         # tempo50 ist die 6. BROLL-Spalte "50 %" (s. Kommentar über BROLL) — nicht geraten, sondern dort nachgelesen.
-        gyro_clips, gesehen = [], set()
+        gyro_clips, nach_datei = [], {}
         for zeile in BROLL:
             s = shots.get(zeile[0])
             if s is None:
                 continue  # fehlender Shot wäre oben schon als FEHLER gemeldet, dieser Zweig liefe dann nicht
             datei = s["datei"]
-            if datei in gesehen:
-                continue
-            gesehen.add(datei)
-            gyro_clips.append({"datei": datei, "tempo50": bool(zeile[5])})
+            eintrag = nach_datei.get(GF.norm_pfad(datei))
+            if eintrag is None:
+                eintrag = {"datei": datei, "tempo50": False}
+                nach_datei[GF.norm_pfad(datei)] = eintrag
+                gyro_clips.append(eintrag)
+            # ODER über alle Verwendungen statt „erste gewinnt": eine Datei, die einmal mit 100 % und einmal mit
+            # 50 % im Schnitt steht, ist im Bericht sonst falsch ausgewiesen. Reine Anzeige — VideoSpeed leitet
+            # der Bau je Shot selbst aus m["langsam"] ab, nicht aus dieser Datei.
+            eintrag["tempo50"] = eintrag["tempo50"] or bool(zeile[5])
         ziel = AC / "gyroflow_clips.json"
         ziel.write_text(json.dumps(gyro_clips, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"{len(gyro_clips)} B-Roll-Quelldateien für Gyroflow → {ziel}")

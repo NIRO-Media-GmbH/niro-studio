@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import unicodedata
 from pathlib import Path
 
@@ -389,3 +390,27 @@ def test_charge_lauf_dedupliziert_ueber_die_unicode_form_hinweg(tmp_path: Path):
     assert erg["uebersprungen"] == []
     assert len(erg["clips"]) == 1
     assert (medien / "aufrufe.log").read_text(encoding="utf-8").count("--export-project") == 1
+
+
+def test_clip_export_teilt_den_cache_nicht_zwischen_zwei_kopien_derselben_datei(tmp_path: Path):
+    """fingerprint() ist Name + Größe + mtime, ohne Ordner — zwei Kopien derselben Datei an verschiedenen Orten
+    teilen ihn (Kartenkopie SSD/NAS). Ohne Prüfung des Sidecar-Pfads galt die zweite Kopie als Cache-Treffer und
+    bekam nie ihr eigenes Sidecar, sondern den Pfad neben der ersten — verschwindet die, ist der Shot ohne."""
+    ch = _charge(tmp_path)
+    a, b = tmp_path / "ssd", tmp_path / "nas"
+    a.mkdir(), b.mkdir()
+    va, vb = a / "FX3_0001.MP4", b / "FX3_0001.MP4"
+    va.write_bytes(b"videodaten")
+    vb.write_bytes(b"videodaten")
+    os.utime(vb, ns=(va.stat().st_atime_ns, va.stat().st_mtime_ns))     # gleicher Fingerprint erzwungen
+    from niro_autocut.media import fingerprint as _fp
+    assert _fp(va) == _fp(vb)
+    cfg = json.loads(json.dumps(CFG))
+    cfg["gyroflow"]["cli"] = _cli_attrappe(tmp_path)
+
+    reca, _ = G.clip_export(ch, va, {"haltung": "hand"}, cfg, {str(va), str(vb)})
+    recb, aus_cache = G.clip_export(ch, vb, {"haltung": "hand"}, cfg, {str(va), str(vb)})
+
+    assert aus_cache is False
+    assert Path(reca["sidecar"]) == a / "FX3_0001.gyroflow" and (a / "FX3_0001.gyroflow").is_file()
+    assert Path(recb["sidecar"]) == b / "FX3_0001.gyroflow" and (b / "FX3_0001.gyroflow").is_file()

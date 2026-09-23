@@ -352,3 +352,13 @@ def test_gyroflow_joins_laufen_ueber_norm_pfad():
     text = VORLAGE.read_text(encoding="utf-8")
     assert text.count("GF.norm_pfad(") >= 2
     assert "expanduser().resolve()" not in text
+
+
+def test_probelauf_verodert_tempo50_ueber_alle_verwendungen():
+    """Dieselbe Quelldatei einmal mit 100 % und einmal mit 50 % im Schnitt: „erste gewinnt" wies sie im Bericht
+    falsch aus. Reine Anzeige — VideoSpeed leitet der Bau je Shot aus m[\"langsam\"] ab."""
+    text = VORLAGE.read_text(encoding="utf-8")
+    i = text.index("gyro_clips, nach_datei")
+    block = text[i:text.index("gyroflow_clips.json", i)]
+    assert 'eintrag["tempo50"] = eintrag["tempo50"] or bool(zeile[5])' in block
+    assert "gesehen" not in block                       # kein Set, das die zweite Verwendung verwirft

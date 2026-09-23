@@ -125,14 +125,20 @@ def clip_export(ch, video, rec: dict, cfg: dict, erlaubte_pfade: set[str],
     ph = preset_hash(preset)
     fp = fingerprint(video)
     cache = Path(ch.autocut) / CACHE_DIR / f"{fp}.json"
+    # Erwarteter Sidecar-Pfad wie in sidecar_pfad(), aber ohne dessen Freigabeprüfung — hier nur als Cache-Schlüssel.
+    erwartet = str(Path(norm_pfad(video)).with_suffix(".gyroflow"))
 
     if cache.exists() and not force:
         try:
             alt = json.loads(cache.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError, OSError):
             alt = None
+        # Der Fingerprint ist Name + Größe + mtime ohne Ordner: zwei Kopien derselben Datei an verschiedenen Orten
+        # (SSD und NAS, Kartenkopie) teilen ihn. Ohne den Pfadvergleich bekäme die zweite nie ein eigenes Sidecar,
+        # sondern den Pfad neben der ersten — verschwindet die, steht der Shot ohne da.
         if isinstance(alt, dict) and not alt.get("fehler") and alt.get("preset_hash") == ph \
-                and alt.get("sidecar") and Path(alt["sidecar"]).is_file():
+                and alt.get("sidecar") and norm_pfad(alt["sidecar"]) == erwartet \
+                and Path(alt["sidecar"]).is_file():
             alt["path"], alt["clip"] = str(video), video.stem
             return alt, True
 
