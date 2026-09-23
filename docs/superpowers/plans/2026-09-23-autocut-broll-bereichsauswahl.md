@@ -264,7 +264,8 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 """Erzeugt die Fixtures bereiche-urteile.json und bereiche-wlc.json aus den Chargen-Daten.
 
 Einmalig von Hand laufen lassen, NICHT im Testlauf: die Quellen liegen in projects/ und damit nicht im Repo
-(NAS-Spiegel). Die erzeugten Dateien werden committet — sie sind die Testgrundlage.
+(NAS-Spiegel). Die erzeugten Dateien werden committet — sie sind die Testgrundlage. Gelesen wird aus dem
+HAUPTORDNER des Repos (Worktrees haben kein projects/), geschrieben wird neben diese Datei.
 
     python3 tools/autocut/tests/fixtures/gen_bereiche_fixture.py
 
@@ -280,10 +281,22 @@ bleiben vollständig — dort werden Kandidaten über den ganzen Clip geprüft.
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 
 HIER = Path(__file__).resolve().parent
-STUDIO = HIER.parents[3]            # tests/fixtures → tests → autocut → tools → NIRO Studio
+
+
+def studio_wurzel() -> Path:
+    """Hauptordner des Repos. NICHT relativ zu dieser Datei bestimmen: in einem Worktree gibt es kein
+    projects/ (CLAUDE.md, „Chargen-Daten nur im Hauptordner des Repos lesen und schreiben"). Die erste
+    Zeile von `git worktree list --porcelain` nennt den Hauptordner, auch aus einem Worktree heraus."""
+    aus = subprocess.run(["git", "worktree", "list", "--porcelain"], cwd=HIER,
+                         capture_output=True, text=True, check=True).stdout
+    return Path(aus.splitlines()[0].removeprefix("worktree "))
+
+
+STUDIO = studio_wurzel()
 MEK = STUDIO / "projects/Marien-Elisabeth-Kliniken/Imagefilm/2026-06 Ads und Imagefilm Dreh/_intern/autocut/telemetrie.json"
 WLC = STUDIO / "projects/WLC/Recruiting/2026-07 Erster Dreh/_intern/autocut/telemetrie.json"
 KAL = STUDIO / "projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schwenks/_intern"
@@ -351,7 +364,7 @@ bereiche-urteile.json: 30 Einträge, 52 KB
 bereiche-wlc.json: 4 Einträge, 9 KB
 ```
 
-Wenn eine Quelle fehlt: `sh tools/studio_abgleich.sh --charge "projects/<...>"` holt die Charge vom NAS. Die Telemetrie-Dateien liegen unter 20 MB und werden vom Abgleich getragen.
+Wenn eine Quelle fehlt: `sh tools/studio_abgleich.sh --charge "projects/<...>"` **im Hauptordner** `/Users/jansantos/NIRO Studio` holt die Charge vom NAS. Die Telemetrie-Dateien liegen unter 20 MB und werden vom Abgleich getragen. Der Worktree bekommt kein `projects/` — das ist richtig so, der Generator liest über `git worktree list --porcelain` im Hauptordner.
 
 - [ ] **Step 3: Write the failing test**
 
