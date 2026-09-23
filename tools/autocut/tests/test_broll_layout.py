@@ -520,6 +520,24 @@ def test_verify_layout_schneller_zoom_mit_abweichung_erlaubt():
     assert not any("schneller Zoom" in e for e in r.errors)
 
 
+def test_verify_layout_abweichung_ohne_grund_ist_ein_fehler():
+    """Seit Regel 3b ist `abweichung` der einzige Ausweg aus einer HARTEN Regel; dass ein Grund zwingend
+    dazugehört, hängt allein an einer Zeile in verify_layout(). Ohne sie könnte jeder Shot die Zoomregel
+    wortlos aushebeln. Ein Grund aus Leerzeichen zählt nicht (``.strip()``)."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    shot = plan.strecken[0].szenen[0].shots[0]
+    shot.abweichung = True
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25)
+    assert any("abweichung=true ohne abweichung_grund" in e and "FX3_1" in e for e in r.errors), r.errors
+    shot.abweichung_grund = "   "
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25)
+    assert any("abweichung=true ohne abweichung_grund" in e for e in r.errors), r.errors
+    shot.abweichung_grund = "Plan verlangt genau diese Fahrt"
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25)
+    assert not any("abweichung_grund" in e for e in r.errors), r.errors
+
+
 def test_verify_layout_schneller_zoom_zeitlupe_halbiert_genutzten_bereich():
     """Fix-Runde 1 (Coordinator-Review zu Task 4): beide bisherigen Zoom-Tests nutzten nur tempo=1 —
     der Zeitlupen-Zweig `langsam=(p.get("tempo") or 1) > 1` beim Aufruf von TM.genutzter_quellbereich_s()
