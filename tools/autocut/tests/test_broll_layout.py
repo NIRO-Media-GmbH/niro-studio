@@ -421,6 +421,49 @@ def test_verify_layout_brennweitenfolge_frische_telemetrie_ohne_schwellen_warnun
     assert not any("Telemetrie-Schwellen" in w for w in r.warnings)
 
 
+def test_verify_layout_meldet_shots_ohne_telemetrie_datensatz():
+    """Fix-Welle, Fund I2: Shots, für die finden() keinen Datensatz liefert, wurden bei 3b und 3c stumm
+    übersprungen — der einzige Zähler zählte Schnittpaare und nannte ausdrücklich nur die Brennweitenregel.
+    Hier hat nur FX3_1 einen Datensatz; für FX3_2 und FX3_3 muss der Bericht sagen, dass Zoom- und
+    Bewegungsregel nicht geprüft wurden, getrennt von der Schnittpaar-Zählung."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    ohne = [w for w in r.warnings if "ohne verwertbaren Telemetrie-Datensatz" in w]
+    assert len(ohne) == 1 and ohne[0].startswith("2 von 3 Shots"), r.warnings
+    assert "Zoom- und Bewegungsregel" in ohne[0]
+    # getrennt davon die Schnittpaar-Zählung für die Brennweitenregel
+    assert any("Schnitte ohne Brennweitenverlauf" in w and "Brennweitenregel" in w for w in r.warnings), r.warnings
+    # Gegenprobe: mit Datensatz für alle drei Clips schweigt die Meldung
+    tele = [_tele("FX3_1.MP4", 25.0), _tele("FX3_2.MP4", 40.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert not any("ohne verwertbaren Telemetrie-Datensatz" in w for w in r.warnings), r.warnings
+
+
+def test_verify_layout_datensatz_mit_fehler_zaehlt_als_ungeprueft():
+    """Ein Datensatz mit ``fehler`` trägt weder ``zooms`` noch ``fenster`` — 3b und 3c würden still
+    durchwinken. Er zählt deshalb wie ein fehlender Datensatz."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [{**_tele("FX3_1.MP4", 25.0), "fehler": "rtmd nicht lesbar"},
+            _tele("FX3_2.MP4", 40.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    assert any(w.startswith("1 von 3 Shots ohne verwertbaren Telemetrie-Datensatz") for w in r.warnings), r.warnings
+
+
+def test_verify_layout_ohne_telemetrie_nur_eine_meldung():
+    """Fix-Welle, Fund I2: ohne jede Telemetrie meldeten „N Schnitte ohne Brennweitenverlauf" und
+    „keine Telemetrie" denselben Sachverhalt zweimal. Jetzt bleibt genau eine Meldung, die alle drei
+    Regeln und die Zahl der Shots nennt."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, None)
+    tele_w = [w for w in r.warnings if "Telemetrie" in w or "Brennweitenverlauf" in w]
+    assert len(tele_w) == 1, tele_w
+    assert tele_w[0].startswith("keine Telemetrie") and "alle 3 Shots" in tele_w[0]
+    assert "Brennweiten-, Zoom- und Bewegungsregel" in tele_w[0]
+
+
 # --------------------------------------------------------------------------- #
 # Task 4: Regel 3b — kein schneller Zoom im genutzten Bereich
 # --------------------------------------------------------------------------- #

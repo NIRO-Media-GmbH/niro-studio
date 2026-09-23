@@ -636,6 +636,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     forbidden = set(cfg["forbidden_maengel"])
     uses: dict[str, list[str]] = {}
     n_exc = 0
+    ohne_datensatz = 0          # Shots, für die 3b/3c gar nicht laufen konnten (Fix-Welle, Fund I2)
     for p in placed:
         tag = f"Strecke {p['strecke']} Szene {p['szene_i']} Shot {p['shot_i']} ({p['name']} {p['in_s']:g}–{p['out_s']:g}s)"
         c = by_path[p["clip"]]
@@ -677,14 +678,21 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         if p["abweichung"] and not p["abweichung_grund"].strip():
             r.errors.append(f"{tag}: abweichung=true ohne abweichung_grund.")
         rec = TM.finden(tele, p["clip"]) if tele else None
-        # außerhalb der abweichung-Bedingung: Regel 3c rechnet auf denselben Grenzen weiter
-        von, bis = _quellbereich_s(p, fps)
-        if rec:
+        if rec is not None and rec.get("fehler"):
+            rec = None          # Messfehler: zooms und fenster sind leer, beide Regeln würden still durchwinken
+        if rec is None:
+            # Kein verwertbarer Datensatz — Teil-Lauf der Telemetrie, Material von NAS auf SSD gewandert
+            # (finden() fällt auf den Dateinamen zurück und schweigt bei Mehrdeutigkeit) oder telemetrie.json
+            # unlesbar (laden() gibt dann []). Bisher entfielen 3b und 3c hier spurlos: der einzige Zähler
+            # zählte Schnittpaare und nannte nur die Brennweitenregel (Fix-Welle, Fund I2).
+            ohne_datensatz += 1
+        if rec is not None:
+            # außerhalb der abweichung-Bedingung: Regel 3c rechnet auf denselben Grenzen weiter
+            von, bis = _quellbereich_s(p, fps)
             if not p["abweichung"]:
                 for z in TM.zooms_im_bereich(rec, von, bis):
                     r.errors.append(f"{tag}: schneller Zoom im genutzten Bereich ({z['von_mm']:g} → {z['bis_mm']:g} mm, "
                                     f"Spitze {z['tempo_max']:.0f} %/s) — anderen Bereich wählen oder `abweichung` mit Grund.")
-        if rec:
             rand = float(tcfg["bewegung_rand_s"])
             faktor = float(tcfg["bewegung_spitze_faktor"])
             ruhig = float(tcfg["ruhig_max_px"])
@@ -757,12 +765,20 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         if a["setup_hash"] and b["setup_hash"] and _hamming(a["setup_hash"], b["setup_hash"]) < min_dist:
             r.warnings.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} sehen fast gleich aus (Setup-Abstand "
                               f"{_hamming(a['setup_hash'], b['setup_hash'])}).")
-    if ungeprueft:
-        r.warnings.append(f"{ungeprueft} Schnitte ohne Brennweitenverlauf — keine Telemetrie oder Datensatz von vor der "
-                          f"Umstellung; Brennweitenregel dort nicht geprüft.")
+    # Eine Meldung je Sachverhalt (Fix-Welle, Fund I2): ohne jede Telemetrie sind „Schnitte ohne
+    # Brennweitenverlauf" und „Shots ohne Datensatz" dieselbe Aussage — sie entfallen dann zugunsten einer
+    # einzigen Meldung, die alle drei Regeln und die Zahl der Shots nennt.
     if not tele:
-        r.warnings.append("keine Telemetrie — Brennweiten- und Zoomregel nicht geprüft.")
+        r.warnings.append(f"keine Telemetrie — Brennweiten-, Zoom- und Bewegungsregel für alle {len(placed)} Shots "
+                          f"nicht geprüft; autocut_telemetrie.py laufen lassen.")
     else:
+        if ungeprueft:
+            r.warnings.append(f"{ungeprueft} Schnitte ohne Brennweitenverlauf — Brennweitenregel dort nicht geprüft "
+                              f"(Datensatz fehlt oder stammt von vor der Umstellung).")
+        if ohne_datensatz:
+            r.warnings.append(f"{ohne_datensatz} von {len(placed)} Shots ohne verwertbaren Telemetrie-Datensatz — "
+                              f"Zoom- und Bewegungsregel dort nicht geprüft (Telemetrie nur teilweise gelaufen, Clip "
+                              f"verschoben oder telemetrie.json unlesbar).")
         # veraltete Datensätze der genutzten Clips melden, wie es die Vorlagen 3a/6d tun
         for hinweis in TM.telemetrie_hinweise([TM.finden(tele, p["clip"]) for p in seq], tcfg):
             r.warnings.append(hinweis)

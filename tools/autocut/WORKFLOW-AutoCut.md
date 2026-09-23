@@ -307,7 +307,10 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    Bewegungsspitze** (nur Warnung) — Spitze mindestens `bewegung_spitze_faktor` (3,0) über der Basis (Grundniveau
    des Clips, nach unten gedeckelt bei `ruhig_max_px` 0,15, darunter gilt das Bild ohnehin als ruhig);
    `bewegung_rand_s` (0,5) und `bewegung_spitze_faktor` sind unkalibriert, die Regel blockiert deshalb nie. Ohne
-   Telemetrie entfallen alle drei, der Bericht nennt die Zahl der ungeprüften Shots.
+   Telemetrie entfallen alle drei, und der Bericht sagt das in **einer** Warnung mit der Zahl der Shots. Fehlt sie
+   nur einzelnen Clips (Teil-Lauf, Material von NAS auf SSD gewandert, `telemetrie.json` unlesbar), nennt er
+   getrennt, wie viele Shots ohne verwertbaren Datensatz blieben (Zoom- und Bewegungsregel) und wie viele Schnitte
+   ohne Brennweitenverlauf (Brennweitenregel).
 5. **Dem User vorlegen** — Gesichtsanteil, Zahl der Strecken/Szenen/Shots/Zeitlupen, Ausnahmen und
    Abweichungen mit Grund, offene Motive. Erst nach Freigabe bauen.
 6. **Bauen** — `autocut_place_broll.py "$CHARGE"`: V3 in die roh-Timeline (Bin `AutoCut/<Video>/B-Roll`,
