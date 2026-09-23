@@ -769,8 +769,12 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                                 f"({kb_a:g} → {kb_b:g} mm, Abstand {TM.brennweite_abstand(kb_a, kb_b):.0%}) — anderen Shot wählen.")
         else:
             ungeprueft += 1
-        if a["einstellung"] == b["einstellung"] and a["perspektive"] == b["perspektive"] and \
-                (gleiche_kb if gleiche_kb is not None else a["brennweite"] == b["brennweite"]):
+        # Shot-Doppel nur noch als Rückfall auf die Klassen, wenn mindestens eine KB-Brennweite fehlt. Sind beide
+        # bekannt und gleich, hat Regel 3a dasselbe Paar eine Zeile darüber schon gemeldet (mit anderem
+        # Abhilfetext) — die Dublettenbedingung ist dann eine echte Teilmenge und kann nichts beitragen; sind
+        # beide bekannt und verschieden, sind es ohnehin zwei Setups (Fix-Welle, Fund M1).
+        if gleiche_kb is None and a["einstellung"] == b["einstellung"] and a["perspektive"] == b["perspektive"] \
+                and a["brennweite"] == b["brennweite"]:
             r.errors.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} haben dieselbe Einstellung ({a['einstellung']}) "
                             f"und Perspektive ({a['perspektive']}) bei gleicher Brennweite — anderer Shot.")
         if a["setup_hash"] and b["setup_hash"] and _hamming(a["setup_hash"], b["setup_hash"]) < min_dist:

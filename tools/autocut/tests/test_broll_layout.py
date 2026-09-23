@@ -468,6 +468,28 @@ def test_verify_layout_ohne_telemetrie_nur_eine_meldung():
     assert "Brennweiten-, Zoom- und Bewegungsregel" in tele_w[0]
 
 
+def test_verify_layout_gleiche_kb_meldet_das_paar_nur_einmal():
+    """Fix-Welle, Fund M1: feuerte Regel 3a (gleiche KB), meldete die Dublettenprüfung direkt darunter dasselbe
+    Paar noch einmal mit anderem Abhilfetext. Da 3a immer feuert, sobald ``gleiche_kb`` wahr ist, war die
+    Dublettenbedingung eine echte Teilmenge. FX3_1 und FX3_4 sind im Index dasselbe Setup (Totale / ohne
+    Person / weit) — vor dem Fix gab es für dieses Paar zwei Fehler."""
+    idx = _idx()
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_4.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    tele = [_tele("FX3_1.MP4", 25.0), _tele("FX3_4.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
+    paar = [e for e in r.errors if "FX3_1.MP4 → FX3_4.MP4" in e]
+    assert len(paar) == 1, paar
+    assert "KB-Brennweite" in paar[0], paar
+    # Rückfall auf den Klassenvergleich bleibt unverändert: ohne Telemetrie meldet die Dublettenprüfung weiter
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, None)
+    paar = [e for e in r.errors if "FX3_1.MP4 → FX3_4.MP4" in e]
+    assert len(paar) == 1 and "dieselbe Einstellung" in paar[0], paar
+    # und ebenso, wenn nur eine der beiden KB-Brennweiten bekannt ist
+    r = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    paar = [e for e in r.errors if "FX3_1.MP4 → FX3_4.MP4" in e]
+    assert len(paar) == 1 and "dieselbe Einstellung" in paar[0], paar
+
+
 # --------------------------------------------------------------------------- #
 # Task 4: Regel 3b — kein schneller Zoom im genutzten Bereich
 # --------------------------------------------------------------------------- #
