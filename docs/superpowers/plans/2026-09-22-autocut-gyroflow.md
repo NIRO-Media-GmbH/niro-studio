@@ -4,7 +4,7 @@
 
 **Goal:** Die im Feinschnitt genutzten B-Roll-Shots werden mit Gyroflow stabilisiert — über 8-KB-bis-MB-Sidecars neben den Medien und das OFX-Plugin im Schnitt, ohne gerenderte Zweitmedien.
 
-**Architecture:** Ein neues Modul `niro_autocut.gyroflow` ruft die Gyroflow-CLI headless auf und legt je genutzter Quelldatei eine `.gyroflow`-Projektdatei neben die Mediendatei (`--export-project 2`, mit Gyrodaten, damit sie Pfadwechsel übersteht). Das Glättungs-Preset kommt aus `telemetrie.json` (`haltung`, `wackeln`); Gyroflows `max_zoom` wird so gedeckelt, dass der Brennweitenregel ihre 1,25× garantiert bleiben. Angewendet wird im 6d-Bau per Fusion-Comp je V3-Clip, damit die Readback-Kette gültig bleibt.
+**Architecture:** Ein neues Modul `niro_autocut.gyroflow` ruft die Gyroflow-CLI headless auf und legt je genutzter Quelldatei eine `.gyroflow`-Projektdatei neben die Mediendatei (`--export-project 2`, mit Gyrodaten, damit sie Pfadwechsel übersteht). Das Glättungs-Preset kommt aus `telemetrie.json` (`haltung`, `wackeln`); Gyroflows `max_zoom` deckelt **Gyroflows eigenen** Beschnitt. **Korrektur 23.09.:** Die ursprüngliche Fassung dieses Plans behauptete, das halte der Brennweitenregel ihre 1,25× frei — falsch, `digitalzoom()` lässt bis `digitalzoom_max` (1,5) zu, Gesamtzoom also bis 1,8×. Siehe Spec Abschnitt 4. Angewendet wird im 6d-Bau per Fusion-Comp je V3-Clip, damit die Readback-Kette gültig bleibt.
 
 **Tech Stack:** Python 3.12 (`tools/autocut/venv`), Gyroflow-CLI 1.6.1, Gyroflow-OFX in DaVinci Resolve Studio 21.1, pytest 9.1. Keine neue Abhängigkeit.
 
@@ -16,7 +16,7 @@
 - **Tests:** `cd "/Users/jansantos/NIRO Studio/tools/autocut" && venv/bin/python -m pytest -q`. Tests dürfen **nie** die echte Gyroflow-CLI oder echtes Drehmaterial brauchen.
 - **Gyroflow-CLI:** `/Applications/Gyroflow.app/Contents/MacOS/gyroflow`, konfigurierbar über `gyroflow.cli`.
 - **Export-Typ:** immer `--export-project 2` (mit Gyrodaten). Typ 1 und 3 werden nicht für Sidecars verwendet.
-- **Deckel-Ungleichung:** `max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100`. Mit den Standardwerten (`telemetrie.digitalzoom_max` = 1.5, `telemetrie.digitalzoom_faktor` = 1.25) also **≤ 120**.
+- **Deckel-Ungleichung:** `max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100`, mit den Standardwerten also **≤ 120**. **Korrektur 23.09.: Das ist keine Zusage über den Gesamtzoom** — die Brennweitenregel nimmt bis `digitalzoom_max` (1,5), nicht nur `digitalzoom_faktor`. Der Deckel begrenzt nur Gyroflow; die Einspeisung des Gyroflow-Beschnitts in die Regel ist vereinbart und steht aus.
 - **Config-Pfade:** `cfg["gyroflow"][…]` für das Neue; `cfg["telemetrie"]["digitalzoom_max"]` und `cfg["telemetrie"]["digitalzoom_faktor"]` für die Grenzen (sie liegen unter `telemetrie:`, nicht auf oberster Ebene).
 - **Schreibschutz:** `Charge.assert_writable` wird **nicht** aufgeweicht. Sidecars neben den Medien laufen ausschließlich über `sidecar_pfad()` (Task 3).
 - **Resolve:** Standard nur lesen. Schreibend nur im Projekt, das der User in derselben Session freigibt, nur anhängend, nie während der Wiedergabe.
@@ -138,8 +138,8 @@ gyroflow:                   # Gyroflow-Stabilisierung für B-Roll (Spec 2026-09-
   # Glättung je Haltung aus telemetrie.json. Startwerte 22.09., am ersten echten Durchlauf zu prüfen.
   glaettung: {stativ: 0.2, gimbal: 0.4, hand: 0.7}
   # Gyroflows eigene Zoom-Obergrenze in Prozent (100 = kein Beschnitt). Muss die Ungleichung
-  # max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100 einhalten (1,5 / 1,25 × 100 = 120),
-  # damit der Brennweitenregel ihre 1,25× garantiert bleiben. pruefe_deckel() bricht sonst ab.
+  # max_zoom ≤ digitalzoom_max / digitalzoom_faktor × 100 einhalten (1,5 / 1,25 × 100 = 120);
+  # pruefe_deckel() bricht sonst ab. KEINE Zusage über den Gesamtzoom — siehe Korrektur oben.
   max_zoom: {stativ: 105, gimbal: 110, hand: 120}
 ```
 
