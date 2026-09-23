@@ -20,7 +20,8 @@ from PIL import Image, ImageDraw
 
 from .broll_index import API_ATTEMPTS, CACHE_DIR, RETRY_ERRORS, _font, _image_block, _make_client
 from .charge import TOOL_ROOT, AutoCutError
-from .telemetrie import abschnitt_brennweite, abschnitt_werte, bewegung_spitzen, brennweite_text, finden, laden as telemetrie_laden
+from .telemetrie import (abschnitt_brennweite, abschnitt_werte, bewegung_spitzen, brennweite_text, finden,
+                         laden as telemetrie_laden, stabile_bereiche)
 
 PROMPT_FILE = TOOL_ROOT / "prompts" / "index-sections.md"
 EINSTELLUNG5 = ["Totale", "Halbtotale", "Halbnah", "Nah", "Detail"]
@@ -185,14 +186,20 @@ def _tele_felder(tele: dict | None) -> dict[str, str]:
     return {feld: tele[k] for feld, k in _TELE_FELDER if tele.get(k)}
 
 
-def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) -> tuple[dict, bool]:
+def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0,
+                        tcfg: dict | None = None) -> tuple[dict, bool]:
     """Metadaten in die Abschnitte: perspektive_hoehe überschreiben (``felder_quelle`` „rtmd": der Pitch stammt immer
     aus den Metadaten, auch wenn die Bewegung optisch gemessen wurde), ``brennweite_mm``/``zoom`` (Brennweite in mm und
     schnellste Zoomfahrt im Abschnitt, nur mit ``kb_verlauf``) sowie bewegungsart/haltung ergänzen. Claudes Klasse
     ``brennweite`` bleibt unangetastet (Spec 2026-09-21). Claudes Originalwert je überschriebenem Feld bleibt im
     Abschnitt unter ``claude``: stammt das Feld laut ``felder_quelle`` schon aus der Telemetrie, bleibt ein vorhandenes
     ``claude[feld]`` stehen (der aktuelle Wert ist dann der Telemetrie-Wert), sonst ist der aktuelle Wert Claudes und
-    wird gesichert. Idempotent. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert."""
+    wird gesichert. Idempotent. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert.
+
+    ``tcfg`` = der ``telemetrie:``-Config-Block (Spec 2026-09-23). Mit ihm bekommt jeder Abschnitt zusätzlich
+    ``stabil`` — die auf ihn geschnittenen stabilen Bereiche des Clips, Stücke unter ``stabil_min_s`` fallen weg —
+    und der Datensatz ``stabil_quelle`` mit den drei Schwellen und dem Config-Hash der Messung, aus der sie stammen.
+    Ohne ``tcfg`` schreibt die Funktion beides nicht (Aufrufer, die nur die Metadaten brauchen)."""
     if not tele or tele.get("quelle") in (None, "keine"):
         return rec, False
     felder = _tele_felder(tele)
@@ -200,6 +207,8 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) ->
     quelle: dict[str, str] = {}
     neu = []
     geaendert = False
+    bereiche = stabile_bereiche(tele, tcfg) if tcfg else None
+    min_s = float(tcfg["stabil_min_s"]) if tcfg else 0.0
     for a in rec.get("abschnitte") or []:
         b = dict(a)
         claude = dict(b.get("claude") or {})
@@ -223,11 +232,22 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0) ->
             if w.get(k) is not None:
                 geaendert |= b.get(k) != w[k]
                 b[k] = w[k]
+        if bereiche is not None:
+            # auf den Abschnitt schneiden; was dabei unter stabil_min_s fällt, ist kein Shot mehr
+            geschnitten = [[max(x, von), min(z, bis), wk, bw] for x, z, wk, bw in bereiche
+                           if min(z, bis) - max(x, von) >= min_s - 1e-6]
+            geaendert |= b.get("stabil") != geschnitten
+            b["stabil"] = geschnitten
         neu.append(b)
     out = {**rec, "abschnitte": neu}
     if quelle:
         geaendert |= rec.get("felder_quelle") != quelle
         out["felder_quelle"] = quelle
+    if tcfg:
+        sq = {"ruhig_max_px": float(tcfg["ruhig_max_px"]), "bewegung_max": float(tcfg["bewegung_max"]),
+              "stabil_min_s": float(tcfg["stabil_min_s"]), "config_hash": tele.get("config_hash")}
+        geaendert |= rec.get("stabil_quelle") != sq
+        out["stabil_quelle"] = sq
     return out, geaendert
 
 
@@ -359,10 +379,11 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
     """
     scfg = cfg["index_sections"]
     icfg = cfg["index"]
+    tcfg = cfg.get("telemetrie") or None
     fenster_s = float((cfg.get("telemetrie") or {}).get("fenster_s", 2.0))
     max_sections = int(scfg.get("max_sections", 5))
     if not force and not needs_sections(rec, max_sections):
-        neu, geaendert = telemetrie_anwenden(rec, telemetrie, fenster_s)
+        neu, geaendert = telemetrie_anwenden(rec, telemetrie, fenster_s, tcfg)
         if geaendert:
             _cache_schreiben(charge, neu)
         return {**neu, "_cache": True}
@@ -418,7 +439,7 @@ def index_sections_clip(charge, rec: dict, client, cfg: dict, system_prompt: str
     out = {**rec, "abschnitte": merged, "abschnittsbogen": str(sheet), "warnungen": warnungen,
            "nachlauf": {"modell": call_cfg["model"], "effort": call_cfg["effort"], "usage": usage, "reparaturen": reparaturen,
                         "indiziert_am": _dt.datetime.now().isoformat(timespec="seconds")}}
-    out, _ = telemetrie_anwenden(out, telemetrie, fenster_s)
+    out, _ = telemetrie_anwenden(out, telemetrie, fenster_s, tcfg)
     _cache_schreiben(charge, out)
     return {**out, "_cache": False}
 
