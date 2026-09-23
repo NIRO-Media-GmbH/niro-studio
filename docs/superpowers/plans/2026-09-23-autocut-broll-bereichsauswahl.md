@@ -478,7 +478,7 @@ def test_abnahme_wlc_kandidaten_unveraendert():
 cd tools/autocut && "/Users/jansantos/NIRO Studio/tools/autocut/venv/bin/python3" -m pytest tests/test_bereiche_abnahme.py -q -v
 ```
 
-Erwartet: PASS. Neun Testfunktionen, davon eine viermal parametrisiert — `pytest -v` zeigt zwölf Zeilen.
+Erwartet: PASS. Sieben Testfunktionen, davon eine viermal parametrisiert — `pytest` sammelt zehn Fälle.
 
 Dies ist der erste Test, der nach der Implementierung geschrieben wird statt davor — bewusst: er prüft nicht neues Verhalten, sondern nimmt das aus Task 1 gegen echte Urteile ab. Schlägt eine Abnahme fehl, **nicht den Test anpassen**, sondern melden: dann stimmt die Schwelle nicht.
 
