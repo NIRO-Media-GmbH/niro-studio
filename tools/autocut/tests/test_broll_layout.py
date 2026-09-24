@@ -384,15 +384,21 @@ def test_compact_index_v2_ohne_telemetrie_liefert_none():
 # Task 3: Telemetrie in verify_layout() — Regel 3a (Brennweitenfolge)
 # --------------------------------------------------------------------------- #
 
-def _tele(datei, kb_mm, zooms=None, fenster=None):
+def _tele(datei, kb_mm, zooms=None, fenster=None, ruhige=None, dauer_s=12.0):
     """Telemetrie-Datensatz wie in telemetrie.json; konstante Brennweite = ein kb_verlauf-Eintrag.
 
     ``config_hash`` trägt den Hash der Test-Config: produktiv setzt ihn clip_messen() bei jeder Messung, und
     seit Fund I4 überspringen Regel 3b und 3c Datensätze mit abweichendem Hash. Ein Datensatz ohne Hash ist
-    damit ausdrücklich „mit anderen Schwellen gemessen" (siehe eigener Test)."""
+    damit ausdrücklich „mit anderen Schwellen gemessen" (siehe eigener Test).
+
+    ``ruhige`` überschreibt ``ruhige_fenster`` (Startzeiten mit ``wackeln`` <= ruhig_max_px); ohne Angabe aus
+    ``fenster`` abgeleitet — damit greift die Bewegungsrechnung (Spec 2026-09-23) auch ohne, dass jeder Aufrufer
+    sie von Hand pflegt."""
     return {"path": f"/nas/Standort 1/Sortiert/B-Roll/Flur/{datei}", "clip": datei.split(".")[0],
-            "quelle": "rtmd", "fps": 25.0, "dauer_s": 12.0, "fenster_s": 2.0, "config_hash": TM.config_hash(CFG_TELEMETRIE),
-            "kb_verlauf": [[0.0, kb_mm]], "zooms": zooms or [], "fenster": fenster or []}
+            "quelle": "rtmd", "fps": 25.0, "dauer_s": dauer_s, "fenster_s": 2.0,
+            "config_hash": TM.config_hash(CFG_TELEMETRIE),
+            "kb_verlauf": [[0.0, kb_mm]], "zooms": zooms or [], "fenster": fenster or [],
+            "ruhige_fenster": ruhige if ruhige is not None else [f[0] for f in (fenster or []) if f[1] <= 0.15]}
 
 
 def test_verify_layout_brennweitenfolge_meldet_gleiche_kb_am_schnitt():
@@ -925,3 +931,93 @@ def test_compact_index_v2_reicht_maengel_und_stabil_bei_verwendbaren_abschnitten
 def test_compact_index_v2_ohne_neue_felder_wie_bisher():
     ab = L.compact_index_v2(_idx(1), CFG)[0]["abschnitte"][0]
     assert ab["maengel"] == [] and ab["stabil"] == [] and "gerettet" not in ab
+
+
+# --------------------------------------------------------------------------- #
+# Prüfer je Abschnitt (Spec 2026-09-23)
+# --------------------------------------------------------------------------- #
+
+def _idx_abschnitts_maengel(maengel_a, maengel_b, stabil_a=None, stabil_b=None):
+    """Clip 1 mit zwei Abschnitten 0–6 s und 6–12 s, je eigene Mängel und stabile Bereiche."""
+    idx = _idx()
+    c = idx["clips"][0]
+    c["maengel"] = sorted(set(maengel_a) | set(maengel_b))
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                          "config_hash": TM.config_hash(CFG_TELEMETRIE)}
+    vorlage = dict(c["abschnitte"][0])
+    c["abschnitte"] = [{**vorlage, "von_s": 0, "bis_s": 6, "maengel": list(maengel_a),
+                        "stabil": stabil_a if stabil_a is not None else [[0.0, 6.0, 0.05, 0.4]]},
+                       {**vorlage, "von_s": 6, "bis_s": 12, "maengel": list(maengel_b),
+                        "stabil": stabil_b if stabil_b is not None else [[6.0, 12.0, 0.05, 0.4]]}]
+    return idx
+
+
+def test_verify_layout_sperrt_nur_den_betroffenen_abschnitt():
+    """FX3_8636-Fall: „Blick in Kamera" nur im ersten Abschnitt — der zweite bleibt nutzbar."""
+    idx = _idx_abschnitts_maengel(["Blick in Kamera"], [])
+    plan = _plan({1: [("Flur/FX3_1.MP4", 7.0, 10.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert not any("Blick in Kamera" in e for e in res.errors)
+
+
+def test_verify_layout_meldet_den_mangel_des_benutzten_abschnitts():
+    idx = _idx_abschnitts_maengel(["Blick in Kamera"], [])
+    plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert any("Blick in Kamera" in e and "0–6s" in e for e in res.errors)
+
+
+def test_verify_layout_laesst_wackler_im_stabilen_bereich_fallen():
+    """Frage (b) der Spec: die Messung überstimmt den Mangel, Schwelle ist ruhig_max_px."""
+    cfg = {**CFG, "forbidden_maengel": ["Blick in Kamera", "Crew im Bild", "Wackler"]}
+    idx = _idx_abschnitts_maengel(["Wackler"], [])
+    plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, cfg, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert not any("Wackler" in e for e in res.errors)
+    # ohne stabilen Bereich greift die Sperre wieder
+    ohne = _idx_abschnitts_maengel(["Wackler"], [], stabil_a=[])
+    res2 = L.verify_layout(plan, TP, ohne, CL, cfg, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert any("Wackler" in e for e in res2.errors)
+
+
+def test_verify_layout_erlaubt_shot_im_stabilen_bereich_eines_verworfenen_abschnitts():
+    idx = _idx_abschnitts_maengel([], [])
+    for a in idx["clips"][0]["abschnitte"]:
+        a["verwendbar"] = False
+    plan = _plan({1: [("Flur/FX3_1.MP4", 4.0, 7.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    # 4–7 s läuft über die Abschnittsgrenze bei 6 s: nur durch das Zusammenlegen erlaubt (FX3_8641-Fall)
+    assert not any("verwendbaren Abschnitt" in e for e in res.errors)
+
+
+def test_verify_layout_warnt_bei_shot_ausserhalb_jedes_stabilen_bereichs():
+    """FX3_8663-Fall: der Abschnitt ist verwendbar, die gemessene Bewegung dort aber hoch — nur Warnung."""
+    idx = _idx_abschnitts_maengel([], [], stabil_a=[])
+    fenster = [[0.0, 0.5, 10.3, "tilt_auf", None], [1.0, 0.5, 8.8, "tilt_auf", None],
+               [2.0, 0.5, 9.1, "tilt_auf", None], [3.0, 0.5, 7.4, "tilt_auf", None]]
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0, fenster=fenster)])
+    assert not any("stabil" in e for e in res.errors)
+    assert any("nicht als stabil gemessen" in w and "10,3" in w for w in res.warnings)
+
+
+def test_verify_layout_ohne_abschnitts_maengel_sperrt_weiter_clip_weit():
+    """Alter Index: kein Abschnitt trägt den Schlüssel maengel — Verhalten wie vor der Umstellung."""
+    idx = _idx()
+    idx["clips"][0]["maengel"] = ["Blick in Kamera"]
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, None)
+    assert any("Blick in Kamera" in e for e in res.errors)
+    # Wortlaut wie Step 7 ihn tatsächlich erzeugt (nicht "... fehlen", siehe Report: Diskrepanz zum Brief)
+    assert any("Clips ohne Abschnitts-Mängel" in w for w in res.warnings)
+
+
+def test_verify_layout_ignoriert_stabile_bereiche_aus_alter_messung():
+    """Mit anderen Schwellen abgeleitet: der Bereich sagt nichts über die heutige Konfiguration."""
+    idx = _idx_abschnitts_maengel([], [])
+    for a in idx["clips"][0]["abschnitte"]:
+        a["verwendbar"] = False
+    idx["clips"][0]["stabil_quelle"]["config_hash"] = "000000000000"
+    plan = _plan({1: [("Flur/FX3_1.MP4", 4.0, 7.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert any("verwendbaren Abschnitt" in e for e in res.errors)

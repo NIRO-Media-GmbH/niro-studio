@@ -586,6 +586,27 @@ def _kb_am_schnitt(p: dict, tele: list[dict] | None, fps: float, seite: str) -> 
     return TM.kb_am(rec, bis if seite == "ende" else von, seite=seite)
 
 
+def _hat_abschnitts_maengel(c: dict) -> bool:
+    """True, wenn mindestens ein Abschnitt den Schlüssel ``maengel`` trägt (Index ab Spec 2026-09-23).
+    Eine leere Liste ist eine Aussage („hier ist nichts"), ein fehlender Schlüssel ist keine."""
+    return any("maengel" in a for a in (c.get("abschnitte") or []))
+
+
+def _abschnitte_im_bereich(c: dict, von_s: float, bis_s: float) -> list[dict]:
+    """Abschnitte, die das Intervall berühren — ein Shot über eine Abschnittsgrenze muss beide erfüllen."""
+    return [a for a in (c.get("abschnitte") or [])
+            if float(a["von_s"]) - EPS < bis_s and von_s < float(a["bis_s"]) + EPS]
+
+
+def _stabil_bereiche(c: dict) -> list[tuple[float, float]]:
+    return [(float(x), float(z)) for a in (c.get("abschnitte") or []) for x, z, *_ in (a.get("stabil") or [])]
+
+
+def _in_stabil(c: dict, von_s: float, bis_s: float) -> bool:
+    """Liegt der genutzte Quellbereich ganz in einem gemessenen stabilen Bereich?"""
+    return any(x - EPS <= von_s and bis_s <= z + EPS for x, z in _stabil_bereiche(c))
+
+
 def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg: dict, fps: float,
                   tele: list[dict] | None = None) -> VerifyResult:
     """Harte Prüfung nach Spec v2 Abschnitt 3.3."""
@@ -638,6 +659,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     n_exc = 0
     ohne_datensatz = 0          # Shots, für die 3b/3c gar nicht laufen konnten (Fix-Welle, Fund I2)
     alte_schwellen = 0          # Shots, für die 3b/3c übersprungen wurden (Fix-Welle, Fund I4)
+    ohne_abschnitts_maengel = 0     # Clips aus einem Index vor Spec 2026-09-23 (Sperre bleibt clip-weit)
     hash_heute = TM.config_hash(tcfg)
     for p in placed:
         tag = f"Strecke {p['strecke']} Szene {p['szene_i']} Shot {p['shot_i']} ({p['name']} {p['in_s']:g}–{p['out_s']:g}s)"
@@ -650,14 +672,32 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
             continue
         if c.get("dauer_s") is not None and p["out_s"] > float(c["dauer_s"]) + EPS:
             r.errors.append(f"{tag}: liegt außerhalb des Clips (0–{_s(c['dauer_s'])}).")
-        spans = _usable_spans(c)
+        # Stabile Bereiche aus einer Messung mit anderen Schwellen zählen nicht — dann verhält sich der Clip
+        # wie ohne Telemetrie (Spec 2026-09-23, Randfälle).
+        frisch = _stabil_frisch(c, hash_heute)
+        spans = _usable_spans(c, stabil=frisch)
         if not any(a - EPS <= p["in_s"] and p["out_s"] <= z + EPS for a, z in spans):
-            r.errors.append(f"{tag}: liegt in keinem verwendbaren Abschnitt (verwendbar: {', '.join(f'{a:g}–{z:g}s' for a, z in spans) or 'keiner'}).")
-        maengel = set(c.get("maengel") or [])
-        if (c.get("personen") or {}).get("blick_in_kamera"):
-            maengel.add("Blick in Kamera")
-        for m in sorted(maengel & forbidden):
-            r.errors.append(f"{tag}: Clip hat den Mangel „{m}“ — gesperrt.")
+            r.errors.append(f"{tag}: liegt in keinem verwendbaren Abschnitt und in keinem gemessenen stabilen Bereich "
+                            f"(erlaubt: {', '.join(f'{a:g}–{z:g}s' for a, z in spans) or 'nichts'}).")
+        q_von, q_bis = _quellbereich_s(p, fps)
+        stabil_ok = frisch and _in_stabil(c, q_von, q_bis)
+        if _hat_abschnitts_maengel(c):
+            # Sperre je Abschnitt: der Index verortet den Mangel, der Prüfer darf ihn nicht auf den Clip weiten.
+            # „Wackler" entfällt im gemessenen stabilen Bereich — das ist das Überstimmen aus Spec 2026-09-23.
+            for a in _abschnitte_im_bereich(c, p["in_s"], p["out_s"]):
+                sperrend = set(a.get("maengel") or []) & forbidden
+                if stabil_ok:
+                    sperrend -= {"Wackler"}
+                for m in sorted(sperrend):
+                    r.errors.append(f"{tag}: Abschnitt {float(a['von_s']):g}–{float(a['bis_s']):g}s hat den Mangel "
+                                    f"„{m}“ — gesperrt.")
+        else:
+            ohne_abschnitts_maengel += 1
+            maengel = set(c.get("maengel") or [])
+            if (c.get("personen") or {}).get("blick_in_kamera"):
+                maengel.add("Blick in Kamera")
+            for m in sorted(maengel & forbidden):
+                r.errors.append(f"{tag}: Clip hat den Mangel „{m}“ — gesperrt.")
         if p["q"] is not None and int(p["q"]) < 3:
             r.warnings.append(f"{tag}: Abschnitt mit Qualität {p['q']} — Bild prüfen.")
         beat = beat_at(tp_dict, p["rec_in_f"])
@@ -730,6 +770,13 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                     r.warnings.append(f"{tag}: Schnittgrenze bei {schnittgrenze:g} s im Clip liegt in einer Bewegungsspitze — "
                                       f"gemessen im Fenster {t_s:g}–{t_s + fen_s:g} s (Bewegung {bw:g} gegen Basis "
                                       f"{basis:g}, Sockel ruhig_max_px {ruhig:g}) — Hinweis, Schwellen unkalibriert.")
+            # Spec 2026-09-23: der Abschnitt ist verwendbar, der genutzte Bereich aber nicht als ruhig gemessen.
+            # Bewusst nur eine Warnung — ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt.
+            if frisch and any("stabil" in a for a in (c.get("abschnitte") or [])) and not stabil_ok:
+                bw = TM.bewegung_max_im_bereich(rec, von, bis, fen_s)
+                bw_txt = "–" if bw is None else f"{bw:.1f}".replace(".", ",")
+                r.warnings.append(f"{tag}: Bereich nicht als stabil gemessen (Bewegung max {bw_txt}) — "
+                                  f"für einen ruhigen Einsetzer einen `stabil`-Bereich wählen.")
         if not p["grund"].strip():
             r.warnings.append(f"{tag}: ohne grund.")
         if p["tempo"] == 4:
@@ -794,6 +841,10 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         if a["setup_hash"] and b["setup_hash"] and _hamming(a["setup_hash"], b["setup_hash"]) < min_dist:
             r.warnings.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} sehen fast gleich aus (Setup-Abstand "
                               f"{_hamming(a['setup_hash'], b['setup_hash'])}).")
+    if ohne_abschnitts_maengel:
+        r.warnings.append(f"{ohne_abschnitts_maengel} von {len(placed)} Shots aus Clips ohne Abschnitts-Mängel — "
+                          f"die Sperre greift dort clip-weit wie vor der Umstellung; "
+                          f"autocut_index_broll.py --force holt die Verortung nach.")
     # Eine Meldung je Sachverhalt (Fix-Welle, Fund I2): ohne jede Telemetrie sind „Schnitte ohne
     # Brennweitenverlauf" und „Shots ohne Datensatz" dieselbe Aussage — sie entfallen dann zugunsten einer
     # einzigen Meldung, die alle drei Regeln und die Zahl der Shots nennt.

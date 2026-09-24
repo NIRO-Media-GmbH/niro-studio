@@ -222,12 +222,20 @@ def normalize_clip_refs(bp: BrollPlan, index: dict) -> list[str]:
     return errors
 
 
-def _usable_spans(c: dict) -> list[tuple[float, float]]:
+def _usable_spans(c: dict, stabil: bool = False) -> list[tuple[float, float]]:
     """Verwendbare Abschnitte, direkt angrenzende zusammengelegt (ein Item darf über eine Inhaltsgrenze laufen,
-    solange kein unbrauchbarer Abschnitt dazwischen liegt)."""
-    spans = sorted((float(a["von_s"]), float(a["bis_s"])) for a in (c.get("abschnitte") or []) if a.get("verwendbar"))
+    solange kein unbrauchbarer Abschnitt dazwischen liegt).
+
+    ``stabil=True`` (nur Plan v2, Spec 2026-09-23) nimmt zusätzlich die gemessenen ``stabil``-Bereiche der
+    Abschnitte auf, die das Modell verworfen hat. Ob dort ein gesperrter Mangel liegt, prüft ``verify_layout()``
+    getrennt je Abschnitt — hier geht es nur um die Frage, wo überhaupt brauchbares Material liegt. Ohne den
+    Parameter (Plan v1) ist das Ergebnis unverändert."""
+    spans = [(float(a["von_s"]), float(a["bis_s"])) for a in (c.get("abschnitte") or []) if a.get("verwendbar")]
+    if stabil:
+        spans += [(float(x), float(z)) for a in (c.get("abschnitte") or []) if not a.get("verwendbar")
+                  for x, z, *_ in (a.get("stabil") or [])]
     merged: list[list[float]] = []
-    for a, z in spans:
+    for a, z in sorted(spans):
         if merged and a <= merged[-1][1] + EPS:
             merged[-1][1] = max(merged[-1][1], z)
         else:

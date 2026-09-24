@@ -5,8 +5,8 @@ import json
 
 import pytest
 
-from niro_autocut.broll_plan import (BrollBeat, BrollItem, BrollPlan, build_v3_items, check_files, compact_index,
-                                     load_profile, render_broll_plan_md, resolve_clip_ref, verify_broll_plan)
+from niro_autocut.broll_plan import (BrollBeat, BrollItem, BrollPlan, _usable_spans, build_v3_items, check_files,
+                                     compact_index, load_profile, render_broll_plan_md, resolve_clip_ref, verify_broll_plan)
 from niro_autocut.charge import AutoCutError
 from niro_autocut.cutlist import Beat, Cut, Cutlist, Sperre
 
@@ -315,3 +315,13 @@ def test_build_v3_items_snaps_rounding_overlap_to_previous_item():
     assert all(b[0] >= a[1] for a, b in zip(recs, recs[1:]))     # keine Überlappung
     assert recs[-1][1] <= 608                                       # innerhalb des Beats
     assert recs == [(433, 477), (477, 521), (521, 565), (565, 608)]
+
+
+def test_usable_spans_nimmt_stabile_bereiche_nur_auf_wunsch_auf():
+    """Plan v1 ruft ohne den Parameter auf und darf sich nicht ändern (Spec 2026-09-23)."""
+    c = {"abschnitte": [{"von_s": 0, "bis_s": 2, "verwendbar": False, "stabil": [[0.0, 2.0, 0.05, 0.3]]},
+                        {"von_s": 2, "bis_s": 5, "verwendbar": False, "stabil": [[2.0, 4.8, 0.07, 0.3]]},
+                        {"von_s": 5, "bis_s": 9, "verwendbar": True}]}
+    assert _usable_spans(c) == [(5.0, 9.0)]
+    # angrenzende gerettete Bereiche werden zusammengelegt — ein Shot darf über die Abschnittsgrenze laufen
+    assert _usable_spans(c, stabil=True) == [(0.0, 4.8), (5.0, 9.0)]
