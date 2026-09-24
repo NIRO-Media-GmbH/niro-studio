@@ -80,8 +80,11 @@ CLIP_SCHEMA: dict = {
             "von_s": {"type": "number"}, "bis_s": {"type": "number"},
             "beschreibung": {"type": "string"},
             "qualitaet": {"type": "integer", "enum": SCORE},
+            # Mängel je Abschnitt (Spec 2026-09-23): die clip-weite Liste bleibt die Vereinigung, die Sperre
+            # in verify_layout() liest aber diese hier — ein Mangel in einer Sekunde darf keinen Clip kosten.
+            "maengel": {"type": "array", "items": {"type": "string", "enum": MAENGEL}},
             "verwendbar": {"type": "boolean"}},
-            "required": ["von_s", "bis_s", "beschreibung", "qualitaet", "verwendbar"],
+            "required": ["von_s", "bis_s", "beschreibung", "qualitaet", "maengel", "verwendbar"],
             "additionalProperties": False}},
         "maengel": {"type": "array", "items": {"type": "string", "enum": MAENGEL}},
         "tags": {"type": "array", "items": {"type": "string"}},

@@ -31,7 +31,7 @@ ANTWORT = {
     "einstellung": "Halbtotale", "kamerabewegung": "Gimbal", "tempo": "ruhig",
     "stimmung": "ruhig, professionell", "licht": "hell, Tageslicht durch Fenster",
     "abschnitte": [{"von_s": 0.0, "bis_s": 5.35, "beschreibung": "Fahrt hinter dem Bett her",
-                    "qualitaet": 4, "verwendbar": True}],
+                    "qualitaet": 4, "verwendbar": True, "maengel": []}],
     "maengel": [], "tags": ["Flur", "Bett", "Pflege", "Klinik", "Gimbal"],
     "eignung": ["Übergang", "Arbeit"], "qualitaet_gesamt": 4,
 }
@@ -613,3 +613,18 @@ def test_index_broll_without_previous_index_writes_only_this_run(tmp_path, monke
     out = _run(ch, monkeypatch, ("a", "b", "c"), limit=2)
     written = ch.read_json("broll_index.json")
     assert [c["path"] for c in written["clips"]] == ["/nas/B/a.MP4", "/nas/B/b.MP4"] and out["clips_gesamt"] == 2
+
+
+def test_clip_schema_kennt_maengel_je_abschnitt():
+    """Spec 2026-09-23: die Verortung eines Mangels gehört in den Abschnitt, nicht nur in den Clip."""
+    absch = B.CLIP_SCHEMA["properties"]["abschnitte"]["items"]
+    assert absch["properties"]["maengel"] == {"type": "array", "items": {"type": "string", "enum": B.MAENGEL}}
+    assert "maengel" in absch["required"]          # Structured Outputs: alle Felder required
+    assert absch["additionalProperties"] is False
+
+
+def test_prompt_verlangt_maengel_je_abschnitt():
+    text = (B.TOOL_ROOT / "prompts" / "index-clip.md").read_text(encoding="utf-8")
+    assert "maengel je Abschnitt" in text
+    # Beispiel 2 (Kapelle) zeigt den Fall: Mangel nur im zweiten Abschnitt
+    assert '"maengel": ["Blick in Kamera"]}], "maengel": ["Blick in Kamera"]' in text
