@@ -1203,3 +1203,70 @@ def test_bewegung_grundniveau_nimmt_nur_entfernte_fenster():
                        [8.0, 0.1, 0.5, "fahrt", None]]}
     assert T.bewegung_grundniveau(rec, 4.0, 3.0) == 0.5          # Median von 0,4 / 0,6 / 0,5
     assert T.bewegung_grundniveau({"fenster": []}, 4.0, 3.0) is None
+
+
+# --------------------------------------------------------------------------- #
+# Stabile Bereiche (Spec 2026-09-23)
+# --------------------------------------------------------------------------- #
+
+CFG_STABIL = {**CFG, "bewegung_max": 2.0, "stabil_min_s": 2.0}
+
+
+def _rec_fenster(fenster, ruhige=None, dauer_s=None, fenster_s=2.0):
+    """Datensatz mit Fenster-Reihe; ruhige_fenster sonst aus wackeln <= ruhig_max_px wie clip_messen()."""
+    if ruhige is None:
+        ruhige = [f[0] for f in fenster if f[1] <= CFG_STABIL["ruhig_max_px"]]
+    return {"clip": "FX3_1", "dauer_s": dauer_s, "fenster_s": fenster_s,
+            "fenster": fenster, "ruhige_fenster": ruhige}
+
+
+def test_stabile_bereiche_fasst_benachbarte_ruhige_fenster_zusammen():
+    rec = _rec_fenster([[0.0, 0.05, 0.1, "statisch", None], [1.0, 0.06, 0.2, "statisch", None],
+                        [2.0, 0.40, 3.0, "schwenk_links", None], [3.0, 0.05, 0.3, "statisch", None],
+                        [4.0, 0.05, 0.3, "statisch", None]], dauer_s=6.0)
+    assert T.stabile_bereiche(rec, CFG_STABIL) == [[0.0, 3.0, 0.06, 0.2], [3.0, 6.0, 0.05, 0.3]]
+
+
+def test_stabile_bereiche_deckelt_bewegung_und_kappt_an_der_clipdauer():
+    # t=1 ist nach wackeln ruhig, die Bewegung (3,5) liegt über bewegung_max → der Lauf beginnt erst bei t=2;
+    # das Ende 3,0 + fenster_s = 5,0 wird auf die Clipdauer 4,6 gekappt
+    rec = _rec_fenster([[0.0, 0.30, 0.4, "fahrt", None], [1.0, 0.05, 3.5, "schwenk_rechts", None],
+                        [2.0, 0.05, 0.4, "fahrt", None], [3.0, 0.05, 0.4, "fahrt", None]], dauer_s=4.6)
+    assert T.stabile_bereiche(rec, CFG_STABIL) == [[2.0, 4.6, 0.05, 0.4]]
+
+
+def test_stabile_bereiche_folgt_ruhige_fenster_und_verwirft_zu_kurze_laeufe():
+    # ruhige_fenster ist die Quelle: t=2 fehlt dort (schnelle Zoomfahrt im Fenster), obwohl wackeln klein ist
+    rec = _rec_fenster([[0.0, 0.05, 0.1, "statisch", None], [1.0, 0.40, 0.1, "gemischt", None],
+                        [2.0, 0.05, 0.1, "statisch", None]], ruhige=[0.0], dauer_s=4.0)
+    assert T.stabile_bereiche(rec, CFG_STABIL) == [[0.0, 2.0, 0.05, 0.1]]
+    assert T.stabile_bereiche(rec, {**CFG_STABIL, "stabil_min_s": 2.5}) == []
+
+
+def test_stabile_bereiche_ohne_daten_leer():
+    assert T.stabile_bereiche(None, CFG_STABIL) == []
+    assert T.stabile_bereiche({"fenster": [], "ruhige_fenster": []}, CFG_STABIL) == []
+    # Fenster vorhanden, aber keins ruhig (Datensatz einer verwackelten Handkamera)
+    assert T.stabile_bereiche({"fenster": [[0.0, 2.0, 5.0, "gemischt", None]], "ruhige_fenster": [],
+                               "dauer_s": 3.0, "fenster_s": 2.0}, CFG_STABIL) == []
+
+
+def test_bewegung_max_im_bereich():
+    rec = _rec_fenster([[0.0, 0.05, 0.1, "statisch", None], [1.0, 0.05, 2.4, "fahrt", None],
+                        [2.0, 0.05, 0.3, "statisch", None]], dauer_s=4.0)
+    assert T.bewegung_max_im_bereich(rec, 0.0, 4.0) == 2.4
+    assert T.bewegung_max_im_bereich(None, 0.0, 4.0) is None
+    assert T.bewegung_max_im_bereich({"fenster": []}, 0.0, 4.0) is None
+
+
+def test_config_hash_ignoriert_die_stabil_schwellen():
+    # beide Schlüssel ändern keine Messung, nur die Ableitung aus fenster → kein neuer Hash, kein Neumessen
+    h = T.config_hash(CFG)
+    assert T.config_hash({**CFG, "bewegung_max": 5.0}) == h
+    assert T.config_hash({**CFG, "stabil_min_s": 3.0}) == h
+
+
+def test_defaults_haben_die_stabil_schwellen():
+    cfg = load_config(Path("/nirgendwo"))["telemetrie"]
+    assert cfg["bewegung_max"] == 2.0 and cfg["stabil_min_s"] == 2.0
+    assert cfg["ruhig_max_px"] == 0.15

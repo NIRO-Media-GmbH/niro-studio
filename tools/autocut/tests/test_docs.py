@@ -12,6 +12,9 @@ SETUP = TOOL_ROOT / "SETUP.md"
 CLAUDE_MD = STUDIO_ROOT / "CLAUDE.md"
 RESOLVE_WORKFLOW = STUDIO_ROOT / "tools" / "resolve" / "WORKFLOW-Resolve.md"
 REPLAY_PLAN = STUDIO_ROOT / "docs" / "superpowers" / "plans" / "2026-09-16-autocut-replay.md"
+BEREICH_PLAN = STUDIO_ROOT / "docs" / "superpowers" / "plans" / "2026-09-23-autocut-broll-bereichsauswahl.md"
+PLACE_PROMPT = TOOL_ROOT / "prompts" / "place-broll.md"
+SPEC_BEREICH = STUDIO_ROOT / "docs" / "superpowers" / "specs" / "2026-09-23-autocut-broll-bereichsauswahl-design.md"
 
 # CLI-Einstiege laut Spec Abschnitt 6 (alle mit venv/bin/python, Argument = Chargen-Ordner)
 SPEC_SCRIPTS = ["autocut_prepare.py", "autocut_sync.py", "autocut_find_quote.py", "autocut_verify.py",
@@ -190,3 +193,68 @@ def test_replay_plan_kopie_test_deckt_zusatzmessungen_ab():
     muster = _flach(_plan_schritt(task, 11))
     for frage in messungen:
         assert f"| {frage} |" in muster, f"Step 11: Zeile für „{frage}“ fehlt"
+
+
+def test_workflow_erklaert_die_bereichsauswahl():
+    text = _text(WORKFLOW)
+    for needle in ("stabile Bereiche", "abschnitte[].maengel", "stabil_quelle", "gerettet",
+                   "bewegung_max", "stabil_min_s", "nicht als stabil gemessen"):
+        assert needle in text, f"WORKFLOW-AutoCut.md: „{needle}“ fehlt"
+
+
+def test_readme_nennt_die_bereichsauswahl():
+    assert "stabile Bereiche" in _text(README)
+
+
+def test_bereichsauswahl_nennt_die_ungeschnittenen_laeufe():
+    """Task 8 (Schluss-Review I3/M1/M9): Stufe 2b speichert die ungeschnittenen Läufe je Clip und schneidet die Stücke
+    ohne Mindestlänge; der Prüfer legt Stücke nur innerhalb eines Laufs zusammen; der kompakte Index gibt die Läufe
+    je Clip aus."""
+    stufe2b = _flach(_abschnitt(_text(WORKFLOW), "## Ablauf Stufe 2b"))
+    for needle in ("stabil_quelle.laeufe", "ohne Mindestlänge je Stück"):
+        assert needle in stufe2b, f"Stufe 2b: „{needle}“ fehlt"
+    stufe3 = _flach(_abschnitt(_text(WORKFLOW), "## Ablauf Stufe 3 —"))
+    for needle in ("ungeschnittenen Läufe", "desselben Laufs", "verschiedener Läufe nie", "nur clip-weit"):
+        assert needle in stufe3, f"Stufe 3: „{needle}“ fehlt"
+    assert "weder `stabil`" not in stufe3 and "`stabil_laeufe` leer aus" in stufe3      # beide stehen da, als []
+    readme = _flach(_text(README))
+    assert "`stabil` je Abschnitt" in readme and "`stabil_quelle` je Clip" in readme and "laeufe" in readme
+    prompt = _flach(_text(PLACE_PROMPT))
+    for needle in ("stabil_laeufe", "in EINEM Lauf", "verwendbar oder gerettet"):
+        assert needle in prompt, f"place-broll.md: „{needle}“ fehlt"
+    assert "die Messung widerspricht —" not in prompt       # passt nur zum Wackler (Schluss-Review M8)
+
+
+def test_force_in_stufe_2_nennt_den_neuen_nachlauf():
+    """Schluss-Review M2: `autocut_index_broll.py --force` schreibt frische Datensätze ohne die Felder aus Stufe 2b —
+    der Nachlauf muss danach neu laufen und fragt die API erneut an. Weder der Workflow noch der Plan dürfen dafür
+    „keine API-Kosten" versprechen."""
+    stufe2 = _flach(_abschnitt(_text(WORKFLOW), "## Ablauf Stufe 2 —"))
+    assert "autocut_index_sections.py" in stufe2 and "API" in stufe2
+    probe = _flach(_abschnitt(_text(BEREICH_PLAN), "## Nach dem Plan: erste Probe an WLC"))
+    assert "keine API-Kosten" not in probe and "--dry-run" in probe
+
+
+def test_spec_bereichsauswahl_passt_zu_den_ungeschnittenen_laeufen():
+    """Fix-Runde 1 zu Task 8: die maßgebliche Spec widerspricht dem umgesetzten Verhalten nicht mehr — sonst brächte ein
+    späterer Task, der nach Abschnitt 3 arbeitet, den Filter je Stück zurück. Jede Berichtigung ist datiert, der Kopf
+    nennt sie und den User-Entscheid zu Mängeln, die nur clip-weit stehen."""
+    spec = _text(SPEC_BEREICH)
+    kopf = _flach(spec[:spec.index("## Anlass")])
+    for needle in ("Berichtigt 24.09.2026", "stabil_quelle.laeufe", "keine Mindestlänge je Stück", "desselben Laufs",
+                   "nur clip-weit"):
+        assert needle in kopf, f"Spec-Kopf: „{needle}“ fehlt"
+    stufe2b = _flach(_abschnitt(spec, "## 3 —"))
+    assert ", Schnitte unter `stabil_min_s` fallen weg." not in stufe2b
+    for needle in ("ohne Mindestlänge je Stück", "config_hash, laeufe}", "berichtigt 24.09.2026, Task 8"):
+        assert needle in stufe2b, f"Spec Abschnitt 3: „{needle}“ fehlt"
+    kompakt = _flach(_abschnitt(spec, "## 4 —"))            # die Prompt-Regel wie in place-broll.md
+    assert "darf ein Shot nur innerhalb von `stabil` liegen" not in kompakt
+    for needle in ("in EINEM Lauf aus `stabil_laeufe`", "verwendbar oder gerettet",
+                   "außer die Charge sperrt „Wackler\"", "berichtigt 24.09.2026, Task 8"):
+        assert needle in kompakt, f"Spec Abschnitt 4: „{needle}“ fehlt"
+    randfaelle = _flach(_abschnitt(spec, "## Fehler und Randfälle"))
+    assert "wenn sie aneinandergrenzen (FX3_8641" not in randfaelle
+    assert "zum selben gemessenen Lauf" in randfaelle and "berichtigt 24.09.2026, Task 8" in randfaelle
+    probe = _flach(_abschnitt(spec, "## Erste Probe"))
+    assert "ohne API-Kosten" not in probe and "--dry-run" in probe and "berichtigt 24.09.2026, Task 8" in probe

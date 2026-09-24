@@ -329,7 +329,8 @@ TELE = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd",
                     [6.0, 0.02, 0.1, "statisch"]]}
 _CFG_T = {"index": {"model": "claude-opus-5"},
           "index_sections": {"tile_px": 480, "per_section": 2, "max_sections": 5, "effort": "medium", "max_tokens": 2500},
-          "telemetrie": {"fenster_s": 2.0}}
+          "telemetrie": {"fenster_s": 2.0, "schritt_s": 1.0, "ruhig_max_px": 0.15,
+                         "bewegung_max": 2.0, "stabil_min_s": 2.0}}
 
 
 def test_telemetrie_text_und_anwenden():
@@ -460,7 +461,9 @@ def test_index_sections_clip_meta_text_stimmt_mit_geschriebenem_bewegungsart_ueb
     rec = {"path": "/nas/B-Roll/Flur/FX3_9.MP4", "datei": "FX3_9.MP4", "fingerprint": "abcdefabcdef0000",
            "orientierung": "16:9",
            "abschnitte": [{"von_s": 2, "bis_s": 4, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": True}]}
-    cfg = {**_CFG_T, "telemetrie": {"fenster_s": 6.0}}
+    # Charge-Override deep-merged wie in load_config (charge.py) — nicht der volle Ersatz des Blocks, sonst fehlen
+    # stabile_bereiche() unten die anderen Schwellen (bewegung_max u. a.), die ein echter Charge-Override nie wegnimmt.
+    cfg = {**_CFG_T, "telemetrie": {**_CFG_T["telemetrie"], "fenster_s": 6.0}}
     gesehen = {}
 
     def fake_describe(client, sheet, meta_text, cfg2, prompt):
@@ -630,3 +633,138 @@ def test_telemetrie_anwenden_ohne_fenster_setzt_kein_feld():
     tele = {"quelle": "rtmd", "perspektive_hoehe": "Augenhöhe", "fenster": [], "fenster_s": 2.0}
     neu, _ = S.telemetrie_anwenden(rec, tele, 2.0)
     assert "bewegung_spitzen" not in neu["abschnitte"][0]
+
+
+# --------------------------------------------------------------------------- #
+# Stabile Bereiche je Abschnitt (Spec 2026-09-23)
+# --------------------------------------------------------------------------- #
+
+_TCFG = {"fenster_s": 2.0, "schritt_s": 1.0, "ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0}
+# Telemetrie mit ruhigen Fenstern: 0–3 s ruhig, 4 s Ausreißer, 5–6 s wieder ruhig
+_TELE_STABIL = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd", "fehler": None,
+                "dauer_s": 8.0, "fenster_s": 2.0, "haltung": "gimbal", "wackeln": 0.05,
+                "pitch_grad": -12.0, "perspektive_hoehe": "Aufsicht",
+                "fenster": [[0.0, 0.05, 0.2, "statisch", None], [1.0, 0.05, 0.2, "statisch", None],
+                            [2.0, 0.05, 0.2, "statisch", None], [3.0, 0.05, 0.2, "statisch", None],
+                            [4.0, 0.40, 4.0, "schwenk_links", None], [5.0, 0.05, 0.3, "statisch", None],
+                            [6.0, 0.05, 0.3, "statisch", None]],
+                "ruhige_fenster": [0.0, 1.0, 2.0, 3.0, 5.0, 6.0],
+                "config_hash": "abc123abc123"}
+
+
+def test_telemetrie_anwenden_schreibt_stabil_je_abschnitt():
+    rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "verwendbar": True},
+                          {"von_s": 4, "bis_s": 8, "verwendbar": False}]}
+    neu, geaendert = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0, _TCFG)
+    assert geaendert is True
+    # Clip-Läufe sind 0–5 s und 5–8 s (das unruhige Fenster bei 4 s trennt sie), auf die Abschnitte geschnitten
+    assert neu["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.05, 0.2]]
+    # 4,0–5,0 s ist nur 1,0 s lang, bleibt aber: der Lauf 0–5 s geht im Nachbarabschnitt weiter (Schluss-Review I3)
+    assert neu["abschnitte"][1]["stabil"] == [[4.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+    assert neu["stabil_quelle"] == {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                                    "config_hash": "abc123abc123",
+                                    "laeufe": [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]}
+
+
+def test_telemetrie_anwenden_laesst_nur_stuecke_ohne_laenge_weg():
+    """Schluss-Review I3 (Task 8): ein kurzes Stück bleibt — Abschnitt 3,5–4,5 s trifft den Lauf 0–5 s nur 1,0 s lang,
+    die Mindestlänge gilt aber für den Lauf, nicht für das Stück. Weg fällt nur ein Stück ohne Länge: der Abschnitt
+    5–7 s berührt den Lauf 0–5 s nur im Punkt 5,0."""
+    rec = {"abschnitte": [{"von_s": 3.5, "bis_s": 4.5, "verwendbar": False},
+                          {"von_s": 5.0, "bis_s": 7.0, "verwendbar": False}]}
+    neu, _ = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0, _TCFG)
+    assert neu["abschnitte"][0]["stabil"] == [[3.5, 4.5, 0.05, 0.2]]
+    assert neu["abschnitte"][1]["stabil"] == [[5.0, 7.0, 0.05, 0.3]]
+
+
+# Schluss-Review I3 (Task 8): EIN gemessener Lauf 12–18 s — Fenster 12 … 16 s ruhig, alle anderen unruhig
+_TELE_LAUF = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd", "fehler": None,
+              "dauer_s": 20.0, "fenster_s": 2.0, "haltung": "gimbal", "wackeln": 0.1,
+              "fenster": [[float(t), 0.05 if 12 <= t <= 16 else 0.4, 0.3 if 12 <= t <= 16 else 3.0, "statisch", None]
+                          for t in range(19)],
+              "ruhige_fenster": [12.0, 13.0, 14.0, 15.0, 16.0], "config_hash": "abc123abc123"}
+
+
+def test_telemetrie_anwenden_randstueck_bleibt_und_laeufe_ungeschnitten():
+    """Schluss-Review I3 (Task 8): Abschnitte 8–13 und 13–20 s, EIN Lauf 12–18 s. Das Stück 12–13 s (1,0 s, unter
+    stabil_min_s) fiel bisher weg, obwohl sein Lauf im Nachbarabschnitt weitergeht — der Prüfer ließ dann einen Shot
+    12,5–15,5 s durchfallen. Jetzt bleibt es, und stabil_quelle hält den ungeschnittenen Lauf für den Prüfer."""
+    rec = {"abschnitte": [{"von_s": 8, "bis_s": 13, "verwendbar": False},
+                          {"von_s": 13, "bis_s": 20, "verwendbar": False}]}
+    neu, geaendert = S.telemetrie_anwenden(rec, _TELE_LAUF, 2.0, _TCFG)
+    assert geaendert is True
+    assert neu["abschnitte"][0]["stabil"] == [[12.0, 13.0, 0.05, 0.3]]
+    assert neu["abschnitte"][1]["stabil"] == [[13.0, 18.0, 0.05, 0.3]]
+    assert neu["stabil_quelle"]["laeufe"] == [[12.0, 18.0, 0.05, 0.3]]
+    wieder, geaendert2 = S.telemetrie_anwenden(neu, _TELE_LAUF, 2.0, _TCFG)
+    assert geaendert2 is False and wieder == neu
+
+
+def test_telemetrie_anwenden_ohne_config_hash_im_datensatz():
+    """Ledger Task 3: trägt der Telemetrie-Datensatz keinen Config-Hash, steht in stabil_quelle None — der Prüfer und
+    der kompakte Index behandeln das wie eine veraltete Messung (Tests in test_broll_layout.py)."""
+    tele = {k: v for k, v in _TELE_STABIL.items() if k != "config_hash"}
+    neu, _ = S.telemetrie_anwenden({"abschnitte": [{"von_s": 0, "bis_s": 4, "verwendbar": True}]}, tele, 2.0, _TCFG)
+    assert neu["stabil_quelle"]["config_hash"] is None and neu["stabil_quelle"]["laeufe"]
+
+
+def test_telemetrie_anwenden_ohne_tcfg_schreibt_kein_stabil():
+    rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "verwendbar": True}]}
+    neu, _ = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0)
+    assert "stabil" not in neu["abschnitte"][0] and "stabil_quelle" not in neu
+
+
+def test_telemetrie_anwenden_ist_mit_stabil_idempotent():
+    rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "verwendbar": True}]}
+    einmal, _ = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0, _TCFG)
+    zweimal, geaendert = S.telemetrie_anwenden(einmal, _TELE_STABIL, 2.0, _TCFG)
+    assert geaendert is False and zweimal == einmal
+
+
+def test_index_sections_clip_traegt_stabil_bei_cache_treffer_nach(tmp_path):
+    ch = _Ch(tmp_path)
+    (ch.autocut / "broll_index").mkdir()
+    rec = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "datei": "FX3_1.MP4", "fingerprint": "abcdefabcdef0000",
+           "orientierung": "16:9",
+           "abschnitte": [{"von_s": 0, "bis_s": 4, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": False,
+                           "einstellung": "Halbtotale", "perspektive_hoehe": "Augenhöhe",
+                           "perspektive_ansicht": "seitlich", "brennweite": "normal",
+                           "bewegungsrichtung": "keine", "hauptmotiv": "Flur", "setup_hash": "0123456789abcdef"}]}
+    (ch.autocut / "broll_index" / "abcdefabcdef0000.json").write_text(json.dumps(rec), encoding="utf-8")
+
+    def kein_api(*a, **k):
+        raise AssertionError("kein API-Aufruf bei Cache-Treffer")
+
+    out = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=kein_api, telemetrie=_TELE_STABIL)
+    assert out["_cache"] is True and out["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.05, 0.2]]
+    cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
+    assert cached["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.05, 0.2]]
+    assert cached["stabil_quelle"]["config_hash"] == "abc123abc123"
+    assert cached["stabil_quelle"]["laeufe"] == [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+
+
+def test_index_sections_clip_traegt_laeufe_bei_altem_datensatz_nach(tmp_path):
+    """Task 8: ein Datensatz aus Stufe 2b vor den Läufen (stabil_quelle ohne laeufe, das kurze Randstück 4–5 s
+    verworfen) bekommt beides beim nächsten Lauf ohne API-Aufruf — derselbe Cache-Treffer-Pfad wie für stabil."""
+    ch = _Ch(tmp_path)
+    (ch.autocut / "broll_index").mkdir()
+    alt = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "datei": "FX3_1.MP4", "fingerprint": "abcdefabcdef0000",
+           "orientierung": "16:9",
+           "stabil_quelle": {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                             "config_hash": "abc123abc123"},
+           "abschnitte": [{"von_s": 4, "bis_s": 8, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": False,
+                           "einstellung": "Halbtotale", "perspektive_hoehe": "Augenhöhe",
+                           "perspektive_ansicht": "seitlich", "brennweite": "normal", "bewegungsrichtung": "keine",
+                           "hauptmotiv": "Flur", "setup_hash": "0123456789abcdef",
+                           "stabil": [[5.0, 8.0, 0.05, 0.3]]}]}
+    (ch.autocut / "broll_index" / "abcdefabcdef0000.json").write_text(json.dumps(alt), encoding="utf-8")
+
+    def kein_api(*a, **k):
+        raise AssertionError("kein API-Aufruf bei Cache-Treffer")
+
+    out = S.index_sections_clip(ch, alt, None, _CFG_T, "prompt", describe=kein_api, telemetrie=_TELE_STABIL)
+    assert out["_cache"] is True
+    assert out["abschnitte"][0]["stabil"] == [[4.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+    cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
+    assert cached["stabil_quelle"]["laeufe"] == [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+    assert cached["abschnitte"][0]["stabil"] == out["abschnitte"][0]["stabil"]

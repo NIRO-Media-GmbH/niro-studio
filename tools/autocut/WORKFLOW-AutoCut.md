@@ -262,6 +262,15 @@ Abweichend davon:
    fort. Ergebnis `_intern/autocut/broll_index.json` + `broll-index.md` + Protokoll-Eintrag.
    Exit 1 = einzelne Clips fehlgeschlagen (Index trotzdem geschrieben; Fehlerliste lesen, Lauf wiederholen).
 
+Je Abschnitt steht seit dem 23.09.2026 auch `maengel` (`abschnitte[].maengel`) — dieselbe Liste wie clip-weit, aber
+nur, was in diesem Abschnitt zu sehen ist. Der Prüfer sperrt anhand dieser Liste; die clip-weite bleibt die
+Vereinigung und dient nur der Übersicht. Ein Index aus der Zeit davor trägt das Feld nicht: dann sperrt der Prüfer wie
+früher clip-weit und sagt es im Bericht. `autocut_index_broll.py --force` holt die Verortung nach und kostet die
+Stufe-2-Token erneut (bei 51 Clips rund 2,50 €) — und nicht nur die: `--force` schreibt je Clip einen frischen
+Datensatz **ohne** die Felder aus Stufe 2b (Einstellung, Perspektive, Brennweite, `setup_hash`, `stabil` …). Danach
+muss der Nachlauf `autocut_index_sections.py` neu laufen, und der fragt jeden so neu indexierten Clip erneut bei der
+API an — erst mit `--dry-run` Clipzahl und Schätzung holen und dem User nennen.
+
 ## Ablauf Stufe 2b — „Nachlauf" (Pflicht vor Stufe 3 v2)
 
 1. **Umfang und Kosten** — `autocut_index_sections.py "$CHARGE" --dry-run`: Clipzahl, Cache-Stand,
@@ -274,6 +283,18 @@ Abweichend davon:
    (falsche Zahl der Einträge, abweichende Schreibweise) gleicht der Code an bzw. fragt genau einmal mit
    Fehlerliste nach; der Protokoll-Eintrag nennt die Zahl der Nachfragen. Exit 1 = einzelne Clips
    fehlgeschlagen (Lauf wiederholen; Cache hält Fertiges).
+
+Zusätzlich trägt der Nachlauf die gemessenen **stabilen Bereiche** ein, je
+`[von_s, bis_s, wackeln_max, bewegung_max]`: Läufe benachbarter ruhiger Fenster (`wackeln ≤ ruhig_max_px`, ohne
+schnelle Zoomfahrten, `bewegung ≤ bewegung_max`), je Lauf mindestens `stabil_min_s` lang. Je Clip steht
+`stabil_quelle` — die drei Schwellen, der Config-Hash der Messung, aus der die Bereiche stammen, und
+`stabil_quelle.laeufe`, die **ungeschnittenen Läufe** (seit 24.09.2026). Je Abschnitt steht `stabil`: die Stücke
+dieser Läufe, auf den Abschnitt geschnitten, **ohne Mindestlänge je Stück** — die gilt für den Lauf; ein kürzeres
+Stück entsteht nur an einer Abschnittsgrenze, wo sein Lauf im Nachbarabschnitt weitergeht (Lauf 12–18 s, Abschnitte
+8–13 und 13–20 s → Stücke 12–13 und 13–18 s). Das ist reine Rechnung auf vorhandenen Daten: Cache-Treffer bekommen
+die Felder ohne API-Aufruf, auch ein Index aus der Zeit vor den Läufen beim nächsten Lauf. Wer `bewegung_max` oder
+`stabil_min_s` ändert, lässt `autocut_index_sections.py` erneut laufen — kostenlos, die Telemetrie selbst bleibt
+gültig (beide Schlüssel stehen in `OHNE_MESSWIRKUNG`).
 
 Liegt `telemetrie.json` vor (`autocut_telemetrie.py`), bekommt der Abschnittsbogen eine Kontextzeile mit der
 KB-Brennweite in mm („KB 71,6 mm", bei Zoomfahrten „KB 24–70 mm, langsamer Zoom"), Pitch, Haltung und Bewegungsart je
@@ -327,6 +348,37 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    nur Bild, kein Ton), Cyan-Marker je Szene, gelbe Marker je Abweichung. Schreibt `broll_build.json`,
    Bericht `Ergebnisse/Rohschnitt/<video>-broll.md`, Protokoll-Eintrag.
 7. **Finalisieren** — Stufe 5 (Abschnitt unten): Pegel, Zeitlupen, End-Timeline.
+
+Der kompakte Index enthält neben den verwendbaren Abschnitten die **geretteten**: solche, die der Bild-Index
+verworfen hat, für die die Messung aber einen stabilen Bereich ausweist und kein gesperrter Mangel bleibt.
+Sie tragen `gerettet: true` und `trotz` (was der Index sonst noch bemängelt hat, meist Unschärfe). Je Clip stehen
+dort die ungeschnittenen Läufe als `stabil_laeufe`. Shots in geretteten Abschnitten müssen vollständig in **einem**
+Lauf liegen; sie dürfen dabei über Abschnittsgrenzen laufen, solange jeder berührte Abschnitt verwendbar oder
+gerettet ist.
+
+`--verify-only` prüft dazu — gegen die **ungeschnittenen Läufe** aus `stabil_quelle.laeufe`:
+- **Mangel je Abschnitt** statt je Clip. `Wackler` entfällt, wenn der genutzte Quellbereich vollständig in einem
+  gemessenen Lauf liegt — die Messung überstimmt das Bildurteil, Schwelle ist `ruhig_max_px`.
+- **Lage**: der Shot muss in einem verwendbaren Abschnitt **oder** in einem stabilen Stück eines geretteten
+  Abschnitts liegen. Stücke desselben Laufs legen sich über Abschnittsgrenzen zusammen, Stücke verschiedener Läufe
+  nie — auch nicht, wenn sich zwei Läufe genau an einer Abschnittsgrenze berühren (dazwischen lag ein unruhiges
+  Fenster). Verwendbare Abschnitte legen sich wie bisher an ihren Grenzen mit jedem Nachbarn zusammen.
+- **Warnung `Bereich nicht als stabil gemessen`**: der Abschnitt ist verwendbar, die gemessene Bewegung dort
+  aber hoch. Bewusst keine Sperre — ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt.
+- **Warnung `nennt „…“ nur clip-weit, in keinem Abschnitt`**: ein gesperrter Mangel steht nur in der clip-weiten
+  Liste (oder kommt aus `personen.blick_in_kamera`), kein Abschnitt führt ihn. Keine Sperre — verortet ist er
+  nirgends —, aber das Bild prüfen; einmal je Clip.
+
+Ein Index aus Stufe 2b vor dem 24.09.2026 trägt keine `laeufe`: dann legt der Prüfer die Stücke wie zuvor an echten
+Abschnittsgrenzen zusammen und überbrückt dabei einen Bruch zwischen zwei Läufen, der genau auf einer Grenze liegt.
+`autocut_index_sections.py` trägt die Läufe kostenlos aus dem Cache nach.
+
+**Andere Schwellen**: stabile Bereiche aus einer Messung mit anderen Telemetrie-Schwellen (`ruhig_max_px`,
+`fenster_s`) zählen nicht: keine Rettung, keine Bewegungs-Warnung, und der kompakte Index gibt für diese Clips
+`stabil` (in allen Abschnitten) und `stabil_laeufe` leer aus; der Bericht und `--compact` nennen die Zahl der
+Clips. Abhilfe: erst `autocut_telemetrie.py`, dann `autocut_index_sections.py` (kostenlos aus dem Cache). Wurden nur
+`bewegung_max` oder `stabil_min_s` geändert, reicht `autocut_index_sections.py` — der Bericht sagt dann „mit anderen
+Stabil-Schwellen abgeleitet — autocut_index_sections.py erneut laufen lassen".
 
 ## Ablauf Stufe 3a — „B-Roll aus Auswahl" (Vorlagen, Stand Taxodia 15.09.2026)
 
@@ -848,6 +900,12 @@ Damit tragen `spitze`, `verhaeltnis`, `wackeln` und `bewegungsart` keine Grenze.
 die Absicht hängt am Bildinhalt, nicht an der Bewegung. Folge: kein Vorfilter vor dem kostenpflichtigen
 B-Roll-Index — die Telemetrie liefert Bereichs-Hinweise, keine Urteile über Absicht. Die 30 Urteile liegen als
 Testsatz in `projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schwenks/`; jeder künftige Versuch muss 83 % schlagen.
+
+`bewegung_max` (2,0) und `stabil_min_s` (2,0) sind **unkalibrierte Startwerte** vom 23.09.2026. Die Abnahme
+läuft gegen die 30 Urteile vom 22.09. und die vier WLC-Clips aus dem Review
+(`tests/test_bereiche_abnahme.py`): kein Kandidat im Beispiel „komplett ungewollt", höchstens zwei der
+24 „ungewollt"-Beispiele mit Kandidat, und jeder vom User genannte Bereich liegt in einem Kandidaten.
+Wer eine Schwelle ändert, muss dort wieder antreten.
 
 ## Kantenprüfung — „Kanten" (seit 16.09.2026)
 
