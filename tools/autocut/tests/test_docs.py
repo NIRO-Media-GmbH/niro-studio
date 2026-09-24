@@ -12,6 +12,7 @@ SETUP = TOOL_ROOT / "SETUP.md"
 CLAUDE_MD = STUDIO_ROOT / "CLAUDE.md"
 RESOLVE_WORKFLOW = STUDIO_ROOT / "tools" / "resolve" / "WORKFLOW-Resolve.md"
 REPLAY_PLAN = STUDIO_ROOT / "docs" / "superpowers" / "plans" / "2026-09-16-autocut-replay.md"
+BEREICH_PLAN = STUDIO_ROOT / "docs" / "superpowers" / "plans" / "2026-09-23-autocut-broll-bereichsauswahl.md"
 PLACE_PROMPT = TOOL_ROOT / "prompts" / "place-broll.md"
 
 # CLI-Einstiege laut Spec Abschnitt 6 (alle mit venv/bin/python, Argument = Chargen-Ordner)
@@ -212,7 +213,7 @@ def test_bereichsauswahl_nennt_die_ungeschnittenen_laeufe():
     for needle in ("stabil_quelle.laeufe", "ohne Mindestlänge je Stück"):
         assert needle in stufe2b, f"Stufe 2b: „{needle}“ fehlt"
     stufe3 = _flach(_abschnitt(_text(WORKFLOW), "## Ablauf Stufe 3 —"))
-    for needle in ("ungeschnittenen Läufe", "desselben Laufs", "verschiedener Läufe nie"):
+    for needle in ("ungeschnittenen Läufe", "desselben Laufs", "verschiedener Läufe nie", "nur clip-weit"):
         assert needle in stufe3, f"Stufe 3: „{needle}“ fehlt"
     readme = _flach(_text(README))
     assert "`stabil` je Abschnitt" in readme and "`stabil_quelle` je Clip" in readme and "laeufe" in readme
@@ -220,3 +221,13 @@ def test_bereichsauswahl_nennt_die_ungeschnittenen_laeufe():
     for needle in ("stabil_laeufe", "in EINEM Lauf", "verwendbar oder gerettet"):
         assert needle in prompt, f"place-broll.md: „{needle}“ fehlt"
     assert "die Messung widerspricht —" not in prompt       # passt nur zum Wackler (Schluss-Review M8)
+
+
+def test_force_in_stufe_2_nennt_den_neuen_nachlauf():
+    """Schluss-Review M2: `autocut_index_broll.py --force` schreibt frische Datensätze ohne die Felder aus Stufe 2b —
+    der Nachlauf muss danach neu laufen und fragt die API erneut an. Weder der Workflow noch der Plan dürfen dafür
+    „keine API-Kosten" versprechen."""
+    stufe2 = _flach(_abschnitt(_text(WORKFLOW), "## Ablauf Stufe 2 —"))
+    assert "autocut_index_sections.py" in stufe2 and "API" in stufe2
+    probe = _flach(_abschnitt(_text(BEREICH_PLAN), "## Nach dem Plan: erste Probe an WLC"))
+    assert "keine API-Kosten" not in probe and "--dry-run" in probe

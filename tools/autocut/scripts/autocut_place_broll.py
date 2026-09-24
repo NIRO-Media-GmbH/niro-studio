@@ -241,16 +241,20 @@ def main(argv: list[str] | None = None) -> int:
         if args.compact:
             cfg_kompakt = {**cfg_broll, "telemetrie": ch.config["telemetrie"]}
             clips = compact_index_v2(index, cfg_kompakt)
+            # gezählt werden Abschnitte, nicht Clips (Schluss-Review M4) — ein Clip kann mehrere gerettete haben
             gerettet = sum(1 for c in clips for a in c["abschnitte"] if a.get("gerettet"))
             # Review-Fund I4: stabil_quelle mit einem Hash, der nicht mehr zur heutigen telemetrie-Config passt —
             # verify_layout meldet das je Plan, --compact fasst den ganzen Index zusammen (Spec, Fehler und Randfälle).
+            # Der Hash deckt ruhig_max_px/fenster_s ab: erst neu messen, dann den Nachlauf (Ledger B2).
             veraltet = stabil_quelle_veraltet(index, cfg_kompakt)
-            hinweis = (f" · {veraltet} mit stabil {TM.HINWEIS_SCHWELLEN} — autocut_index_sections.py neu laufen "
-                      f"lassen" if veraltet else "")
+            hinweis = (f"\nHINWEIS: {veraltet} {'Clip hat' if veraltet == 1 else 'Clips haben'} stabile Bereiche, die "
+                       f"{TM.HINWEIS_SCHWELLEN} wurden — im kompakten Index leer, keine Rettung. Erst "
+                       f"autocut_telemetrie.py, dann autocut_index_sections.py laufen lassen." if veraltet else "")
             p = ch.write_json(COMPACT_FILE, {"erstellt_am": _dt.datetime.now().isoformat(timespec="seconds"),
                                              "anzahl": len(clips), "clips": clips})
             print(f"Kompakter Index: {p} ({len(clips)} Clips, {sum(1 for c in clips if c['verwendbar'])} mit verwendbaren "
-                  f"Abschnitten, davon {gerettet} über die Messung gerettet, {p.stat().st_size // 1024} KB){hinweis}\n"
+                  f"Abschnitten, {gerettet} {'geretteter Abschnitt' if gerettet == 1 else 'gerettete Abschnitte'}, "
+                  f"{p.stat().st_size // 1024} KB){hinweis}\n"
                   f"Profil: {Path(__file__).resolve().parents[1] / 'profile' / (args.profile + '.md')}")
             return 0
 

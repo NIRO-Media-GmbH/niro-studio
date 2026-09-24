@@ -700,6 +700,14 @@ def test_telemetrie_anwenden_randstueck_bleibt_und_laeufe_ungeschnitten():
     assert geaendert2 is False and wieder == neu
 
 
+def test_telemetrie_anwenden_ohne_config_hash_im_datensatz():
+    """Ledger Task 3: trägt der Telemetrie-Datensatz keinen Config-Hash, steht in stabil_quelle None — der Prüfer und
+    der kompakte Index behandeln das wie eine veraltete Messung (Tests in test_broll_layout.py)."""
+    tele = {k: v for k, v in _TELE_STABIL.items() if k != "config_hash"}
+    neu, _ = S.telemetrie_anwenden({"abschnitte": [{"von_s": 0, "bis_s": 4, "verwendbar": True}]}, tele, 2.0, _TCFG)
+    assert neu["stabil_quelle"]["config_hash"] is None and neu["stabil_quelle"]["laeufe"]
+
+
 def test_telemetrie_anwenden_ohne_tcfg_schreibt_kein_stabil():
     rec = {"abschnitte": [{"von_s": 0, "bis_s": 4, "verwendbar": True}]}
     neu, _ = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0)

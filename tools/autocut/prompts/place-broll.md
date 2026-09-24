@@ -110,6 +110,7 @@ erster Auftritt 2,5 s; sonst 2,0 s).
 | `Abschnittsfelder fehlen` | `autocut_index_sections.py` laufen lassen |
 | `wird zweimal verwendet` / `verwendbar` / `Mangel` / `Sperre` / `Nur S1` | wie bisher: anderer Clip/Bereich |
 | `liegt in keinem verwendbaren Abschnitt` / `Abschnitt … hat den Mangel` / `Bereich nicht als stabil gemessen` | Shot vollständig in einen Lauf aus `stabil_laeufe` legen oder anderen Abschnitt wählen |
+| `nennt „…“ nur clip-weit, in keinem Abschnitt` (Warnung) | kein Abschnitt verortet den gesperrten Mangel — Abschnittsbogen/Kontaktbogen ansehen; ist er im genutzten Bereich zu sehen, anderen Bereich oder Clip wählen |
 
 ## Eiserne Regeln
 

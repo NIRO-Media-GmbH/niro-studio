@@ -64,6 +64,11 @@ def _s(x: float) -> str:
     return f"{float(x):.1f}".replace(".", ",") + " s"
 
 
+def _z(x: float) -> str:
+    """Zahl ohne überflüssige Nullen mit Dezimalkomma für Zeitbereiche in Meldungen („0–4,8s")."""
+    return f"{float(x):g}".replace(".", ",")
+
+
 # --------------------------------------------------------------------------- #
 # Modell
 # --------------------------------------------------------------------------- #
@@ -631,6 +636,21 @@ def _in_stabil(c: dict, von_s: float, bis_s: float) -> bool:
     return any(x - EPS <= von_s and bis_s <= z + EPS for x, z in _stabil_bereiche(c))
 
 
+def _maengel_nur_clip_weit(c: dict, forbidden: set[str]) -> list[str]:
+    """Gesperrte Mängel, die der Clip nur clip-weit nennt (``maengel``, dazu „Blick in Kamera" aus
+    ``personen.blick_in_kamera``), die aber KEIN Abschnitt in seinem ``maengel`` führt (Schluss-Review I1). Die
+    Sperre je Abschnitt greift dort nicht — der Index hat den Mangel nirgends verortet —, deshalb meldet
+    ``verify_layout()`` ihn als Warnung (User-Entscheid 24.09.2026: nur warnen). Leer beim alten Index ohne
+    Abschnitts-Mängel: dort sperrt der Prüfer ohnehin clip-weit."""
+    if not _hat_abschnitts_maengel(c):
+        return []
+    clip_weit = set(c.get("maengel") or [])
+    if (c.get("personen") or {}).get("blick_in_kamera"):
+        clip_weit.add("Blick in Kamera")
+    verortet = {m for a in (c.get("abschnitte") or []) for m in (a.get("maengel") or [])}
+    return sorted((clip_weit & forbidden) - verortet)
+
+
 def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg: dict, fps: float,
                   tele: list[dict] | None = None) -> VerifyResult:
     """Harte Prüfung nach Spec v2 Abschnitt 3.3."""
@@ -702,7 +722,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         spans = _usable_spans(c, stabil=frisch)
         if not any(a - EPS <= p["in_s"] and p["out_s"] <= z + EPS for a, z in spans):
             r.errors.append(f"{tag}: liegt in keinem verwendbaren Abschnitt und in keinem gemessenen stabilen Bereich "
-                            f"(erlaubt: {', '.join(f'{a:g}–{z:g}s' for a, z in spans) or 'nichts'}).")
+                            f"(erlaubt: {', '.join(f'{_z(a)}–{_z(z)}s' for a, z in spans) or 'nichts'}).")
         q_von, q_bis = _quellbereich_s(p, fps)
         # stabil = ganz in EINEM gemessenen Lauf (Schluss-Review I3/M1), im Rückfall ohne Läufe wie bisher
         stabil_ok = frisch and _in_stabil(c, q_von, q_bis)
@@ -714,7 +734,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 if stabil_ok:
                     sperrend -= {"Wackler"}
                 for m in sorted(sperrend):
-                    r.errors.append(f"{tag}: Abschnitt {float(a['von_s']):g}–{float(a['bis_s']):g}s hat den Mangel "
+                    r.errors.append(f"{tag}: Abschnitt {_z(a['von_s'])}–{_z(a['bis_s'])}s hat den Mangel "
                                     f"„{m}“ — gesperrt.")
         else:
             ohne_abschnitts_maengel += 1
@@ -873,6 +893,15 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         r.warnings.append(f"{ohne_abschnitts_maengel} von {len(placed)} Shots aus Clips ohne Abschnitts-Mängel — "
                           f"die Sperre greift dort clip-weit wie vor der Umstellung; "
                           f"autocut_index_broll.py --force holt die Verortung nach.")
+    # Schluss-Review I1 (User-Entscheid 24.09.2026: nur warnen, keine Sperre, Rettung unverändert): ein gesperrter
+    # Mangel, den der Clip nur clip-weit nennt und kein Abschnitt verortet, sperrt je Abschnitt nirgends — einmal je
+    # genutztem Clip darauf hinweisen, nicht je Shot.
+    for clip in uses:
+        nur_clip_weit = _maengel_nur_clip_weit(by_path[clip], forbidden)
+        if nur_clip_weit:
+            name = by_path[clip].get("datei") or Path(clip).name
+            r.warnings.append(f"{name}: nennt {', '.join(f'„{m}“' for m in nur_clip_weit)} nur clip-weit, in keinem "
+                              f"Abschnitt — nicht gesperrt, Bild prüfen.")
     # Review-Fund I4 (Spec, Fehler und Randfälle + Konfiguration): stabil_quelle verortet, mit welchen Schwellen
     # ein Abschnitts stabil-Bereich abgeleitet wurde. Zwei getrennte Fälle je genutztem Clip (nicht je Shot —
     # ein Clip zählt nur einmal): der Config-Hash passt nicht mehr (ruhig_max_px/fenster_s geändert — dieselbe
@@ -892,9 +921,10 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
               or float(sq.get("stabil_min_s", tcfg["stabil_min_s"])) != float(tcfg["stabil_min_s"])):
             andere_stabil_schwellen += 1
     if stabil_ignoriert:
+        # Ledger B2: ruhig_max_px/fenster_s stecken im Hash — erst die Telemetrie neu messen, dann den Nachlauf
         r.warnings.append(f"{stabil_ignoriert} {'Clip' if stabil_ignoriert == 1 else 'Clips'}: stabile Bereiche "
-                          f"{TM.HINWEIS_SCHWELLEN} — keine Rettung, keine Bewegungs-Warnung dort; "
-                          f"autocut_index_sections.py neu laufen lassen.")
+                          f"{TM.HINWEIS_SCHWELLEN} — keine Rettung, keine Bewegungs-Warnung dort; erst "
+                          f"autocut_telemetrie.py, dann autocut_index_sections.py laufen lassen.")
     if andere_stabil_schwellen:
         r.warnings.append(f"{andere_stabil_schwellen} {'Clip' if andere_stabil_schwellen == 1 else 'Clips'} mit "
                           f"anderen Stabil-Schwellen abgeleitet — autocut_index_sections.py erneut laufen lassen.")

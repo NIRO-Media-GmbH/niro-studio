@@ -1512,7 +1512,7 @@ Kein Task — das ist der Lauf mit dem User zusammen, nach Abschluss aller siebe
 1. `sh tools/studio_abgleich.sh --charge "projects/WLC/Recruiting/2026-07 Erster Dreh"`
 2. `broll.forbidden_maengel: ["Blick in Kamera", "Crew im Bild"]` in `_intern/autocut/config.yaml` (offener Punkt im Protokoll vom 23.09.: „Logo/Marke" ist bei WLC gewollt, betrifft 27 der 51 Clips)
 3. `venv/bin/python scripts/autocut_index_broll.py "<Charge>" --force` (51 Clips, ~2,50 €)
-4. `venv/bin/python scripts/autocut_index_sections.py "<Charge>"` (Cache, keine API-Kosten)
+4. `venv/bin/python scripts/autocut_index_sections.py "<Charge>"` — **mit API-Kosten** (berichtigt 24.09., Schluss-Review M2): `--force` in Schritt 3 schreibt je Clip einen frischen Datensatz ohne die Felder aus Stufe 2b, der Nachlauf fragt deshalb jeden Clip neu an. Vorher `--dry-run` für Clipzahl und Schätzung und beides dem User nennen.
 5. `venv/bin/python scripts/autocut_place_broll.py "<Charge>" --compact`
 6. Auswahl für Video 1 neu; Ergebnis als Sichtungs-Video gegen `Ergebnisse/Rohschnitt/video-1-broll-sichtung.mp4` und `video-1-broll-nachtrag.mp4` halten.
 7. Protokoll-Eintrag, dann `sh tools/studio_abgleich.sh --charge "<Charge>"`

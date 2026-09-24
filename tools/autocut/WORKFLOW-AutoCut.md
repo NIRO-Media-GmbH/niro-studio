@@ -265,8 +265,11 @@ Abweichend davon:
 Je Abschnitt steht seit dem 23.09.2026 auch `maengel` (`abschnitte[].maengel`) — dieselbe Liste wie clip-weit, aber
 nur, was in diesem Abschnitt zu sehen ist. Der Prüfer sperrt anhand dieser Liste; die clip-weite bleibt die
 Vereinigung und dient nur der Übersicht. Ein Index aus der Zeit davor trägt das Feld nicht: dann sperrt der Prüfer wie
-früher clip-weit und sagt es im Bericht. `autocut_index_broll.py --force` holt die Verortung nach (kostet die
-Stufe-2-Token erneut, bei 51 Clips rund 2,50 €).
+früher clip-weit und sagt es im Bericht. `autocut_index_broll.py --force` holt die Verortung nach und kostet die
+Stufe-2-Token erneut (bei 51 Clips rund 2,50 €) — und nicht nur die: `--force` schreibt je Clip einen frischen
+Datensatz **ohne** die Felder aus Stufe 2b (Einstellung, Perspektive, Brennweite, `setup_hash`, `stabil` …). Danach
+muss der Nachlauf `autocut_index_sections.py` neu laufen, und der fragt jeden so neu indexierten Clip erneut bei der
+API an — erst mit `--dry-run` Clipzahl und Schätzung holen und dem User nennen.
 
 ## Ablauf Stufe 2b — „Nachlauf" (Pflicht vor Stufe 3 v2)
 
@@ -362,6 +365,9 @@ gerettet ist.
   Fenster). Verwendbare Abschnitte legen sich wie bisher an ihren Grenzen mit jedem Nachbarn zusammen.
 - **Warnung `Bereich nicht als stabil gemessen`**: der Abschnitt ist verwendbar, die gemessene Bewegung dort
   aber hoch. Bewusst keine Sperre — ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt.
+- **Warnung `nennt „…“ nur clip-weit, in keinem Abschnitt`**: ein gesperrter Mangel steht nur in der clip-weiten
+  Liste (oder kommt aus `personen.blick_in_kamera`), kein Abschnitt führt ihn. Keine Sperre — verortet ist er
+  nirgends —, aber das Bild prüfen; einmal je Clip.
 
 Ein Index aus Stufe 2b vor dem 24.09.2026 trägt keine `laeufe`: dann legt der Prüfer die Stücke wie zuvor an echten
 Abschnittsgrenzen zusammen und überbrückt dabei einen Bruch zwischen zwei Läufen, der genau auf einer Grenze liegt.
