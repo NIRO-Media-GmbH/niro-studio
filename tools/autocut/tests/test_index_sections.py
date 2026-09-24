@@ -657,19 +657,47 @@ def test_telemetrie_anwenden_schreibt_stabil_je_abschnitt():
                           {"von_s": 4, "bis_s": 8, "verwendbar": False}]}
     neu, geaendert = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0, _TCFG)
     assert geaendert is True
-    # Clip-Bereiche sind 0–5 s und 5–8 s, auf die Abschnitte geschnitten
+    # Clip-Läufe sind 0–5 s und 5–8 s (das unruhige Fenster bei 4 s trennt sie), auf die Abschnitte geschnitten
     assert neu["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.05, 0.2]]
-    # 4,0–5,0 s wäre nur 1,0 s lang und fällt unter stabil_min_s weg
-    assert neu["abschnitte"][1]["stabil"] == [[5.0, 8.0, 0.05, 0.3]]
+    # 4,0–5,0 s ist nur 1,0 s lang, bleibt aber: der Lauf 0–5 s geht im Nachbarabschnitt weiter (Schluss-Review I3)
+    assert neu["abschnitte"][1]["stabil"] == [[4.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
     assert neu["stabil_quelle"] == {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
-                                    "config_hash": "abc123abc123"}
+                                    "config_hash": "abc123abc123",
+                                    "laeufe": [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]}
 
 
-def test_telemetrie_anwenden_schneidet_zu_kurze_stabile_stuecke_weg():
-    # Abschnitt 3,5–4,5 s trifft den Bereich 0–5 s nur 1,0 s lang → unter stabil_min_s, fällt weg
-    rec = {"abschnitte": [{"von_s": 3.5, "bis_s": 4.5, "verwendbar": False}]}
+def test_telemetrie_anwenden_laesst_nur_stuecke_ohne_laenge_weg():
+    """Schluss-Review I3 (Task 8): ein kurzes Stück bleibt — Abschnitt 3,5–4,5 s trifft den Lauf 0–5 s nur 1,0 s lang,
+    die Mindestlänge gilt aber für den Lauf, nicht für das Stück. Weg fällt nur ein Stück ohne Länge: der Abschnitt
+    5–7 s berührt den Lauf 0–5 s nur im Punkt 5,0."""
+    rec = {"abschnitte": [{"von_s": 3.5, "bis_s": 4.5, "verwendbar": False},
+                          {"von_s": 5.0, "bis_s": 7.0, "verwendbar": False}]}
     neu, _ = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0, _TCFG)
-    assert neu["abschnitte"][0]["stabil"] == []
+    assert neu["abschnitte"][0]["stabil"] == [[3.5, 4.5, 0.05, 0.2]]
+    assert neu["abschnitte"][1]["stabil"] == [[5.0, 7.0, 0.05, 0.3]]
+
+
+# Schluss-Review I3 (Task 8): EIN gemessener Lauf 12–18 s — Fenster 12 … 16 s ruhig, alle anderen unruhig
+_TELE_LAUF = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd", "fehler": None,
+              "dauer_s": 20.0, "fenster_s": 2.0, "haltung": "gimbal", "wackeln": 0.1,
+              "fenster": [[float(t), 0.05 if 12 <= t <= 16 else 0.4, 0.3 if 12 <= t <= 16 else 3.0, "statisch", None]
+                          for t in range(19)],
+              "ruhige_fenster": [12.0, 13.0, 14.0, 15.0, 16.0], "config_hash": "abc123abc123"}
+
+
+def test_telemetrie_anwenden_randstueck_bleibt_und_laeufe_ungeschnitten():
+    """Schluss-Review I3 (Task 8): Abschnitte 8–13 und 13–20 s, EIN Lauf 12–18 s. Das Stück 12–13 s (1,0 s, unter
+    stabil_min_s) fiel bisher weg, obwohl sein Lauf im Nachbarabschnitt weitergeht — der Prüfer ließ dann einen Shot
+    12,5–15,5 s durchfallen. Jetzt bleibt es, und stabil_quelle hält den ungeschnittenen Lauf für den Prüfer."""
+    rec = {"abschnitte": [{"von_s": 8, "bis_s": 13, "verwendbar": False},
+                          {"von_s": 13, "bis_s": 20, "verwendbar": False}]}
+    neu, geaendert = S.telemetrie_anwenden(rec, _TELE_LAUF, 2.0, _TCFG)
+    assert geaendert is True
+    assert neu["abschnitte"][0]["stabil"] == [[12.0, 13.0, 0.05, 0.3]]
+    assert neu["abschnitte"][1]["stabil"] == [[13.0, 18.0, 0.05, 0.3]]
+    assert neu["stabil_quelle"]["laeufe"] == [[12.0, 18.0, 0.05, 0.3]]
+    wieder, geaendert2 = S.telemetrie_anwenden(neu, _TELE_LAUF, 2.0, _TCFG)
+    assert geaendert2 is False and wieder == neu
 
 
 def test_telemetrie_anwenden_ohne_tcfg_schreibt_kein_stabil():
@@ -704,3 +732,31 @@ def test_index_sections_clip_traegt_stabil_bei_cache_treffer_nach(tmp_path):
     cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
     assert cached["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.05, 0.2]]
     assert cached["stabil_quelle"]["config_hash"] == "abc123abc123"
+    assert cached["stabil_quelle"]["laeufe"] == [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+
+
+def test_index_sections_clip_traegt_laeufe_bei_altem_datensatz_nach(tmp_path):
+    """Task 8: ein Datensatz aus Stufe 2b vor den Läufen (stabil_quelle ohne laeufe, das kurze Randstück 4–5 s
+    verworfen) bekommt beides beim nächsten Lauf ohne API-Aufruf — derselbe Cache-Treffer-Pfad wie für stabil."""
+    ch = _Ch(tmp_path)
+    (ch.autocut / "broll_index").mkdir()
+    alt = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "datei": "FX3_1.MP4", "fingerprint": "abcdefabcdef0000",
+           "orientierung": "16:9",
+           "stabil_quelle": {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                             "config_hash": "abc123abc123"},
+           "abschnitte": [{"von_s": 4, "bis_s": 8, "beschreibung": "Flur", "qualitaet": 4, "verwendbar": False,
+                           "einstellung": "Halbtotale", "perspektive_hoehe": "Augenhöhe",
+                           "perspektive_ansicht": "seitlich", "brennweite": "normal", "bewegungsrichtung": "keine",
+                           "hauptmotiv": "Flur", "setup_hash": "0123456789abcdef",
+                           "stabil": [[5.0, 8.0, 0.05, 0.3]]}]}
+    (ch.autocut / "broll_index" / "abcdefabcdef0000.json").write_text(json.dumps(alt), encoding="utf-8")
+
+    def kein_api(*a, **k):
+        raise AssertionError("kein API-Aufruf bei Cache-Treffer")
+
+    out = S.index_sections_clip(ch, alt, None, _CFG_T, "prompt", describe=kein_api, telemetrie=_TELE_STABIL)
+    assert out["_cache"] is True
+    assert out["abschnitte"][0]["stabil"] == [[4.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+    cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
+    assert cached["stabil_quelle"]["laeufe"] == [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+    assert cached["abschnitte"][0]["stabil"] == out["abschnitte"][0]["stabil"]

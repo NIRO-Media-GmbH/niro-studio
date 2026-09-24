@@ -281,13 +281,17 @@ Stufe-2-Token erneut, bei 51 Clips rund 2,50 €).
    Fehlerliste nach; der Protokoll-Eintrag nennt die Zahl der Nachfragen. Exit 1 = einzelne Clips
    fehlgeschlagen (Lauf wiederholen; Cache hält Fertiges).
 
-Zusätzlich trägt der Nachlauf je Abschnitt `stabil` ein: die gemessenen **stabilen Bereiche**
-`[von_s, bis_s, wackeln_max, bewegung_max]` — Läufe benachbarter ruhiger Fenster (`wackeln ≤ ruhig_max_px`,
-ohne schnelle Zoomfahrten, `bewegung ≤ bewegung_max`), mindestens `stabil_min_s` lang, auf den Abschnitt
-geschnitten. Je Clip kommt `stabil_quelle` dazu (die drei Schwellen und der Config-Hash der Messung, aus der
-die Bereiche stammen). Das ist reine Rechnung auf vorhandenen Daten: Cache-Treffer bekommen die Felder ohne
-API-Aufruf. Wer `bewegung_max` oder `stabil_min_s` ändert, lässt `autocut_index_sections.py` erneut laufen —
-kostenlos, die Telemetrie selbst bleibt gültig (beide Schlüssel stehen in `OHNE_MESSWIRKUNG`).
+Zusätzlich trägt der Nachlauf die gemessenen **stabilen Bereiche** ein, je
+`[von_s, bis_s, wackeln_max, bewegung_max]`: Läufe benachbarter ruhiger Fenster (`wackeln ≤ ruhig_max_px`, ohne
+schnelle Zoomfahrten, `bewegung ≤ bewegung_max`), je Lauf mindestens `stabil_min_s` lang. Je Clip steht
+`stabil_quelle` — die drei Schwellen, der Config-Hash der Messung, aus der die Bereiche stammen, und
+`stabil_quelle.laeufe`, die **ungeschnittenen Läufe** (seit 24.09.2026). Je Abschnitt steht `stabil`: die Stücke
+dieser Läufe, auf den Abschnitt geschnitten, **ohne Mindestlänge je Stück** — die gilt für den Lauf; ein kürzeres
+Stück entsteht nur an einer Abschnittsgrenze, wo sein Lauf im Nachbarabschnitt weitergeht (Lauf 12–18 s, Abschnitte
+8–13 und 13–20 s → Stücke 12–13 und 13–18 s). Das ist reine Rechnung auf vorhandenen Daten: Cache-Treffer bekommen
+die Felder ohne API-Aufruf, auch ein Index aus der Zeit vor den Läufen beim nächsten Lauf. Wer `bewegung_max` oder
+`stabil_min_s` ändert, lässt `autocut_index_sections.py` erneut laufen — kostenlos, die Telemetrie selbst bleibt
+gültig (beide Schlüssel stehen in `OHNE_MESSWIRKUNG`).
 
 Liegt `telemetrie.json` vor (`autocut_telemetrie.py`), bekommt der Abschnittsbogen eine Kontextzeile mit der
 KB-Brennweite in mm („KB 71,6 mm", bei Zoomfahrten „KB 24–70 mm, langsamer Zoom"), Pitch, Haltung und Bewegungsart je
@@ -344,19 +348,28 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
 
 Der kompakte Index enthält neben den verwendbaren Abschnitten die **geretteten**: solche, die der Bild-Index
 verworfen hat, für die die Messung aber einen stabilen Bereich ausweist und kein gesperrter Mangel bleibt.
-Sie tragen `gerettet: true` und `trotz` (was der Index sonst noch bemängelt hat, meist Unschärfe). Shots dort
-müssen vollständig in einem `stabil`-Bereich liegen.
+Sie tragen `gerettet: true` und `trotz` (was der Index sonst noch bemängelt hat, meist Unschärfe). Je Clip stehen
+dort die ungeschnittenen Läufe als `stabil_laeufe`. Shots in geretteten Abschnitten müssen vollständig in **einem**
+Lauf liegen; sie dürfen dabei über Abschnittsgrenzen laufen, solange jeder berührte Abschnitt verwendbar oder
+gerettet ist.
 
-`--verify-only` prüft dazu:
-- **Mangel je Abschnitt** statt je Clip. `Wackler` entfällt, wenn der genutzte Quellbereich in einem stabilen
-  Bereich liegt — die Messung überstimmt das Bildurteil, Schwelle ist `ruhig_max_px`.
-- **Lage**: der Shot muss in einem verwendbaren Abschnitt **oder** in einem stabilen Bereich liegen;
-  angrenzende Bereiche werden zusammengelegt, ein Shot darf also über eine Abschnittsgrenze laufen.
+`--verify-only` prüft dazu — gegen die **ungeschnittenen Läufe** aus `stabil_quelle.laeufe`:
+- **Mangel je Abschnitt** statt je Clip. `Wackler` entfällt, wenn der genutzte Quellbereich vollständig in einem
+  gemessenen Lauf liegt — die Messung überstimmt das Bildurteil, Schwelle ist `ruhig_max_px`.
+- **Lage**: der Shot muss in einem verwendbaren Abschnitt **oder** in einem stabilen Stück eines geretteten
+  Abschnitts liegen. Stücke desselben Laufs legen sich über Abschnittsgrenzen zusammen, Stücke verschiedener Läufe
+  nie — auch nicht, wenn sich zwei Läufe genau an einer Abschnittsgrenze berühren (dazwischen lag ein unruhiges
+  Fenster). Verwendbare Abschnitte legen sich wie bisher an ihren Grenzen mit jedem Nachbarn zusammen.
 - **Warnung `Bereich nicht als stabil gemessen`**: der Abschnitt ist verwendbar, die gemessene Bewegung dort
   aber hoch. Bewusst keine Sperre — ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt.
 
+Ein Index aus Stufe 2b vor dem 24.09.2026 trägt keine `laeufe`: dann legt der Prüfer die Stücke wie zuvor an echten
+Abschnittsgrenzen zusammen und überbrückt dabei einen Bruch zwischen zwei Läufen, der genau auf einer Grenze liegt.
+`autocut_index_sections.py` trägt die Läufe kostenlos aus dem Cache nach.
+
 **Andere Schwellen**: stabile Bereiche aus einer Messung mit anderen Telemetrie-Schwellen (`ruhig_max_px`,
-`fenster_s`) zählen nicht: keine Rettung, keine Bewegungs-Warnung; der Bericht und `--compact` nennen die Zahl der
+`fenster_s`) zählen nicht: keine Rettung, keine Bewegungs-Warnung, und der kompakte Index gibt für diese Clips
+weder `stabil` (in keinem Abschnitt) noch `stabil_laeufe` aus; der Bericht und `--compact` nennen die Zahl der
 Clips. Abhilfe: erst `autocut_telemetrie.py`, dann `autocut_index_sections.py` (kostenlos aus dem Cache). Wurden nur
 `bewegung_max` oder `stabil_min_s` geändert, reicht `autocut_index_sections.py` — der Bericht sagt dann „mit anderen
 Stabil-Schwellen abgeleitet — autocut_index_sections.py erneut laufen lassen".

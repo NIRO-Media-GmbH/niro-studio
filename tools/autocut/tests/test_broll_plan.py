@@ -350,3 +350,59 @@ def test_usable_spans_legt_stabile_stuecke_nur_an_der_abschnittsgrenze_zusammen(
     c2 = {"abschnitte": [{"von_s": 0, "bis_s": 2, "verwendbar": False, "maengel": [], "stabil": [[0.0, 2.0, 0.05, 0.3]]},
                          {"von_s": 2, "bis_s": 5, "verwendbar": False, "maengel": [], "stabil": [[2.0, 4.8, 0.07, 0.3]]}]}
     assert _usable_spans(c2, stabil=True) == [(0.0, 4.8)]
+
+
+# --------------------------------------------------------------------------- #
+# Task 8: ungeschnittene stabile Läufe (Schluss-Review I3/M1)
+# --------------------------------------------------------------------------- #
+
+def test_usable_spans_legt_stuecke_desselben_laufs_ueber_die_grenze_zusammen():
+    """Schluss-Review I3: trägt stabil_quelle die ungeschnittenen Läufe, legen sich die Stücke EINES Laufs über die
+    Abschnittsgrenze zusammen (12–13 + 13–18 → 12–18 s), auch wenn ein Stück kürzer als stabil_min_s ist."""
+    c = {"stabil_quelle": {"laeufe": [[12.0, 18.0, 0.05, 0.3]]},
+         "abschnitte": [{"von_s": 8, "bis_s": 13, "verwendbar": False, "maengel": [], "stabil": [[12.0, 13.0, 0.05, 0.3]]},
+                        {"von_s": 13, "bis_s": 20, "verwendbar": False, "maengel": [], "stabil": [[13.0, 18.0, 0.05, 0.3]]}]}
+    assert _usable_spans(c, stabil=True) == [(12.0, 18.0)]
+    assert _usable_spans(c) == []                           # Plan v1: nur verwendbare Abschnitte, wie bisher
+
+
+def test_usable_spans_legt_verschiedene_laeufe_an_der_grenze_nie_zusammen():
+    """Schluss-Review M1: zwei Läufe 0–4 und 4–11 s (das Fenster 3–5 s ist unruhig) berühren sich genau an der
+    Abschnittsgrenze 4,0 — sie bleiben zwei. Ohne laeufe (Rückfall) legt die Grenzregel sie wie bisher zusammen."""
+    abschnitte = [{"von_s": 0, "bis_s": 4, "verwendbar": False, "maengel": ["Wackler"], "stabil": [[0.0, 4.0, 0.05, 0.3]]},
+                  {"von_s": 4, "bis_s": 12, "verwendbar": False, "maengel": ["Wackler"], "stabil": [[4.0, 11.0, 0.05, 0.3]]}]
+    c = {"stabil_quelle": {"laeufe": [[0.0, 4.0, 0.05, 0.3], [4.0, 11.0, 0.05, 0.3]]}, "abschnitte": abschnitte}
+    assert _usable_spans(c, stabil=True) == [(0.0, 4.0), (4.0, 11.0)]
+    assert _usable_spans({"abschnitte": abschnitte}, stabil=True) == [(0.0, 11.0)]
+
+
+def test_usable_spans_verwendbarer_abschnitt_legt_sich_mit_jedem_lauf_zusammen():
+    """Ein verwendbarer Abschnitt ist als Ganzes brauchbar und legt sich wie bisher an seinen Grenzen mit jedem
+    Nachbarn zusammen — auch mit Stücken zweier verschiedener Läufe links und rechts."""
+    c = {"stabil_quelle": {"laeufe": [[2.0, 4.0, 0.05, 0.3], [8.0, 10.0, 0.05, 0.3]]},
+         "abschnitte": [{"von_s": 0, "bis_s": 4, "verwendbar": False, "maengel": [], "stabil": [[2.0, 4.0, 0.05, 0.3]]},
+                        {"von_s": 4, "bis_s": 8, "verwendbar": True, "maengel": []},
+                        {"von_s": 8, "bis_s": 12, "verwendbar": False, "maengel": [], "stabil": [[8.0, 10.0, 0.05, 0.3]]}]}
+    assert _usable_spans(c, stabil=True) == [(2.0, 10.0)]
+
+
+def test_usable_spans_ordnet_ein_stueck_dem_lauf_mit_der_groessten_ueberdeckung_zu():
+    """Zwei Läufe berühren sich bei 4,0; der Abschnitt 0–4,02 s endet 0,02 s hinter dem ersten Lauf und trägt deshalb
+    ein 0,02-s-Stück des zweiten, das in der Toleranz (±EPS) auch im ersten läge. Es gehört zu dem Lauf, den es
+    wirklich überdeckt — dem zweiten — und legt sich mit dessen Stück im Folgeabschnitt zusammen (beim ersten
+    passenden Lauf blieben drei Bereiche übrig)."""
+    c = {"stabil_quelle": {"laeufe": [[0.0, 4.0, 0.05, 0.3], [4.0, 11.0, 0.05, 0.3]]},
+         "abschnitte": [{"von_s": 0, "bis_s": 4.02, "verwendbar": False, "maengel": [],
+                         "stabil": [[0.0, 4.0, 0.05, 0.3], [4.0, 4.02, 0.05, 0.3]]},
+                        {"von_s": 4.02, "bis_s": 8, "verwendbar": False, "maengel": [],
+                         "stabil": [[4.02, 8.0, 0.05, 0.3]]}]}
+    assert _usable_spans(c, stabil=True) == [(0.0, 4.0), (4.0, 8.0)]
+
+
+def test_usable_spans_ignoriert_stueck_ausserhalb_jedes_laufs():
+    """Mit laeufe zählt nur ein Stück, das in einem gemessenen Lauf liegt — ein Stück außerhalb (uneinheitlicher
+    Datensatz, Stufe 2b schreibt beides zugleich) rettet nichts."""
+    c = {"stabil_quelle": {"laeufe": [[0.0, 3.0, 0.05, 0.3]]},
+         "abschnitte": [{"von_s": 0, "bis_s": 12, "verwendbar": False, "maengel": [],
+                         "stabil": [[0.0, 3.0, 0.05, 0.3], [6.0, 9.0, 0.05, 0.3]]}]}
+    assert _usable_spans(c, stabil=True) == [(0.0, 3.0)]

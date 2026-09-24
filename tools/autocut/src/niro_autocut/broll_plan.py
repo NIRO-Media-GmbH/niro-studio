@@ -222,25 +222,49 @@ def normalize_clip_refs(bp: BrollPlan, index: dict) -> list[str]:
     return errors
 
 
-def _merge_an_abschnittsgrenzen(stuecke: list[tuple[float, float, bool, bool]]) -> list[tuple[float, float]]:
-    """Stücke ``(von_s, bis_s, startet_an_grenze, endet_an_grenze)`` zusammenlegen — aber nur, wenn sich zwei
+def _laeufe(c: dict) -> list[tuple[float, float]] | None:
+    """Die ungeschnittenen stabilen Läufe des Clips (``stabil_quelle.laeufe``, Stufe 2b seit Schluss-Review I3/M1)
+    als ``(von_s, bis_s)``; None, wenn der Index sie nicht trägt (Stufe 2b davor) — dann gilt der Rückfall über die
+    an Abschnittsgrenzen zusammengelegten Stücke. Eine leere Liste ist eine Aussage („nichts stabil"), kein
+    Rückfall."""
+    laeufe = (c.get("stabil_quelle") or {}).get("laeufe")
+    return None if laeufe is None else [(float(x), float(z)) for x, z, *_ in laeufe]
+
+
+def _lauf_nr(laeufe: list[tuple[float, float]], von_s: float, bis_s: float) -> int | None:
+    """Nummer des Laufs, in dem das Stück ``[von_s, bis_s]`` liegt (±``EPS``); None, wenn in keinem. Liegt es in der
+    Toleranz in zwei Läufen (sie berühren sich, das Stück ist kürzer als ``EPS``), zählt der, den es wirklich
+    überdeckt."""
+    passend = [i for i, (x, z) in enumerate(laeufe) if x - EPS <= von_s and bis_s <= z + EPS]
+    return max(passend, key=lambda i: min(bis_s, laeufe[i][1]) - max(von_s, laeufe[i][0]), default=None)
+
+
+def _merge_an_abschnittsgrenzen(stuecke: list[tuple]) -> list[tuple[float, float]]:
+    """Stücke ``(von_s, bis_s, startet_an_grenze, endet_an_grenze[, lauf])`` zusammenlegen — aber nur, wenn sich zwei
     Stücke an einer ECHTEN Abschnittsgrenze berühren (Review-Fund B1): das vordere endet an der ``bis_s`` seines
     EIGENEN Abschnitts, das hintere beginnt an der ``von_s`` seines EIGENEN Abschnitts, und beide Zahlen liegen
     innerhalb ``EPS`` beieinander. Ein Lauf, der INNERHALB eines Abschnitts an einer Bewegungsspitze endet (z. B.
     durch ein einzelnes unruhiges Fenster geteilt), trifft die Nachbarzahl bei der Standardkonfiguration
-    (``fenster_s`` = 2 · ``schritt_s``) oft rein arithmetisch — genau das darf nicht als durchgehend stabil
-    zählen; ``stabile_bereiche()`` liefert ohnehin schon maximale Läufe (Spec Abschnitt 2), ein echter Sprung
-    bleibt also ein Sprung. Ein Stück, das schon der ganze Abschnitt ist (z. B. ein ``verwendbar``-Abschnitt),
-    hat ``startet_an_grenze``/``endet_an_grenze`` immer wahr und legt sich wie bisher mit jedem berührenden
-    Nachbarn zusammen."""
-    merged: list[list] = []          # [von_s, bis_s, endet_an_grenze]
-    for von, bis, startet_an_grenze, endet_an_grenze in sorted(stuecke):
-        if merged and merged[-1][2] and startet_an_grenze and von <= merged[-1][1] + EPS:
+    (``fenster_s`` = 2 · ``schritt_s``) oft rein arithmetisch — genau das darf nicht als durchgehend stabil zählen.
+    Ein Stück, das schon der ganze Abschnitt ist (z. B. ein ``verwendbar``-Abschnitt), hat ``startet_an_grenze``/
+    ``endet_an_grenze`` immer wahr und legt sich wie bisher mit jedem berührenden Nachbarn zusammen.
+
+    ``lauf`` (Schluss-Review I3/M1) ist die Nummer des ungeschnittenen Laufs aus ``stabil_quelle.laeufe``, zu dem
+    ein stabiles Stück gehört, oder None — für einen ganzen Abschnitt und für einen Index ohne ``laeufe``. Zwei
+    Stücke mit Nummer legen sich nur bei GLEICHER Nummer zusammen: so bleibt ein echter Sprung zwischen zwei Läufen
+    ein Sprung, auch wenn er genau auf einer Abschnittsgrenze liegt. Ohne ``laeufe`` (alle Nummern None) kann die
+    Regel das nicht sehen und überbrückt einen solchen Sprung (M1) — das bleibt der Rückfall für Indexe von vorher."""
+    merged: list[list] = []          # [von_s, bis_s, endet_an_grenze, lauf des letzten Stücks]
+    for von, bis, startet_an_grenze, endet_an_grenze, *rest in sorted(stuecke, key=lambda s: s[:4]):
+        lauf = rest[0] if rest else None
+        if (merged and merged[-1][2] and startet_an_grenze and von <= merged[-1][1] + EPS
+                and (lauf is None or merged[-1][3] is None or lauf == merged[-1][3])):
             merged[-1][1] = max(merged[-1][1], bis)
             merged[-1][2] = endet_an_grenze
+            merged[-1][3] = lauf
         else:
-            merged.append([von, bis, endet_an_grenze])
-    return [(von, bis) for von, bis, _ in merged]
+            merged.append([von, bis, endet_an_grenze, lauf])
+    return [(von, bis) for von, bis, _, _ in merged]
 
 
 def _usable_spans(c: dict, stabil: bool = False) -> list[tuple[float, float]]:
@@ -255,19 +279,28 @@ def _usable_spans(c: dict, stabil: bool = False) -> list[tuple[float, float]]:
     Bereich liegt, prüft ``verify_layout()`` ohnehin getrennt je Abschnitt; hier geht es nur um die Frage, wo
     überhaupt brauchbares Material liegen könnte.
 
-    Zwei stabile Stücke desselben Abschnitts legen sich NICHT zusammen, nur weil sie sich zufällig berühren
-    (Review-Fund B1) — nur Stücke an einer echten, gemeinsamen Abschnittsgrenze (FX3_8641: 0–2 s + 2–4,8 s →
-    0–4,8 s), siehe ``_merge_an_abschnittsgrenzen()``. Ohne den Parameter (Plan v1) ist das Ergebnis
-    unverändert — ``verwendbar``-Abschnitte legen sich weiter bei jeder Berührung/Überschneidung zusammen."""
-    stuecke = [(float(a["von_s"]), float(a["bis_s"]), True, True)
-              for a in (c.get("abschnitte") or []) if a.get("verwendbar")]
+    Trägt ``stabil_quelle`` die ungeschnittenen Läufe (Schluss-Review I3/M1), legen sich stabile Stücke nur
+    zusammen, wenn sie zum SELBEN Lauf gehören — dann auch über eine Abschnittsgrenze (Lauf 12–18 s, Stücke 12–13
+    und 13–18 s → 12–18 s); Stücke verschiedener Läufe nie, auch nicht genau an einer Abschnittsgrenze. Ein Stück,
+    das in keinem Lauf liegt (uneinheitlicher Datensatz), zählt nicht. Ohne ``laeufe`` gilt der Rückfall: Stücke
+    legen sich an einer echten, gemeinsamen Abschnittsgrenze zusammen (FX3_8641: 0–2 s + 2–4,8 s → 0–4,8 s), zwei
+    Stücke desselben Abschnitts nie (Review-Fund B1), siehe ``_merge_an_abschnittsgrenzen()``. Ohne den Parameter
+    (Plan v1) ist das Ergebnis unverändert — ``verwendbar``-Abschnitte legen sich weiter bei jeder
+    Berührung/Überschneidung zusammen."""
+    stuecke: list[tuple] = [(float(a["von_s"]), float(a["bis_s"]), True, True)
+                            for a in (c.get("abschnitte") or []) if a.get("verwendbar")]
     if stabil:
+        laeufe = _laeufe(c)
         for a in (c.get("abschnitte") or []):
             if a.get("verwendbar") or "maengel" not in a:
                 continue
             a_von, a_bis = float(a["von_s"]), float(a["bis_s"])
-            stuecke += [(float(x), float(z), abs(float(x) - a_von) <= EPS, abs(float(z) - a_bis) <= EPS)
-                       for x, z, *_ in (a.get("stabil") or [])]
+            for x, z, *_ in (a.get("stabil") or []):
+                x, z = float(x), float(z)
+                lauf = None if laeufe is None else _lauf_nr(laeufe, x, z)
+                if laeufe is not None and lauf is None:
+                    continue
+                stuecke.append((x, z, abs(x - a_von) <= EPS, abs(z - a_bis) <= EPS, lauf))
     return _merge_an_abschnittsgrenzen(stuecke)
 
 

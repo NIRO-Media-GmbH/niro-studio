@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
 from niro_autocut import broll_layout as L
+from niro_autocut import index_sections as S
 from niro_autocut import telemetrie as TM
 from niro_autocut.charge import AutoCutError
 from niro_autocut.cutlist import Beat, Cut, Cutlist
@@ -1138,3 +1140,125 @@ def test_verify_layout_meldet_lage_fehler_bei_luecke_in_verworfenem_abschnitt():
     plan = _plan({1: [("Flur/FX3_1.MP4", 2.5, 5.5), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
     assert any("verwendbaren Abschnitt" in e for e in res.errors)
+
+
+# --------------------------------------------------------------------------- #
+# Task 8: Prüfung gegen ungeschnittene stabile Läufe (Schluss-Review I3/M1/I2)
+# --------------------------------------------------------------------------- #
+
+WACKLER_GESPERRT = {**CFG, "forbidden_maengel": ["Blick in Kamera", "Crew im Bild", "Wackler"]}
+WLC_FIXTURE = Path(__file__).resolve().parent / "fixtures" / "bereiche-wlc.json"
+
+
+def _idx_laeufe(abschnitte, laeufe, dauer_s=12.0):
+    """Clip 1 mit eigenen Abschnitten ``(von_s, bis_s, verwendbar, maengel, stabil)`` und den ungeschnittenen Läufen
+    in ``stabil_quelle.laeufe`` (frischer Config-Hash); die übrigen Clips wie in ``_idx()``."""
+    idx = _idx()
+    c = idx["clips"][0]
+    vorlage = dict(c["abschnitte"][0])
+    c["dauer_s"] = dauer_s
+    c["abschnitte"] = [{**vorlage, "von_s": von, "bis_s": bis, "verwendbar": verwendbar, "maengel": list(maengel),
+                        "stabil": stabil} for von, bis, verwendbar, maengel, stabil in abschnitte]
+    c["maengel"] = sorted({m for _, _, _, maengel, _ in abschnitte for m in maengel})
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                          "config_hash": TM.config_hash(CFG_TELEMETRIE), "laeufe": laeufe}
+    return idx
+
+
+def _fehler_fx3_1(res, *worte):
+    return [e for e in res.errors if "FX3_1.MP4" in e and any(w in e for w in worte)]
+
+
+def test_verify_layout_i3_shot_ueber_die_grenze_in_einem_lauf():
+    """Schluss-Review I3: gerettete Abschnitte 8–13 und 13–20 s, EIN gemessener Lauf 12–18 s (Stücke 12–13 und
+    13–18 s). Der Shot 12,5–15,5 s liegt in diesem einen Lauf: kein Lage-Fehler, stabil — auch wenn die Charge
+    „Wackler" sperrt und beide Abschnitte ihn nennen —, keine Bewegungs-Warnung."""
+    plan = _plan({1: [("Flur/FX3_1.MP4", 12.5, 15.5), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    for maengel in ([], ["Wackler"]):
+        idx = _idx_laeufe([(8, 13, False, maengel, [[12.0, 13.0, 0.05, 0.3]]),
+                           (13, 20, False, maengel, [[13.0, 18.0, 0.05, 0.3]])],
+                          laeufe=[[12.0, 18.0, 0.05, 0.3]], dauer_s=20.0)
+        res = L.verify_layout(plan, TP, idx, CL, WACKLER_GESPERRT, 25, [_tele("FX3_1.MP4", 25.0, dauer_s=20.0)])
+        assert _fehler_fx3_1(res, "verwendbaren Abschnitt", "Mangel") == [], res.errors
+        assert not any("nicht als stabil gemessen" in w for w in res.warnings), res.warnings
+
+
+def test_verify_layout_i3_ende_zu_ende_an_fx3_8660():
+    """Schluss-Review I3 an echten Werten: FX3_8660 (WLC, tests/fixtures/bereiche-wlc.json) hat die Läufe 0–11 s und
+    12–18,72 s; der User hat 12,5–15,5 s zurückgeholt. Mit verworfenen Abschnitten 8–13 und 13–18,72 s (Grenzen für
+    diesen Fall gewählt) verwarf Stufe 2b bisher das 1-s-Randstück 12–13 s, und der Prüfer ließ den Shot durchfallen,
+    obwohl EIN gemessener Lauf ihn deckt. Hier läuft der Weg ohne Handarbeit: Stufe 2b schreibt, der Prüfer liest."""
+    e = next(x for x in json.loads(WLC_FIXTURE.read_text(encoding="utf-8")) if x["clip"] == "FX3_8660")
+    idx = _idx()
+    c = idx["clips"][0]
+    tele = {**e["telemetrie"], "path": c["path"], "quelle": "rtmd", "fehler": None,
+            "config_hash": TM.config_hash(CFG_TELEMETRIE)}
+    vorlage = dict(c["abschnitte"][0])
+    c.update(dauer_s=18.72, maengel=["Wackler"],
+             abschnitte=[{**vorlage, "von_s": 8.0, "bis_s": 13.0, "verwendbar": False, "maengel": ["Wackler"]},
+                         {**vorlage, "von_s": 13.0, "bis_s": 18.72, "verwendbar": False, "maengel": ["Wackler"]}])
+    idx["clips"][0], _ = S.telemetrie_anwenden(c, tele, 2.0, CFG_TELEMETRIE)
+    assert idx["clips"][0]["stabil_quelle"]["laeufe"] == [[0.0, 11.0, 0.128, 1.664], [12.0, 18.72, 0.08, 1.635]]
+    plan = _plan({1: [("Flur/FX3_1.MP4", 12.5, 15.5), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, WACKLER_GESPERRT, 25, [tele])
+    assert _fehler_fx3_1(res, "verwendbaren Abschnitt", "Mangel") == [], res.errors
+
+
+def test_verify_layout_m1_zwei_laeufe_an_der_abschnittsgrenze_bleiben_zwei():
+    """Schluss-Review M1: Abschnitte 0–4 und 4–12 s mit „Wackler", das Fenster 3–5 s ist unruhig → zwei Läufe 0–4 und
+    4–11 s, die sich genau an der Abschnittsgrenze berühren. Der Shot 2,5–5,5 s liegt in keinem Lauf ganz: gerettet →
+    Lage-Fehler; verwendbar → Wackler-Sperre und Bewegungs-Warnung. Bisher legte der Prüfer beide Stücke an der
+    Abschnittsgrenze zu 0–11 s zusammen und ließ den Shot als stabil durch."""
+    fenster = [[float(t), 0.4 if t == 3 else 0.05, 5.0 if t == 3 else (3.0 if t == 10 else 0.3), "keine", None]
+               for t in range(11)]
+    tele = [_tele("FX3_1.MP4", 25.0, fenster=fenster)]
+    plan = _plan({1: [("Flur/FX3_1.MP4", 2.5, 5.5), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    laeufe = [[0.0, 4.0, 0.05, 0.3], [4.0, 11.0, 0.05, 0.3]]
+
+    def idx(verwendbar):
+        return _idx_laeufe([(0, 4, verwendbar, ["Wackler"], [[0.0, 4.0, 0.05, 0.3]]),
+                            (4, 12, verwendbar, ["Wackler"], [[4.0, 11.0, 0.05, 0.3]])], laeufe=laeufe)
+
+    gerettet = L.verify_layout(plan, TP, idx(False), CL, WACKLER_GESPERRT, 25, tele)
+    assert _fehler_fx3_1(gerettet, "verwendbaren Abschnitt"), gerettet.errors
+    verwendbar = L.verify_layout(plan, TP, idx(True), CL, WACKLER_GESPERRT, 25, tele)
+    assert _fehler_fx3_1(verwendbar, "„Wackler“"), verwendbar.errors
+    assert any("FX3_1.MP4" in w and "nicht als stabil gemessen" in w and "5,0" in w
+               for w in verwendbar.warnings), verwendbar.warnings
+
+
+def test_verify_layout_fx3_8641_mit_laeufen():
+    """FX3_8641 mit den gemessenen Werten (EIN Lauf 0–4,8 s, Stücke 0–2 und 2–4,8 s in zwei geretteten Abschnitten):
+    die Stücke desselben Laufs legen sich zusammen, der Shot 1,5–4,0 s besteht — wie im Rückfall ohne laeufe."""
+    idx = _idx_laeufe([(0, 2, False, ["Wackler"], [[0.0, 2.0, 0.071, 0.271]]),
+                       (2, 4.8, False, ["Wackler"], [[2.0, 4.8, 0.071, 0.271]])],
+                      laeufe=[[0.0, 4.8, 0.071, 0.271]], dauer_s=4.8)
+    plan = _plan({1: [("Flur/FX3_1.MP4", 1.5, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, WACKLER_GESPERRT, 25, [_tele("FX3_1.MP4", 25.0, dauer_s=4.8)])
+    assert _fehler_fx3_1(res, "verwendbaren Abschnitt", "Mangel") == [], res.errors
+    assert not any("nicht als stabil gemessen" in w for w in res.warnings), res.warnings
+
+
+def test_compact_index_v2_gibt_die_laeufe_je_clip_aus():
+    """stabil_laeufe = die ungeschnittenen Läufe aus stabil_quelle, wenn die Messung frisch ist; ohne laeufe (Stufe 2b
+    von vor den Läufen) und ohne stabil_quelle eine leere Liste."""
+    laeufe = [[0.0, 4.0, 0.05, 0.3], [4.0, 11.0, 0.05, 0.3]]
+    idx = _idx_laeufe([(0, 4, True, [], [[0.0, 4.0, 0.05, 0.3]]), (4, 12, False, [], [[4.0, 11.0, 0.05, 0.3]])],
+                      laeufe=laeufe)
+    cx = {c["datei"]: c for c in L.compact_index_v2(idx, CFG)}
+    assert cx["FX3_1.MP4"]["stabil_laeufe"] == laeufe
+    assert cx["FX3_2.MP4"]["stabil_laeufe"] == []                      # ohne stabil_quelle
+    del idx["clips"][0]["stabil_quelle"]["laeufe"]
+    assert {c["datei"]: c for c in L.compact_index_v2(idx, CFG)}["FX3_1.MP4"]["stabil_laeufe"] == []
+
+
+def test_compact_index_v2_veraltete_messung_leert_alle_stabilen_bereiche():
+    """Schluss-Review I2 (Spec, Fehler und Randfälle): mit anderen Schwellen gemessen → der kompakte Index gibt für ALLE
+    Abschnitte des Clips stabil [] aus — auch für verwendbare, die bisher die veralteten Bereiche durchreichten — und
+    stabil_laeufe []. Ein Config-Hash None (Datensatz ohne Hash) zählt genauso."""
+    for hash_ in ("000000000000", None):
+        idx = _idx_laeufe([(0, 4, True, [], [[0.0, 4.0, 0.05, 0.3]]), (4, 12, True, [], [[4.0, 11.0, 0.05, 0.3]])],
+                          laeufe=[[0.0, 4.0, 0.05, 0.3], [4.0, 11.0, 0.05, 0.3]])
+        idx["clips"][0]["stabil_quelle"]["config_hash"] = hash_
+        c = {x["datei"]: x for x in L.compact_index_v2(idx, CFG)}["FX3_1.MP4"]
+        assert [a["stabil"] for a in c["abschnitte"]] == [[], []] and c["stabil_laeufe"] == []

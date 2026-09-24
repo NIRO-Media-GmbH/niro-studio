@@ -18,18 +18,28 @@ Gilt für „AutoCut: <Kunde>/<Projekt>[/<Charge>] B-Roll" nach `autocut_build.p
 ## Eingaben (nur lesen)
 
 - `cutlist.json` (Beats, Bild-Spalte, Kommentare, Sperren), `timeline.json` (Beat-Positionen), `raster.json` (Fenster und
-  Strecken mit den Beats darunter, O-Ton-Texten und Hinweisen), `broll_index_kompakt.json` (je Clip `ref`, `fps`, verwendbare
+  Strecken mit den Beats darunter, O-Ton-Texten und Hinweisen), `broll_index_kompakt.json` (je Clip `ref`, `fps`,
+  `stabil_laeufe`, die verwendbaren und geretteten
   `abschnitte[{von_s,bis_s,kurz,q,einstellung,perspektive,brennweite,richtung,motiv,brennweite_mm,zoom,bewegungsart,haltung,bewegung_spitzen,maengel,stabil,gerettet,trotz}]`
-  — die letzten fünf sind **gemessen**, nicht Claudes Einschätzung: `brennweite_mm` (KB-Median im Abschnitt), `zoom`
-  (keiner/langsam/schnell), `bewegungsart`, `haltung` und `bewegung_spitzen` (`[t_s, bewegung]` der lokalen
-  Bewegungs-Maxima, `t_s` = Fenster-Start); ohne Telemetrie `None`/leer, Claudes Klasse `brennweite` bleibt daneben
-  bestehen), `profile/default.md` + `.yaml`, Plankopf.
-- `stabil` = gemessene ruhige Bereiche `[von_s, bis_s, wackeln_max, bewegung_max]` im Abschnitt; dort ist das Bild
-  ruhig genug für einen kurzen Einsetzer. `gerettet: true` heißt: diesen Abschnitt hat der Bild-Index verworfen, die
-  Messung widerspricht — **Shots dort müssen vollständig in einem `stabil`-Bereich liegen**, und `trotz` nennt, was
-  der Index sonst noch bemängelt hat (meist Unschärfe). Bei normalen Abschnitten ist `stabil` ein Hinweis, kein Zwang:
-  ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt. `maengel` gilt je Abschnitt, die clip-weite Liste darunter
-  ist nur die Vereinigung.
+  — `brennweite_mm` bis `bewegung_spitzen` sind **gemessen**, nicht Claudes Einschätzung: `brennweite_mm` (KB-Median im
+  Abschnitt), `zoom` (keiner/langsam/schnell), `bewegungsart`, `haltung` und `bewegung_spitzen` (`[t_s, bewegung]` der
+  lokalen Bewegungs-Maxima, `t_s` = Fenster-Start); ohne Telemetrie `None`/leer, Claudes Klasse `brennweite` bleibt
+  daneben bestehen), `profile/default.md` + `.yaml`, Plankopf.
+- `stabil_laeufe` (je Clip) = die **ungeschnittenen** gemessenen ruhigen Läufe `[von_s, bis_s, wackeln_max,
+  bewegung_max]`; dort ist das Bild ruhig genug für einen kurzen Einsetzer. `stabil` (je Abschnitt) sind ihre Stücke,
+  auf den Abschnitt geschnitten — ein Stück kann kürzer als ein Shot sein, wenn sein Lauf im Nachbarabschnitt
+  weitergeht. Zwei Läufe, die sich nur berühren, sind zwei (dazwischen war es unruhig). Ohne frische Messung sind beide
+  leer.
+- `gerettet: true` heißt: diesen Abschnitt hat der Bild-Index verworfen, die Messung weist darin aber ruhige Stücke aus,
+  und kein gesperrter Mangel bleibt. **Ein Shot in geretteten Abschnitten muss vollständig in EINEM Lauf aus
+  `stabil_laeufe` liegen**; er darf dabei über Abschnittsgrenzen laufen, solange jeder berührte Abschnitt verwendbar
+  oder gerettet ist. Hat der Index den Abschnitt wegen „Wackler" verworfen, widerlegt die Messung das im Lauf. `trotz`
+  nennt, was der Index sonst noch bemängelt hat (meist „Unschärfe", „Über-" oder „Unterbelichtung") — dazu sagt die
+  Messung nichts, das Bild bleibt so.
+- Bei verwendbaren Abschnitten ist `stabil` ein Hinweis, kein Zwang: ein gewollter Schwenk ist nicht ruhig und bleibt
+  erlaubt — **außer** die Charge sperrt „Wackler" (`broll.forbidden_maengel`) und der Abschnitt nennt ihn in
+  `maengel`: dann muss auch dort der Shot vollständig in einem Lauf liegen. `maengel` gilt je Abschnitt, die clip-weite
+  Liste darunter ist nur die Vereinigung.
 
 ## Aufbau von broll_plan.json (v2)
 
@@ -99,7 +109,7 @@ erster Auftritt 2,5 s; sonst 2,0 s).
 | `Shots aus verschiedenen Ordnern` | Szene teilen oder `ausnahme` (Wechselschnitt) |
 | `Abschnittsfelder fehlen` | `autocut_index_sections.py` laufen lassen |
 | `wird zweimal verwendet` / `verwendbar` / `Mangel` / `Sperre` / `Nur S1` | wie bisher: anderer Clip/Bereich |
-| `liegt in keinem verwendbaren Abschnitt` / `Abschnitt … hat den Mangel` / `Bereich nicht als stabil gemessen` | Shot in einen `stabil`-Bereich legen oder anderen Abschnitt wählen |
+| `liegt in keinem verwendbaren Abschnitt` / `Abschnitt … hat den Mangel` / `Bereich nicht als stabil gemessen` | Shot vollständig in einen Lauf aus `stabil_laeufe` legen oder anderen Abschnitt wählen |
 
 ## Eiserne Regeln
 

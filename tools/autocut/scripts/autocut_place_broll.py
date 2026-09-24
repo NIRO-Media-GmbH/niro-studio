@@ -7,7 +7,8 @@ Aufruf:
     venv/bin/python scripts/autocut_place_broll.py "<Charge>" [--profile default] [--timeline NAME]
 
 --compact      schreibt _intern/autocut/broll_index_kompakt.json — die Kurzform des B-Roll-Index (mit den
-               Abschnittsfeldern aus dem Nachlauf) für die Session (siehe prompts/place-broll.md); sonst nichts.
+               Abschnittsfeldern aus dem Nachlauf, geretteten Abschnitten und den stabilen Läufen je Clip) für die
+               Session (siehe prompts/place-broll.md); sonst nichts.
 --raster       berechnet die Sprecher-Fenster je O-Ton-Beat und die dazwischenliegenden Strecken; schreibt
                _intern/autocut/raster.json und Ergebnisse/Rohschnitt/<video>-raster.md, baut nichts. Ist bereits ein
                B-Roll-Plan (Version 2) vorhanden, gehen dessen eigene Fenster in die Rechnung ein; sonst gilt je

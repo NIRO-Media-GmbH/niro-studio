@@ -12,6 +12,7 @@ SETUP = TOOL_ROOT / "SETUP.md"
 CLAUDE_MD = STUDIO_ROOT / "CLAUDE.md"
 RESOLVE_WORKFLOW = STUDIO_ROOT / "tools" / "resolve" / "WORKFLOW-Resolve.md"
 REPLAY_PLAN = STUDIO_ROOT / "docs" / "superpowers" / "plans" / "2026-09-16-autocut-replay.md"
+PLACE_PROMPT = TOOL_ROOT / "prompts" / "place-broll.md"
 
 # CLI-Einstiege laut Spec Abschnitt 6 (alle mit venv/bin/python, Argument = Chargen-Ordner)
 SPEC_SCRIPTS = ["autocut_prepare.py", "autocut_sync.py", "autocut_find_quote.py", "autocut_verify.py",
@@ -201,3 +202,21 @@ def test_workflow_erklaert_die_bereichsauswahl():
 
 def test_readme_nennt_die_bereichsauswahl():
     assert "stabile Bereiche" in _text(README)
+
+
+def test_bereichsauswahl_nennt_die_ungeschnittenen_laeufe():
+    """Task 8 (Schluss-Review I3/M1/M9): Stufe 2b speichert die ungeschnittenen Läufe je Clip und schneidet die Stücke
+    ohne Mindestlänge; der Prüfer legt Stücke nur innerhalb eines Laufs zusammen; der kompakte Index gibt die Läufe
+    je Clip aus."""
+    stufe2b = _flach(_abschnitt(_text(WORKFLOW), "## Ablauf Stufe 2b"))
+    for needle in ("stabil_quelle.laeufe", "ohne Mindestlänge je Stück"):
+        assert needle in stufe2b, f"Stufe 2b: „{needle}“ fehlt"
+    stufe3 = _flach(_abschnitt(_text(WORKFLOW), "## Ablauf Stufe 3 —"))
+    for needle in ("ungeschnittenen Läufe", "desselben Laufs", "verschiedener Läufe nie"):
+        assert needle in stufe3, f"Stufe 3: „{needle}“ fehlt"
+    readme = _flach(_text(README))
+    assert "`stabil` je Abschnitt" in readme and "`stabil_quelle` je Clip" in readme and "laeufe" in readme
+    prompt = _flach(_text(PLACE_PROMPT))
+    for needle in ("stabil_laeufe", "in EINEM Lauf", "verwendbar oder gerettet"):
+        assert needle in prompt, f"place-broll.md: „{needle}“ fehlt"
+    assert "die Messung widerspricht —" not in prompt       # passt nur zum Wackler (Schluss-Review M8)

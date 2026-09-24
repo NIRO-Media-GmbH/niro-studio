@@ -196,9 +196,12 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0,
     ``claude[feld]`` stehen (der aktuelle Wert ist dann der Telemetrie-Wert), sonst ist der aktuelle Wert Claudes und
     wird gesichert. Idempotent. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert.
 
-    ``tcfg`` = der ``telemetrie:``-Config-Block (Spec 2026-09-23). Mit ihm bekommt jeder Abschnitt zusätzlich
-    ``stabil`` — die auf ihn geschnittenen stabilen Bereiche des Clips, Stücke unter ``stabil_min_s`` fallen weg —
-    und der Datensatz ``stabil_quelle`` mit den drei Schwellen und dem Config-Hash der Messung, aus der sie stammen.
+    ``tcfg`` = der ``telemetrie:``-Config-Block (Spec 2026-09-23). Mit ihm bekommt der Datensatz ``stabil_quelle``
+    mit den drei Schwellen, dem Config-Hash der Messung und ``laeufe`` — den ungeschnittenen stabilen Läufen des
+    Clips aus ``stabile_bereiche()`` (Schluss-Review I3/M1: der Prüfer prüft gegen sie). Jeder Abschnitt bekommt
+    ``stabil`` — die Stücke dieser Läufe, auf den Abschnitt geschnitten, OHNE Mindestlänge je Stück: die gilt für den
+    Lauf, und die garantiert ``stabile_bereiche()`` schon; ein kürzeres Stück entsteht nur am Schnitt mit einer
+    Abschnittsgrenze, also genau dort, wo der Lauf im Nachbarabschnitt weitergeht. Nur Stücke ohne Länge fallen weg.
     Ohne ``tcfg`` schreibt die Funktion beides nicht (Aufrufer, die nur die Metadaten brauchen)."""
     if not tele or tele.get("quelle") in (None, "keine"):
         return rec, False
@@ -207,8 +210,7 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0,
     quelle: dict[str, str] = {}
     neu = []
     geaendert = False
-    bereiche = stabile_bereiche(tele, tcfg) if tcfg else None
-    min_s = float(tcfg["stabil_min_s"]) if tcfg else 0.0
+    laeufe = stabile_bereiche(tele, tcfg) if tcfg else None
     for a in rec.get("abschnitte") or []:
         b = dict(a)
         claude = dict(b.get("claude") or {})
@@ -232,10 +234,10 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0,
             if w.get(k) is not None:
                 geaendert |= b.get(k) != w[k]
                 b[k] = w[k]
-        if bereiche is not None:
-            # auf den Abschnitt schneiden; was dabei unter stabil_min_s fällt, ist kein Shot mehr
-            geschnitten = [[max(x, von), min(z, bis), wk, bw] for x, z, wk, bw in bereiche
-                           if min(z, bis) - max(x, von) >= min_s - 1e-6]
+        if laeufe is not None:
+            # auf den Abschnitt schneiden — ohne Mindestlänge je Stück (Schluss-Review I3), nur ohne Länge fällt weg
+            stuecke = [[max(x, von), min(z, bis), wk, bw] for x, z, wk, bw in laeufe]
+            geschnitten = [s for s in stuecke if s[1] - s[0] > 1e-6]
             geaendert |= b.get("stabil") != geschnitten
             b["stabil"] = geschnitten
         neu.append(b)
@@ -245,7 +247,7 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0,
         out["felder_quelle"] = quelle
     if tcfg:
         sq = {"ruhig_max_px": float(tcfg["ruhig_max_px"]), "bewegung_max": float(tcfg["bewegung_max"]),
-              "stabil_min_s": float(tcfg["stabil_min_s"]), "config_hash": tele.get("config_hash")}
+              "stabil_min_s": float(tcfg["stabil_min_s"]), "config_hash": tele.get("config_hash"), "laeufe": laeufe}
         geaendert |= rec.get("stabil_quelle") != sq
         out["stabil_quelle"] = sq
     return out, geaendert

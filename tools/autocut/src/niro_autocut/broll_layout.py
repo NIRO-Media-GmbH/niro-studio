@@ -15,8 +15,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from . import telemetrie as TM
-from .broll_plan import (_index_by_path, _merge_an_abschnittsgrenzen, _section_quality, _standort_nr, _usable_spans,
-                         clip_ref, resolve_clip_ref)
+from .broll_plan import (_index_by_path, _laeufe, _merge_an_abschnittsgrenzen, _section_quality, _standort_nr,
+                         _usable_spans, clip_ref, resolve_clip_ref)
 from .charge import AutoCutError
 from .cutlist import Beat, Cutlist, VerifyResult
 from .media import seconds_to_frames
@@ -603,12 +603,20 @@ def _abschnitte_im_bereich(c: dict, von_s: float, bis_s: float) -> list[dict]:
 
 
 def _stabil_bereiche(c: dict) -> list[tuple[float, float]]:
-    """Gemessene stabile Bereiche aller Abschnitte, NUR an echten Abschnittsgrenzen zusammengelegt (Review-Fund
-    I2, korrigiert durch B1): Stufe 2b schneidet jeden Lauf an der Abschnittsgrenze, ein Shot darf über die
-    Grenze laufen, wenn beide Seiten dort stabil sind (FX3_8641: 0–2 s + 2–4,8 s → 0–4,8 s). Zwei Stücke
-    DESSELBEN Abschnitts, die sich an einer Bewegungsspitze innerhalb des Abschnitts nur zufällig berühren,
-    legen sich NICHT zusammen — siehe ``_merge_an_abschnittsgrenzen()`` in ``broll_plan.py``, dieselbe Regel wie
-    in ``_usable_spans()``."""
+    """Gemessene stabile Bereiche des Clips. Trägt ``stabil_quelle`` die ungeschnittenen Läufe (Schluss-Review
+    I3/M1), sind es genau diese — ein Bereich ist stabil, wenn er in EINEM Lauf liegt, auch über Abschnittsgrenzen
+    hinweg (Lauf 12–18 s deckt 12,5–15,5 s, obwohl eine Abschnittsgrenze bei 13 s liegt); zwei Läufe, die sich
+    genau an einer Abschnittsgrenze berühren, bleiben zwei.
+
+    Rückfall ohne ``laeufe`` (Index aus Stufe 2b davor): die Stücke aller Abschnitte, NUR an echten
+    Abschnittsgrenzen zusammengelegt (Review-Fund I2, korrigiert durch B1) — ein Shot darf über die Grenze laufen,
+    wenn beide Seiten dort stabil sind (FX3_8641: 0–2 s + 2–4,8 s → 0–4,8 s); zwei Stücke DESSELBEN Abschnitts, die
+    sich an einer Bewegungsspitze nur zufällig berühren, nie. Diese Regel sieht nicht, ob zwei Stücke an einer
+    Abschnittsgrenze zu einem Lauf gehören, und überbrückt einen Bruch genau dort (M1) — siehe
+    ``_merge_an_abschnittsgrenzen()`` in ``broll_plan.py``, dieselbe Regel wie in ``_usable_spans()``."""
+    laeufe = _laeufe(c)
+    if laeufe is not None:
+        return laeufe
     stuecke = []
     for a in (c.get("abschnitte") or []):
         a_von, a_bis = float(a["von_s"]), float(a["bis_s"])
@@ -618,8 +626,8 @@ def _stabil_bereiche(c: dict) -> list[tuple[float, float]]:
 
 
 def _in_stabil(c: dict, von_s: float, bis_s: float) -> bool:
-    """Liegt der genutzte Quellbereich ganz in einem gemessenen, an Abschnittsgrenzen zusammengelegten stabilen
-    Bereich?"""
+    """Liegt der genutzte Quellbereich ganz in einem gemessenen stabilen Bereich (±``EPS``) — mit ``laeufe`` in einem
+    ungeschnittenen Lauf, sonst in den an Abschnittsgrenzen zusammengelegten Stücken (``_stabil_bereiche()``)?"""
     return any(x - EPS <= von_s and bis_s <= z + EPS for x, z in _stabil_bereiche(c))
 
 
@@ -689,13 +697,14 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         if c.get("dauer_s") is not None and p["out_s"] > float(c["dauer_s"]) + EPS:
             r.errors.append(f"{tag}: liegt außerhalb des Clips (0–{_s(c['dauer_s'])}).")
         # Stabile Bereiche aus einer Messung mit anderen Schwellen zählen nicht — dann verhält sich der Clip
-        # wie ohne Telemetrie (Spec 2026-09-23, Randfälle).
+        # wie ohne Telemetrie (Spec 2026-09-23, Randfälle). Das gilt für die Läufe genauso wie für die Stücke.
         frisch = _stabil_frisch(c, hash_heute)
         spans = _usable_spans(c, stabil=frisch)
         if not any(a - EPS <= p["in_s"] and p["out_s"] <= z + EPS for a, z in spans):
             r.errors.append(f"{tag}: liegt in keinem verwendbaren Abschnitt und in keinem gemessenen stabilen Bereich "
                             f"(erlaubt: {', '.join(f'{a:g}–{z:g}s' for a, z in spans) or 'nichts'}).")
         q_von, q_bis = _quellbereich_s(p, fps)
+        # stabil = ganz in EINEM gemessenen Lauf (Schluss-Review I3/M1), im Rückfall ohne Läufe wie bisher
         stabil_ok = frisch and _in_stabil(c, q_von, q_bis)
         if _hat_abschnitts_maengel(c):
             # Sperre je Abschnitt: der Index verortet den Mangel, der Prüfer darf ihn nicht auf den Clip weiten.
@@ -969,7 +978,7 @@ def stabil_quelle_veraltet(index: dict, cfg: dict) -> int:
     return sum(1 for c in index.get("clips") or [] if c.get("stabil_quelle") and not _stabil_frisch(c, hash_heute))
 
 
-def _abschnitt_kompakt(a: dict) -> dict:
+def _abschnitt_kompakt(a: dict, frisch: bool) -> dict:
     return {"von_s": a["von_s"], "bis_s": a["bis_s"], "kurz": a.get("beschreibung", ""), "q": a.get("qualitaet"),
             "einstellung": a.get("einstellung"), "perspektive": _perspektive(a), "brennweite": a.get("brennweite"),
             "richtung": a.get("bewegungsrichtung"), "motiv": a.get("hauptmotiv"),
@@ -977,8 +986,10 @@ def _abschnitt_kompakt(a: dict) -> dict:
             "brennweite_mm": a.get("brennweite_mm"), "zoom": a.get("zoom"),
             "bewegungsart": a.get("bewegungsart"), "haltung": a.get("haltung"),
             "bewegung_spitzen": a.get("bewegung_spitzen") or [],
-            # Spec 2026-09-23: Mängel dieses Abschnitts und die gemessenen ruhigen Bereiche darin
-            "maengel": list(a.get("maengel") or []), "stabil": [list(s) for s in (a.get("stabil") or [])]}
+            # Spec 2026-09-23: Mängel dieses Abschnitts und die gemessenen ruhigen Stücke darin — aus einer Messung
+            # mit anderen Schwellen keine (Spec „Fehler und Randfälle", Schluss-Review I2)
+            "maengel": list(a.get("maengel") or []),
+            "stabil": [list(s) for s in (a.get("stabil") or [])] if frisch else []}
 
 
 def compact_index_v2(index: dict, cfg: dict) -> list[dict]:
@@ -987,7 +998,12 @@ def compact_index_v2(index: dict, cfg: dict) -> list[dict]:
     markiert mit ``gerettet`` und ``trotz`` (die übrigen, nicht sperrenden Mängel). „Wackler" zählt bei geretteten
     Abschnitten nicht als Mangel: sie werden ausschließlich über ihre stabilen Bereiche angeboten, und die sind
     per Definition unter ``ruhig_max_px`` gemessen. Ein Abschnitt ohne ``maengel``-Schlüssel (Index vor der
-    Umstellung) wird nie gerettet — dort ist der Grund des Verwerfens nicht bekannt."""
+    Umstellung) wird nie gerettet — dort ist der Grund des Verwerfens nicht bekannt.
+
+    Je Clip steht ``stabil_laeufe``: die ungeschnittenen gemessenen Läufe (``stabil_quelle.laeufe``, Schluss-Review
+    I3/M1) — ein Shot in geretteten Abschnitten muss in EINEM davon liegen. Stammt die Messung nicht aus den heutigen
+    Schwellen (``_stabil_frisch``), sind ``stabil_laeufe`` und ``stabil`` ALLER Abschnitte des Clips leer, auch der
+    verwendbaren (Schluss-Review I2); ohne ``laeufe`` (Stufe 2b von vorher) ist ``stabil_laeufe`` leer."""
     forbidden = set(cfg["forbidden_maengel"])
     hash_heute = TM.config_hash(cfg["telemetrie"])
     out = []
@@ -996,17 +1012,19 @@ def compact_index_v2(index: dict, cfg: dict) -> list[dict]:
         abschnitte = []
         for a in c.get("abschnitte") or []:
             if a.get("verwendbar"):
-                abschnitte.append(_abschnitt_kompakt(a))
+                abschnitte.append(_abschnitt_kompakt(a, frisch))
                 continue
             if not frisch or "maengel" not in a or not (a.get("stabil") or []):
                 continue
             uebrig = [m for m in (a.get("maengel") or []) if m != "Wackler"]
             if set(uebrig) & forbidden:
                 continue
-            abschnitte.append({**_abschnitt_kompakt(a), "gerettet": True, "trotz": uebrig})
+            abschnitte.append({**_abschnitt_kompakt(a, frisch), "gerettet": True, "trotz": uebrig})
+        laeufe = ((c.get("stabil_quelle") or {}).get("laeufe") or []) if frisch else []
         out.append({"ref": clip_ref(c), "datei": c.get("datei"), "ordner": c.get("ordner") or "", "standort": c.get("standort"),
                     "dauer_s": c.get("dauer_s"), "fps": c.get("fps"), "kurz": c.get("beschreibung_kurz", ""),
                     "bewegung": c.get("kamerabewegung"), "tempo": c.get("tempo"), "verwendbar": bool(abschnitte), "abschnitte": abschnitte,
+                    "stabil_laeufe": [list(lauf) for lauf in laeufe],
                     "tags": list(c.get("tags") or []), "maengel": list(c.get("maengel") or []), "eignung": list(c.get("eignung") or []),
                     "qualitaet": c.get("qualitaet_gesamt")})
     out.sort(key=lambda x: (str(x["standort"] or ""), x["ordner"], str(x["datei"])))
