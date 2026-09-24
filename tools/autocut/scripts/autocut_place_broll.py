@@ -236,18 +236,20 @@ def main(argv: list[str] | None = None) -> int:
         if index is None:
             raise AutoCutError(f"{ch.autocut / 'broll_index.json'} fehlt — erst autocut_index_broll.py ausführen.")
 
+        _, cfg_broll = effective_broll_cfg(ch, args.profile)
         if args.compact:
-            clips = compact_index_v2(index)
+            clips = compact_index_v2(index, {**cfg_broll, "telemetrie": ch.config["telemetrie"]})
+            gerettet = sum(1 for c in clips for a in c["abschnitte"] if a.get("gerettet"))
             p = ch.write_json(COMPACT_FILE, {"erstellt_am": _dt.datetime.now().isoformat(timespec="seconds"),
                                              "anzahl": len(clips), "clips": clips})
             print(f"Kompakter Index: {p} ({len(clips)} Clips, {sum(1 for c in clips if c['verwendbar'])} mit verwendbaren "
-                  f"Abschnitten, {p.stat().st_size // 1024} KB)\nProfil: {Path(__file__).resolve().parents[1] / 'profile' / (args.profile + '.md')}")
+                  f"Abschnitten, davon {gerettet} über die Messung gerettet, {p.stat().st_size // 1024} KB)\n"
+                  f"Profil: {Path(__file__).resolve().parents[1] / 'profile' / (args.profile + '.md')}")
             return 0
 
         cl = require_verified_cutlist(ch)
         tp_dict, quelle = timeline_plan_dict(ch, cl)
         fps = float(tp_dict.get("fps") or cl.fps)
-        _, cfg_broll = effective_broll_cfg(ch, args.profile)
         ppath = ch.autocut / PLAN_FILE
 
         if args.raster:

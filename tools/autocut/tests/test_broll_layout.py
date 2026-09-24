@@ -19,7 +19,8 @@ CFG_TELEMETRIE = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_
                   "optisch_fuer": [], "optisch_breite": 480, "parallel": 2, "zoom_min_proz": 3.0, "zoom_rausch_proz_s": 1.0,
                   "zoom_schnell_proz_s": 100.0, "zoom_ruck_max": 1.0, "zoom_stocken_anteil": 0.0, "zoom_sprung_proz": 12.0,
                   "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20, "digitalzoom_faktor": 1.25, "digitalzoom_max": 1.5,
-                  "bewegung_rand_s": 0.5, "bewegung_spitze_faktor": 3.0}
+                  "bewegung_rand_s": 0.5, "bewegung_spitze_faktor": 3.0,
+                  "bewegung_max": 2.0, "stabil_min_s": 2.0}
 CFG = {"face_share": [0.15, 0.20], "face_share_hard": [0.12, 0.23], "window_first_s": 2.5, "window_s": 2.0, "window_min_s": 1.5,
        "window_max_s": 4.0, "full_face_beat_max_s": 3.0, "full_face_keywords": ["Gehaltenes Gesicht", "Bookend"],
        "shot_len_s": [2.0, 5.0], "shot_len_slow_max_s": 6.0, "montage_len_s": [1.5, 3.0], "fast_cuts_len_s": [1.0, 2.0],
@@ -227,7 +228,7 @@ def test_build_v3_items_v2_and_markers():
     items, markers = L.build_v3_items_v2(placed, 25)
     assert [(i.track, i.rec_in_f, i.rec_out_f, i.src_in_f, i.src_out_f, i.tempo, i.video_only) for i in items][:1] == [("V3", 58, 108, 0, 100, 2, True)]
     assert markers[0].color == "Cyan" and markers[0].name.startswith("Szene 1") and markers[0].frame == 58
-    cx = L.compact_index_v2(idx)
+    cx = L.compact_index_v2(idx, CFG)
     assert cx[0]["abschnitte"][0]["einstellung"] == "Totale" and "perspektive" in cx[0]["abschnitte"][0]
 
 
@@ -364,7 +365,7 @@ def test_compact_index_v2_reicht_telemetriewerte_durch():
     a = idx["clips"][0]["abschnitte"][0]
     a.update(brennweite_mm=71.6, zoom="langsam", bewegungsart="schwenk_links", haltung="gimbal",
              bewegung_spitzen=[[1.0, 3.0]])
-    cx = L.compact_index_v2(idx)
+    cx = L.compact_index_v2(idx, CFG)
     ab = cx[0]["abschnitte"][0]
     assert ab["brennweite_mm"] == 71.6 and ab["zoom"] == "langsam"
     assert ab["bewegungsart"] == "schwenk_links" and ab["haltung"] == "gimbal"
@@ -373,7 +374,7 @@ def test_compact_index_v2_reicht_telemetriewerte_durch():
 
 
 def test_compact_index_v2_ohne_telemetrie_liefert_none():
-    cx = L.compact_index_v2(_idx())
+    cx = L.compact_index_v2(_idx(), CFG)
     ab = cx[0]["abschnitte"][0]
     assert ab["brennweite_mm"] is None and ab["zoom"] is None
     assert ab["bewegungsart"] is None and ab["haltung"] is None and ab["bewegung_spitzen"] == []
@@ -842,3 +843,63 @@ def test_render_layout_md_ohne_telemetrie_zeigt_gedankenstrich():
     md = L.render_layout_md(plan, placed, r, idx, CL)
     assert "| KB |" in md
     assert " – | " in md                        # kein Absturz und keine „None"-Anzeige ohne tele
+
+
+# --------------------------------------------------------------------------- #
+# Gerettete Abschnitte im kompakten Index (Spec 2026-09-23)
+# --------------------------------------------------------------------------- #
+
+def _idx_gerettet(maengel, stabil=None, hash_=None):
+    """Ein Clip, dessen einziger Abschnitt verworfen ist, mit Mängeln und gemessenen stabilen Bereichen."""
+    idx = _idx(1)
+    c = idx["clips"][0]
+    c["maengel"] = list(maengel)
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                          "config_hash": hash_ if hash_ is not None else TM.config_hash(CFG_TELEMETRIE)}
+    a = c["abschnitte"][0]
+    a["verwendbar"] = False
+    a["maengel"] = list(maengel)
+    a["stabil"] = [[2.0, 8.0, 0.05, 0.4]] if stabil is None else stabil
+    return idx
+
+
+def test_compact_index_v2_rettet_verworfenen_abschnitt_mit_stabilem_bereich():
+    cx = L.compact_index_v2(_idx_gerettet(["Wackler", "Unschärfe"]), CFG)
+    ab = cx[0]["abschnitte"][0]
+    assert ab["gerettet"] is True and ab["stabil"] == [[2.0, 8.0, 0.05, 0.4]]
+    assert ab["trotz"] == ["Unschärfe"]            # Wackler fällt weg: im stabilen Bereich widerlegt
+    assert ab["maengel"] == ["Wackler", "Unschärfe"]
+    assert cx[0]["verwendbar"] is True             # Clip ist wieder sichtbar
+
+
+def test_compact_index_v2_rettet_nicht_bei_gesperrtem_mangel():
+    cx = L.compact_index_v2(_idx_gerettet(["Wackler", "Blick in Kamera"]), CFG)
+    assert cx[0]["abschnitte"] == [] and cx[0]["verwendbar"] is False
+
+
+def test_compact_index_v2_rettet_nicht_ohne_stabilen_bereich():
+    cx = L.compact_index_v2(_idx_gerettet(["Wackler"], stabil=[]), CFG)
+    assert cx[0]["abschnitte"] == [] and cx[0]["verwendbar"] is False
+
+
+def test_compact_index_v2_rettet_nicht_bei_anderem_config_hash():
+    """Mit anderen Schwellen gemessen: der Bereich sagt nichts über die heutige Konfiguration."""
+    cx = L.compact_index_v2(_idx_gerettet(["Wackler"], hash_="000000000000"), CFG)
+    assert cx[0]["abschnitte"] == []
+
+
+def test_compact_index_v2_reicht_maengel_und_stabil_bei_verwendbaren_abschnitten_durch():
+    idx = _idx(1)
+    a = idx["clips"][0]["abschnitte"][0]
+    a["maengel"] = ["Unschärfe"]
+    a["stabil"] = [[0.0, 6.0, 0.05, 0.4]]
+    idx["clips"][0]["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                                        "config_hash": TM.config_hash(CFG_TELEMETRIE)}
+    ab = L.compact_index_v2(idx, CFG)[0]["abschnitte"][0]
+    assert ab["maengel"] == ["Unschärfe"] and ab["stabil"] == [[0.0, 6.0, 0.05, 0.4]]
+    assert "gerettet" not in ab and "trotz" not in ab
+
+
+def test_compact_index_v2_ohne_neue_felder_wie_bisher():
+    ab = L.compact_index_v2(_idx(1), CFG)[0]["abschnitte"][0]
+    assert ab["maengel"] == [] and ab["stabil"] == [] and "gerettet" not in ab

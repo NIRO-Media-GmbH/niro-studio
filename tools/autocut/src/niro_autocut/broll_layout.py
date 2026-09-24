@@ -859,17 +859,47 @@ def build_v3_items_v2(placed: list[dict], fps: float) -> tuple[list[Item], list[
     return items, markers
 
 
-def compact_index_v2(index: dict) -> list[dict]:
+def _stabil_frisch(c: dict, hash_heute: str) -> bool:
+    """Stammen die stabilen Bereiche des Clips aus einer Messung mit den heutigen Schwellen? Sonst zählen sie
+    nicht — dieselbe Regel, die 3b und 3c seit dem 22.09. für veraltete Datensätze anwenden (Spec 2026-09-23)."""
+    return bool(hash_heute) and (c.get("stabil_quelle") or {}).get("config_hash") == hash_heute
+
+
+def _abschnitt_kompakt(a: dict) -> dict:
+    return {"von_s": a["von_s"], "bis_s": a["bis_s"], "kurz": a.get("beschreibung", ""), "q": a.get("qualitaet"),
+            "einstellung": a.get("einstellung"), "perspektive": _perspektive(a), "brennweite": a.get("brennweite"),
+            "richtung": a.get("bewegungsrichtung"), "motiv": a.get("hauptmotiv"),
+            # gemessen (Spec 2026-09-22): die Auswahl plant auf diesen Werten, nicht auf den Klassen
+            "brennweite_mm": a.get("brennweite_mm"), "zoom": a.get("zoom"),
+            "bewegungsart": a.get("bewegungsart"), "haltung": a.get("haltung"),
+            "bewegung_spitzen": a.get("bewegung_spitzen") or [],
+            # Spec 2026-09-23: Mängel dieses Abschnitts und die gemessenen ruhigen Bereiche darin
+            "maengel": list(a.get("maengel") or []), "stabil": [list(s) for s in (a.get("stabil") or [])]}
+
+
+def compact_index_v2(index: dict, cfg: dict) -> list[dict]:
+    """Kompakter Index für die Planung. Neben den verwendbaren Abschnitten enthält er die vom Modell verworfenen,
+    für die die Messung einen stabilen Bereich ausweist und kein gesperrter Mangel bleibt (Spec 2026-09-23) —
+    markiert mit ``gerettet`` und ``trotz`` (die übrigen, nicht sperrenden Mängel). „Wackler" zählt bei geretteten
+    Abschnitten nicht als Mangel: sie werden ausschließlich über ihre stabilen Bereiche angeboten, und die sind
+    per Definition unter ``ruhig_max_px`` gemessen. Ein Abschnitt ohne ``maengel``-Schlüssel (Index vor der
+    Umstellung) wird nie gerettet — dort ist der Grund des Verwerfens nicht bekannt."""
+    forbidden = set(cfg["forbidden_maengel"])
+    hash_heute = TM.config_hash(cfg["telemetrie"])
     out = []
     for c in index.get("clips") or []:
-        abschnitte = [{"von_s": a["von_s"], "bis_s": a["bis_s"], "kurz": a.get("beschreibung", ""), "q": a.get("qualitaet"),
-                       "einstellung": a.get("einstellung"), "perspektive": _perspektive(a), "brennweite": a.get("brennweite"),
-                       "richtung": a.get("bewegungsrichtung"), "motiv": a.get("hauptmotiv"),
-                       # gemessen (Spec 2026-09-22): die Auswahl plant auf diesen Werten, nicht auf den Klassen
-                       "brennweite_mm": a.get("brennweite_mm"), "zoom": a.get("zoom"),
-                       "bewegungsart": a.get("bewegungsart"), "haltung": a.get("haltung"),
-                       "bewegung_spitzen": a.get("bewegung_spitzen") or []}
-                      for a in (c.get("abschnitte") or []) if a.get("verwendbar")]
+        frisch = _stabil_frisch(c, hash_heute)
+        abschnitte = []
+        for a in c.get("abschnitte") or []:
+            if a.get("verwendbar"):
+                abschnitte.append(_abschnitt_kompakt(a))
+                continue
+            if not frisch or "maengel" not in a or not (a.get("stabil") or []):
+                continue
+            uebrig = [m for m in (a.get("maengel") or []) if m != "Wackler"]
+            if set(uebrig) & forbidden:
+                continue
+            abschnitte.append({**_abschnitt_kompakt(a), "gerettet": True, "trotz": uebrig})
         out.append({"ref": clip_ref(c), "datei": c.get("datei"), "ordner": c.get("ordner") or "", "standort": c.get("standort"),
                     "dauer_s": c.get("dauer_s"), "fps": c.get("fps"), "kurz": c.get("beschreibung_kurz", ""),
                     "bewegung": c.get("kamerabewegung"), "tempo": c.get("tempo"), "verwendbar": bool(abschnitte), "abschnitte": abschnitte,
