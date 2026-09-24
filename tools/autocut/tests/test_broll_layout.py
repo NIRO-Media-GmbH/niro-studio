@@ -888,6 +888,28 @@ def test_compact_index_v2_rettet_nicht_bei_anderem_config_hash():
     assert cx[0]["abschnitte"] == []
 
 
+def test_compact_index_v2_rettet_nicht_ohne_maengel_schluessel():
+    """Alter Index/Cache vor der Umstellung (Task 4): der Abschnitt hat noch gar kein `maengel`-Feld — der
+    Verwerfungsgrund ist dann unbekannt, also wird trotz stabilem Bereich nie gerettet (Rückwärtskompatibel-
+    Regel aus dem Docstring von compact_index_v2)."""
+    idx = _idx_gerettet(["Wackler"])
+    del idx["clips"][0]["abschnitte"][0]["maengel"]
+    cx = L.compact_index_v2(idx, CFG)
+    assert cx[0]["abschnitte"] == [] and cx[0]["verwendbar"] is False
+
+
+def test_compact_index_v2_rettet_bei_vorhandener_aber_leerer_maengel_liste():
+    """Abgrenzung zum Test oben: eine VORHANDENE, aber leere `maengel`-Liste ist kein alter Datensatz (das
+    Feld ist seit Task 4 Pflicht je Abschnitt) und blockiert die Rettung nicht — anders als der ganz fehlende
+    Schlüssel. Eine Prüfung wie ``not a.get("maengel")`` (statt ``"maengel" not in a``) würde beide Fälle
+    verwechseln, weil eine leere Liste genauso falsy ist wie ein fehlender Schlüssel, und hier fälschlich
+    nicht retten."""
+    cx = L.compact_index_v2(_idx_gerettet([]), CFG)
+    ab = cx[0]["abschnitte"][0]
+    assert ab["gerettet"] is True and ab["trotz"] == [] and ab["maengel"] == []
+    assert cx[0]["verwendbar"] is True
+
+
 def test_compact_index_v2_reicht_maengel_und_stabil_bei_verwendbaren_abschnitten_durch():
     idx = _idx(1)
     a = idx["clips"][0]["abschnitte"][0]
