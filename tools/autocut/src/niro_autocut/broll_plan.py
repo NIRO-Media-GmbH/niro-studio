@@ -222,8 +222,29 @@ def normalize_clip_refs(bp: BrollPlan, index: dict) -> list[str]:
     return errors
 
 
+def _merge_an_abschnittsgrenzen(stuecke: list[tuple[float, float, bool, bool]]) -> list[tuple[float, float]]:
+    """Stücke ``(von_s, bis_s, startet_an_grenze, endet_an_grenze)`` zusammenlegen — aber nur, wenn sich zwei
+    Stücke an einer ECHTEN Abschnittsgrenze berühren (Review-Fund B1): das vordere endet an der ``bis_s`` seines
+    EIGENEN Abschnitts, das hintere beginnt an der ``von_s`` seines EIGENEN Abschnitts, und beide Zahlen liegen
+    innerhalb ``EPS`` beieinander. Ein Lauf, der INNERHALB eines Abschnitts an einer Bewegungsspitze endet (z. B.
+    durch ein einzelnes unruhiges Fenster geteilt), trifft die Nachbarzahl bei der Standardkonfiguration
+    (``fenster_s`` = 2 · ``schritt_s``) oft rein arithmetisch — genau das darf nicht als durchgehend stabil
+    zählen; ``stabile_bereiche()`` liefert ohnehin schon maximale Läufe (Spec Abschnitt 2), ein echter Sprung
+    bleibt also ein Sprung. Ein Stück, das schon der ganze Abschnitt ist (z. B. ein ``verwendbar``-Abschnitt),
+    hat ``startet_an_grenze``/``endet_an_grenze`` immer wahr und legt sich wie bisher mit jedem berührenden
+    Nachbarn zusammen."""
+    merged: list[list] = []          # [von_s, bis_s, endet_an_grenze]
+    for von, bis, startet_an_grenze, endet_an_grenze in sorted(stuecke):
+        if merged and merged[-1][2] and startet_an_grenze and von <= merged[-1][1] + EPS:
+            merged[-1][1] = max(merged[-1][1], bis)
+            merged[-1][2] = endet_an_grenze
+        else:
+            merged.append([von, bis, endet_an_grenze])
+    return [(von, bis) for von, bis, _ in merged]
+
+
 def _usable_spans(c: dict, stabil: bool = False) -> list[tuple[float, float]]:
-    """Verwendbare Abschnitte, direkt angrenzende zusammengelegt (ein Item darf über eine Inhaltsgrenze laufen,
+    """Verwendbare Abschnitte, an Abschnittsgrenzen zusammengelegt (ein Item darf über eine Inhaltsgrenze laufen,
     solange kein unbrauchbarer Abschnitt dazwischen liegt).
 
     ``stabil=True`` (nur Plan v2, Spec 2026-09-23) nimmt zusätzlich die gemessenen ``stabil``-Bereiche der
@@ -232,19 +253,22 @@ def _usable_spans(c: dict, stabil: bool = False) -> list[tuple[float, float]]:
     Cache vor Spec 2026-09-23) ist der Verwerfungsgrund unbekannt — könnte ein Inhalts-Mangel sein, den die
     Messung nicht widerlegen kann —, also bleibt der Abschnitt gesperrt. Ob ein GESPERRTER Mangel im gemessenen
     Bereich liegt, prüft ``verify_layout()`` ohnehin getrennt je Abschnitt; hier geht es nur um die Frage, wo
-    überhaupt brauchbares Material liegen könnte. Ohne den Parameter (Plan v1) ist das Ergebnis unverändert."""
-    spans = [(float(a["von_s"]), float(a["bis_s"])) for a in (c.get("abschnitte") or []) if a.get("verwendbar")]
+    überhaupt brauchbares Material liegen könnte.
+
+    Zwei stabile Stücke desselben Abschnitts legen sich NICHT zusammen, nur weil sie sich zufällig berühren
+    (Review-Fund B1) — nur Stücke an einer echten, gemeinsamen Abschnittsgrenze (FX3_8641: 0–2 s + 2–4,8 s →
+    0–4,8 s), siehe ``_merge_an_abschnittsgrenzen()``. Ohne den Parameter (Plan v1) ist das Ergebnis
+    unverändert — ``verwendbar``-Abschnitte legen sich weiter bei jeder Berührung/Überschneidung zusammen."""
+    stuecke = [(float(a["von_s"]), float(a["bis_s"]), True, True)
+              for a in (c.get("abschnitte") or []) if a.get("verwendbar")]
     if stabil:
-        spans += [(float(x), float(z)) for a in (c.get("abschnitte") or [])
-                  if not a.get("verwendbar") and "maengel" in a
-                  for x, z, *_ in (a.get("stabil") or [])]
-    merged: list[list[float]] = []
-    for a, z in sorted(spans):
-        if merged and a <= merged[-1][1] + EPS:
-            merged[-1][1] = max(merged[-1][1], z)
-        else:
-            merged.append([a, z])
-    return [(a, z) for a, z in merged]
+        for a in (c.get("abschnitte") or []):
+            if a.get("verwendbar") or "maengel" not in a:
+                continue
+            a_von, a_bis = float(a["von_s"]), float(a["bis_s"])
+            stuecke += [(float(x), float(z), abs(float(x) - a_von) <= EPS, abs(float(z) - a_bis) <= EPS)
+                       for x, z, *_ in (a.get("stabil") or [])]
+    return _merge_an_abschnittsgrenzen(stuecke)
 
 
 def _section_quality(c: dict, in_s: float, out_s: float) -> int | None:

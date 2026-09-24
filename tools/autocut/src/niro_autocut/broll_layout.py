@@ -15,7 +15,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from . import telemetrie as TM
-from .broll_plan import _index_by_path, _section_quality, _standort_nr, _usable_spans, clip_ref, resolve_clip_ref
+from .broll_plan import (_index_by_path, _merge_an_abschnittsgrenzen, _section_quality, _standort_nr, _usable_spans,
+                         clip_ref, resolve_clip_ref)
 from .charge import AutoCutError
 from .cutlist import Beat, Cutlist, VerifyResult
 from .media import seconds_to_frames
@@ -602,21 +603,23 @@ def _abschnitte_im_bereich(c: dict, von_s: float, bis_s: float) -> list[dict]:
 
 
 def _stabil_bereiche(c: dict) -> list[tuple[float, float]]:
-    """Gemessene stabile Bereiche aller Abschnitte, angrenzende zusammengelegt (Review-Fund I2): Stufe 2b
-    schneidet jeden Lauf an der Abschnittsgrenze, ein Shot darf aber über die Grenze laufen, wenn beide Seiten
-    stabil sind (FX3_8641: 0–2 s + 2–4,8 s → 0–4,8 s) — dieselbe Zusammenlegung wie ``_usable_spans()``."""
-    spans = [(float(x), float(z)) for a in (c.get("abschnitte") or []) for x, z, *_ in (a.get("stabil") or [])]
-    merged: list[list[float]] = []
-    for a, z in sorted(spans):
-        if merged and a <= merged[-1][1] + EPS:
-            merged[-1][1] = max(merged[-1][1], z)
-        else:
-            merged.append([a, z])
-    return [(a, z) for a, z in merged]
+    """Gemessene stabile Bereiche aller Abschnitte, NUR an echten Abschnittsgrenzen zusammengelegt (Review-Fund
+    I2, korrigiert durch B1): Stufe 2b schneidet jeden Lauf an der Abschnittsgrenze, ein Shot darf über die
+    Grenze laufen, wenn beide Seiten dort stabil sind (FX3_8641: 0–2 s + 2–4,8 s → 0–4,8 s). Zwei Stücke
+    DESSELBEN Abschnitts, die sich an einer Bewegungsspitze innerhalb des Abschnitts nur zufällig berühren,
+    legen sich NICHT zusammen — siehe ``_merge_an_abschnittsgrenzen()`` in ``broll_plan.py``, dieselbe Regel wie
+    in ``_usable_spans()``."""
+    stuecke = []
+    for a in (c.get("abschnitte") or []):
+        a_von, a_bis = float(a["von_s"]), float(a["bis_s"])
+        stuecke += [(float(x), float(z), abs(float(x) - a_von) <= EPS, abs(float(z) - a_bis) <= EPS)
+                   for x, z, *_ in (a.get("stabil") or [])]
+    return _merge_an_abschnittsgrenzen(stuecke)
 
 
 def _in_stabil(c: dict, von_s: float, bis_s: float) -> bool:
-    """Liegt der genutzte Quellbereich ganz in einem gemessenen, zusammengelegten stabilen Bereich?"""
+    """Liegt der genutzte Quellbereich ganz in einem gemessenen, an Abschnittsgrenzen zusammengelegten stabilen
+    Bereich?"""
     return any(x - EPS <= von_s and bis_s <= z + EPS for x, z in _stabil_bereiche(c))
 
 

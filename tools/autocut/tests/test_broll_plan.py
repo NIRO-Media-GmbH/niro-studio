@@ -336,3 +336,17 @@ def test_usable_spans_ignoriert_stabil_ohne_maengel_schluessel():
                         {"von_s": 2, "bis_s": 5, "verwendbar": False, "stabil": [[2.0, 4.8, 0.07, 0.3]]},
                         {"von_s": 5, "bis_s": 9, "verwendbar": True}]}
     assert _usable_spans(c, stabil=True) == [(5.0, 9.0)]
+
+
+def test_usable_spans_legt_stabile_stuecke_nur_an_der_abschnittsgrenze_zusammen():
+    """Review-Fund B1: zwei stabile Stücke, die sich INNERHALB eines Abschnitts nur zufällig berühren (z. B.
+    durch ein einzelnes unruhiges Fenster geteilt, hier bei 4,0 s), bleiben getrennt — nur Stücke an ihrer
+    jeweils EIGENEN Abschnittsgrenze legen sich zusammen (FX3_8641-Gegenprobe zur bestehenden Zusammenlegung)."""
+    c = {"abschnitte": [{"von_s": 0, "bis_s": 12, "verwendbar": False, "maengel": [],
+                        "stabil": [[0.0, 4.0, 0.05, 0.3], [4.0, 12.0, 0.05, 0.3]]}]}
+    assert _usable_spans(c, stabil=True) == [(0.0, 4.0), (4.0, 12.0)]
+
+    # FX3_8641 wörtlich: die Stücke enden/beginnen an ihrer jeweiligen Abschnittsgrenze (2,0) — werden zusammengelegt
+    c2 = {"abschnitte": [{"von_s": 0, "bis_s": 2, "verwendbar": False, "maengel": [], "stabil": [[0.0, 2.0, 0.05, 0.3]]},
+                         {"von_s": 2, "bis_s": 5, "verwendbar": False, "maengel": [], "stabil": [[2.0, 4.8, 0.07, 0.3]]}]}
+    assert _usable_spans(c2, stabil=True) == [(0.0, 4.8)]

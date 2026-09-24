@@ -1098,3 +1098,43 @@ def test_verify_layout_warnt_bei_anderen_stabil_schwellen():
     plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     res = L.verify_layout(plan, TP, idx, CL, cfg, 25, [_tele("FX3_1.MP4", 25.0)])
     assert any("anderen Stabil-Schwellen abgeleitet" in w for w in res.warnings)
+
+
+# --------------------------------------------------------------------------- #
+# Fix-Runde 2 (Re-Review gegen die Spec, Fund B1: nur an Abschnittsgrenzen zusammenlegen)
+# --------------------------------------------------------------------------- #
+
+def _idx_luecke_innerhalb_des_abschnitts(verwendbar: bool) -> dict:
+    """Ein Abschnitt 0–12 s, dessen stabiler Bereich durch ein einzelnes unruhiges Fenster (3–5 s, Bewegung 5,0)
+    in [0,4] und [4,12] geteilt ist. Bei der Standardkonfiguration (fenster_s = 2 · schritt_s) berühren sich
+    diese beiden Stücke rein arithmetisch bei 4,0 — das ist aber keine Abschnittsgrenze (Review-Fund B1)."""
+    idx = _idx()
+    c = idx["clips"][0]
+    c["abschnitte"][0]["verwendbar"] = verwendbar
+    c["abschnitte"][0]["maengel"] = ["Wackler"]
+    c["abschnitte"][0]["stabil"] = [[0.0, 4.0, 0.05, 0.3], [4.0, 12.0, 0.05, 0.3]]
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                          "config_hash": TM.config_hash(CFG_TELEMETRIE)}
+    return idx
+
+
+def test_verify_layout_wackler_bleibt_gesperrt_bei_luecke_innerhalb_des_abschnitts():
+    """Review-Fund B1, FX3_8663-Fall: der Shot 2,5–5,5 s liegt in keinem der beiden getrennten Stücke allein —
+    „Wackler" bleibt gesperrt, und die Bewegungs-Warnung feuert mit der echten Bewegung des 3–5-s-Fensters."""
+    cfg = {**CFG, "forbidden_maengel": ["Blick in Kamera", "Crew im Bild", "Wackler"]}
+    idx = _idx_luecke_innerhalb_des_abschnitts(verwendbar=True)
+    fenster = [[float(t), 0.05, 5.0 if t == 3 else 0.3, "keine", None] for t in range(10)]
+    plan = _plan({1: [("Flur/FX3_1.MP4", 2.5, 5.5), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, cfg, 25, [_tele("FX3_1.MP4", 25.0, fenster=fenster)])
+    assert any("Wackler" in e for e in res.errors)
+    assert any("nicht als stabil gemessen" in w and "5,0" in w for w in res.warnings)
+
+
+def test_verify_layout_meldet_lage_fehler_bei_luecke_in_verworfenem_abschnitt():
+    """Review-Fund B1, Gegenstück für einen verworfenen Abschnitt: dieselbe Lücke bei 4,0 s — der Shot liegt in
+    keinem der beiden getrennten stabilen Stücke, der Lage-Fehler muss also greifen (vor B1 fälschlich still,
+    weil die ältere _usable_spans-Zusammenlegung dieselbe Lücke schon seit Task 6 überbrückte)."""
+    idx = _idx_luecke_innerhalb_des_abschnitts(verwendbar=False)
+    plan = _plan({1: [("Flur/FX3_1.MP4", 2.5, 5.5), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert any("verwendbaren Abschnitt" in e for e in res.errors)
