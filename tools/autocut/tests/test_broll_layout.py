@@ -988,6 +988,8 @@ def test_verify_layout_erlaubt_shot_im_stabilen_bereich_eines_verworfenen_abschn
     res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
     # 4–7 s läuft über die Abschnittsgrenze bei 6 s: nur durch das Zusammenlegen erlaubt (FX3_8641-Fall)
     assert not any("verwendbaren Abschnitt" in e for e in res.errors)
+    # Review-Fund I2: die zusammengelegten stabilen Bereiche (0–6 + 6–12 = 0–12) decken den Shot vollständig ab
+    assert not any("nicht als stabil gemessen" in w for w in res.warnings)
 
 
 def test_verify_layout_warnt_bei_shot_ausserhalb_jedes_stabilen_bereichs():
@@ -1021,3 +1023,78 @@ def test_verify_layout_ignoriert_stabile_bereiche_aus_alter_messung():
     plan = _plan({1: [("Flur/FX3_1.MP4", 4.0, 7.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
     assert any("verwendbaren Abschnitt" in e for e in res.errors)
+    # Review-Fund I4: veralteter stabil_quelle-Hash wird im Bericht gezählt (Spec, Fehler und Randfälle)
+    assert any(TM.HINWEIS_SCHWELLEN in w for w in res.warnings)
+
+
+# --------------------------------------------------------------------------- #
+# Fix-Runde 1 (Review gegen die Spec 2026-09-23, Funde I1–I4)
+# --------------------------------------------------------------------------- #
+
+def test_verify_layout_abschnittsgrenze_zaehlt_nicht_als_beruehrt():
+    """Review-Fund I1: ein Shot, der genau an der Abschnittsgrenze beginnt oder endet, gehört nicht mehr zum
+    Nachbarabschnitt — sonst erbt FX3_8636 (Grenze bei 6,0 s) dessen Mangel (Spec: „Abschnitt, in dem der Shot
+    liegt"). Reines Berühren an der Grenze zählt nicht; eine echte Grenzüberschreitung (siehe andere Tests) schon."""
+    idx = _idx_abschnitts_maengel(["Blick in Kamera"], [])
+    plan = _plan({1: [("Flur/FX3_1.MP4", 6.0, 9.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert not any("Blick in Kamera" in e for e in res.errors)
+
+    idx2 = _idx_abschnitts_maengel([], ["Blick in Kamera"])
+    plan2 = _plan({1: [("Flur/FX3_1.MP4", 3.0, 6.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res2 = L.verify_layout(plan2, TP, idx2, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert not any("Blick in Kamera" in e for e in res2.errors)
+
+
+def test_verify_layout_shot_ueber_gerettete_abschnittsgrenze_ohne_warnung():
+    """FX3_8641-Fall wörtlich aus der Spec (Fehler und Randfälle): zwei gerettete Abschnitte 0–2 s und 2–4,8 s,
+    deren stabile Bereiche zusammengelegt werden — der Shot 1,5–4,0 s bekommt weder den Lage-Fehler noch die
+    Bewegungs-Warnung, und mit „Wackler" in beiden Abschnitten bleibt die Sperre trotzdem aus (Review-Fund I2)."""
+    cfg = {**CFG, "forbidden_maengel": ["Blick in Kamera", "Crew im Bild", "Wackler"]}
+    idx = _idx_abschnitts_maengel(["Wackler"], ["Wackler"])
+    grenzen = [(0.0, 2.0, [[0.0, 2.0, 0.05, 0.3]]), (2.0, 4.8, [[2.0, 4.8, 0.05, 0.3]])]
+    for a, (von, bis, stabil) in zip(idx["clips"][0]["abschnitte"], grenzen):
+        a["von_s"], a["bis_s"], a["stabil"] = von, bis, stabil
+        a["verwendbar"] = False
+    plan = _plan({1: [("Flur/FX3_1.MP4", 1.5, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, cfg, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert not any("verwendbaren Abschnitt" in e for e in res.errors)
+    assert not any("Wackler" in e for e in res.errors)
+    assert not any("nicht als stabil gemessen" in w for w in res.warnings)
+
+
+def test_verify_layout_keine_bewegungs_warnung_in_verworfenem_abschnitt():
+    """Review-Fund I2: die Bewegungs-Warnung gilt laut Spec nur „in einem verwendbar-Abschnitt" — ein verworfener
+    Abschnitt ohne stabilen Bereich bekommt nur den Lage-Fehler, nicht zusätzlich diese Warnung."""
+    idx = _idx_abschnitts_maengel([], [], stabil_a=[])
+    idx["clips"][0]["abschnitte"][0]["verwendbar"] = False
+    plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert any("verwendbaren Abschnitt" in e for e in res.errors)
+    assert not any("nicht als stabil gemessen" in w for w in res.warnings)
+
+
+def test_verify_layout_rettet_nicht_ohne_maengel_schluessel_am_abschnitt():
+    """Review-Fund I3: ein alter Cache ohne den Schlüssel maengel wird trotz frischem stabil-Bereich nicht über
+    die Lage-Prüfung gerettet — der Verwerfungsgrund ist unbekannt (dieselbe Vorbedingung wie compact_index_v2
+    für die Rettung). Vor Task 6 meldete genau dieser Fall „liegt in keinem verwendbaren Abschnitt"."""
+    idx = _idx()
+    c = idx["clips"][0]
+    c["abschnitte"][0]["verwendbar"] = False
+    c["abschnitte"][0]["stabil"] = [[0.0, 12.0, 0.05, 0.4]]         # kein "maengel"-Schlüssel am Abschnitt
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+                          "config_hash": TM.config_hash(CFG_TELEMETRIE)}
+    plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert any("verwendbaren Abschnitt" in e for e in res.errors)
+
+
+def test_verify_layout_warnt_bei_anderen_stabil_schwellen():
+    """Review-Fund I4, Spec „Konfiguration": bewegung_max/stabil_min_s stehen in OHNE_MESSWIRKUNG — der
+    Config-Hash bleibt gleich, obwohl stabil mit anderen Schwellen abgeleitet wurde. Kostenlos behebbar
+    (autocut_index_sections.py liest nur den Cache neu), deshalb nur ein Hinweis, keine Sperre."""
+    idx = _idx_abschnitts_maengel([], [])
+    cfg = {**CFG, "telemetrie": {**CFG_TELEMETRIE, "bewegung_max": 5.0}}
+    plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, cfg, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert any("anderen Stabil-Schwellen abgeleitet" in w for w in res.warnings)

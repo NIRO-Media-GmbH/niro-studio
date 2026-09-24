@@ -571,10 +571,16 @@ def test_place_v2_build_upload_schutz_meldung_bei_unklarem_log(charge_dir, tmp_p
 def test_place_v2_compact_and_v1_plan_rejected(charge_dir, capsys):
     """--compact nutzt compact_index_v2; ein Plan im alten (v1) Format wird mit Hinweis auf --raster abgelehnt."""
     ch = Charge.open(charge_dir)
-    ch.write_json("broll_index.json", {"clips": [_broll_clip(charge_dir.parent, "FX3_1.MP4", "Totale", "ohne Person", "weit")]})
+    stale = _broll_clip(charge_dir.parent, "FX3_2.MP4", "Halbnah", "seitlich", "normal")
+    # Review-Fund I4: stabil_quelle mit einem Hash, der zu keiner echten Config passen kann — der --compact-
+    # Bericht muss das als veraltet zählen und nennen (Spec, Fehler und Randfälle).
+    stale["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0, "config_hash": "ffffffffffff"}
+    ch.write_json("broll_index.json", {"clips": [_broll_clip(charge_dir.parent, "FX3_1.MP4", "Totale", "ohne Person", "weit"), stale]})
     assert place.main([str(charge_dir), "--compact"]) == 0
+    out = capsys.readouterr().out
     k = ch.read_json("broll_index_kompakt.json")
     assert k["clips"][0]["abschnitte"][0]["einstellung"] == "Totale" and "perspektive" in k["clips"][0]["abschnitte"][0]
+    assert TM.HINWEIS_SCHWELLEN in out and "autocut_index_sections.py" in out
 
     cutlist = {"video": "video-1-test.md", "fps": 25, "format": "16:9", "pause_s": 1.0,
                "beats": [{"nr": "1", "szene": "Hook", "typ": "oton", "person": "Anna",

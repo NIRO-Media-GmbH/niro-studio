@@ -43,8 +43,8 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from niro_autocut.broll_layout import (LayoutPlan, build_v3_items_v2, compact_index_v2, effective_windows,  # noqa: E402
-                                       place_shots, raster, render_layout_md, render_raster_md, stretches,
-                                       verify_layout, window_frames)
+                                       place_shots, raster, render_layout_md, render_raster_md,
+                                       stabil_quelle_veraltet, stretches, verify_layout, window_frames)
 from niro_autocut.broll_plan import load_profile  # noqa: E402
 from niro_autocut.charge import DEFAULTS_FILE, AutoCutError, Charge, append_protokoll  # noqa: E402
 from niro_autocut.cutlist import Cutlist, cutlist_hash  # noqa: E402
@@ -238,12 +238,18 @@ def main(argv: list[str] | None = None) -> int:
 
         _, cfg_broll = effective_broll_cfg(ch, args.profile)
         if args.compact:
-            clips = compact_index_v2(index, {**cfg_broll, "telemetrie": ch.config["telemetrie"]})
+            cfg_kompakt = {**cfg_broll, "telemetrie": ch.config["telemetrie"]}
+            clips = compact_index_v2(index, cfg_kompakt)
             gerettet = sum(1 for c in clips for a in c["abschnitte"] if a.get("gerettet"))
+            # Review-Fund I4: stabil_quelle mit einem Hash, der nicht mehr zur heutigen telemetrie-Config passt —
+            # verify_layout meldet das je Plan, --compact fasst den ganzen Index zusammen (Spec, Fehler und Randfälle).
+            veraltet = stabil_quelle_veraltet(index, cfg_kompakt)
+            hinweis = (f" · {veraltet} mit stabil {TM.HINWEIS_SCHWELLEN} — autocut_index_sections.py neu laufen "
+                      f"lassen" if veraltet else "")
             p = ch.write_json(COMPACT_FILE, {"erstellt_am": _dt.datetime.now().isoformat(timespec="seconds"),
                                              "anzahl": len(clips), "clips": clips})
             print(f"Kompakter Index: {p} ({len(clips)} Clips, {sum(1 for c in clips if c['verwendbar'])} mit verwendbaren "
-                  f"Abschnitten, davon {gerettet} über die Messung gerettet, {p.stat().st_size // 1024} KB)\n"
+                  f"Abschnitten, davon {gerettet} über die Messung gerettet, {p.stat().st_size // 1024} KB){hinweis}\n"
                   f"Profil: {Path(__file__).resolve().parents[1] / 'profile' / (args.profile + '.md')}")
             return 0
 

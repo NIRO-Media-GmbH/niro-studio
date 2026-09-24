@@ -593,17 +593,30 @@ def _hat_abschnitts_maengel(c: dict) -> bool:
 
 
 def _abschnitte_im_bereich(c: dict, von_s: float, bis_s: float) -> list[dict]:
-    """Abschnitte, die das Intervall berühren — ein Shot über eine Abschnittsgrenze muss beide erfüllen."""
+    """Abschnitte, die das Intervall wirklich überlappen — ein Shot über eine echte Abschnittsgrenze muss beide
+    erfüllen, aber reines Berühren an der Grenze zählt nicht (Review-Fund I1): ein Shot, der exakt dort beginnt,
+    wo ein Nachbarabschnitt endet, erbt dessen Mängel sonst fälschlich (FX3_8636). Inward-Toleranz wie
+    ``_section_quality`` in ``broll_plan.py``."""
     return [a for a in (c.get("abschnitte") or [])
-            if float(a["von_s"]) - EPS < bis_s and von_s < float(a["bis_s"]) + EPS]
+            if float(a["von_s"]) < bis_s - EPS and float(a["bis_s"]) > von_s + EPS]
 
 
 def _stabil_bereiche(c: dict) -> list[tuple[float, float]]:
-    return [(float(x), float(z)) for a in (c.get("abschnitte") or []) for x, z, *_ in (a.get("stabil") or [])]
+    """Gemessene stabile Bereiche aller Abschnitte, angrenzende zusammengelegt (Review-Fund I2): Stufe 2b
+    schneidet jeden Lauf an der Abschnittsgrenze, ein Shot darf aber über die Grenze laufen, wenn beide Seiten
+    stabil sind (FX3_8641: 0–2 s + 2–4,8 s → 0–4,8 s) — dieselbe Zusammenlegung wie ``_usable_spans()``."""
+    spans = [(float(x), float(z)) for a in (c.get("abschnitte") or []) for x, z, *_ in (a.get("stabil") or [])]
+    merged: list[list[float]] = []
+    for a, z in sorted(spans):
+        if merged and a <= merged[-1][1] + EPS:
+            merged[-1][1] = max(merged[-1][1], z)
+        else:
+            merged.append([a, z])
+    return [(a, z) for a, z in merged]
 
 
 def _in_stabil(c: dict, von_s: float, bis_s: float) -> bool:
-    """Liegt der genutzte Quellbereich ganz in einem gemessenen stabilen Bereich?"""
+    """Liegt der genutzte Quellbereich ganz in einem gemessenen, zusammengelegten stabilen Bereich?"""
     return any(x - EPS <= von_s and bis_s <= z + EPS for x, z in _stabil_bereiche(c))
 
 
@@ -771,8 +784,11 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                                       f"gemessen im Fenster {t_s:g}–{t_s + fen_s:g} s (Bewegung {bw:g} gegen Basis "
                                       f"{basis:g}, Sockel ruhig_max_px {ruhig:g}) — Hinweis, Schwellen unkalibriert.")
             # Spec 2026-09-23: der Abschnitt ist verwendbar, der genutzte Bereich aber nicht als ruhig gemessen.
-            # Bewusst nur eine Warnung — ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt.
-            if frisch and any("stabil" in a for a in (c.get("abschnitte") or [])) and not stabil_ok:
+            # Bewusst nur eine Warnung — ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt. Nur in einem
+            # verwendbar-Abschnitt (Review-Fund I2): ein bereits verworfener Abschnitt ohne stabilen Bereich hat
+            # schon den Lage-Fehler und braucht diese zusätzliche Warnung nicht.
+            if (frisch and not stabil_ok
+                    and any(a.get("verwendbar") for a in _abschnitte_im_bereich(c, p["in_s"], p["out_s"]))):
                 bw = TM.bewegung_max_im_bereich(rec, von, bis, fen_s)
                 bw_txt = "–" if bw is None else f"{bw:.1f}".replace(".", ",")
                 r.warnings.append(f"{tag}: Bereich nicht als stabil gemessen (Bewegung max {bw_txt}) — "
@@ -845,6 +861,31 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         r.warnings.append(f"{ohne_abschnitts_maengel} von {len(placed)} Shots aus Clips ohne Abschnitts-Mängel — "
                           f"die Sperre greift dort clip-weit wie vor der Umstellung; "
                           f"autocut_index_broll.py --force holt die Verortung nach.")
+    # Review-Fund I4 (Spec, Fehler und Randfälle + Konfiguration): stabil_quelle verortet, mit welchen Schwellen
+    # ein Abschnitts stabil-Bereich abgeleitet wurde. Zwei getrennte Fälle je genutztem Clip (nicht je Shot —
+    # ein Clip zählt nur einmal): der Config-Hash passt nicht mehr (ruhig_max_px/fenster_s geändert — dieselbe
+    # Prüfung wie 3b/3c, Meldung über HINWEIS_SCHWELLEN), oder der Hash passt, aber bewegung_max/stabil_min_s
+    # weichen ab (beide in OHNE_MESSWIRKUNG, ändern also den Hash nicht, machen stabil aber trotzdem veraltet —
+    # kostenlos aus dem Cache behebbar, deshalb nur ein Hinweis, keine Sperre).
+    stabil_ignoriert = 0
+    andere_stabil_schwellen = 0
+    for clip in uses:
+        c_clip = by_path[clip]
+        sq = c_clip.get("stabil_quelle")
+        if not sq:
+            continue
+        if not _stabil_frisch(c_clip, hash_heute):
+            stabil_ignoriert += 1
+        elif (float(sq.get("bewegung_max", tcfg["bewegung_max"])) != float(tcfg["bewegung_max"])
+              or float(sq.get("stabil_min_s", tcfg["stabil_min_s"])) != float(tcfg["stabil_min_s"])):
+            andere_stabil_schwellen += 1
+    if stabil_ignoriert:
+        r.warnings.append(f"{stabil_ignoriert} {'Clip' if stabil_ignoriert == 1 else 'Clips'}: stabile Bereiche "
+                          f"{TM.HINWEIS_SCHWELLEN} — keine Rettung, keine Bewegungs-Warnung dort; "
+                          f"autocut_index_sections.py neu laufen lassen.")
+    if andere_stabil_schwellen:
+        r.warnings.append(f"{andere_stabil_schwellen} {'Clip' if andere_stabil_schwellen == 1 else 'Clips'} mit "
+                          f"anderen Stabil-Schwellen abgeleitet — autocut_index_sections.py erneut laufen lassen.")
     # Eine Meldung je Sachverhalt (Fix-Welle, Fund I2): ohne jede Telemetrie sind „Schnitte ohne
     # Brennweitenverlauf" und „Shots ohne Datensatz" dieselbe Aussage — sie entfallen dann zugunsten einer
     # einzigen Meldung, die alle drei Regeln und die Zahl der Shots nennt.
@@ -914,6 +955,15 @@ def _stabil_frisch(c: dict, hash_heute: str) -> bool:
     """Stammen die stabilen Bereiche des Clips aus einer Messung mit den heutigen Schwellen? Sonst zählen sie
     nicht — dieselbe Regel, die 3b und 3c seit dem 22.09. für veraltete Datensätze anwenden (Spec 2026-09-23)."""
     return bool(hash_heute) and (c.get("stabil_quelle") or {}).get("config_hash") == hash_heute
+
+
+def stabil_quelle_veraltet(index: dict, cfg: dict) -> int:
+    """Clips im Index, deren ``stabil_quelle`` einen anderen Config-Hash trägt als die heutige ``telemetrie:``-
+    Config (Review-Fund I4, Spec „Fehler und Randfälle") — für den ``--compact``-Bericht in
+    ``autocut_place_broll.py``, der nicht wie ``verify_layout()`` auf einen konkreten Plan eingeschränkt ist,
+    sondern den ganzen Index zusammenfasst."""
+    hash_heute = TM.config_hash(cfg["telemetrie"])
+    return sum(1 for c in index.get("clips") or [] if c.get("stabil_quelle") and not _stabil_frisch(c, hash_heute))
 
 
 def _abschnitt_kompakt(a: dict) -> dict:
