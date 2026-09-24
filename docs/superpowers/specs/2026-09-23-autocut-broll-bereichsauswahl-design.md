@@ -3,6 +3,12 @@
 Datum: 2026-09-23 · Status: entworfen, nicht umgesetzt. Folgeschritt von
 `docs/superpowers/specs/2026-09-22-autocut-broll-auswahl-telemetrie-design.md` (Telemetrie in der Auswahl).
 
+**Berichtigt 24.09.2026** nach dem Schluss-Review (Task 8, User-Entscheid): Stufe 2b speichert die ungeschnittenen
+stabilen Läufe in `stabil_quelle.laeufe`, `stabil` je Abschnitt hat keine Mindestlänge je Stück, und stabile Stücke
+legen sich nur innerhalb desselben Laufs zusammen (Abschnitt 3, „Fehler und Randfälle"; „Erste Probe" Schritt 3: der
+Nachlauf braucht nach `--force` die API). Ein gesperrter Mangel, den ein Clip nur clip-weit nennt und kein Abschnitt
+führt, sperrt nicht — `verify_layout()` warnt dann einmal je Clip („Bild prüfen").
+
 ## Anlass
 
 Beim WLC-Test am 23.09. (`projects/WLC/Recruiting/2026-07 Erster Dreh/Protokoll.md`, Abschnitt „Nachtrag gleicher
@@ -121,13 +127,18 @@ Die Fensterauflösung (`fenster_s` 2,0 / `schritt_s` 1,0) macht die Bereichsgren
 ## 3 — Stufe 2b (`index_sections.py`): `stabil` je Abschnitt
 
 `telemetrie_anwenden` ergänzt je Abschnitt `stabil` = die mit `[von_s, bis_s]` geschnittenen Bereiche aus
-`stabile_bereiche()`, Schnitte unter `stabil_min_s` fallen weg. Dieselbe Stelle und dieselbe Mechanik wie
-`bewegung_spitzen` seit dem 22.09.: Cache-Treffer bekommen das Feld ohne API-Aufruf, `felder_quelle` führt es wie
-die übrigen. Die Schleife läuft über **alle** Abschnitte, auch über die mit `verwendbar=false` — genau die brauchen
-das Feld.
+`stabile_bereiche()`, ohne Mindestlänge je Stück: `stabil_min_s` gilt für den Lauf (das garantiert
+`stabile_bereiche()`), ein kürzeres Stück entsteht nur an einer Abschnittsgrenze, wo sein Lauf im Nachbarabschnitt
+weitergeht; nur Stücke ohne Länge fallen weg (berichtigt 24.09.2026, Task 8: der frühere Filter je Stück verwarf
+solche Randstücke — ein Shot 12,5–15,5 s im Lauf 12–18 s fiel an der Abschnittsgrenze bei 13 s durch). Dieselbe
+Stelle und dieselbe Mechanik wie `bewegung_spitzen` seit dem 22.09.: Cache-Treffer bekommen das Feld ohne
+API-Aufruf, `felder_quelle` führt es wie die übrigen. Die Schleife läuft über **alle** Abschnitte, auch über die
+mit `verwendbar=false` — genau die brauchen das Feld.
 
-Dazu je Clip `stabil_quelle: {ruhig_max_px, bewegung_max, stabil_min_s, config_hash}` — die drei Schwellen der
-Ableitung und der Config-Hash des Telemetrie-Datensatzes, aus dem sie stammt. Damit können `compact_index_v2()` und
+Dazu je Clip `stabil_quelle: {ruhig_max_px, bewegung_max, stabil_min_s, config_hash, laeufe}` — die drei Schwellen
+der Ableitung, der Config-Hash des Telemetrie-Datensatzes, aus dem sie stammt, und `laeufe`, die ungeschnittenen
+Läufe aus `stabile_bereiche()` (berichtigt 24.09.2026, Task 8: gegen sie prüft `verify_layout()`, und
+`compact_index_v2()` gibt sie je Clip als `stabil_laeufe` aus). Damit können `compact_index_v2()` und
 `verify_layout()` veraltete Bereiche erkennen, **ohne die Telemetrie selbst laden zu müssen** (der kompakte Index
 hat sie nicht).
 
@@ -206,8 +217,11 @@ abgeleitet — `autocut_index_sections.py` erneut laufen lassen" (kostenlos aus 
   betroffenen Clips und rät zu `autocut_index_broll.py --force`.
 - **Abschnitt mit `verwendbar=true`, aber sperrendem Mangel**: bleibt gesperrt. Die Charge-Config gewinnt über das
   Modellurteil — das ist der Sinn von `forbidden_maengel`.
-- **Gerettete Abschnitte in Folge**: mehrere gerettete Abschnitte nebeneinander legen ihre `stabil`-Bereiche
-  zusammen, wenn sie aneinandergrenzen (FX3_8641: 0–2 s und 2–4,8 s → 0–4,8 s).
+- **Gerettete Abschnitte in Folge**: mehrere gerettete Abschnitte nebeneinander legen ihre `stabil`-Stücke
+  zusammen, wenn sie zum selben gemessenen Lauf gehören (FX3_8641: 0–2 s und 2–4,8 s aus dem Lauf 0–4,8 s →
+  0–4,8 s); zwei Läufe, die sich genau an einer Abschnittsgrenze berühren, bleiben getrennt (berichtigt 24.09.2026,
+  Task 8: bisher genügte das Aneinandergrenzen — das überbrückte ein unruhiges Fenster genau auf der Grenze). Ein
+  Index ohne `laeufe` (Stufe 2b von vorher) legt wie bisher an Abschnittsgrenzen zusammen.
 
 ## Tests (pytest, ohne NAS, ohne Resolve, ohne API)
 
@@ -256,7 +270,10 @@ Fixtures mit echten Werten aus WLC und MEK, nicht mit erfundenen — wie beim En
 1. `broll.forbidden_maengel: ["Blick in Kamera", "Crew im Bild"]` in `_intern/autocut/config.yaml` — steht als
    offener Punkt schon im Protokoll vom 23.09.
 2. `autocut_index_broll.py "$CHARGE" --force` für die 51 Clips (~2,50 €) — bringt `abschnitte[].maengel`.
-3. `autocut_index_sections.py "$CHARGE"` — trägt `stabil` aus dem Cache nach, ohne API-Kosten.
+3. `autocut_index_sections.py "$CHARGE"` — trägt die Abschnittsfelder samt `stabil` und `stabil_quelle.laeufe` neu
+   ein, **mit API-Kosten**: `--force` in Schritt 2 schreibt je Clip einen frischen Datensatz ohne die Felder aus
+   Stufe 2b, der Nachlauf fragt deshalb jeden Clip neu an; vorher `--dry-run` für Clipzahl und Schätzung (berichtigt
+   24.09.2026, Task 8, wie im Plan).
 4. `autocut_place_broll.py "$CHARGE" --compact` — kompakter Index mit geretteten Abschnitten.
 5. Auswahl für Video 1 neu, Ergebnis wieder als Sichtungs-Video gegen
    `Ergebnisse/Rohschnitt/video-1-broll-sichtung.mp4` und `…-nachtrag.mp4` halten.

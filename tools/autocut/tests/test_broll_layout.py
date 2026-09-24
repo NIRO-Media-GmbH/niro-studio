@@ -1358,3 +1358,13 @@ def test_verify_layout_stabil_quelle_ohne_config_hash_gilt_als_veraltet():
     hinweis = [w for w in res.warnings if w.startswith("1 Clip:") and TM.HINWEIS_SCHWELLEN in w]
     assert len(hinweis) == 1, res.warnings
     assert hinweis[0].index("autocut_telemetrie.py") < hinweis[0].index("autocut_index_sections.py"), hinweis
+
+
+def test_verify_layout_alter_index_nennt_den_nachlauf_nach_force():
+    """Fix-Runde 1 zu Task 8 (wie Schluss-Review M2): „autocut_index_broll.py --force" allein reicht nicht — es schreibt
+    die Datensätze ohne die Felder aus Stufe 2b neu, danach muss autocut_index_sections.py laufen und fragt die API
+    erneut an. Die Meldung zum alten Index ohne Abschnitts-Mängel sagt beides."""
+    plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, _idx(), CL, CFG, 25, None)
+    w = next(w for w in res.warnings if "Clips ohne Abschnitts-Mängel" in w)
+    assert w.index("autocut_index_broll.py --force") < w.index("autocut_index_sections.py") and "API" in w, w

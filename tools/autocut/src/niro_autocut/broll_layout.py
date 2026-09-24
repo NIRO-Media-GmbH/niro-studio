@@ -890,9 +890,11 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
             r.warnings.append(f"Strecke {a['strecke']}: {a['name']} → {b['name']} sehen fast gleich aus (Setup-Abstand "
                               f"{_hamming(a['setup_hash'], b['setup_hash'])}).")
     if ohne_abschnitts_maengel:
+        # --force schreibt die Datensätze ohne die Felder aus Stufe 2b neu — der Nachlauf gehört zum Rat dazu
         r.warnings.append(f"{ohne_abschnitts_maengel} von {len(placed)} Shots aus Clips ohne Abschnitts-Mängel — "
-                          f"die Sperre greift dort clip-weit wie vor der Umstellung; "
-                          f"autocut_index_broll.py --force holt die Verortung nach.")
+                          f"die Sperre greift dort clip-weit wie vor der Umstellung; autocut_index_broll.py --force "
+                          f"holt die Verortung nach, danach muss autocut_index_sections.py neu laufen (fragt die neu "
+                          f"indexierten Clips erneut bei der API an).")
     # Schluss-Review I1 (User-Entscheid 24.09.2026: nur warnen, keine Sperre, Rettung unverändert): ein gesperrter
     # Mangel, den der Clip nur clip-weit nennt und kein Abschnitt verortet, sperrt je Abschnitt nirgends — einmal je
     # genutztem Clip darauf hinweisen, nicht je Shot.

@@ -375,7 +375,7 @@ Abschnittsgrenzen zusammen und überbrückt dabei einen Bruch zwischen zwei Läu
 
 **Andere Schwellen**: stabile Bereiche aus einer Messung mit anderen Telemetrie-Schwellen (`ruhig_max_px`,
 `fenster_s`) zählen nicht: keine Rettung, keine Bewegungs-Warnung, und der kompakte Index gibt für diese Clips
-weder `stabil` (in keinem Abschnitt) noch `stabil_laeufe` aus; der Bericht und `--compact` nennen die Zahl der
+`stabil` (in allen Abschnitten) und `stabil_laeufe` leer aus; der Bericht und `--compact` nennen die Zahl der
 Clips. Abhilfe: erst `autocut_telemetrie.py`, dann `autocut_index_sections.py` (kostenlos aus dem Cache). Wurden nur
 `bewegung_max` oder `stabil_min_s` geändert, reicht `autocut_index_sections.py` — der Bericht sagt dann „mit anderen
 Stabil-Schwellen abgeleitet — autocut_index_sections.py erneut laufen lassen".

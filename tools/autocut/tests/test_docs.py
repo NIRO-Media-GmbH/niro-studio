@@ -14,6 +14,7 @@ RESOLVE_WORKFLOW = STUDIO_ROOT / "tools" / "resolve" / "WORKFLOW-Resolve.md"
 REPLAY_PLAN = STUDIO_ROOT / "docs" / "superpowers" / "plans" / "2026-09-16-autocut-replay.md"
 BEREICH_PLAN = STUDIO_ROOT / "docs" / "superpowers" / "plans" / "2026-09-23-autocut-broll-bereichsauswahl.md"
 PLACE_PROMPT = TOOL_ROOT / "prompts" / "place-broll.md"
+SPEC_BEREICH = STUDIO_ROOT / "docs" / "superpowers" / "specs" / "2026-09-23-autocut-broll-bereichsauswahl-design.md"
 
 # CLI-Einstiege laut Spec Abschnitt 6 (alle mit venv/bin/python, Argument = Chargen-Ordner)
 SPEC_SCRIPTS = ["autocut_prepare.py", "autocut_sync.py", "autocut_find_quote.py", "autocut_verify.py",
@@ -215,6 +216,7 @@ def test_bereichsauswahl_nennt_die_ungeschnittenen_laeufe():
     stufe3 = _flach(_abschnitt(_text(WORKFLOW), "## Ablauf Stufe 3 —"))
     for needle in ("ungeschnittenen Läufe", "desselben Laufs", "verschiedener Läufe nie", "nur clip-weit"):
         assert needle in stufe3, f"Stufe 3: „{needle}“ fehlt"
+    assert "weder `stabil`" not in stufe3 and "`stabil_laeufe` leer aus" in stufe3      # beide stehen da, als []
     readme = _flach(_text(README))
     assert "`stabil` je Abschnitt" in readme and "`stabil_quelle` je Clip" in readme and "laeufe" in readme
     prompt = _flach(_text(PLACE_PROMPT))
@@ -231,3 +233,23 @@ def test_force_in_stufe_2_nennt_den_neuen_nachlauf():
     assert "autocut_index_sections.py" in stufe2 and "API" in stufe2
     probe = _flach(_abschnitt(_text(BEREICH_PLAN), "## Nach dem Plan: erste Probe an WLC"))
     assert "keine API-Kosten" not in probe and "--dry-run" in probe
+
+
+def test_spec_bereichsauswahl_passt_zu_den_ungeschnittenen_laeufen():
+    """Fix-Runde 1 zu Task 8: die maßgebliche Spec widerspricht dem umgesetzten Verhalten nicht mehr — sonst brächte ein
+    späterer Task, der nach Abschnitt 3 arbeitet, den Filter je Stück zurück. Jede Berichtigung ist datiert, der Kopf
+    nennt sie und den User-Entscheid zu Mängeln, die nur clip-weit stehen."""
+    spec = _text(SPEC_BEREICH)
+    kopf = _flach(spec[:spec.index("## Anlass")])
+    for needle in ("Berichtigt 24.09.2026", "stabil_quelle.laeufe", "keine Mindestlänge je Stück", "desselben Laufs",
+                   "nur clip-weit"):
+        assert needle in kopf, f"Spec-Kopf: „{needle}“ fehlt"
+    stufe2b = _flach(_abschnitt(spec, "## 3 —"))
+    assert ", Schnitte unter `stabil_min_s` fallen weg." not in stufe2b
+    for needle in ("ohne Mindestlänge je Stück", "config_hash, laeufe}", "berichtigt 24.09.2026, Task 8"):
+        assert needle in stufe2b, f"Spec Abschnitt 3: „{needle}“ fehlt"
+    randfaelle = _flach(_abschnitt(spec, "## Fehler und Randfälle"))
+    assert "wenn sie aneinandergrenzen (FX3_8641" not in randfaelle
+    assert "zum selben gemessenen Lauf" in randfaelle and "berichtigt 24.09.2026, Task 8" in randfaelle
+    probe = _flach(_abschnitt(spec, "## Erste Probe"))
+    assert "ohne API-Kosten" not in probe and "--dry-run" in probe and "berichtigt 24.09.2026, Task 8" in probe
