@@ -190,3 +190,14 @@ def test_replay_plan_kopie_test_deckt_zusatzmessungen_ab():
     muster = _flach(_plan_schritt(task, 11))
     for frage in messungen:
         assert f"| {frage} |" in muster, f"Step 11: Zeile für „{frage}“ fehlt"
+
+
+def test_workflow_erklaert_die_bereichsauswahl():
+    text = _text(WORKFLOW)
+    for needle in ("stabile Bereiche", "abschnitte[].maengel", "stabil_quelle", "gerettet",
+                   "bewegung_max", "stabil_min_s", "nicht als stabil gemessen"):
+        assert needle in text, f"WORKFLOW-AutoCut.md: „{needle}“ fehlt"
+
+
+def test_readme_nennt_die_bereichsauswahl():
+    assert "stabile Bereiche" in _text(README)
