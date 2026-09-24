@@ -166,8 +166,12 @@ zum `verwendbar=false` bewogen haben (typisch „Unschärfe"). Das Planungsmodel
 Charge abhängig — der Aufruf in `autocut_place_broll.py` (`--compact`) hat `effective_broll_cfg()` schon zur Hand,
 muss es aber vor dem `--compact`-Zweig laden.
 
-`prompts/place-broll.md` beschreibt die neuen Felder und die Regel: in einem `gerettet`-Abschnitt darf ein Shot nur
-innerhalb von `stabil` liegen; in einem normalen Abschnitt ist `stabil` ein Hinweis, wo es ruhig ist.
+`prompts/place-broll.md` beschreibt die neuen Felder (dazu je Clip `stabil_laeufe`) und die Regel: ein Shot in
+geretteten Abschnitten muss vollständig in EINEM Lauf aus `stabil_laeufe` liegen und darf dabei über
+Abschnittsgrenzen laufen, solange jeder berührte Abschnitt verwendbar oder gerettet ist; in einem normalen Abschnitt
+ist `stabil` ein Hinweis, wo es ruhig ist — außer die Charge sperrt „Wackler" und der Abschnitt nennt ihn, dann muss
+der Shot auch dort vollständig in einem Lauf liegen (berichtigt 24.09.2026, Task 8: bisher „nur innerhalb von
+`stabil`" und ohne Ausnahme „ein Hinweis").
 
 ## 5 — `verify_layout()` (`broll_layout.py`): drei Änderungen
 

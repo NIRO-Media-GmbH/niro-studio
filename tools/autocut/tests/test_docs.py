@@ -248,6 +248,11 @@ def test_spec_bereichsauswahl_passt_zu_den_ungeschnittenen_laeufen():
     assert ", Schnitte unter `stabil_min_s` fallen weg." not in stufe2b
     for needle in ("ohne Mindestlänge je Stück", "config_hash, laeufe}", "berichtigt 24.09.2026, Task 8"):
         assert needle in stufe2b, f"Spec Abschnitt 3: „{needle}“ fehlt"
+    kompakt = _flach(_abschnitt(spec, "## 4 —"))            # die Prompt-Regel wie in place-broll.md
+    assert "darf ein Shot nur innerhalb von `stabil` liegen" not in kompakt
+    for needle in ("in EINEM Lauf aus `stabil_laeufe`", "verwendbar oder gerettet",
+                   "außer die Charge sperrt „Wackler\"", "berichtigt 24.09.2026, Task 8"):
+        assert needle in kompakt, f"Spec Abschnitt 4: „{needle}“ fehlt"
     randfaelle = _flach(_abschnitt(spec, "## Fehler und Randfälle"))
     assert "wenn sie aneinandergrenzen (FX3_8641" not in randfaelle
     assert "zum selben gemessenen Lauf" in randfaelle and "berichtigt 24.09.2026, Task 8" in randfaelle
