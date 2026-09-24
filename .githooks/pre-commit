@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Größensperre: verhindert, dass Kundenmaterial versehentlich ins Repo wandert.
 #
@@ -22,8 +22,11 @@ is_allowed() {
 	esac
 }
 
+# Pfade NUL-getrennt lesen: ohne -z gibt git Umlaute, Anführungszeichen und
+# Steuerzeichen escaped in Anführungszeichen aus ("projects/F\303\266rch/..."),
+# und [ -f ] übersprang sie still. read -d '' gibt es nur in bash, nicht in sh.
 too_big=""
-while IFS= read -r file; do
+while IFS= read -r -d '' file; do
 	[ -f "$file" ] || continue
 	is_allowed "$file" && continue
 	size=$(wc -c <"$file" | tr -d ' ')
@@ -31,9 +34,7 @@ while IFS= read -r file; do
 		too_big="$too_big  $((size / 1024 / 1024)) MB  $file
 "
 	fi
-done <<EOF
-$(git diff --cached --name-only --diff-filter=ACM)
-EOF
+done < <(git diff --cached --name-only -z --diff-filter=ACM)
 
 if [ -n "$too_big" ]; then
 	cat >&2 <<MSG
