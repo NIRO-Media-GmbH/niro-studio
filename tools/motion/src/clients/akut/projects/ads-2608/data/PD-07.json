@@ -1,0 +1,139 @@
+{
+ "nr": "PD-07",
+ "titel": "Ausgebrannt ist keine Schwäche",
+ "fps": 25,
+ "durationSec": 29.2,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 2.87,
+   "endSec": 3.29,
+   "text": "Genau,"
+  },
+  {
+   "startSec": 3.29,
+   "endSec": 4.47,
+   "text": "und man kriegt seinen"
+  },
+  {
+   "startSec": 4.47,
+   "endSec": 5.21,
+   "text": "ganz normalen"
+  },
+  {
+   "startSec": 7.104,
+   "endSec": 8.814,
+   "text": "Bezüglich des Stresslevels"
+  },
+  {
+   "startSec": 8.814,
+   "endSec": 9.766,
+   "text": "gibt es auch,"
+  },
+  {
+   "startSec": 9.766,
+   "endSec": 11.246,
+   "text": "Gruppen oder Einrichtungen,"
+  },
+  {
+   "startSec": 11.246,
+   "endSec": 12.889,
+   "text": "die sind sehr intensiv,"
+  },
+  {
+   "startSec": 12.889,
+   "endSec": 13.569,
+   "text": "egal jetzt auf"
+  },
+  {
+   "startSec": 16.611,
+   "endSec": 17.951,
+   "text": "Kann man ja so seinen"
+  },
+  {
+   "startSec": 17.951,
+   "endSec": 19.391,
+   "text": "Kopf dann auch freimachen"
+  },
+  {
+   "startSec": 19.391,
+   "endSec": 20.221,
+   "text": "und sagen:"
+  },
+  {
+   "startSec": 20.221,
+   "endSec": 21.281,
+   "text": "„Jetzt ziehe ich das durch,"
+  },
+  {
+   "startSec": 21.281,
+   "endSec": 22.201,
+   "text": "gebe ich natürlich hundert"
+  },
+  {
+   "startSec": 22.201,
+   "endSec": 23.141,
+   "text": "Prozent den Monat,"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "karte",
+   "id": "urlaub",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Urlaub wird\nnie gekippt.",
+   "t_in": 0.439,
+   "t_out": 2.83
+  },
+  {
+   "typ": "karte",
+   "id": "krank",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Krank?\nNormaler Lohn.",
+   "t_in": 5.23,
+   "t_out": 7.064
+  },
+  {
+   "typ": "stapel",
+   "id": "intensiv",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 13.589,
+   "t_out": 16.571,
+   "items": [
+    {
+     "text": "Lautstärke",
+     "at": 13.589,
+     "icon": "kreuz"
+    },
+    {
+     "text": "Verhalten",
+     "at": 15.679,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "monat",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Nächsten Monat\nwoanders hin.",
+   "t_in": 23.381,
+   "t_out": 25.396
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 25.396,
+   "t_out": 29.2
+  }
+ ]
+}

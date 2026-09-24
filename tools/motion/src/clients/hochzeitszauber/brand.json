@@ -1,0 +1,25 @@
+{
+  "name": "Hochzeitszauber (Hochzeitsmesse, MN Deko und Dekoverleih)",
+  "colors": {
+    "primary": "#A5A195",
+    "secondary": "#B48A61",
+    "accent": "#303030",
+    "background": "#E6E3DA",
+    "text": "#303030"
+  },
+  "fonts": {
+    "heading": "Playfair Display",
+    "script": "Ms Madi",
+    "body": "Source Sans 3"
+  },
+  "logo": "clients/hochzeitszauber/logo-website-768.jpg",
+  "style": {
+    "borderRadius": 0,
+    "animationSpeed": "slow"
+  },
+  "quellen": {
+    "logo": "hochzeitszauber-arena.de (768 px JPEG von der Website; Vektor-Logo des Kunden ausstehend)",
+    "farben": "Logo: Taupe #A5A195, Elfenbein #E6E3DA, Schrift-Schwarz #303030 (gemessen 17./18.09.2026); Website-CSS: #B48A61, #473E35, #151515",
+    "fonts": "Website-CSS: PlayfairDisplay + SourceSansPro; Schreibschrift des Logos unbekannt — Ms Madi als nächste Google-Font-Entsprechung"
+  }
+}

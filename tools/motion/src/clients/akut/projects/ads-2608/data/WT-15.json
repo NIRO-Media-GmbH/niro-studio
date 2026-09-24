@@ -1,0 +1,114 @@
+{
+ "nr": "WT-15",
+ "titel": "Wir buchen, du ziehst ein",
+ "fps": 25,
+ "durationSec": 25.6,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 2.916,
+   "endSec": 4.056,
+   "text": "Nein, natürlich,"
+  },
+  {
+   "startSec": 4.056,
+   "endSec": 5.596,
+   "text": "kleiner Spaß am Rande."
+  },
+  {
+   "startSec": 8.267,
+   "endSec": 9.887,
+   "text": "Du hast,"
+  },
+  {
+   "startSec": 10.107,
+   "endSec": 12.556,
+   "text": "vor Ort immer eine Wohnung"
+  },
+  {
+   "startSec": 12.556,
+   "endSec": 13.336,
+   "text": "die wird über uns"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "chat",
+   "id": "frage",
+   "y": 0.45,
+   "label": "Frage an Nico",
+   "text": "Muss ich viel mitnehmen?",
+   "t_in": 0.0,
+   "t_out": 2.876
+  },
+  {
+   "typ": "karte",
+   "id": "wohnungen",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Vollausgestattete\nWohnungen",
+   "t_in": 6.476,
+   "t_out": 8.227
+  },
+  {
+   "typ": "karte",
+   "id": "gebucht",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Wir buchen,\ndu ziehst ein.",
+   "t_in": 13.356,
+   "t_out": 14.456
+  },
+  {
+   "typ": "stapel",
+   "id": "tiere",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 15.14,
+   "t_out": 17.523,
+   "items": [
+    {
+     "text": "Katze",
+     "at": 15.14,
+     "icon": "herz"
+    },
+    {
+     "text": "Hund",
+     "at": 15.781,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "stapel",
+   "id": "kosten",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 17.523,
+   "t_out": 20.593,
+   "items": [
+    {
+     "text": "Fahrtkosten übernommen",
+     "at": 17.523,
+     "icon": "herz"
+    },
+    {
+     "text": "Pauschalen",
+     "at": 19.723,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 20.593,
+   "t_out": 25.6
+  }
+ ]
+}

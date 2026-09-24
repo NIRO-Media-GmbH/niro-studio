@@ -1,0 +1,128 @@
+{
+ "nr": "PD-10",
+ "titel": "Und was ist mit den Kindern",
+ "fps": 25,
+ "durationSec": 32.44,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 8.294,
+   "endSec": 9.154,
+   "text": "Was ist für mich der"
+  },
+  {
+   "startSec": 11.905,
+   "endSec": 13.845,
+   "text": "Was möchte ich noch erleben,"
+  },
+  {
+   "startSec": 13.845,
+   "endSec": 15.487,
+   "text": "erreichen, wie auch immer."
+  },
+  {
+   "startSec": 15.487,
+   "endSec": 16.527,
+   "text": "So ein Einsatz,"
+  },
+  {
+   "startSec": 16.527,
+   "endSec": 18.107,
+   "text": "der kann von einer"
+  },
+  {
+   "startSec": 21.478,
+   "endSec": 22.457,
+   "text": "Also natürlich macht"
+  },
+  {
+   "startSec": 22.457,
+   "endSec": 23.297,
+   "text": "man auch Erfahrungen"
+  },
+  {
+   "startSec": 23.297,
+   "endSec": 24.48,
+   "text": "mit Kunden und,"
+  },
+  {
+   "startSec": 24.48,
+   "endSec": 25.16,
+   "text": "dann stellen wir uns"
+  },
+  {
+   "startSec": 25.16,
+   "endSec": 25.68,
+   "text": "natürlich auch"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "chat",
+   "id": "frage",
+   "y": 0.45,
+   "label": "Viele fragen sich:",
+   "text": "Lasse ich mein Team und die Kinder im Stich?",
+   "t_in": 0.0,
+   "t_out": 7.032
+  },
+  {
+   "typ": "karte",
+   "id": "selbst",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Auch an sich\nselber denken.",
+   "t_in": 7.032,
+   "t_out": 8.254
+  },
+  {
+   "typ": "stapel",
+   "id": "fragen",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 9.194,
+   "t_out": 11.865,
+   "items": [
+    {
+     "text": "Nächster Step?",
+     "at": 9.194,
+     "icon": "herz"
+    },
+    {
+     "text": "Wohlfühlen?",
+     "at": 10.465,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "dauer",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "1 Woche bis\n18 Monate",
+   "t_in": 18.127,
+   "t_out": 21.438
+  },
+  {
+   "typ": "karte",
+   "id": "schutz",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Schützend vor\nunseren Mitarbeitern",
+   "t_in": 25.7,
+   "t_out": 27.2
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 27.2,
+   "t_out": 32.44
+  }
+ ]
+}

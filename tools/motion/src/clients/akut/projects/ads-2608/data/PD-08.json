@@ -1,0 +1,65 @@
+{
+ "nr": "PD-08",
+ "titel": "Der Netto-Schock",
+ "fps": 25,
+ "durationSec": 19.88,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 0.0,
+   "endSec": 1.077,
+   "text": "Es gibt in der Pädagogik"
+  },
+  {
+   "startSec": 5.202,
+   "endSec": 6.52,
+   "text": "Uns ist besonders wichtig,"
+  },
+  {
+   "startSec": 6.52,
+   "endSec": 7.88,
+   "text": "dass wir individuell auf"
+  },
+  {
+   "startSec": 7.88,
+   "endSec": 9.337,
+   "text": "jeden Mitarbeiter,"
+  },
+  {
+   "startSec": 9.337,
+   "endSec": 10.657,
+   "text": "zugehen können und,"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "karte",
+   "id": "zuschlaege",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Zuschläge –\nz. B. am Wochenende",
+   "t_in": 1.417,
+   "t_out": 5.162
+  },
+  {
+   "typ": "karte",
+   "id": "paket",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Individuelles\nPaket",
+   "t_in": 10.877,
+   "t_out": 14.384
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 14.384,
+   "t_out": 19.88
+  }
+ ]
+}

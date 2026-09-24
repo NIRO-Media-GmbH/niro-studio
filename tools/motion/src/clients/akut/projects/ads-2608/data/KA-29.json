@@ -1,0 +1,141 @@
+{
+ "nr": "KA-29",
+ "titel": "Du musst dich nicht festlegen",
+ "fps": 25,
+ "durationSec": 24.12,
+ "band": 0.62,
+ "ut": "normal",
+ "pages": [
+  {
+   "startSec": 0.06,
+   "endSec": 0.42,
+   "text": "Sag mal,"
+  },
+  {
+   "startSec": 0.42,
+   "endSec": 1.12,
+   "text": "wer hat eigentlich"
+  },
+  {
+   "startSec": 1.12,
+   "endSec": 1.66,
+   "text": "entschieden,"
+  },
+  {
+   "startSec": 1.66,
+   "endSec": 3.96,
+   "text": "dass du dich mit Anfang 20"
+  },
+  {
+   "startSec": 3.96,
+   "endSec": 4.88,
+   "text": "für eine bestimmte"
+  },
+  {
+   "startSec": 4.88,
+   "endSec": 6.06,
+   "text": "Fachrichtung festlegen"
+  },
+  {
+   "startSec": 6.06,
+   "endSec": 6.498,
+   "text": "musst?"
+  },
+  {
+   "startSec": 6.498,
+   "endSec": 7.758,
+   "text": "Bei akut kannst du alles"
+  },
+  {
+   "startSec": 7.758,
+   "endSec": 8.458,
+   "text": "ausprobieren:"
+  },
+  {
+   "startSec": 14.178,
+   "endSec": 14.978,
+   "text": "Du wechselst,"
+  },
+  {
+   "startSec": 14.978,
+   "endSec": 16.298,
+   "text": "bis es passt und"
+  },
+  {
+   "startSec": 16.298,
+   "endSec": 17.318,
+   "text": "wenn es passt,"
+  },
+  {
+   "startSec": 17.318,
+   "endSec": 18.358,
+   "text": "kannst du auch da bleiben,"
+  },
+  {
+   "startSec": 18.358,
+   "endSec": 19.197,
+   "text": "wo du bist."
+  }
+ ],
+ "beats": [
+  {
+   "typ": "worte",
+   "id": "bereiche",
+   "y": 0.45,
+   "variante": "hell",
+   "groesse": 0.04,
+   "t_in": 8.498,
+   "t_out": 11.958,
+   "items": [
+    {
+     "text": "Kita",
+     "at": 8.498
+    },
+    {
+     "text": "Hort",
+     "at": 8.938
+    },
+    {
+     "text": "Jugendhilfe",
+     "at": 9.338
+    },
+    {
+     "text": "Eingliederungshilfe",
+     "at": 10.198
+    },
+    {
+     "text": "& vieles mehr",
+     "at": 11.138
+    }
+   ]
+  },
+  {
+   "typ": "duo",
+   "id": "unbefristet",
+   "y": 0.45,
+   "variante": "hell",
+   "groesse": 0.04,
+   "t_in": 12.118,
+   "t_out": 14.138,
+   "items": [
+    {
+     "text": "Ein Vertrag.",
+     "at": 12.118
+    },
+    {
+     "text": "Unbefristet.",
+     "at": 13.098
+    }
+   ]
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 19.477,
+   "t_out": 24.12
+  }
+ ]
+}

@@ -10,6 +10,9 @@ import {
   AeternaMesseScreen, messeScreenSchema, messeScreenDefaults,
 } from "./clients/aeterna-weddings/projects/messe-screen/Composition";
 import {
+  HochzeitszauberAftermovie, aftermovieSchema, aftermovieDefaults, aftermovieMetadata,
+} from "./clients/hochzeitszauber/projects/aftermovie/Composition";
+import {
   MekZertifikat, zertifikatSchema, zertifikatCacDefaults, zertifikatWeaningDefaults,
 } from "./clients/mek/projects/imagefilm/Zertifikate";
 import {
@@ -18,6 +21,10 @@ import {
 import {
   TaxodiaGrafikebene, grafikSchema as taxodiaGrafikSchema, grafikDefaults as taxodiaGrafikDefaults, calculateGrafik as calculateTaxodiaGrafik,
 } from "./clients/taxodia/projects/erklaervideo/Grafikebene";
+import {
+  TaxodiaGrafikebeneMesse, grafikMesseSchema as taxodiaGrafikMesseSchema, grafikMesseDefaults as taxodiaGrafikMesseDefaults,
+  calculateGrafikMesse as calculateTaxodiaGrafikMesse,
+} from "./clients/taxodia/projects/erklaervideo/GrafikebeneMesse";
 
 const REVIEW_DEFAULTS = {
   showGuides: false,
@@ -189,6 +196,9 @@ import { CraissVieleJahreSubtitled, craissVieleJahreSubtitledSchema, craissViele
 import { CraissFunnelSubtitled, craissFunnelSubtitledSchema, craissFunnelSubtitledDefaults } from "./clients/craiss/projects/funnel/CompositionSubtitled";
 import { CraissTestimonialSubtitled, craissTestimonialSubtitledSchema, craissTestimonialSubtitledDefaults } from "./clients/craiss/projects/testimonial/CompositionSubtitled";
 import { CraissVorschau, craissVorschauSchema, craissVorschauDefaults, craissAlphaDefaults } from "./clients/craiss/projects/vorschau/Composition";
+import {
+  RappoldV2Mechatroniker, rappoldV2Schema, rappoldV2VorschauDefaults, rappoldV2AlphaDefaults, calculateRappoldV2,
+} from "./clients/rappold/projects/mechatroniker/Composition";
 import { DoldEndcard, doldEndcardSchema, doldEndcardDefaults } from "./clients/dold/projects/recruiting-endcard/Composition";
 import { SWBifazialeModule, swBifazialeModuleSchema } from "./clients/sw-projektentwicklung/projects/bifaziale-module/Composition";
 import { SWGottwollshausen, swGottwollshausenSchema } from "./clients/sw-projektentwicklung/projects/gottwollshausen/Composition";
@@ -1575,6 +1585,16 @@ export const RemotionRoot: React.FC = () => {
           />
         </Folder>
 
+        <Folder name="Hochzeitszauber">
+          <Composition
+            id="Hochzeitszauber-Aftermovie"
+            component={HochzeitszauberAftermovie}
+            schema={aftermovieSchema}
+            defaultProps={aftermovieDefaults}
+            calculateMetadata={aftermovieMetadata}
+          />
+        </Folder>
+
         <Folder name="AeternaWeddings">
           <Composition
             id="Aeterna-MesseScreen"
@@ -1616,6 +1636,30 @@ export const RemotionRoot: React.FC = () => {
             schema={taxodiaGrafikSchema}
             defaultProps={taxodiaGrafikDefaults}
             calculateMetadata={calculateTaxodiaGrafik}
+          />
+          <Composition
+            id="Taxodia-Erklaervideo-Grafikebene-Messe"
+            component={TaxodiaGrafikebeneMesse}
+            schema={taxodiaGrafikMesseSchema}
+            defaultProps={taxodiaGrafikMesseDefaults}
+            calculateMetadata={calculateTaxodiaGrafikMesse}
+          />
+        </Folder>
+
+        <Folder name="Rappold">
+          <Composition
+            id="Rappold-V2-Mechatroniker-Vorschau"
+            component={RappoldV2Mechatroniker}
+            schema={rappoldV2Schema}
+            defaultProps={rappoldV2VorschauDefaults}
+            calculateMetadata={calculateRappoldV2}
+          />
+          <Composition
+            id="Rappold-V2-Mechatroniker-Alpha"
+            component={RappoldV2Mechatroniker}
+            schema={rappoldV2Schema}
+            defaultProps={rappoldV2AlphaDefaults}
+            calculateMetadata={calculateRappoldV2}
           />
         </Folder>
       </Folder>

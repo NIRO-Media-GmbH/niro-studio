@@ -492,3 +492,340 @@ export const TaxodiaWeg: React.FC<{ dauer: number; stationen: Station[]; fortsch
     </WeisserGrund>
   );
 };
+
+// ------------------------------------------------------------
+// Der Taxodia-Weg, Messe-Fassung (17.09.2026, Kundenfeedback): fünf Stationen, davon eine „Pause"-Station
+// (Entscheidung nach 32 UStd: Teilnehmer · Taxodia · Kanzlei — die Chips leuchten auf, wenn Flammann sie nennt).
+// Nur 32 UStd als Stundenzahl (Kunde: „Einstiegskurs-Grafik nur 32 h"). Teil I/II-Ziele von taxodia.de/kurse.
+// ------------------------------------------------------------
+
+export type ZeileT = { text: string; start: number };
+export type StationMesse = { titel: string; zeilen: ZeileT[]; start: number; kicker?: string; pause?: boolean; fuss?: ZeileT };
+
+export const TaxodiaWegMesse: React.FC<{ dauer: number; stationen: StationMesse[]; fortschritt: [number, number]; fussStart: number }> = ({
+  dauer,
+  stationen,
+  fortschritt,
+  fussStart,
+}) => {
+  const frame = useCurrentFrame();
+  const x0 = 250;
+  const x1 = 1620;
+  const yLinie = 600;
+  const n = stationen.length;
+  const xs = stationen.map((_, i) => x0 + (i * (x1 - x0)) / (n - 1));
+  const pauseIdx = stationen.findIndex((s) => s.pause);
+  const letzterStart = stationen[n - 1].start;
+  // Linie wächst bis zur Pause-Station, wartet dort (der Break), und läuft erst mit dem Fortschritt weiter
+  const linie1 = interpolate(frame, [stationen[0].start, stationen[pauseIdx].start + 10], [0, 1], { ...CLAMP, easing: Easing.inOut(Easing.cubic) });
+  const linie2 = interpolate(frame, [fortschritt[0], letzterStart + 10], [0, 1], { ...CLAMP, easing: Easing.inOut(Easing.cubic) });
+  const xPause = xs[pauseIdx];
+  const prog = interpolate(frame, fortschritt, [0, 1], { ...CLAMP, easing: Easing.inOut(Easing.cubic) });
+  const punktX = xPause + prog * (xs[pauseIdx + 1] - xPause);
+  const punktSichtbar = frame >= fortschritt[0] - 4 ? rein(frame, fortschritt[0] - 4, 6) : 0;
+  const fuss = rein(frame, fussStart, 12);
+  const pausePuls = interpolate((frame - stationen[pauseIdx].start) % 40, [0, 20, 40], [0.18, 0.34, 0.18], CLAMP);
+  return (
+    <WeisserGrund dauer={dauer}>
+      <div style={{ position: "absolute", left: 150, top: 140, fontFamily: URBANIST, color: SCHWARZ }}>
+        <Kicker text="Steuerkanzlei Ludwig × Taxodia" marke="taxodia" start={4} groesse={20} />
+        <WortKaskade zeilen={["Der Taxodia-Weg"]} start={7} groesse={84} gewicht={800} sperrung={-2} marginTop={10} />
+      </div>
+      {/* Linie: grauer Grund + grüne Füllung in zwei Etappen (Break an der Pause-Station) */}
+      <div style={{ position: "absolute", left: x0, top: yLinie - 3, width: x1 - x0, height: 6, borderRadius: 3, background: "#E4E7DD" }} />
+      <div
+        style={{
+          position: "absolute",
+          left: x0,
+          top: yLinie - 3,
+          width: xPause - x0,
+          height: 6,
+          borderRadius: 3,
+          background: `linear-gradient(90deg, ${TAXODIA_GRUEN}, ${TAXODIA_BAND})`,
+          transform: `scaleX(${linie1})`,
+          transformOrigin: "0 50%",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: xPause,
+          top: yLinie - 3,
+          width: x1 - xPause,
+          height: 6,
+          borderRadius: 3,
+          background: `linear-gradient(90deg, ${TAXODIA_BAND}, ${TAXODIA_GRUEN})`,
+          transform: `scaleX(${linie2})`,
+          transformOrigin: "0 50%",
+        }}
+      />
+      {stationen.map((s, i) => {
+        const k = setzen(frame, s.start);
+        const t = rein(frame, s.start + 4, 12);
+        const oben = i % 2 === 1;
+        const breit = s.pause ? 760 : 400;
+        return (
+          <React.Fragment key={i}>
+            {s.pause ? (
+              // Pause-Knoten: Pillen-Ring mit Pausezeichen, pulsierender Hof
+              <>
+                <div
+                  style={{
+                    position: "absolute",
+                    left: xs[i] - 46,
+                    top: yLinie - 46,
+                    width: 92,
+                    height: 92,
+                    borderRadius: 46,
+                    background: hexA(TAXODIA_GRUEN, pausePuls),
+                    transform: `scale(${frame >= s.start ? k : 0})`,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    left: xs[i] - 30,
+                    top: yLinie - 30,
+                    width: 60,
+                    height: 60,
+                    borderRadius: 30,
+                    background: "#FFFFFF",
+                    boxShadow: `inset 0 0 0 7px ${TAXODIA_BAND}, 0 8px 22px ${hexA("#141A08", 0.16)}`,
+                    transform: `scale(${frame >= s.start ? k : 0})`,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  <div style={{ width: 7, height: 24, borderRadius: 2, background: TAXODIA_BAND }} />
+                  <div style={{ width: 7, height: 24, borderRadius: 2, background: TAXODIA_BAND }} />
+                </div>
+              </>
+            ) : (
+              <div
+                style={{
+                  position: "absolute",
+                  left: xs[i] - 22,
+                  top: yLinie - 22,
+                  width: 44,
+                  height: 44,
+                  borderRadius: 22,
+                  background: "#FFFFFF",
+                  boxShadow: `inset 0 0 0 7px ${TAXODIA_GRUEN}, 0 8px 22px ${hexA("#141A08", 0.16)}`,
+                  transform: `scale(${frame >= s.start ? k : 0})`,
+                }}
+              />
+            )}
+            <div
+              style={{
+                position: "absolute",
+                left: xs[i] - breit / 2,
+                width: breit,
+                top: oben ? yLinie - (s.pause ? 300 : 186) : yLinie + (s.pause ? 70 : 48),
+                textAlign: "center",
+                fontFamily: URBANIST,
+                color: SCHWARZ,
+                opacity: t,
+                transform: `translateY(${(1 - t) * (oben ? 12 : -12)}px)`,
+              }}
+            >
+              <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: 2.6, color: TAXODIA_TIEF, textTransform: "uppercase" }}>
+                {s.kicker ?? `Schritt ${i + 1 - (pauseIdx >= 0 && i > pauseIdx ? 1 : 0)}`}
+              </div>
+              <div style={{ fontSize: s.pause ? 56 : 50, fontWeight: 800, letterSpacing: -1, marginTop: 6, lineHeight: 1.05 }}>{s.titel}</div>
+              {s.pause ? (
+                <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
+                  {s.zeilen.map((z, zi) => {
+                    const an = rein(frame, z.start, 8);
+                    return (
+                      <div
+                        key={zi}
+                        style={{
+                          padding: "8px 22px 10px",
+                          borderRadius: 40,
+                          fontSize: 30,
+                          fontWeight: 700,
+                          color: an > 0.5 ? "#FFFFFF" : hexA("#000000", 0.55),
+                          background: an > 0.5 ? TAXODIA_BAND : hexA(TAXODIA_HELL, 0.9),
+                          transform: `scale(${0.92 + 0.08 * setzen(frame, z.start)})`,
+                          opacity: 0.55 + 0.45 * an,
+                        }}
+                      >
+                        {z.text}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                s.zeilen.map((z, zi) => (
+                  <div
+                    key={zi}
+                    style={{
+                      fontSize: 31,
+                      fontWeight: 500,
+                      color: hexA("#000000", 0.72),
+                      marginTop: zi === 0 ? 8 : 2,
+                      opacity: rein(frame, z.start, 10),
+                    }}
+                  >
+                    {z.text}
+                  </div>
+                ))
+              )}
+              {s.fuss && (
+                <div style={{ marginTop: 14, fontSize: 28, fontWeight: 700, color: TAXODIA_TIEF, whiteSpace: "nowrap", opacity: rein(frame, s.fuss.start, 12) }}>
+                  {s.fuss.text}
+                </div>
+              )}
+            </div>
+          </React.Fragment>
+        );
+      })}
+      {/* Fortschrittspunkt: nach der Entscheidung geht der Quereinsteiger weiter (ab der 33. Unterrichtsstunde in der Kanzlei) */}
+      <div
+        style={{
+          position: "absolute",
+          left: punktX - 13,
+          top: yLinie - 13,
+          width: 26,
+          height: 26,
+          borderRadius: 13,
+          background: TAXODIA_BAND,
+          boxShadow: `0 0 0 8px ${hexA(TAXODIA_GRUEN, 0.25)}`,
+          opacity: punktSichtbar,
+        }}
+      />
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 120, textAlign: "center", fontFamily: URBANIST, opacity: fuss }}>
+        <Textzeile text="Einstieg jederzeit möglich · Hauptkurs startet jeden Monat" start={fussStart} groesse={32} gewicht={700} farbe={TAXODIA_TIEF} ausrichtung="center" />
+      </div>
+    </WeisserGrund>
+  );
+};
+
+// ------------------------------------------------------------
+// Zitat-Blende (18.09.2026, User-Feedback K14/K15/K26): Vollbild-Übergang mit dem Zitat des gerade Gehörten —
+// Kicker Name · Rolle, großes Zitat, Iris öffnet in den nächsten Take (dessen Ton beginnt schon darunter).
+// ------------------------------------------------------------
+
+export const ZitatBlende: React.FC<{ dauer: number; zitat: string[]; name?: string; rolle?: string; marke: "taxodia" | "ludwig" }> = ({
+  dauer,
+  zitat,
+  name,
+  rolle,
+  marke,
+}) => {
+  // User 18.09.: keine Quellenzeile (Name · Kanzlei) — der Sprecher war gerade im Bild; name/rolle nur, wenn ausdrücklich gesetzt
+  const frame = useCurrentFrame();
+  const textAb = interpolate(frame, [dauer - 14, dauer - 9], [1, 0], CLAMP);
+  const strich = setzen(frame, 5);
+  const akzent = marke === "ludwig" ? LUDWIG_GRUEN : TAXODIA_GRUEN;
+  const tief = marke === "ludwig" ? LUDWIG_TIEF : TAXODIA_TIEF;
+  return (
+    <WeisserGrund dauer={dauer}>
+      <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", fontFamily: URBANIST, color: SCHWARZ, opacity: textAb }}>
+        <div style={{ textAlign: "center", maxWidth: 1500 }}>
+          <div style={{ width: 64, height: 8, borderRadius: 4, background: akzent, margin: "0 auto 30px", transform: `scaleX(${strich})` }} />
+          <WortKaskade zeilen={zitat} start={7} versatz={2} groesse={78} gewicht={800} sperrung={-1.8} marginTop={0} ausrichtung="center" />
+          {name && (
+            <div style={{ marginTop: 34, display: "flex", justifyContent: "center", gap: 14, alignItems: "baseline" }}>
+              <Textzeile text={name} start={22} groesse={34} gewicht={800} farbe={SCHWARZ} sperrung={-0.4} marginTop={0} ausrichtung="center" />
+              {rolle && <Textzeile text={"· " + rolle} start={26} groesse={28} gewicht={600} farbe={tief} marginTop={0} ausrichtung="center" />}
+            </div>
+          )}
+        </div>
+      </AbsoluteFill>
+    </WeisserGrund>
+  );
+};
+
+// ------------------------------------------------------------
+// Ampel-Grafik (18.09.2026, User-Feedback K21/K22): Controlling nach dem Ampelprinzip — drei Lampen, Grün leuchtet ab
+// Start, Gelb und Rot schalten auf Flammanns Wort; Texte aus seinem O-Ton (A8 Grün, #16 Gelb/Rot). Iris öffnet auf ihn.
+// ⚠️ Ampel-Grafik laut Schnittplan erst nach Freigabe durch Taxodia (Website nennt „Monitoring"); der User hat sie bestellt.
+// ------------------------------------------------------------
+
+export const AmpelGrafik: React.FC<{ dauer: number; titelStart: number; gelb: number; gelbText: number; rot: number; rotText: number }> = ({
+  dauer,
+  titelStart,
+  gelb,
+  gelbText,
+  rot,
+  rotText,
+}) => {
+  const frame = useCurrentFrame();
+  const textAb = interpolate(frame, [dauer - 14, dauer - 9], [1, 0], CLAMP);
+  const lampen = [
+    { farbe: "#D64545", dunkel: "#5A1F1F", an: frame >= rot, start: rot, label: "Über 1 Woche im Rückstand", text: "Gespräch mit Teilnehmer und Kanzlei", textStart: rotText },
+    { farbe: "#F2B705", dunkel: "#5C4A0E", an: frame >= gelb && frame < rot, start: gelb, label: "Bis 1 Woche im Rückstand", text: "Anruf von Taxodia", textStart: gelbText },
+    { farbe: TAXODIA_GRUEN, dunkel: "#2E3A18", an: frame < gelb, start: titelStart + 14, label: "Wochenpensum erreicht", text: "Alles läuft", textStart: titelStart + 20 },
+  ];
+  const gehaeuse = setzen(frame, titelStart + 6);
+  return (
+    <WeisserGrund dauer={dauer}>
+      <AbsoluteFill style={{ fontFamily: URBANIST, color: SCHWARZ, opacity: textAb }}>
+        <div style={{ position: "absolute", left: 150, top: 140 }}>
+          <Kicker text="Taxodia" marke="taxodia" start={titelStart} groesse={20} />
+          <WortKaskade zeilen={["Controlling nach", "dem Ampelprinzip"]} start={titelStart + 3} groesse={80} gewicht={800} sperrung={-2} marginTop={10} />
+        </div>
+        {/* Ampelgehäuse */}
+        <div
+          style={{
+            position: "absolute",
+            left: 1180,
+            top: 250,
+            width: 200,
+            height: 600,
+            borderRadius: 100,
+            background: "#1F2419",
+            boxShadow: `0 30px 70px ${hexA("#141A08", 0.35)}`,
+            transform: `scale(${gehaeuse})`,
+            transformOrigin: "50% 50%",
+          }}
+        />
+        {lampen.map((l, i) => {
+          const cy = 250 + 100 + i * 200;
+          const glow = l.an ? 1 : 0;
+          const puls = interpolate((frame + i * 13) % 50, [0, 25, 50], [0.75, 1, 0.75], CLAMP);
+          const ein = setzen(frame, l.start);
+          return (
+            <React.Fragment key={i}>
+              <div
+                style={{
+                  position: "absolute",
+                  left: 1280 - 70,
+                  top: cy - 70,
+                  width: 140,
+                  height: 140,
+                  borderRadius: 70,
+                  background: l.an ? l.farbe : l.dunkel,
+                  boxShadow: l.an ? `0 0 ${60 * puls}px ${hexA(l.farbe, 0.85)}, inset 0 -10px 24px ${hexA("#000000", 0.25)}` : `inset 0 -10px 24px ${hexA("#000000", 0.45)}`,
+                  transform: `scale(${gehaeuse})`,
+                  opacity: gehaeuse,
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  left: 1400,
+                  top: cy - 44,
+                  width: 500,
+                  opacity: ein,
+                  transform: `translateX(${(1 - ein) * -16}px)`,
+                }}
+              >
+                <div style={{ fontSize: 36, fontWeight: 800, letterSpacing: -0.6, color: l.an ? SCHWARZ : hexA("#000000", 0.45) }}>{l.label}</div>
+                <div style={{ fontSize: 28, fontWeight: 500, color: hexA("#000000", 0.7), marginTop: 6, opacity: rein(frame, l.textStart, 10) }}>{l.text}</div>
+              </div>
+              <div style={{ position: "absolute", left: 1200 - 40, top: cy - 44, width: 0, opacity: glow }} />
+            </React.Fragment>
+          );
+        })}
+        <div style={{ position: "absolute", left: 150, top: 560, width: 900, opacity: rein(frame, titelStart + 30, 12) }}>
+          <Textzeile text="Jedes Wochenende ein Reporting:" start={titelStart + 30} groesse={30} gewicht={600} farbe={TAXODIA_TIEF} marginTop={0} />
+          <Textzeile text="Sind die gebuchten Unterrichtsstunden erreicht?" start={titelStart + 34} groesse={30} gewicht={600} farbe={TAXODIA_TIEF} marginTop={6} />
+        </div>
+      </AbsoluteFill>
+    </WeisserGrund>
+  );
+};

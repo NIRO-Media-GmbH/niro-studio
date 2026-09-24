@@ -1,0 +1,154 @@
+{
+ "nr": "P-04",
+ "titel": "Zeitarbeit Niemals",
+ "fps": 25,
+ "durationSec": 33.24,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 1.648,
+   "endSec": 3.166,
+   "text": "Nein, Spaß beiseite."
+  },
+  {
+   "startSec": 3.166,
+   "endSec": 4.546,
+   "text": "So dieses schwarze Schaf"
+  },
+  {
+   "startSec": 4.546,
+   "endSec": 5.637,
+   "text": "aufm Arbeitsmarkt,"
+  },
+  {
+   "startSec": 5.637,
+   "endSec": 6.837,
+   "text": "darf man der Zeitarbeit"
+  },
+  {
+   "startSec": 6.837,
+   "endSec": 7.322,
+   "text": "an sich,"
+  },
+  {
+   "startSec": 7.322,
+   "endSec": 8.482,
+   "text": "gar nicht mehr zuschreiben,"
+  },
+  {
+   "startSec": 8.482,
+   "endSec": 9.442,
+   "text": "man kann super ein"
+  },
+  {
+   "startSec": 14.452,
+   "endSec": 14.832,
+   "text": "Natürlich,"
+  },
+  {
+   "startSec": 14.832,
+   "endSec": 15.678,
+   "text": "wenn es euch super"
+  },
+  {
+   "startSec": 15.678,
+   "endSec": 16.318,
+   "text": "dort gefällt,"
+  },
+  {
+   "startSec": 16.318,
+   "endSec": 17.029,
+   "text": "könnt ihr euch,"
+  },
+  {
+   "startSec": 17.029,
+   "endSec": 17.949,
+   "text": "dort gerne auch"
+  },
+  {
+   "startSec": 24.135,
+   "endSec": 25.132,
+   "text": "Ich sage immer:"
+  },
+  {
+   "startSec": 25.132,
+   "endSec": 26.551,
+   "text": "Mehr als Zeit"
+  },
+  {
+   "startSec": 26.551,
+   "endSec": 27.491,
+   "text": "kann man nicht verlieren,"
+  },
+  {
+   "startSec": 27.491,
+   "endSec": 28.654,
+   "text": "wenn man es ausprobiert,"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "chat",
+   "id": "frage",
+   "y": 0.45,
+   "label": "Frage an Nico",
+   "text": "Welche Vorurteile über Zeitarbeit hörst du?",
+   "t_in": 0.0,
+   "t_out": 1.608
+  },
+  {
+   "typ": "stapel",
+   "id": "chancen",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 9.482,
+   "t_out": 14.412,
+   "items": [
+    {
+     "text": "Sprungbrett",
+     "at": 9.482,
+     "icon": "herz"
+    },
+    {
+     "text": "Neu entdecken",
+     "at": 11.565,
+     "icon": "herz"
+    },
+    {
+     "text": "Viel ausprobieren",
+     "at": 13.245,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "uebernahme",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Übernahme\nmöglich",
+   "t_in": 17.969,
+   "t_out": 20.977
+  },
+  {
+   "typ": "karte",
+   "id": "ruf",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "24/7\nRufbereitschaft",
+   "t_in": 21.417,
+   "t_out": 24.095
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 28.694,
+   "t_out": 33.24
+  }
+ ]
+}

@@ -1,0 +1,248 @@
+{
+ "gesamtFrames": 9514,
+ "schnittFrames": 9306,
+ "elemente": [
+  {
+   "id": "flash-fachkraeftemangel",
+   "from": 48,
+   "dauer": 28,
+   "vollbild": true
+  },
+  {
+   "id": "flash-quereinsteiger",
+   "from": 207,
+   "dauer": 28,
+   "vollbild": true
+  },
+  {
+   "id": "titel",
+   "from": 346,
+   "dauer": 96
+  },
+  {
+   "id": "karte-ilshofen",
+   "from": 526,
+   "dauer": 141,
+   "vollbild": true,
+   "radiusStart": 74
+  },
+  {
+   "id": "bauchbinde-ludwig",
+   "from": 670,
+   "dauer": 200
+  },
+  {
+   "id": "bauchbinde-hein",
+   "from": 1349,
+   "dauer": 200
+  },
+  {
+   "id": "blende-taxodia",
+   "from": 1968,
+   "dauer": 48,
+   "vollbild": true
+  },
+  {
+   "id": "bauchbinde-flammann",
+   "from": 2020,
+   "dauer": 123
+  },
+  {
+   "id": "karte-taxodia",
+   "from": 2145,
+   "dauer": 120,
+   "vollbild": true
+  },
+  {
+   "id": "software",
+   "from": 2714,
+   "dauer": 161
+  },
+  {
+   "id": "bachelor-professional",
+   "from": 3120,
+   "dauer": 204
+  },
+  {
+   "id": "taxodia-weg",
+   "from": 3441,
+   "dauer": 660,
+   "vollbild": true,
+   "stationen": [
+    {
+     "titel": "Einstiegskurs",
+     "zeilen": [
+      {
+       "text": "32 Unterrichtsstunden",
+       "start": 14
+      }
+     ],
+     "start": 10
+    },
+    {
+     "titel": "Entscheidung",
+     "kicker": "Pause nach 32 UStd",
+     "pause": true,
+     "start": 117,
+     "zeilen": [
+      {
+       "text": "Teilnehmer",
+       "start": 140
+      },
+      {
+       "text": "Taxodia",
+       "start": 195
+      },
+      {
+       "text": "Kanzlei",
+       "start": 360
+      }
+     ],
+     "fuss": {
+      "text": "Weiter oder Stopp – gemeinsam entschieden",
+      "start": 420
+     }
+    },
+    {
+     "titel": "Teil I",
+     "zeilen": [
+      {
+       "text": "Laufende Buchführung",
+       "start": 444
+      }
+     ],
+     "start": 424
+    },
+    {
+     "titel": "Teil II",
+     "zeilen": [
+      {
+       "text": "Jahresabschluss & Steuererklärung",
+       "start": 556
+      }
+     ],
+     "start": 544
+    },
+    {
+     "titel": "Prüfung",
+     "zeilen": [
+      {
+       "text": "Bachelor Professional",
+       "start": 594
+      }
+     ],
+     "start": 582
+    }
+   ],
+   "fortschritt": [
+    424,
+    524
+   ],
+   "fussStart": 604
+  },
+  {
+   "id": "zitat-ludwig",
+   "from": 4347,
+   "dauer": 75,
+   "vollbild": true,
+   "zitat": [
+    "„Dass es hier funktioniert.“"
+   ],
+   "marke": "ludwig"
+  },
+  {
+   "id": "kostenbremse",
+   "from": 4690,
+   "dauer": 239
+  },
+  {
+   "id": "zitat-flammann",
+   "from": 4927,
+   "dauer": 75,
+   "vollbild": true,
+   "zitat": [
+    "„Keine weiteren Kosten,",
+    "keine Stornokosten.“"
+   ],
+   "marke": "taxodia"
+  },
+  {
+   "id": "kosten",
+   "from": 5030,
+   "dauer": 155
+  },
+  {
+   "id": "blende-online",
+   "from": 5184,
+   "dauer": 59,
+   "vollbild": true
+  },
+  {
+   "id": "support",
+   "from": 5610,
+   "dauer": 253
+  },
+  {
+   "id": "ampel",
+   "from": 6310,
+   "dauer": 425,
+   "vollbild": true,
+   "titelStart": 37,
+   "gelb": 250,
+   "gelbText": 258,
+   "rot": 406,
+   "rotText": 412
+  },
+  {
+   "id": "monitoring",
+   "from": 6926,
+   "dauer": 116
+  },
+  {
+   "id": "abrechnung",
+   "from": 7052,
+   "dauer": 112
+  },
+  {
+   "id": "zitat-hein",
+   "from": 7538,
+   "dauer": 75,
+   "vollbild": true,
+   "zitat": [
+    "„Die Zweifel wurden",
+    "sehr schnell genommen.“"
+   ],
+   "marke": "ludwig"
+  },
+  {
+   "id": "pruefung",
+   "from": 7615,
+   "dauer": 241
+  },
+  {
+   "id": "blende-ergebnis",
+   "from": 7859,
+   "dauer": 46,
+   "vollbild": true
+  },
+  {
+   "id": "blende-kanzleien",
+   "from": 8369,
+   "dauer": 50,
+   "vollbild": true
+  },
+  {
+   "id": "blende-quereinsteiger",
+   "from": 9018,
+   "dauer": 36,
+   "vollbild": true
+  },
+  {
+   "id": "endcard",
+   "from": 9306,
+   "dauer": 208,
+   "vollbild": true
+  }
+ ],
+ "hinweis": "erzeugt von _intern/messe/messe2_plan.py — Frames der Messe-V2-Timeline, 25 fps · v5 18.09.: Zitate ohne Quellenzeile, Ludwig-Zitat neu"
+}

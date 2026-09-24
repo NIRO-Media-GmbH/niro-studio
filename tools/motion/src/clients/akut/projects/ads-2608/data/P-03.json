@@ -1,0 +1,129 @@
+{
+ "nr": "P-03",
+ "titel": "Verantwortung verdient mehr",
+ "fps": 25,
+ "durationSec": 35.36,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 9.866,
+   "endSec": 10.706,
+   "text": "Kommt immer darauf an:"
+  },
+  {
+   "startSec": 10.706,
+   "endSec": 11.266,
+   "text": "Hat man noch eine"
+  },
+  {
+   "startSec": 21.749,
+   "endSec": 22.649,
+   "text": "Bei uns gibt es einen ganz"
+  },
+  {
+   "startSec": 22.649,
+   "endSec": 23.009,
+   "text": "normalen"
+  },
+  {
+   "startSec": 24.943,
+   "endSec": 26.081,
+   "text": "Viele Mitarbeiter"
+  },
+  {
+   "startSec": 26.081,
+   "endSec": 27.692,
+   "text": "begleiten uns bei akut,"
+  },
+  {
+   "startSec": 27.692,
+   "endSec": 28.212,
+   "text": "schon"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "chat",
+   "id": "frage",
+   "y": 0.45,
+   "label": "Frage an Nico",
+   "text": "Was verdient eine examinierte Pflegekraft bei euch?",
+   "t_in": 0.0,
+   "t_out": 3.012
+  },
+  {
+   "typ": "stapel",
+   "id": "gehalt",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 3.012,
+   "t_out": 9.826,
+   "items": [
+    {
+     "text": "Examinierte: ab 24–25 €",
+     "at": 3.012,
+     "icon": "herz"
+    },
+    {
+     "text": "Nach oben fast offen",
+     "at": 6.599,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "stapel",
+   "id": "plus",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 11.306,
+   "t_out": 21.709,
+   "items": [
+    {
+     "text": "Zusatzqualifikation",
+     "at": 11.306,
+     "icon": "herz"
+    },
+    {
+     "text": "Wechselschichtzulage",
+     "at": 16.139,
+     "icon": "herz"
+    },
+    {
+     "text": "Zuschläge nach GVP-Tarif",
+     "at": 18.241,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "vertrag",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Unbefristeter\nArbeitsvertrag",
+   "t_in": 23.029,
+   "t_out": 24.903
+  },
+  {
+   "typ": "karte",
+   "id": "treue",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Viele seit\n15, 16 Jahren\nbei akut",
+   "t_in": 28.232,
+   "t_out": 31.4
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 31.4,
+   "t_out": 35.36
+  }
+ ]
+}
