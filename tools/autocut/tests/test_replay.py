@@ -136,6 +136,20 @@ def test_finde_upload_nfc_normalisiert(basis_charge):
     assert charge == basis_charge and e["timeline"] == "X"
 
 
+@pytest.mark.parametrize("form_log, form_eingabe", [("NFD", "NFC"), ("NFC", "NFD")])
+def test_upload_eintrag_und_einsortiert_nfc_normalisiert(basis_charge, form_log, form_eingabe):
+    """Rest-Review Punkt 6: --titel wird von der Replay-Seite abgetippt — upload_eintrag(titel_=…) und
+    setze_einsortiert vergleichen wie finde_upload NFC-normalisiert, egal welche Seite zerlegt vorliegt."""
+    ch = Charge.open_basis(basis_charge)
+    titel = "Café Übergabe"
+    R.speichere_upload(ch, {"titel": unicodedata.normalize(form_log, titel), "timeline": "X",
+                            "hochgeladen_am": "2026-09-17T10:00:00", "upload_status": "Upload Completed"})
+    eingabe = unicodedata.normalize(form_eingabe, titel)
+    assert R.upload_eintrag(ch, titel_=eingabe)["timeline"] == "X"
+    R.setze_einsortiert(ch, eingabe, "Autocut/Kunde A/Projekt B", zeit="2026-09-17T12:00:00")
+    assert R.lade_uploads(ch)[0]["einsortiert_am"] == "2026-09-17T12:00:00"
+
+
 def test_finde_upload_kaputtes_json_einer_charge(basis_charge):
     """M1: Ein kaputtes uploads.json einer Charge → AutoCutError mit Pfad statt rohem JSONDecodeError."""
     zweite = basis_charge.parent / "2026-10 Zweiter Dreh"

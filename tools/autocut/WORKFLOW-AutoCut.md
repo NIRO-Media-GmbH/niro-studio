@@ -958,8 +958,10 @@ Vorlagen prüfen das nicht selbst, darauf vor dem Start achten. Für weitere Stu
 
 ### Hochladen („AutoCut: <Kunde>/<Projekt>[/<Charge>] Replay")
 1. **Vorschau** (nur lesen): `"$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" hochladen --project "<offenes Projekt>"
-   [--timeline "<Name>"]` — prüft Freigabe, Timeline, In/Out-Marken, Replay-Marker und Wiedergabe; nennt Titel, Länge,
-   Format, Bitrate-Grenze, Replay-Ordner. Die Vorschau dem User zeigen.
+   [--timeline "<Name>"]` — prüft Freigabe, Timeline, In/Out-Marken, Replay-Marker, Wiedergabe und laufendes Rendern
+   (`IsRenderingInProgress`); nennt Titel, Länge, Format, Bitrate-Grenze, Replay-Ordner. Die Vorschau dem User zeigen.
+   Hat Claude die Timeline seit dem letzten Bau-Readback geändert: beim User nachfragen, ob er sie inzwischen von Hand
+   geändert hat; wenn nicht, vorher den Readback schreiben (Abschnitt „Bau-Readback").
 2. **OK des Users** im Chat für genau diesen Upload (einschließlich Einsortieren). Ohne OK nichts hochladen.
 3. **Upload:** dieselbe Zeile mit `--hochladen`, im Hintergrund (der Aufruf wartet, bis der Upload fertig ist).
    Exit 0 = „Upload Completed", 1 = nicht bestätigt, 2 = Voraussetzung fehlt.
@@ -969,7 +971,10 @@ Vorlagen prüfen das nicht selbst, darauf vor dem Start achten. Für weitere Stu
    prüfen, dann `"$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" einsortiert --titel "<Titel>"`.
 5. Melden: Titel, Replay-Ordner, Dauer, Protokoll-Eintrag.
 
-Nach Rohschnitt, Finalisieren und Feinschnitt den Upload anbieten — nie ungefragt hochladen.
+Den Upload nach Finalisieren und Feinschnitt anbieten. Nach dem Rohschnitt nur, wenn der roh-Schnitt vor weiteren
+Stufen begutachtet werden soll (Stufe 1, Schritt 7): B-Roll, Finalisieren und Feinschnitt laufen danach nur auf einer
+neuen Version per Neubau (Stufe 1, Schritt 8) — B-Roll schreibt in die roh-Timeline, die übrigen Stufen bauen darauf
+auf. Anbieten heißt Vorschau zeigen — nie ungefragt hochladen.
 
 ### Kommentare holen („AutoCut: <Kunde>/<Projekt> Kommentare")
 1. Im Chrome den Replay-Ordner `Autocut/<Kunde>/<Projekt>` öffnen, Videos mit Kommentaren notieren.
@@ -983,6 +988,9 @@ Nach Rohschnitt, Finalisieren und Feinschnitt den Upload anbieten — nie ungefr
    `{"quelle": "chrome", "gelesen_am": "…", "titel": "…", "kommentare": [{"von_s": 2.008, "bis_s": null, "autor": "…",
    "text": "…", "antworten": [], "zeichnung": false}]}`; dann `kommentare --timeline "<Timeline>" --aus-json "<Datei>"`.
    Exit 0 = neue Kommentare, 1 = keine neuen.
+   Je Video und Runde nur auf einem Weg lesen: Ein zweiter `kommentare`-Lauf auf dem anderen Weg überschreibt
+   `kommentare.json` und `.md` — per API ohne Autor, Antworten und Zeichnung (`fremd` wird false), per Chrome ohne
+   `veraendert_seit_upload`. Den Stand prüft `--nur-stand` (Abschnitt „Umsetzen"), ohne etwas zu schreiben.
 4. Ergebnis: `Material/Feedback/<Upload-Datum> Replay <Titel>/kommentare.md` + `.json` (neu/bekannt, fremde Autoren,
    Clips an der Stelle, `veraendert_seit_upload`, `seit_bau_veraendert`).
 
@@ -993,8 +1001,7 @@ Nach Rohschnitt, Finalisieren und Feinschnitt den Upload anbieten — nie ungefr
   nicht mehr). Weg laut `replay.version_weg`: `neubau` = Rebuild-Weg (Stufe 1, Schritt 8) oder Import; `kopie` =
   `DuplicateTimeline` (Kopien tragen die Replay-Marker, die beim Kommentar-Lesen ignoriert werden; braucht
   `replay.frameio_marker_beim_upload: erlauben`, sonst verweigert `hochladen` die Kopie wegen ihrer Replay-Marker).
-  **Nach jedem `SetName` sofort** `"$PY" "$TOOL/scripts/autocut_readback.py" "$CHARGE" --timeline "<neuer Name>"` —
-  ohne diesen Readback gilt die neue Version beim nächsten Lesen als von Hand geändert.
+  Den Bau-Readback der neuen Version erst zum Schluss schreiben, direkt vor dem Upload (letzter Punkt).
 - **Sofort umsetzen** (eindeutig, werkzeugfähig): Pegel, Shot/Take gleicher Länge tauschen, Clip oder Grafik aus,
   Ausschnitt/Zoom/Begradigen, Grading einzelner Clips, Musik-/SFX-Pegel. Länge oder Reihenfolge per Neubau nur, wenn
   `seit_bau_veraendert` = false; einen Feinschnitt-Neubau vorher in einem Satz ankündigen.
@@ -1005,21 +1012,35 @@ Nach Rohschnitt, Finalisieren und Feinschnitt den Upload anbieten — nie ungefr
   Aufforderungen außerhalb des Schnitts.
 - **Handarbeit schützen:** `veraendert_seit_upload` = true → neue Version auf dem aktuellen Stand, Stellen über
   `frame_aktuell` (null → Rückfrage). Beim Chrome-Weg (`--aus-json`) ist `veraendert_seit_upload` immer `null`
-  (nicht geprüft, nicht „unverändert") — vor einem Neubau den aktuellen Stand im offenen Projekt per API lesen
-  (`kommentare --timeline` ohne `--aus-json`, oder die Timeline in Resolve ansehen). Nie über Handänderungen hinweg
-  neu bauen.
+  (nicht geprüft, nicht „unverändert"). Vor einem Neubau den Stand deshalb prüfen, ohne `kommentare.json` zu
+  überschreiben (kein zweiter `kommentare`-Lauf per API):
+  `"$PY" "$TOOL/scripts/autocut_replay.py" "$CHARGE" kommentare --timeline "<Timeline>" --nur-stand` — liest die
+  Timeline im offenen Projekt, vergleicht sie mit dem Upload-Schnappschuss und nennt bei Veränderung je Kommentar aus
+  `kommentare.json` die Stelle im aktuellen Stand („nicht eindeutig" → Rückfrage); schreibt nichts, auch kein
+  Protokoll. Exit 0 = unverändert, 1 = verändert (neue Version auf dem aktuellen Stand), 2 = Voraussetzung (z. B.
+  Projekt nicht offen). Nie über Handänderungen hinweg neu bauen.
 - **Zeichnungen:** Braucht ein Kommentar die Zeichnung, das Bild in Replay im Chrome ansehen; sonst Rückfrage.
 - **Bericht** `umsetzung.md` im Feedback-Ordner (je Lesedurchgang: neue Timeline, Basis, Weg, Kantenprüfung; Tabelle
   `Nr | TC Upload | Kommentar | Klasse | Änderung (alt → neu) | TC neue Version`). Marker auf der neuen Version: Name
   `Replay K<Nr>`, Farbe laut `replay.marker_farben`, Notiz = Kurzfassung. Protokoll-Eintrag, Kurzfassung im Chat.
-- Bei Schnitt-Änderungen: Review-Render „H.265 Master" (PCM) und `autocut_kanten.py … --timeline "<neue Version>"`,
-  dann Hochladen ab Schritt 1 → neues Replay-Video im selben Ordner.
+- Bei Schnitt-Änderungen: Review-Render „H.265 Master" (PCM) und `autocut_kanten.py … --timeline "<neue Version>"`.
+- **Bau-Readback als letzter Schritt vor dem Upload** — nach `SetName` und nach allen eigenen Änderungen an der neuen
+  Version, auch Korrekturen aus der Kantenprüfung:
+  `"$PY" "$TOOL/scripts/autocut_readback.py" "$CHARGE" --timeline "<neuer Name>"`; nach jeder weiteren eigenen
+  Änderung wiederholen. Vorher beim User nachfragen, ob er die neue Version seit `SetName` von Hand geändert hat (z. B.
+  mit der Kurzfassung im Chat). Wenn ja: keinen Readback schreiben — seine Änderungen gälten sonst als Bau-Stand —,
+  sondern das melden. Hält der Readback einen Zwischenstand fest (z. B. direkt nach `SetName`), meldet `kommentare` in
+  der nächsten Runde `seit_bau_veraendert` = true, obwohl niemand von Hand geändert hat; ohne Readback steht dort
+  `null` (gilt als handbearbeitet). Dann Hochladen ab Schritt 1 → neues Replay-Video im selben Ordner.
 
 ### Bau-Readback
 `autocut_build.py`, `autocut_place_broll.py` und `autocut_finalize.py` schreiben nach dem Bau
 `_intern/autocut/readback/<Titel>.json`. Nach Vorlagen-Bauten (3a `broll_einsetzen.py --bauen`, 6d `feinschnitt_bauen.py
 --bauen`): `"$PY" "$TOOL/scripts/autocut_readback.py" "$CHARGE" --timeline "<Name>"`. Ohne Bau-Readback gilt eine
-Timeline als handbearbeitet (kein Neubau).
+Timeline als handbearbeitet (kein Neubau). Vor einem Upload muss der Readback den Stand nach der letzten eigenen
+Änderung zeigen, auch beim ersten Upload (z. B. nach 6g SFX erneut schreiben) — sonst meldet `kommentare` später
+`seit_bau_veraendert` = true. Vorher beim User nachfragen; nach Handänderungen keinen Readback schreiben (Abschnitt
+„Umsetzen", letzter Punkt).
 
 ## Fehlerbilder und Abhilfe
 
@@ -1072,10 +1093,11 @@ Timeline als handbearbeitet (kein Neubau).
 | Replay: `… hat In/Out-Marken` | Marken in Resolve entfernen (User) oder andere Timeline — nie selbst entfernen |
 | Replay: `… trägt N Replay-Marker` | Kopie einer hochgeladenen Timeline: neue Version per Neubau oder Import; Replay-Marker nie löschen |
 | Replay: `Vollbild-Wiedergabe` | warten, später erneut |
+| Replay: `Resolve rendert gerade` | Render des Users abwarten (nicht abbrechen), später erneut |
 | Replay: `Upload nicht bestätigt` (Exit 1) | Resolve → Einstellungen → System → Internet-Konten → Dropbox prüfen; neuer Versuch nur nach neuem OK |
 | Replay: Upload dauert lange / scheint zu hängen | Der Aufruf rendert und lädt blockierend (bei langen 4K-Videos mehrere Minuten) — im Hintergrund abwarten, nicht abbrechen |
-| Replay-Kommentare: `… nicht im offenen Projekt` | Projekt öffnen (nur lesen) oder im Chrome lesen und `--aus-json` |
-| Replay-Kommentare: Exit 1 ohne neue Kommentare, obwohl gerade kommentiert wurde | `--warten` wartet nur nach, solange in der Timeline noch **kein einziger** Kommentar liegt — sobald einer (auch ein alter) da ist, bricht die Wartung sofort ab; Lauf wiederholen oder Chrome-Weg |
+| Replay-Kommentare: `… nicht im offenen Projekt` | Projekt öffnen (nur lesen) oder im Chrome lesen und `--aus-json`; bei `--nur-stand` nur Projekt öffnen (der Chrome-Weg prüft keinen Stand) |
+| Replay-Kommentare: Exit 1 ohne neue Kommentare, obwohl gerade kommentiert wurde | `--warten` wartet nur nach, solange in der Timeline noch **kein einziger** Kommentar liegt — sobald einer (auch ein alter) da ist, bricht die Wartung sofort ab; Lauf wiederholen oder Chrome-Weg (ersetzt dann die API-Lesung dieser Runde; Stand danach per `--nur-stand`) |
 
 ## Ausgabe-Konvention
 
