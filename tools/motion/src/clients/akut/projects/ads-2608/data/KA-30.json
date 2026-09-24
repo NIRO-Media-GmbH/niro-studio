@@ -1,0 +1,99 @@
+{
+ "nr": "KA-30",
+ "titel": "Finde deine Pädagogik",
+ "fps": 25,
+ "durationSec": 19.52,
+ "band": 0.62,
+ "ut": "normal",
+ "pages": [
+  {
+   "startSec": 1.475,
+   "endSec": 2.295,
+   "text": "Das musst du jetzt nicht"
+  },
+  {
+   "startSec": 2.295,
+   "endSec": 3.415,
+   "text": "auf dem Sofa entscheiden"
+  },
+  {
+   "startSec": 3.415,
+   "endSec": 4.215,
+   "text": "und erst recht nicht,"
+  },
+  {
+   "startSec": 4.215,
+   "endSec": 4.915,
+   "text": "bevor du beides"
+  },
+  {
+   "startSec": 4.915,
+   "endSec": 6.06,
+   "text": "kennengelernt hast."
+  },
+  {
+   "startSec": 6.06,
+   "endSec": 7.42,
+   "text": "Bei uns lernst du"
+  },
+  {
+   "startSec": 7.42,
+   "endSec": 8.799,
+   "text": "Einrichtungen mit ganz"
+  },
+  {
+   "startSec": 8.799,
+   "endSec": 10.62,
+   "text": "unterschiedlichen Konzepten"
+  },
+  {
+   "startSec": 10.62,
+   "endSec": 11.973,
+   "text": "und Fachrichtungen kennen."
+  },
+  {
+   "startSec": 11.973,
+   "endSec": 13.473,
+   "text": "Und das Ganze mit einem"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "duo",
+   "id": "team",
+   "y": 0.43,
+   "variante": "hell",
+   "groesse": 0.038,
+   "t_in": 0.075,
+   "t_out": 1.435,
+   "items": [
+    {
+     "text": "Team Krippe?",
+     "at": 0.075
+    },
+    {
+     "text": "Team Kita?",
+     "at": 0.915
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "vertrag",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Unbefristeter\nArbeitsvertrag",
+   "t_in": 13.513,
+   "t_out": 15.083
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 15.131,
+   "t_out": 19.52
+  }
+ ]
+}

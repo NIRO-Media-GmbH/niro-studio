@@ -1,0 +1,108 @@
+{
+ "nr": "KA-33",
+ "titel": "Frei bleibt frei (kurz)",
+ "fps": 25,
+ "durationSec": 18.8,
+ "band": 0.62,
+ "ut": "normal",
+ "pages": [
+  {
+   "startSec": 3.053,
+   "endSec": 3.953,
+   "text": "Bei akut gilt ein"
+  },
+  {
+   "startSec": 3.953,
+   "endSec": 4.953,
+   "text": "einfacher Satz:"
+  },
+  {
+   "startSec": 9.133,
+   "endSec": 10.473,
+   "text": "Klingt einfach?"
+  },
+  {
+   "startSec": 10.473,
+   "endSec": 11.288,
+   "text": "Ist auch so."
+  },
+  {
+   "startSec": 11.288,
+   "endSec": 12.268,
+   "text": "Also wenn du wirklich"
+  },
+  {
+   "startSec": 12.268,
+   "endSec": 13.788,
+   "text": "planbares Frei haben willst,"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "worte",
+   "id": "hook",
+   "y": 0.45,
+   "variante": "hell",
+   "groesse": 0.042,
+   "t_in": 0.11,
+   "t_out": 3.01,
+   "items": [
+    {
+     "text": "Dein Handy.",
+     "at": 0.11
+    },
+    {
+     "text": "Dein Frei.",
+     "at": 1.17
+    },
+    {
+     "text": "Ein Problem?",
+     "at": 2.09
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "frei_bleibt_frei",
+   "y": 0.39,
+   "variante": "rot",
+   "groesse": 0.042,
+   "text": "Frei bleibt frei.",
+   "t_in": 4.993,
+   "t_out": 9.093
+  },
+  {
+   "typ": "stapel",
+   "id": "kein",
+   "y": 0.495,
+   "t_in": 6.033,
+   "t_out": 9.093,
+   "items": [
+    {
+     "text": "Kein Einspringen",
+     "at": 6.033,
+     "icon": "kreuz"
+    },
+    {
+     "text": "Kein schlechtes Gewissen",
+     "at": 6.973,
+     "icon": "kreuz"
+    },
+    {
+     "text": "Kein Klingeln",
+     "at": 8.133,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 13.988,
+   "t_out": 18.8
+  }
+ ]
+}

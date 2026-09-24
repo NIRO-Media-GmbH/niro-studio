@@ -47,6 +47,7 @@ export const doldEndcardSchema = projectPropsSchema.extend({
   jobEyebrow: z.string().describe("Kleine Zeile über dem Jobtitel, z. B. Wir suchen"),
   jobTitle: z.string().describe("Gesuchte Rolle — leer lassen blendet den Job-Block aus"),
   jobSuffix: z.string().describe("Zusatz hinter der Rolle, z. B. (m/w/d)"),
+  jobTitlePx: z.number().min(24).max(80).optional().describe("Schriftgröße Rolle (Standard 52; lange Berufe kleiner)"),
   jobPos: posSchema,
   ctaText: z.string(),
   ctaPos: posSchema,
@@ -130,7 +131,7 @@ const clamp01 = (v: number) => interpolate(v, [0, 1], [0, 1], {
 // ============================================================
 // DOLD-Marke — als Ganzes: weicher Fade + minimales Aufziehen
 // ============================================================
-const DoldMark: React.FC<{
+export const DoldMark: React.FC<{
   width: number;
   color: string;
   progress: number;
@@ -234,6 +235,7 @@ export const DoldEndcard: React.FC<Props> = ({
   jobEyebrow,
   jobTitle,
   jobSuffix,
+  jobTitlePx,
   jobPos,
   ctaText,
   ctaPos,
@@ -334,7 +336,7 @@ export const DoldEndcard: React.FC<Props> = ({
                 <div
                   style={{
                     fontFamily: robotoFamily,
-                    fontSize: 52,
+                    fontSize: jobTitlePx ?? 52,
                     fontWeight: 900,
                     color: markColor,
                     letterSpacing: 2,

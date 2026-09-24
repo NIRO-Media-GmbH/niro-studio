@@ -1,0 +1,64 @@
+{
+ "nr": "KA-35",
+ "titel": "Und wenn kein Einsatz da ist",
+ "fps": 25,
+ "durationSec": 17.44,
+ "band": 0.62,
+ "ut": "normal",
+ "pages": [
+  {
+   "startSec": 3.922,
+   "endSec": 4.81,
+   "text": "Die Antwort:"
+  },
+  {
+   "startSec": 4.81,
+   "endSec": 6.191,
+   "text": "Auch da bekommst du deinen"
+  },
+  {
+   "startSec": 9.571,
+   "endSec": 10.251,
+   "text": "Ist natürlich"
+  },
+  {
+   "startSec": 10.251,
+   "endSec": 11.692,
+   "text": "Worst-Case-Szenario."
+  },
+  {
+   "startSec": 11.692,
+   "endSec": 12.892,
+   "text": "Also worauf wartest du?"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "chat",
+   "id": "frage",
+   "y": 0.43,
+   "label": "Neue Nachricht",
+   "text": "Und was ist, wenn mal kein Einsatz da ist?",
+   "t_in": 0.0,
+   "t_out": 3.882
+  },
+  {
+   "typ": "karte",
+   "id": "lohn",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Dein Lohn\nläuft weiter.",
+   "t_in": 6.231,
+   "t_out": 9.531
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 12.932,
+   "t_out": 17.44
+  }
+ ]
+}

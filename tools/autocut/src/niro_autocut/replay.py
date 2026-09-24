@@ -92,14 +92,21 @@ def speichere_upload(ch: Charge, eintrag: dict) -> Path:
     return _schreibe_uploads(ch, lade_uploads(ch) + [dict(eintrag)])
 
 
+def _nfc(text) -> str:
+    """Titelvergleich in NFC: abgetippte Titel (Replay-Seite im Chrome) können eine andere Unicode-Form haben."""
+    return unicodedata.normalize("NFC", str(text or ""))
+
+
 def upload_eintrag(ch: Charge, timeline: str | None = None, titel_: str | None = None) -> dict:
-    """Jüngster **erfolgreicher** Upload (optional zu Timeline oder Titel); AutoCutError, wenn keiner passt.
+    """Jüngster **erfolgreicher** Upload (optional zu Timeline oder Titel, Titel NFC-normalisiert); AutoCutError, wenn
+    keiner passt.
 
     Gescheiterte Uploads (``upload_status`` ≠ ``UPLOAD_OK``) zählen nicht — sonst würde z. B. ``kommentare`` ohne
     ``--timeline`` nach einem gescheiterten Upload die falsche (nie tatsächlich hochgeladene) Timeline lesen.
     """
     eintraege = [e for e in lade_uploads(ch) if e.get("upload_status") == UPLOAD_OK
-                 and (timeline is None or e.get("timeline") == timeline) and (titel_ is None or e.get("titel") == titel_)]
+                 and (timeline is None or e.get("timeline") == timeline)
+                 and (titel_ is None or _nfc(e.get("titel")) == _nfc(titel_))]
     if not eintraege:
         wofuer = f" für '{timeline or titel_}'" if (timeline or titel_) else ""
         raise AutoCutError(f"Kein erfolgreicher Upload{wofuer} in {replay_dir(ch) / UPLOADS} — "
@@ -108,9 +115,10 @@ def upload_eintrag(ch: Charge, timeline: str | None = None, titel_: str | None =
 
 
 def setze_einsortiert(ch: Charge, titel_: str, ordner: str, zeit: str | None = None) -> dict:
-    """Einsortieren in Replay vermerken (jüngster **erfolgreicher** Eintrag mit diesem Titel)."""
+    """Einsortieren in Replay vermerken (jüngster **erfolgreicher** Eintrag mit diesem Titel, NFC-normalisiert)."""
     eintraege = lade_uploads(ch)
-    passend = [i for i, e in enumerate(eintraege) if e.get("titel") == titel_ and e.get("upload_status") == UPLOAD_OK]
+    passend = [i for i, e in enumerate(eintraege)
+               if _nfc(e.get("titel")) == _nfc(titel_) and e.get("upload_status") == UPLOAD_OK]
     if not passend:
         raise AutoCutError(f"Kein erfolgreicher Upload mit Titel '{titel_}' in {replay_dir(ch) / UPLOADS}.")
     i = max(passend, key=lambda j: str(eintraege[j].get("hochgeladen_am") or ""))
@@ -148,7 +156,7 @@ def finde_upload(projekt_ordner, replay_titel: str) -> tuple[Path, dict] | None:
     if (projekt_ordner / "_intern" / "replay" / UPLOADS).exists():
         raise AutoCutError(f"{projekt_ordner} ist ein Chargen-Ordner (enthält selbst _intern/replay/{UPLOADS}) — "
                            f"Projekt-Ordner angeben (projects/<Kunde>/<Projekt>).")
-    t = unicodedata.normalize("NFC", replay_titel[:-4] if replay_titel.lower().endswith(".mp4") else replay_titel)
+    t = _nfc(replay_titel[:-4] if replay_titel.lower().endswith(".mp4") else replay_titel)
     treffer = []
     for p in sorted(projekt_ordner.glob(f"*/_intern/replay/{UPLOADS}")):
         try:
@@ -156,8 +164,7 @@ def finde_upload(projekt_ordner, replay_titel: str) -> tuple[Path, dict] | None:
         except json.JSONDecodeError as exc:
             raise AutoCutError(f"{p} ist kaputt (kein gültiges JSON: {exc}) — Datei prüfen, nicht von Hand ändern.") from exc
         for e in daten:
-            if (isinstance(e, dict) and e.get("upload_status") == UPLOAD_OK
-                    and unicodedata.normalize("NFC", str(e.get("titel") or "")) == t):
+            if isinstance(e, dict) and e.get("upload_status") == UPLOAD_OK and _nfc(e.get("titel")) == t:
                 treffer.append((str(e.get("hochgeladen_am") or ""), p.parents[2], e))
     if not treffer:
         return None

@@ -1,0 +1,71 @@
+{
+ "nr": "RL-25",
+ "titel": "Mythos oder Fakt",
+ "fps": 25,
+ "durationSec": 31.68,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [],
+ "beats": [
+  {
+   "typ": "mythos",
+   "id": "befristet",
+   "y": 0.45,
+   "text": "Zeitarbeit heißt\nbefristeter Vertrag.",
+   "einordnung": "Stimmt nicht",
+   "stempel_at": 2.008,
+   "t_in": 0.0,
+   "t_out": 2.84
+  },
+  {
+   "typ": "mythos",
+   "id": "woche",
+   "y": 0.45,
+   "text": "Jede Woche in einer\nanderen Einrichtung.",
+   "einordnung": "Stimmt nicht",
+   "stempel_at": 8.591,
+   "t_in": 2.84,
+   "t_out": 10.28
+  },
+  {
+   "typ": "mythos",
+   "id": "examen",
+   "y": 0.45,
+   "text": "Ohne Examen\nkeine Chance.",
+   "einordnung": "Stimmt nicht",
+   "stempel_at": 12.104,
+   "t_in": 10.28,
+   "t_out": 17.08
+  },
+  {
+   "typ": "mythos",
+   "id": "urlaub",
+   "y": 0.45,
+   "text": "Urlaub nur in den\nSchließzeiten.",
+   "einordnung": "Jein",
+   "stempel_at": 18.848,
+   "t_in": 17.08,
+   "t_out": 24.64
+  },
+  {
+   "typ": "mythos",
+   "id": "uebernahme",
+   "y": 0.45,
+   "text": "Die Einrichtung kann\ndich übernehmen.",
+   "einordnung": "Stimmt",
+   "stempel_at": 26.284,
+   "t_in": 24.64,
+   "t_out": 27.824
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 27.824,
+   "t_out": 31.68
+  }
+ ]
+}

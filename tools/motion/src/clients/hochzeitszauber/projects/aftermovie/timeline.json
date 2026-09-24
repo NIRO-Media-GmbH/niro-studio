@@ -1,0 +1,522 @@
+{
+ "fps": 25,
+ "frames": 5576,
+ "breite": 3840,
+ "hoehe": 2160,
+ "elemente": [
+  {
+   "id": "intro",
+   "typ": "intro",
+   "from": 13,
+   "dauer": 160
+  },
+  {
+   "id": "collage-A",
+   "typ": "collage",
+   "from": 469,
+   "dauer": 99,
+   "text": "Eure Hochzeit",
+   "kicker": "beginnt hier",
+   "layout": "A",
+   "beat_frames": 12.335,
+   "tiles": [
+    {
+     "src": "collage/FX3_0334_1.5.mp4",
+     "notiz": "Brautkleid Untersicht"
+    },
+    {
+     "src": "collage/FX3_0364_0.5.mp4",
+     "notiz": "Eheringe Makro"
+    },
+    {
+     "src": "collage/FX3_0428_2.5.mp4",
+     "notiz": "Dahlien, Rosen"
+    },
+    {
+     "src": "collage/FX3_0396_0.3.mp4",
+     "notiz": "Torte mit Rosen"
+    }
+   ]
+  },
+  {
+   "id": "karte-1",
+   "typ": "karte",
+   "text": "Brautmode",
+   "kicker": "",
+   "nummer": 1,
+   "from": 576,
+   "dauer": 66
+  },
+  {
+   "id": "album-1",
+   "typ": "album",
+   "from": 750,
+   "dauer": 30,
+   "text": "",
+   "a": "uebergang/s015.mp4",
+   "a_start": 10,
+   "a_nr": 15,
+   "b": "uebergang/s016.mp4",
+   "b_bild": "uebergang/s016.jpg",
+   "b_nr": 16,
+   "vor": 15
+  },
+  {
+   "id": "karte-2",
+   "typ": "karte",
+   "text": "Herrenmode",
+   "kicker": "",
+   "nummer": 2,
+   "from": 773,
+   "dauer": 66
+  },
+  {
+   "id": "karte-3",
+   "typ": "karte",
+   "text": "Trauringe & Schmuck",
+   "kicker": "",
+   "nummer": 3,
+   "from": 872,
+   "dauer": 66
+  },
+  {
+   "id": "album-2",
+   "typ": "album",
+   "from": 1046,
+   "dauer": 30,
+   "text": "",
+   "a": "uebergang/s024.mp4",
+   "a_start": 10,
+   "a_nr": 24,
+   "b": "uebergang/s025.mp4",
+   "b_bild": "uebergang/s025.jpg",
+   "b_nr": 25,
+   "vor": 15
+  },
+  {
+   "id": "karte-4",
+   "typ": "karte",
+   "text": "Floristik",
+   "kicker": "",
+   "nummer": 4,
+   "from": 1069,
+   "dauer": 66
+  },
+  {
+   "id": "karte-5",
+   "typ": "karte",
+   "text": "Hochzeitstorten",
+   "kicker": "",
+   "nummer": 5,
+   "from": 1266,
+   "dauer": 66
+  },
+  {
+   "id": "album-3",
+   "typ": "album",
+   "from": 1342,
+   "dauer": 30,
+   "text": "",
+   "a": "uebergang/s033.mp4",
+   "a_start": 10,
+   "a_nr": 33,
+   "b": "uebergang/s034.mp4",
+   "b_bild": "uebergang/s034.jpg",
+   "b_nr": 34,
+   "vor": 15
+  },
+  {
+   "id": "karte-6",
+   "typ": "karte",
+   "text": "Dekoration & Dekoverleih",
+   "kicker": "",
+   "nummer": 6,
+   "from": 1365,
+   "dauer": 78
+  },
+  {
+   "id": "collage-B",
+   "typ": "collage",
+   "from": 1505,
+   "dauer": 99,
+   "text": "Ja, ich will",
+   "kicker": "Locations · Deko · Fotografie",
+   "layout": "B",
+   "beat_frames": 12.335,
+   "tiles": [
+    {
+     "src": "collage/FX3_0519_1.0.mp4",
+     "notiz": "Braut vor LOVE"
+    },
+    {
+     "src": "collage/FX3_0408_2.0.mp4",
+     "notiz": "gedeckter Tisch"
+    },
+    {
+     "src": "collage/FX3_0529_2.0.mp4",
+     "notiz": "Braut nah"
+    },
+    {
+     "src": "collage/FX3_0433_1.5.mp4",
+     "notiz": "Deko-Leiter mit Gläsern"
+    }
+   ]
+  },
+  {
+   "id": "karte-7",
+   "typ": "karte",
+   "text": "Locations",
+   "kicker": "",
+   "nummer": 7,
+   "from": 1612,
+   "dauer": 66
+  },
+  {
+   "id": "album-4",
+   "typ": "album",
+   "from": 1910,
+   "dauer": 30,
+   "text": "",
+   "a": "uebergang/s047.mp4",
+   "a_start": 10,
+   "a_nr": 47,
+   "b": "uebergang/s048.mp4",
+   "b_bild": "uebergang/s048.jpg",
+   "b_nr": 48,
+   "vor": 15
+  },
+  {
+   "id": "karte-8",
+   "typ": "karte",
+   "text": "Hochzeits-Effekte",
+   "kicker": "",
+   "nummer": 8,
+   "from": 1933,
+   "dauer": 66
+  },
+  {
+   "id": "karte-9",
+   "typ": "karte",
+   "text": "Fotobox",
+   "kicker": "",
+   "nummer": 9,
+   "from": 2031,
+   "dauer": 66
+  },
+  {
+   "id": "karte-10",
+   "typ": "karte",
+   "text": "Fotografie",
+   "kicker": "",
+   "nummer": 10,
+   "from": 2130,
+   "dauer": 66
+  },
+  {
+   "id": "karte-11",
+   "typ": "karte",
+   "text": "Hochzeitsfilme",
+   "kicker": "",
+   "nummer": 11,
+   "from": 2327,
+   "dauer": 66
+  },
+  {
+   "id": "collage-D",
+   "typ": "collage",
+   "from": 2418,
+   "dauer": 99,
+   "text": "Schön sein",
+   "kicker": "Beauty · Styling · Kosmetik",
+   "layout": "D",
+   "beat_frames": 12.335,
+   "tiles": [
+    {
+     "src": "collage/FX3_0620_1.0.mp4",
+     "notiz": "Visagistin schminkt Model"
+    },
+    {
+     "src": "collage/FX3_0574_1.0.mp4",
+     "notiz": "Beauty-Beratung"
+    },
+    {
+     "src": "collage/FX3_0609_1.5.mp4",
+     "notiz": "Produkte-Tisch"
+    },
+    {
+     "src": "collage/a7MK4_20260913_2146_1.5.mp4",
+     "notiz": "Make-up nah"
+    }
+   ]
+  },
+  {
+   "id": "karte-12",
+   "typ": "karte",
+   "text": "Beauty & Kosmetik",
+   "kicker": "",
+   "nummer": 12,
+   "from": 2525,
+   "dauer": 66
+  },
+  {
+   "id": "karte-13",
+   "typ": "karte",
+   "text": "Brautkleid-Reinigung",
+   "kicker": "",
+   "nummer": 13,
+   "from": 2821,
+   "dauer": 66
+  },
+  {
+   "id": "karte-14",
+   "typ": "karte",
+   "text": "Personalisierte Lederjacken",
+   "kicker": "",
+   "nummer": 14,
+   "from": 2919,
+   "dauer": 66
+  },
+  {
+   "id": "karte-15",
+   "typ": "karte",
+   "text": "Schuhmacherei",
+   "kicker": "",
+   "nummer": 15,
+   "from": 3018,
+   "dauer": 66
+  },
+  {
+   "id": "album-5",
+   "typ": "album",
+   "from": 3094,
+   "dauer": 30,
+   "text": "",
+   "a": "uebergang/s077.mp4",
+   "a_start": 10,
+   "a_nr": 77,
+   "b": "uebergang/s078.mp4",
+   "b_bild": "uebergang/s078.jpg",
+   "b_nr": 78,
+   "vor": 15
+  },
+  {
+   "id": "karte-16",
+   "typ": "karte",
+   "text": "DJ & Party",
+   "kicker": "",
+   "nummer": 16,
+   "from": 3117,
+   "dauer": 66
+  },
+  {
+   "id": "karte-17",
+   "typ": "karte",
+   "text": "Hochzeitstanz",
+   "kicker": "",
+   "nummer": 17,
+   "from": 3215,
+   "dauer": 66
+  },
+  {
+   "id": "album-6",
+   "typ": "album",
+   "from": 3291,
+   "dauer": 30,
+   "text": "",
+   "a": "uebergang/s084.mp4",
+   "a_start": 10,
+   "a_nr": 84,
+   "b": "uebergang/s085.mp4",
+   "b_bild": "uebergang/s085.jpg",
+   "b_nr": 85,
+   "vor": 15
+  },
+  {
+   "id": "karte-18",
+   "typ": "karte",
+   "text": "Mobile Bar",
+   "kicker": "",
+   "nummer": 18,
+   "from": 3314,
+   "dauer": 66
+  },
+  {
+   "id": "karte-19",
+   "typ": "karte",
+   "text": "Catering",
+   "kicker": "",
+   "nummer": 19,
+   "from": 3413,
+   "dauer": 66
+  },
+  {
+   "id": "karte-20",
+   "typ": "karte",
+   "text": "Food & Drinks",
+   "kicker": "",
+   "nummer": 20,
+   "from": 3511,
+   "dauer": 66
+  },
+  {
+   "id": "collage-E",
+   "typ": "collage",
+   "from": 3651,
+   "dauer": 99,
+   "text": "Handgemacht",
+   "kicker": "Stickerei · Papeterie · Schuhmacherei",
+   "layout": "E",
+   "beat_frames": 12.335,
+   "tiles": [
+    {
+     "src": "collage/FX3_0587_0.5.mp4",
+     "notiz": "Hände im Stickrahmen"
+    },
+    {
+     "src": "collage/FX3_0621_6.5.mp4",
+     "notiz": "Aquarell malen"
+    },
+    {
+     "src": "collage/FX3_0626_0.4.mp4",
+     "notiz": "Herrenschuhe"
+    },
+    {
+     "src": "collage/FX3_0611_1.5.mp4",
+     "notiz": "Lederjacke"
+    }
+   ]
+  },
+  {
+   "id": "karte-21",
+   "typ": "karte",
+   "text": "Bestickte Servietten",
+   "kicker": "",
+   "nummer": 21,
+   "from": 3758,
+   "dauer": 66
+  },
+  {
+   "id": "karte-22",
+   "typ": "karte",
+   "text": "Papeterie & Illustration",
+   "kicker": "",
+   "nummer": 22,
+   "from": 3857,
+   "dauer": 66
+  },
+  {
+   "id": "karte-23",
+   "typ": "karte",
+   "text": "… und viele mehr",
+   "kicker": "",
+   "nummer": 23,
+   "from": 3956,
+   "dauer": 90
+  },
+  {
+   "id": "album-7",
+   "typ": "album",
+   "from": 4130,
+   "dauer": 30,
+   "text": "",
+   "a": "uebergang/s109.mp4",
+   "a_start": 34,
+   "a_nr": 109,
+   "b": "uebergang/s110.mp4",
+   "b_bild": "uebergang/s110.jpg",
+   "b_nr": 110,
+   "vor": 15
+  },
+  {
+   "id": "karte-24",
+   "typ": "karte",
+   "text": "Traurednerin & Sängerin",
+   "kicker": "",
+   "nummer": 24,
+   "from": 4153,
+   "dauer": 66
+  },
+  {
+   "id": "karte-25",
+   "typ": "karte",
+   "text": "Trauredner & Live-Gesang",
+   "kicker": "",
+   "nummer": 25,
+   "from": 4252,
+   "dauer": 66
+  },
+  {
+   "id": "album-8",
+   "typ": "album",
+   "from": 4327,
+   "dauer": 30,
+   "text": "",
+   "a": "uebergang/s114.mp4",
+   "a_start": 9,
+   "a_nr": 114,
+   "b": "uebergang/s115.mp4",
+   "b_bild": "uebergang/s115.jpg",
+   "b_nr": 115,
+   "vor": 15
+  },
+  {
+   "id": "karte-26",
+   "typ": "karte",
+   "text": "Live-Band",
+   "kicker": "",
+   "nummer": 26,
+   "from": 4350,
+   "dauer": 66
+  },
+  {
+   "id": "collage-C",
+   "typ": "collage",
+   "from": 4441,
+   "dauer": 99,
+   "text": "Feiern",
+   "kicker": "Musik · Tanz · Modenschau",
+   "layout": "C",
+   "beat_frames": 12.335,
+   "tiles": [
+    {
+     "src": "collage/FX3_0603_0.5.mp4",
+     "notiz": "Moving Heads im Zelt"
+    },
+    {
+     "src": "collage/FX3_0552_1.0.mp4",
+     "notiz": "Tanzpaar Drehung"
+    },
+    {
+     "src": "collage/FX3_0619_1.5.mp4",
+     "notiz": "Sängerin nah"
+    },
+    {
+     "src": "collage/FX3_0598_1.0.mp4",
+     "notiz": "Party-Zelt Gäste"
+    }
+   ]
+  },
+  {
+   "id": "karte-27",
+   "typ": "modenschau",
+   "text": "Die große Modenschau",
+   "kicker": "",
+   "nummer": 27,
+   "from": 4548,
+   "dauer": 90
+  },
+  {
+   "id": "endcard",
+   "typ": "endcard",
+   "from": 5477,
+   "dauer": 99,
+   "zeilen": [
+    "Danke an alle Aussteller & Besucher",
+    "hochzeitszauber-arena.de  ·  @hochzeitszauber.arena",
+    "veranstaltet von MN Deko und Dekoverleih · Monika Neumeier"
+   ]
+  }
+ ],
+ "kartenzahl": 27,
+ "hinweis": "erzeugt von _intern/entwurf/schnitt.py — nicht von Hand ändern"
+}

@@ -1,0 +1,144 @@
+{
+ "nr": "PB-22",
+ "titel": "Vision - wo soll das hingehen",
+ "fps": 25,
+ "durationSec": 34.68,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 4.063,
+   "endSec": 5.743,
+   "text": "Grade in der heutigen Zeit,"
+  },
+  {
+   "startSec": 5.743,
+   "endSec": 7.283,
+   "text": "anhand von psychischer"
+  },
+  {
+   "startSec": 7.283,
+   "endSec": 8.183,
+   "text": "Belastung ist die"
+  },
+  {
+   "startSec": 8.183,
+   "endSec": 9.743,
+   "text": "Krankenquote ein Indikator"
+  },
+  {
+   "startSec": 9.743,
+   "endSec": 10.729,
+   "text": "und da liegen wir halt,"
+  },
+  {
+   "startSec": 13.463,
+   "endSec": 15.122,
+   "text": "Das heißt in meinen Augen,"
+  },
+  {
+   "startSec": 15.122,
+   "endSec": 16.043,
+   "text": "wir machen definitiv"
+  },
+  {
+   "startSec": 16.043,
+   "endSec": 16.806,
+   "text": "was richtig"
+  },
+  {
+   "startSec": 16.806,
+   "endSec": 17.785,
+   "text": "bei der Disposition,"
+  },
+  {
+   "startSec": 17.785,
+   "endSec": 19.147,
+   "text": "bei der Einsatzplanung."
+  },
+  {
+   "startSec": 19.147,
+   "endSec": 20.247,
+   "text": "Wir haben uns ja über"
+  },
+  {
+   "startSec": 20.247,
+   "endSec": 21.172,
+   "text": "lange Zeit,"
+  },
+  {
+   "startSec": 21.172,
+   "endSec": 21.99,
+   "text": "einen guten Ruf,"
+  },
+  {
+   "startSec": 21.99,
+   "endSec": 22.61,
+   "text": "behaupte ich jetzt"
+  },
+  {
+   "startSec": 22.61,
+   "endSec": 23.43,
+   "text": "einfach mal,"
+  },
+  {
+   "startSec": 23.67,
+   "endSec": 24.713,
+   "text": "erarbeitet."
+  },
+  {
+   "startSec": 24.713,
+   "endSec": 25.753,
+   "text": "Da möcht ich auch einfach,"
+  },
+  {
+   "startSec": 25.753,
+   "endSec": 27.233,
+   "text": "dass der bestehen bleibt,"
+  },
+  {
+   "startSec": 27.233,
+   "endSec": 28.593,
+   "text": "weil wir leben nun mal auch"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "chat",
+   "id": "frage",
+   "y": 0.45,
+   "label": "Frage an Nico",
+   "text": "Was soll jemand nach zwei Jahren bei euch sagen?",
+   "t_in": 0.0,
+   "t_out": 4.023
+  },
+  {
+   "typ": "karte",
+   "id": "krankenquote",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Krankenquote:\ndeutlich unter\nder normalen",
+   "t_in": 10.769,
+   "t_out": 13.423
+  },
+  {
+   "typ": "karte",
+   "id": "empfehlungen",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Wir leben von\nEmpfehlungen",
+   "t_in": 28.833,
+   "t_out": 30.893
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 30.893,
+   "t_out": 34.68
+  }
+ ]
+}

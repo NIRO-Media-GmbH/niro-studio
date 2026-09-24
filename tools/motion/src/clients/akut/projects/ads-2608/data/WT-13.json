@@ -1,0 +1,134 @@
+{
+ "nr": "WT-13",
+ "titel": "Probewohnen mit Job",
+ "fps": 25,
+ "durationSec": 31.36,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 0.002,
+   "endSec": 1.082,
+   "text": "Du hast schon die ganze"
+  },
+  {
+   "startSec": 1.082,
+   "endSec": 2.762,
+   "text": "Zeit eine bestimmte Stadt"
+  },
+  {
+   "startSec": 2.762,
+   "endSec": 3.542,
+   "text": "im Auge,"
+  },
+  {
+   "startSec": 3.542,
+   "endSec": 5.362,
+   "text": "kannst bei uns dort"
+  },
+  {
+   "startSec": 5.362,
+   "endSec": 6.322,
+   "text": "erst mal,"
+  },
+  {
+   "startSec": 17.945,
+   "endSec": 18.428,
+   "text": "„Ey,"
+  },
+  {
+   "startSec": 18.428,
+   "endSec": 19.693,
+   "text": "ist doch nicht meine Stadt“,"
+  },
+  {
+   "startSec": 19.693,
+   "endSec": 20.513,
+   "text": "dann gehst du halt einfach"
+  },
+  {
+   "startSec": 20.513,
+   "endSec": 21.29,
+   "text": "wieder zurück."
+  },
+  {
+   "startSec": 21.29,
+   "endSec": 22.33,
+   "text": "Also wenn man sagt:"
+  },
+  {
+   "startSec": 24.431,
+   "endSec": 25.072,
+   "text": "Ich würd hier gern"
+  },
+  {
+   "startSec": 25.072,
+   "endSec": 25.731,
+   "text": "ein paar Wochen,"
+  },
+  {
+   "startSec": 25.731,
+   "endSec": 26.651,
+   "text": "Monate, wie auch immer,"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "stapel",
+   "id": "ohne",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 7.794,
+   "t_out": 12.426,
+   "items": [
+    {
+     "text": "Ohne Wohnungssuche",
+     "at": 7.794,
+     "icon": "kreuz"
+    },
+    {
+     "text": "Ohne Mietvertrag",
+     "at": 9.174,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "passt",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Passt die Stadt\nzu mir?",
+   "t_in": 12.426,
+   "t_out": 14.886
+  },
+  {
+   "typ": "karte",
+   "id": "risiko",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Kein Risiko.",
+   "t_in": 15.105,
+   "t_out": 16.345
+  },
+  {
+   "typ": "karte",
+   "id": "wohl",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Hier fühl ich mich\nsuper wohl",
+   "t_in": 22.732,
+   "t_out": 24.331
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 27.803,
+   "t_out": 31.36
+  }
+ ]
+}

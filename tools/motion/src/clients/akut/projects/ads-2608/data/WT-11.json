@@ -1,0 +1,142 @@
+{
+ "nr": "WT-11",
+ "titel": "Die gleiche Bank",
+ "fps": 25,
+ "durationSec": 33.6,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 0.026,
+   "endSec": 1.705,
+   "text": "Ich geh meinen geregelten"
+  },
+  {
+   "startSec": 7.435,
+   "endSec": 9.055,
+   "text": "Work and Travel bedeutet,"
+  },
+  {
+   "startSec": 9.055,
+   "endSec": 10.425,
+   "text": "wie der Name schon sagt,"
+  },
+  {
+   "startSec": 17.373,
+   "endSec": 19.273,
+   "text": "Man kommt an Orte,"
+  },
+  {
+   "startSec": 19.273,
+   "endSec": 20.149,
+   "text": "die man"
+  },
+  {
+   "startSec": 20.149,
+   "endSec": 20.829,
+   "text": "immer wieder neu"
+  },
+  {
+   "startSec": 20.829,
+   "endSec": 21.989,
+   "text": "erkunden will,"
+  },
+  {
+   "startSec": 21.989,
+   "endSec": 23.229,
+   "text": "die einfach spannend sind."
+  }
+ ],
+ "beats": [
+  {
+   "typ": "worte",
+   "id": "trott",
+   "y": 0.45,
+   "variante": "lila",
+   "groesse": 0.04,
+   "t_in": 1.745,
+   "t_out": 7.395,
+   "items": [
+    {
+     "text": "Arbeitsweg",
+     "at": 1.745
+    },
+    {
+     "text": "Sofa",
+     "at": 5.355
+    },
+    {
+     "text": "Netflix",
+     "at": 6.487
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "definition",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Reisen\n+ arbeiten",
+   "t_in": 10.465,
+   "t_out": 13.885
+  },
+  {
+   "typ": "duo",
+   "id": "kiel",
+   "y": 0.45,
+   "variante": "lila",
+   "groesse": 0.036,
+   "t_in": 14.244,
+   "t_out": 17.333,
+   "items": [
+    {
+     "text": "Wohnort: Kiel",
+     "at": 14.244
+    },
+    {
+     "text": "Einsatz: München",
+     "at": 16.524
+    }
+   ]
+  },
+  {
+   "typ": "stapel",
+   "id": "erleben",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 23.849,
+   "t_out": 27.329,
+   "items": [
+    {
+     "text": "Natur",
+     "at": 23.849,
+     "icon": "herz"
+    },
+    {
+     "text": "Sehenswürdigkeiten",
+     "at": 25.569,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "vertrag",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Arbeitsvertrag:\nunbefristet",
+   "t_in": 27.496,
+   "t_out": 29.306
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 29.306,
+   "t_out": 33.6
+  }
+ ]
+}

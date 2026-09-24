@@ -155,6 +155,10 @@ def _hochgeladen(w, capsys):
     capsys.readouterr()
 
 
+def _dateien(wurzel: Path) -> dict[str, bytes]:
+    return {str(p.relative_to(wurzel)): p.read_bytes() for p in sorted(wurzel.rglob("*")) if p.is_file()}
+
+
 def test_einsortiert_und_finden(welt, capsys):
     _hochgeladen(welt, capsys)
     assert replay.main([str(welt["charge"]), "einsortiert", "--titel", NAME]) == 0
@@ -214,9 +218,42 @@ def test_kommentare_aus_chrome_json_ohne_resolve(welt, monkeypatch, capsys, tmp_
     assert doc["veraendert_seit_upload"] is None
 
 
-def test_kommentare_aus_json_mit_falschem_titel(welt, monkeypatch, capsys, tmp_path):
+def test_kommentare_nur_stand_nach_chrome_lesung_schreibt_nichts(welt, capsys, tmp_path):
+    """Rest-Review Punkt 3: Nach der Chrome-Lesung prüft `kommentare --nur-stand` den Stand per API, ohne
+    kommentare.json/.md (Autor, Antworten, Zeichnung, fremd) oder das Protokoll zu überschreiben; bei Veränderung
+    nennt es die aktuelle Stelle je Kommentar. Exit 0 = unverändert, 1 = verändert."""
+    _hochgeladen(welt, capsys)
+    datei = tmp_path / "chrome.json"
+    datei.write_text(json.dumps({"quelle": "chrome", "kommentare": [
+        {"von_s": 2.008, "text": "Kunde will anderen Take", "autor": "Kunde X", "antworten": ["ok"],
+         "zeichnung": True}]}), encoding="utf-8")
+    assert replay.main([str(welt["charge"]), "kommentare", "--aus-json", str(datei)]) == 0
+    vorher = _dateien(welt["charge"])                                   # jede Datei der Charge mit Inhalt
+    assert any(p.endswith("kommentare.json") for p in vorher)
+    capsys.readouterr()
+
+    assert replay.main([str(welt["charge"]), "kommentare", "--nur-stand"]) == 0
+    assert "Stand seit Upload: unverändert" in capsys.readouterr().out
+
+    welt["tl"].tl_items[0].start += 10                                  # Handänderung nach dem Upload
+    welt["tl"].AddMarker(48, "FrameIO", "Marker 1", "Kunde will anderen Take", 1)   # synchronisierter Replay-Marker
+    assert replay.main([str(welt["charge"]), "kommentare", "--nur-stand"]) == 1
+    out = capsys.readouterr().out
+    assert "Stand seit Upload: verändert" in out and "K1 01:00:02:00 → jetzt 01:00:02:10" in out   # Frame 50 → 60
+    assert _dateien(welt["charge"]) == vorher                           # nichts geschrieben, nichts angelegt
+    welt["fake"].p.name = "Anderes Projekt"
+    assert replay.main([str(welt["charge"]), "kommentare", "--nur-stand"]) == 2
+    err = capsys.readouterr().err
+    assert "Anderes Projekt" in err and "--aus-json" not in err         # der Chrome-Weg prüft keinen Stand
+    with pytest.raises(SystemExit):
+        replay.main([str(welt["charge"]), "kommentare", "--nur-stand", "--aus-json", str(datei)])
+
+
+@pytest.mark.parametrize("kommentar", [{"von_s": 2.008, "text": "X"}, {"text": "ohne Zeit"}])
+def test_kommentare_aus_json_mit_falschem_titel(welt, monkeypatch, capsys, tmp_path, kommentar):
     """M2: --aus-json für einen anderen Titel als den Upload-Eintrag → AutoCutError statt stillschweigend falscher
-    Kommentare (z. B. die falsche Chrome-Datei erwischt)."""
+    Kommentare (z. B. die falsche Chrome-Datei erwischt) — auch wenn die falsche Datei selbst fehlerhafte Kommentare
+    hat, bleibt „falsche Datei?" die Meldung."""
     _hochgeladen(welt, capsys)
 
     def kein_resolve():
@@ -224,12 +261,31 @@ def test_kommentare_aus_json_mit_falschem_titel(welt, monkeypatch, capsys, tmp_p
 
     monkeypatch.setattr(RA, "connect", kein_resolve)
     datei = tmp_path / "chrome.json"
-    datei.write_text(json.dumps({"quelle": "chrome", "titel": "Anderes Video", "kommentare": [
-        {"von_s": 2.008, "text": "X"}]}), encoding="utf-8")
+    datei.write_text(json.dumps({"quelle": "chrome", "titel": "Anderes Video", "kommentare": [kommentar]}),
+                     encoding="utf-8")
     rc = replay.main([str(welt["charge"]), "kommentare", "--aus-json", str(datei)])
     assert rc == 2
     err = capsys.readouterr().err
     assert "Anderes Video" in err and NAME in err
+
+
+@pytest.mark.parametrize("inhalt", [b'[{"von_s": 2.0, "text": "X"}]', b'"chrome"', b"{kaputt",
+                                    b'{"quelle": "chrome", "titel": "Caf\xe9", "kommentare": []}'])
+def test_kommentare_aus_json_ohne_objekt_exit_2(welt, monkeypatch, capsys, tmp_path, inhalt):
+    """Rest-Review Punkt 2: --aus-json mit gültigem, aber nicht objektförmigem JSON (Liste, Text), kaputtem JSON oder
+    Nicht-UTF-8 → AutoCutError mit Exit 2, nicht AttributeError/JSONDecodeError/UnicodeDecodeError mit Exit 1 (sähe
+    aus wie „keine neuen Kommentare")."""
+    _hochgeladen(welt, capsys)
+
+    def kein_resolve():
+        raise AssertionError("Resolve darf beim Chrome-Weg nicht verbunden werden")
+
+    monkeypatch.setattr(RA, "connect", kein_resolve)
+    datei = tmp_path / "chrome.json"
+    datei.write_bytes(inhalt)
+    assert replay.main([str(welt["charge"]), "kommentare", "--aus-json", str(datei)]) == 2
+    assert "FEHLER:" in capsys.readouterr().err
+    assert not (welt["charge"] / "Material" / "Feedback").exists()
 
 
 def test_kommentare_api_falsches_projekt(welt, capsys):

@@ -1,0 +1,19 @@
+{
+  "name": "akut med",
+  "colors": {
+    "primary": "#E3000F",
+    "secondary": "#291A48",
+    "accent": "#8D85DD",
+    "background": "#FFFFFF",
+    "text": "#291A48"
+  },
+  "fonts": {
+    "heading": "Montserrat",
+    "body": "Inter"
+  },
+  "logo": "clients/akut/akut-med-logo-weiss.svg",
+  "style": {
+    "borderRadius": 18,
+    "animationSpeed": "fast"
+  }
+}

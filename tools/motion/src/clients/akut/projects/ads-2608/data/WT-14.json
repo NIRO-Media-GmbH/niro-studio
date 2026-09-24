@@ -1,0 +1,124 @@
+{
+ "nr": "WT-14",
+ "titel": "Hier ist der Haken",
+ "fps": 25,
+ "durationSec": 29.48,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 11.124,
+   "endSec": 11.464,
+   "text": "Ich glaube,"
+  },
+  {
+   "startSec": 11.464,
+   "endSec": 12.864,
+   "text": "die größten Ängste,"
+  },
+  {
+   "startSec": 16.565,
+   "endSec": 17.665,
+   "text": "Also natürlich gab es da"
+  },
+  {
+   "startSec": 17.665,
+   "endSec": 18.433,
+   "text": "auch schon Sachen,"
+  },
+  {
+   "startSec": 18.433,
+   "endSec": 20.193,
+   "text": "wo die Unterkunft nicht so"
+  },
+  {
+   "startSec": 20.193,
+   "endSec": 21.572,
+   "text": "war wie auf den Bildern,"
+  },
+  {
+   "startSec": 21.572,
+   "endSec": 22.372,
+   "text": "aber wir finden immer"
+  },
+  {
+   "startSec": 22.372,
+   "endSec": 22.913,
+   "text": "Lösungen,"
+  },
+  {
+   "startSec": 22.913,
+   "endSec": 23.653,
+   "text": "klingt zu gut,"
+  },
+  {
+   "startSec": 23.653,
+   "endSec": 24.85,
+   "text": "um wahr zu sein."
+  },
+  {
+   "startSec": 24.85,
+   "endSec": 25.971,
+   "text": "Kann ich verstehen,"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "karte",
+   "id": "haken",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Wo ist\nder Haken?",
+   "t_in": 0.115,
+   "t_out": 3.024
+  },
+  {
+   "typ": "karte",
+   "id": "stunden",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Ab 30 Stunden",
+   "t_in": 3.024,
+   "t_out": 6.861
+  },
+  {
+   "typ": "stapel",
+   "id": "rahmen",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 6.861,
+   "t_out": 11.084,
+   "items": [
+    {
+     "text": "Rahmenbedingungen",
+     "at": 6.861,
+     "icon": "herz"
+    },
+    {
+     "text": "Arbeit vor Ort",
+     "at": 8.541,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "bilder",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "So wie auf\nden Bildern?",
+   "t_in": 14.264,
+   "t_out": 16.525
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 26.011,
+   "t_out": 29.48
+  }
+ ]
+}

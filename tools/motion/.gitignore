@@ -24,3 +24,6 @@ build-*/
 # Remotion-Review-Stills, die versehentlich im Repo-Root landen (Frame-Nummer als Name)
 /[0-9][0-9][0-9]*.png
 /[0-9][0-9][0-9][0-9]
+
+# Zwischenstände von Hand gesicherter Kompositionen (z. B. Composition_v6.tsx.bak) bleiben lokal
+*.bak

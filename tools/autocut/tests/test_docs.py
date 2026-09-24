@@ -1,6 +1,8 @@
 """Task 12 — Doku, Workflow, Trigger: Dateien vorhanden, alle CLI-Einstiege dokumentiert, genau eine Trigger-Zeile."""
 from __future__ import annotations
 
+import re
+
 from niro_autocut.charge import TOOL_ROOT
 
 STUDIO_ROOT = TOOL_ROOT.parents[1]          # tools/autocut → tools → NIRO Studio
@@ -9,6 +11,7 @@ README = TOOL_ROOT / "README.md"
 SETUP = TOOL_ROOT / "SETUP.md"
 CLAUDE_MD = STUDIO_ROOT / "CLAUDE.md"
 RESOLVE_WORKFLOW = STUDIO_ROOT / "tools" / "resolve" / "WORKFLOW-Resolve.md"
+REPLAY_PLAN = STUDIO_ROOT / "docs" / "superpowers" / "plans" / "2026-09-16-autocut-replay.md"
 
 # CLI-Einstiege laut Spec Abschnitt 6 (alle mit venv/bin/python, Argument = Chargen-Ordner)
 SPEC_SCRIPTS = ["autocut_prepare.py", "autocut_sync.py", "autocut_find_quote.py", "autocut_verify.py",
@@ -21,6 +24,27 @@ SPEC_SCRIPTS = ["autocut_prepare.py", "autocut_sync.py", "autocut_find_quote.py"
 def _text(p) -> str:
     assert p.is_file(), f"{p} fehlt"
     return p.read_text(encoding="utf-8")
+
+
+def _abschnitt(text: str, kopf: str) -> str:
+    """Markdown-Abschnitt ab der Überschrift, die mit ``kopf`` beginnt, bis zur nächsten gleich hohen oder höheren."""
+    m = re.search(rf"^{re.escape(kopf)}.*$", text, flags=re.M)
+    assert m, f"Überschrift „{kopf}“ fehlt"
+    ebene = len(kopf) - len(kopf.lstrip("#"))
+    ende = re.compile(rf"^#{{1,{ebene}}} ", flags=re.M).search(text, m.end())
+    return text[m.start():ende.start() if ende else len(text)]
+
+
+def _flach(text: str) -> str:
+    """Leerraum und Zeilenumbrüche zu je einem Leerzeichen — Suchtexte überstehen das Umbrechen der Doku."""
+    return " ".join(text.split())
+
+
+def _plan_schritt(task: str, nr: int) -> str:
+    """Block „- [ ] **Step <nr>:" (auch abgehakt) bis zum nächsten Step (innerhalb des Tasks)."""
+    m = re.search(rf"^- \[[ xX]\] \*\*Step {nr}:.*?(?=^- \[[ xX]\] \*\*Step |\Z)", task, flags=re.M | re.S)
+    assert m, f"Step {nr} fehlt"
+    return m.group(0)
 
 
 def test_docs_exist_and_are_markdown_without_placeholders():
@@ -105,3 +129,64 @@ def test_replay_ist_dokumentiert():
     claude = _text(CLAUDE_MD)
     assert "Review in Dropbox Replay" in claude and "Replay-Marker" in claude
     assert "10. **Dropbox Replay:**" in _text(RESOLVE_WORKFLOW)
+
+
+def test_replay_upload_nach_rohschnitt_nur_mit_stufe1_bedingung():
+    """Rest-Review Punkt 1: „Hochladen" bietet den Upload nach dem Rohschnitt nicht bedingungslos an, sondern mit der
+    Bedingung aus Stufe 1, Schritt 7 (Begutachtung vor weiteren Stufen, die dann nur auf einer neuen Version laufen)."""
+    hochladen = _flach(_abschnitt(_text(WORKFLOW), "### Hochladen"))
+    assert "Nach Rohschnitt, Finalisieren und Feinschnitt den Upload anbieten" not in hochladen
+    for needle in ("Rohschnitt", "begutachtet werden soll", "neuen Version", "nie ungefragt"):
+        assert needle in hochladen, f"„Hochladen“: „{needle}“ fehlt"
+
+
+def test_replay_kommentare_ein_lese_weg_und_stand_ohne_ueberschreiben():
+    """Rest-Review Punkt 3: Kommentare je Video und Runde nur auf einem Weg lesen; den Stand nach der Chrome-Lesung
+    mit `--nur-stand` prüfen — kein zweiter `kommentare`-Lauf per API, der kommentare.json/.md überschreibt."""
+    replay = _abschnitt(_text(WORKFLOW), "## Review in Replay")
+    assert "Je Video und Runde nur auf einem Weg" in _flach(_abschnitt(replay, "### Kommentare holen"))
+    umsetzen = _flach(_abschnitt(replay, "### Umsetzen"))
+    aufrufe = re.findall(r"kommentare --timeline[^`]*", umsetzen)
+    assert aufrufe and all("--nur-stand" in a for a in aufrufe), aufrufe
+    assert "--nur-stand" in _text(README)
+    assert "ersetzt dann die API-Lesung" in _flach(_abschnitt(_text(WORKFLOW), "## Fehlerbilder"))
+    zeile = next(l for l in _text(WORKFLOW).splitlines() if l.startswith("| Replay-Kommentare: `… nicht im offenen Projekt`"))
+    assert "--nur-stand" in zeile, zeile                              # Chrome-Weg prüft keinen Stand
+
+
+def test_replay_bau_readback_zuletzt_vor_dem_upload():
+    """Rest-Review Punkt 4: In „Umsetzen" steht der Bau-Readback der neuen Version nach allen Änderungen (nach der
+    Kantenprüfung) unmittelbar vor dem Hochladen — nicht direkt nach `SetName`."""
+    wf = _text(WORKFLOW)
+    umsetzen = _flach(_abschnitt(wf, "### Umsetzen"))
+    assert "Nach jedem `SetName` sofort" not in umsetzen
+    readback = umsetzen.index("autocut_readback.py")
+    assert umsetzen.index("autocut_kanten.py") < readback < umsetzen.index("Hochladen ab Schritt 1")
+    assert "nachfragen, ob er die neue Version" in umsetzen          # Handänderungen nie zum Bau-Stand machen
+    assert "ohne Readback steht dort `null`" in umsetzen
+    assert "letzten eigenen Änderung" in _flach(_abschnitt(wf, "### Bau-Readback"))   # gilt auch für den ersten Upload
+    hochladen = _flach(_abschnitt(wf, "### Hochladen"))
+    assert "Bau-Readback" in hochladen and "nachfragen" in hochladen   # auch beim ersten Upload (ohne SetName)
+
+
+def test_replay_vorbedingung_rendern_dokumentiert():
+    """Rest-Review Punkt 7: Vorschau-Schritt und Fehlerbilder nennen die Prüfung auf laufendes Rendern."""
+    wf = _text(WORKFLOW)
+    assert "IsRenderingInProgress" in _flach(_abschnitt(wf, "### Hochladen"))
+    assert "| Replay: `Resolve rendert gerade`" in _flach(_abschnitt(wf, "## Fehlerbilder"))
+
+
+def test_replay_plan_kopie_test_deckt_zusatzmessungen_ab():
+    """Rest-Review Punkt 7: Plan Task 1 — die Zusatzmessungen aus Step 9 haben Zusagen in Step 1, Aufräumen in Step 10
+    und je eine Zeile im Nachtrag-Muster von Step 11 (Frage = fett gesetzte Überschrift aus Step 9)."""
+    plan = _text(REPLAY_PLAN)
+    task = plan[plan.index("### Task 1:"):plan.index("### Task 2:")]
+    messungen = re.findall(r"^- \*\*(.+?):\*\*", _plan_schritt(task, 9), flags=re.M)
+    assert len(messungen) >= 6, messungen
+    schritt1 = _flach(_plan_schritt(task, 1))
+    assert "Step 9" in schritt1 and "Step 9" in _flach(_plan_schritt(task, 10))
+    pflicht = schritt1[schritt1.index("(d)"):schritt1.index("(e)")]     # (a)–(d) sind Pflicht, (e)–(g) optional
+    assert "Step 10" in pflicht, "Löschen von T und K braucht eine Pflicht-Zusage"
+    muster = _flach(_plan_schritt(task, 11))
+    for frage in messungen:
+        assert f"| {frage} |" in muster, f"Step 11: Zeile für „{frage}“ fehlt"

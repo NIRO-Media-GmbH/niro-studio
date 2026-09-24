@@ -138,13 +138,18 @@ Skripte mit diesen Aufrufen liegen als Vorlagen unter `tools/autocut/vorlagen/fe
   `Timeline.GetIsTrackEnabled` ist nur auf der aktiven Timeline aussagekräftig; `Folder.GetClipList()` zählt
   Timelines mit (`GetClipProperty("Type") == "Timeline"`).
 - **Nicht aktive Timeline:** `AddMarker`, `SetProperty`/`SetProperties` (AudioVolume, Transform) und `SetFades`
-  wirken ohne `SetCurrentTimeline`. Nur auf der aktiven Timeline: `DeleteClips` (sonst `False`) und
+  wirken ohne `SetCurrentTimeline`. `AddMarker` nimmt je Frame nur einen Marker (zweiter → `False`): Shot-, Szenen-
+  und Grafik-Marker auf demselben Frame vorher zusammenführen (Aftermovie 18.09.2026: 28 Szenen-Marker still verloren). Nur auf der aktiven Timeline: `DeleteClips` (sonst `False`) und
   `SetTrackName`. Kein Slip per API (Left-Offset nicht setzbar) — Quell-In ändern heißt eigenes Item löschen
   und neu anhängen. Zeitweise verweigert Resolve alle Item-Schreibzugriffe (`SetProperty` = `False`), solange
   ein Clip im Source-Viewer/Inspector geöffnet ist — später erneut versuchen.
 - **Anhängen:** `AppendClipInfo.endFrame` ist exklusiv, `mediaType: 1` = nur Bild; mehrere Clips in einem
   `AppendToTimeline` gehen auch extern. Ein PNG ignoriert start/end und wird 125 Frames lang. ProRes 4444 aus
   Remotion bekommt beim Import automatisch Alpha „Straight".
+- **⚠️ Grading extern:** `TimelineItem.GetNodeGraph()` über die externe API (venv, `DaVinciResolveScript`) ließ Resolve 21.1 zweimal
+  abstürzen (Hochzeitszauber 18.09.2026, direkt nach einem Bau mit 125 Items); über den MCP `run_script` (in Resolve) laufen
+  `GetNodeGraph().ApplyGradeFromDRX/SetLUT` + `SetCDL` problemlos (Pakete à 25 Items pro Aufruf, 60-s-Limit). Nach einem Absturz kann eine
+  frisch gebaute Timeline im Cloud-Projekt leer sein → nach dem Bau `ProjectManager.SaveProject()` aufrufen, bevor riskante Schritte folgen.
 - **Tempo:** `SetSpeed` behält die Timeline-Dauer, der Quellbereich schrumpft — für 50 % den doppelten
   Quellbereich bei 100 % anhängen, dann `SetProperties({"RetimeProcess": resolve.RETIME_NEAREST})` (reine
   Bildauswahl) und `SetSpeed({"Percentage": 50.0, "RippleTimeline": False})`. `TimelineItem.Stabilize()` →

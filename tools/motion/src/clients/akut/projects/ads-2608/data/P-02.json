@@ -1,0 +1,171 @@
+{
+ "nr": "P-02",
+ "titel": "Die Teilzeit-Falle",
+ "fps": 25,
+ "durationSec": 41.04,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 2.975,
+   "endSec": 4.115,
+   "text": "Die meisten"
+  },
+  {
+   "startSec": 4.335,
+   "endSec": 5.655,
+   "text": "Pflegekräfte arbeiten"
+  },
+  {
+   "startSec": 5.655,
+   "endSec": 6.515,
+   "text": "Teilzeit,"
+  },
+  {
+   "startSec": 6.515,
+   "endSec": 7.495,
+   "text": "um sich einfach selber"
+  },
+  {
+   "startSec": 7.495,
+   "endSec": 8.232,
+   "text": "zu schützen,"
+  },
+  {
+   "startSec": 8.232,
+   "endSec": 9.692,
+   "text": "weil die Leute dann so"
+  },
+  {
+   "startSec": 9.692,
+   "endSec": 11.252,
+   "text": "viele Tage am Stück"
+  },
+  {
+   "startSec": 11.252,
+   "endSec": 12.112,
+   "text": "eingesetzt werden,"
+  },
+  {
+   "startSec": 12.112,
+   "endSec": 12.732,
+   "text": "zum Beispiel"
+  },
+  {
+   "startSec": 19.759,
+   "endSec": 20.798,
+   "text": "Der größte Vorteil bei"
+  },
+  {
+   "startSec": 20.798,
+   "endSec": 21.678,
+   "text": "uns ist natürlich,"
+  },
+  {
+   "startSec": 29.607,
+   "endSec": 30.467,
+   "text": "Also wenn du"
+  },
+  {
+   "startSec": 31.027,
+   "endSec": 32.247,
+   "text": "heute anrufst"
+  },
+  {
+   "startSec": 32.247,
+   "endSec": 33.247,
+   "text": "beziehungsweise dich"
+  },
+  {
+   "startSec": 33.247,
+   "endSec": 34.647,
+   "text": "einträgst und wir dich"
+  },
+  {
+   "startSec": 34.647,
+   "endSec": 35.307,
+   "text": "anrufen,"
+  },
+  {
+   "startSec": 35.307,
+   "endSec": 36.646,
+   "text": "dann kommst du zum Termin,"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "stapel",
+   "id": "lifestyle",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 0.059,
+   "t_out": 2.935,
+   "items": [
+    {
+     "text": "Lifestyle-Teilzeit",
+     "at": 0.059,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "stapel",
+   "id": "belastung",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 12.752,
+   "t_out": 19.719,
+   "items": [
+    {
+     "text": "11–12 Tage am Stück",
+     "at": 12.752,
+     "icon": "kreuz"
+    },
+    {
+     "text": "Keine Zeit mehr",
+     "at": 15.504,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "vollzeit",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "35 Stunden\n= Vollzeit",
+   "t_in": 21.718,
+   "t_out": 23.804
+  },
+  {
+   "typ": "stapel",
+   "id": "vergleich",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 24.204,
+   "t_out": 29.567,
+   "items": [
+    {
+     "text": "Viele Betriebe: Teilzeit",
+     "at": 24.204,
+     "icon": "kreuz"
+    },
+    {
+     "text": "Bei akut: Vollzeit",
+     "at": 28.094,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "id": "cta",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 36.686,
+   "t_out": 41.04
+  }
+ ]
+}

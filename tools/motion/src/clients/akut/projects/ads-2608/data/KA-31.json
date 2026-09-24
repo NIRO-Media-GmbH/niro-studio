@@ -1,0 +1,103 @@
+{
+ "nr": "KA-31",
+ "titel": "Urlaub im November",
+ "fps": 25,
+ "durationSec": 19.72,
+ "band": 0.62,
+ "ut": "normal",
+ "pages": [
+  {
+   "startSec": 0.06,
+   "endSec": 1.2,
+   "text": "Schon mal als pädagogische"
+  },
+  {
+   "startSec": 1.2,
+   "endSec": 2.46,
+   "text": "Fachkraft in der günstigen"
+  },
+  {
+   "startSec": 2.46,
+   "endSec": 3.42,
+   "text": "Nebensaison im Urlaub"
+  },
+  {
+   "startSec": 3.42,
+   "endSec": 4.308,
+   "text": "gewesen?"
+  },
+  {
+   "startSec": 4.308,
+   "endSec": 5.948,
+   "text": "Schließzeiten heißt Urlaub,"
+  },
+  {
+   "startSec": 5.948,
+   "endSec": 7.088,
+   "text": "wenn alle Urlaub haben."
+  },
+  {
+   "startSec": 13.791,
+   "endSec": 15.271,
+   "text": "Also worauf wartest du?"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "stapel",
+   "id": "schliesszeit",
+   "y": 0.45,
+   "t_in": 7.128,
+   "t_out": 9.283,
+   "items": [
+    {
+     "text": "Teuerste Woche",
+     "at": 7.128,
+     "icon": "kreuz"
+    },
+    {
+     "text": "Vollster Strand",
+     "at": 8.188,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "wann_du_willst",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Urlaub,\nwann du willst.",
+   "t_in": 9.283,
+   "t_out": 12.123
+  },
+  {
+   "typ": "stapel",
+   "id": "monate",
+   "y": 0.45,
+   "t_in": 12.123,
+   "t_out": 13.751,
+   "items": [
+    {
+     "text": "November",
+     "at": 12.123,
+     "icon": "herz"
+    },
+    {
+     "text": "März",
+     "at": 13.223,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 15.311,
+   "t_out": 19.72
+  }
+ ]
+}

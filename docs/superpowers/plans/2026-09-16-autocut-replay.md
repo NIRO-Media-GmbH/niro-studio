@@ -60,7 +60,11 @@ Klärt den offenen Punkt aus dem Spec-Nachtrag: Was passiert mit den übernommen
 
 - [ ] **Step 1: Freigaben einholen (Chat)**
 
-Fragen, in einem Zug: (a) welches Projekt für den Test freigegeben ist (Vorschlag: das leere „Untitled Project"), (b) OK für bis zu zwei Test-Uploads (Test-Video A, Kopie B), (c) ob Claude die zwei Test-Kommentare im Chrome schreiben darf, (d) Hinweis: In Schritt 6 löscht Claude **ausnahmsweise** einen Replay-Marker auf der eigenen Kopie — das kann einen Test-Kommentar in Replay löschen. Ohne alle vier Zusagen nicht weitermachen.
+Fragen, in einem Zug: (a) welches Projekt für den Test freigegeben ist (Vorschlag: das leere „Untitled Project"), (b) OK für bis zu zwei Test-Uploads (Test-Video A, Kopie B), (c) ob Claude die zwei Test-Kommentare im Chrome schreiben darf, (d) Hinweis: In Step 6 löscht Claude **ausnahmsweise** einen Replay-Marker auf der eigenen Kopie — das kann einen Test-Kommentar in Replay löschen; in Step 10 löscht Claude **ausnahmsweise** die eigenen Test-Timelines T (hochgeladen) und K (ggf. in Step 7 als B hochgeladen), obwohl sie Replay-Marker tragen (Live-Test 16.09.: Löschen der Kopie oder der hochgeladenen Timeline lässt die Kommentare in Replay stehen).
+
+Für die Zusatzmessungen aus Step 9 zusätzlich: (e) ob Claude weitere Test-Kommentare auf A im Chrome schreiben darf (einen auf einem Frame mit eigenem AutoCut-Marker, zwei auf demselben Frame, Stichproben für den Sync-Verzug), (f) OK für eigene Zusatzobjekte im freigegebenen Projekt: **ausnahmsweise** einen eigenen Marker auf der hochgeladenen Timeline T, eine 4K-Test-Timeline mit Testclip für einen lokalen Quick Export **ohne** Upload (Datei nur im Scratchpad) und eine per XML-Roundtrip importierte Timeline, (g) Hinweis: Trägt die XML-Roundtrip-Timeline Replay-Marker, löscht Claude sie in Step 10 trotzdem (ob sie Replay-Marker trägt, zeigt erst Step 9).
+
+Ohne (a)–(d) nicht weitermachen. Fehlen Zusagen aus (e)–(g), in Step 9 nur die Messungen mit Zusage ausführen (`GetMarkInOut()` braucht keine; ohne (g) keine XML-Roundtrip-Timeline anlegen) und die übrigen im Nachtrag 2 als offen vermerken.
 
 - [ ] **Step 2: Testmaterial erzeugen**
 
@@ -200,7 +204,12 @@ Ergebnisse in Nachtrag 2 (Step 11) mit aufnehmen.
 
 - [ ] **Step 10: Aufräumen (`run_script`)**
 
-Eigene Objekte löschen: K, T (`mp.DeleteTimelines([...])`), den Clip (`mp.DeleteClips(b.GetClipList())`), den Bin (`mp.DeleteFolders([b])`); Media Pool auf den Bin des Users zurück, Readback der Timeline-/Bin-Liste. Den User bitten, die Test-Videos in Replay zu löschen.
+Eigene Objekte löschen, erst alle Timelines, dann Clips, zuletzt Bins — vorher per Readback prüfen, dass nur eigene Objekte darunter sind:
+1. Timelines (`mp.DeleteTimelines([...])`): K und T (Zusage (d) aus Step 1), dazu aus den Zusatzmessungen von Step 9, soweit angelegt, die 4K-Test-Timeline (ohne Upload, keine Replay-Marker) und die XML-Roundtrip-Timeline (auch mit Replay-Markern, Zusage (g)). Der eigene Marker auf T verschwindet mit T.
+2. Clips: den Testclip im Bin (`mp.DeleteClips(b.GetClipList())`), den 4K-Testclip und beim XML-Import angelegte Clips.
+3. Bins: den Bin (`mp.DeleteFolders([b])`) und beim XML-Import angelegte Bins.
+
+Media Pool auf den Bin des Users zurück, Readback der Timeline-/Bin-Liste. Den User bitten, die Test-Videos in Replay zu löschen; mit ihnen verschwinden die Test-Kommentare aus Step 5 und Step 9. Lokale Render-, XML- und Messdateien liegen nur im Scratchpad (`<Scratchpad>/kopie_test/`).
 
 - [ ] **Step 11: Ergebnisse festhalten**
 
@@ -217,6 +226,19 @@ An die Spec anhängen:
 | Erscheinen übernommene Marker im neuen Video als Kommentare? | <ja/nein> |
 
 **Entscheidung:** `frameio_marker_beim_upload` = `<…>`, `version_weg` = `<…>` (Task 3 des Plans).
+
+### Zusatzmessungen (Step 9)
+
+| Messung | Befund | Folge |
+|---|---|---|
+| `GetMarkInOut()` ohne Marken | <Rückgabe-Dict> | <`_pruefen` passt / anpassen> |
+| Einheit von `VideoQuality` | <gemessene Bitrate bei 12000> | <`video_quality_ueber_1080p` bleibt / neuer Wert> |
+| Replay-Kommentar auf einem Frame mit AutoCut-Marker | <AutoCut-Marker bleibt / wird überschrieben> | <…> |
+| Zwei Kommentare auf demselben Frame | <ein Marker, Text verloren / angehängt / Nachbarframe> | <…> |
+| FrameIO-Marker nach dem XML-Roundtrip des Finalisierens | <bleiben / fehlen> | <`finalize` anpassen?> |
+| Sync-Verzug für `--warten` | <Sekunden je Stichprobe> | <`sync_warten_s` / `WARTE_TAKT_S`> |
+
+Nicht gemessen (fehlende Zusage aus (e)–(g) in Step 1): <Messungen oder „–">
 ```
 
 In `tools/resolve/WORKFLOW-Resolve.md` im Punkt „Dropbox Replay" den Satz „ob verknüpft ist offen" durch den Befund ersetzen. Memory `dropbox-replay-upload` ergänzen.

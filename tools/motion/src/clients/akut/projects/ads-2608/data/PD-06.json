@@ -1,0 +1,144 @@
+{
+ "nr": "PD-06",
+ "titel": "Alleine mit der ganzen Gruppe",
+ "fps": 25,
+ "durationSec": 40.12,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 0.0,
+   "endSec": 0.86,
+   "text": "Wenn jemand sagt,"
+  },
+  {
+   "startSec": 7.278,
+   "endSec": 8.158,
+   "text": "Der Mangel ist ja"
+  },
+  {
+   "startSec": 8.158,
+   "endSec": 8.938,
+   "text": "trotzdem da."
+  },
+  {
+   "startSec": 8.938,
+   "endSec": 9.718,
+   "text": "Wir haben einfach"
+  },
+  {
+   "startSec": 11.051,
+   "endSec": 11.931,
+   "text": "Wenn unsere Kräfte"
+  },
+  {
+   "startSec": 11.931,
+   "endSec": 12.883,
+   "text": "nicht wären,"
+  },
+  {
+   "startSec": 24.157,
+   "endSec": 25.037,
+   "text": "Also gerade in den"
+  },
+  {
+   "startSec": 25.037,
+   "endSec": 26.737,
+   "text": "Fachrichtungen halten wir ja"
+  },
+  {
+   "startSec": 26.737,
+   "endSec": 27.157,
+   "text": "schon im"
+  },
+  {
+   "startSec": 27.157,
+   "endSec": 28.904,
+   "text": "Vorstellungsgespräch fest:"
+  },
+  {
+   "startSec": 28.904,
+   "endSec": 29.623,
+   "text": "Was möchtest du?"
+  },
+  {
+   "startSec": 29.623,
+   "endSec": 30.643,
+   "text": "Möchtest du zum Beispiel"
+  },
+  {
+   "startSec": 30.643,
+   "endSec": 31.394,
+   "text": "keine Krippe?"
+  },
+  {
+   "startSec": 31.394,
+   "endSec": 32.634,
+   "text": "Also da sind wir so breit"
+  },
+  {
+   "startSec": 32.634,
+   "endSec": 34.494,
+   "text": "aufgestellt und da"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "karte",
+   "id": "vorurteil",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Zeitarbeit verschlimmert\nden Mangel?",
+   "t_in": 1.08,
+   "t_out": 7.238
+  },
+  {
+   "typ": "karte",
+   "id": "fachkraefte",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Zu wenig\nFachkräfte",
+   "t_in": 9.738,
+   "t_out": 11.011
+  },
+  {
+   "typ": "stapel",
+   "id": "folgen",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 12.923,
+   "t_out": 22.777,
+   "items": [
+    {
+     "text": "Kita, Krippe: geschlossen",
+     "at": 12.923,
+     "icon": "kreuz"
+    },
+    {
+     "text": "Notdienste",
+     "at": 20.718,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "mitsprache",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Sehr viel\nMitspracherecht",
+   "t_in": 22.777,
+   "t_out": 24.117
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 35.615,
+   "t_out": 40.12
+  }
+ ]
+}

@@ -1,0 +1,121 @@
+{
+ "nr": "P-01",
+ "titel": "Frei bleibt frei",
+ "fps": 25,
+ "durationSec": 34.4,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 5.064,
+   "endSec": 5.964,
+   "text": "Und ich sage mal so,"
+  },
+  {
+   "startSec": 10.376,
+   "endSec": 11.429,
+   "text": "Aber natürlich"
+  },
+  {
+   "startSec": 11.429,
+   "endSec": 12.788,
+   "text": "finden wir auch gemeinsam"
+  },
+  {
+   "startSec": 12.788,
+   "endSec": 13.748,
+   "text": "mit dem Kunden dann eine"
+  },
+  {
+   "startSec": 13.748,
+   "endSec": 14.988,
+   "text": "andere Regelung,"
+  },
+  {
+   "startSec": 14.988,
+   "endSec": 15.788,
+   "text": "dass der Laden nicht"
+  },
+  {
+   "startSec": 15.788,
+   "endSec": 16.713,
+   "text": "zusammenbricht."
+  },
+  {
+   "startSec": 25.308,
+   "endSec": 26.068,
+   "text": "Wenn man bei uns nur im"
+  },
+  {
+   "startSec": 26.068,
+   "endSec": 27.648,
+   "text": "Tagdienst arbeiten möchte,"
+  },
+  {
+   "startSec": 27.648,
+   "endSec": 28.588,
+   "text": "dann ist das auch völlig"
+  },
+  {
+   "startSec": 28.588,
+   "endSec": 29.352,
+   "text": "in Ordnung."
+  }
+ ],
+ "beats": [
+  {
+   "typ": "chat",
+   "id": "denken",
+   "y": 0.45,
+   "label": "Viele denken:",
+   "text": "Wenn ich nicht einspringe, bricht der Laden zusammen.",
+   "t_in": 0.0,
+   "t_out": 5.024
+  },
+  {
+   "typ": "stapel",
+   "id": "erholung",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 6.244,
+   "t_out": 10.336,
+   "items": [
+    {
+     "text": "Erholungsphase",
+     "at": 6.244,
+     "icon": "kreuz"
+    }
+   ]
+  },
+  {
+   "typ": "stapel",
+   "id": "planung",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 16.913,
+   "t_out": 25.268,
+   "items": [
+    {
+     "text": "Frei-Tage vorher melden",
+     "at": 16.913,
+     "icon": "herz"
+    },
+    {
+     "text": "Planungssicherheit",
+     "at": 23.859,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 29.392,
+   "t_out": 34.4
+  }
+ ]
+}

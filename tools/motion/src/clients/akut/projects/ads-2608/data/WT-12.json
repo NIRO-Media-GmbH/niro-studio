@@ -1,0 +1,122 @@
+{
+ "nr": "WT-12",
+ "titel": "Gap Year mit Gehalt",
+ "fps": 25,
+ "durationSec": 31.64,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 8.041,
+   "endSec": 9.401,
+   "text": "Und ich würde behaupten,"
+  },
+  {
+   "startSec": 9.401,
+   "endSec": 10.751,
+   "text": "das ist dasselbe,"
+  },
+  {
+   "startSec": 10.751,
+   "endSec": 11.671,
+   "text": "bloß halt in"
+  },
+  {
+   "startSec": 20.827,
+   "endSec": 21.507,
+   "text": "Man kann das zum"
+  },
+  {
+   "startSec": 21.507,
+   "endSec": 22.385,
+   "text": "Beispiel auch"
+  },
+  {
+   "startSec": 22.385,
+   "endSec": 23.545,
+   "text": "zwischenzeitlich einfach"
+  },
+  {
+   "startSec": 23.545,
+   "endSec": 24.685,
+   "text": "mal einbauen für zwei,"
+  },
+  {
+   "startSec": 24.685,
+   "endSec": 26.205,
+   "text": "drei Monate und dann bist"
+  },
+  {
+   "startSec": 26.205,
+   "endSec": 27.285,
+   "text": "du halt wieder da,"
+  },
+  {
+   "startSec": 27.285,
+   "endSec": 28.174,
+   "text": "wo du wohnst."
+  }
+ ],
+ "beats": [
+  {
+   "typ": "worte",
+   "id": "ausland",
+   "y": 0.45,
+   "variante": "lila",
+   "groesse": 0.04,
+   "t_in": 0.637,
+   "t_out": 8.001,
+   "items": [
+    {
+     "text": "Australien?",
+     "at": 0.637
+    },
+    {
+     "text": "Amerika?",
+     "at": 1.817
+    },
+    {
+     "text": "Auslandsjahr",
+     "at": 3.837
+    }
+   ]
+  },
+  {
+   "typ": "karte",
+   "id": "dasselbe",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Dasselbe –\nin Deutschland",
+   "t_in": 11.691,
+   "t_out": 13.051
+  },
+  {
+   "typ": "karte",
+   "id": "kaenguru",
+   "y": 0.45,
+   "variante": "lila",
+   "text": "Keine freilaufenden\nKängurus",
+   "t_in": 14.285,
+   "t_out": 16.378
+  },
+  {
+   "typ": "karte",
+   "id": "gehalt",
+   "y": 0.45,
+   "variante": "rot",
+   "text": "Gap Year\nmit Gehalt",
+   "t_in": 17.658,
+   "t_out": 20.787
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 28.214,
+   "t_out": 31.64
+  }
+ ]
+}

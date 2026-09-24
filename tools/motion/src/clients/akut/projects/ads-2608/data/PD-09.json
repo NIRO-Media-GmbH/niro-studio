@@ -1,0 +1,96 @@
+{
+ "nr": "PD-09",
+ "titel": "Deine Haltung zählt",
+ "fps": 25,
+ "durationSec": 25.88,
+ "band": 0.62,
+ "ut": "stark",
+ "pages": [
+  {
+   "startSec": 16.291,
+   "endSec": 17.676,
+   "text": "Unsere Mitarbeiter,"
+  },
+  {
+   "startSec": 17.676,
+   "endSec": 19.736,
+   "text": "kommen genauso in das"
+  },
+  {
+   "startSec": 19.736,
+   "endSec": 21.496,
+   "text": "pädagogische Tagesgeschehen,"
+  }
+ ],
+ "beats": [
+  {
+   "typ": "chat",
+   "id": "frage",
+   "y": 0.45,
+   "label": "Frage an Nico",
+   "text": "Für wen ist akut perfekt?",
+   "t_in": 0.0,
+   "t_out": 4.34
+  },
+  {
+   "typ": "stapel",
+   "id": "entdecken",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 4.34,
+   "t_out": 12.098,
+   "items": [
+    {
+     "text": "Sich neu entdecken",
+     "at": 4.34,
+     "icon": "herz"
+    },
+    {
+     "text": "Neue Konzepte",
+     "at": 7.668,
+     "icon": "herz"
+    },
+    {
+     "text": "Andere Fachrichtung",
+     "at": 11.019,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "stapel",
+   "id": "felder",
+   "y": 0.45,
+   "variante": "lila",
+   "t_in": 12.098,
+   "t_out": 16.251,
+   "items": [
+    {
+     "text": "Jugendhilfe",
+     "at": 12.098,
+     "icon": "herz"
+    },
+    {
+     "text": "Eingliederungshilfe",
+     "at": 13.163,
+     "icon": "herz"
+    },
+    {
+     "text": "Obdachlosenhilfe",
+     "at": 14.567,
+     "icon": "herz"
+    }
+   ]
+  },
+  {
+   "typ": "cta",
+   "button": "Jetzt in 1 Minute eintragen",
+   "sub": "ohne Lebenslauf",
+   "variante": "lila",
+   "id": "cta",
+   "y": 0.45,
+   "t_in": 21.536,
+   "t_out": 25.88
+  }
+ ]
+}
