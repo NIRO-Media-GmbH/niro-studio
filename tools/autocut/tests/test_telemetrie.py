@@ -1187,48 +1187,6 @@ def test_bewegung_spitzen_plateau_am_rand():
     assert T.bewegung_spitzen(rec2, 0.0, 4.0) == [[2.0, 2.5], [3.0, 2.5]]
 
 
-def test_neue_schluessel_aendern_den_config_hash_nicht():
-    """Sonst gälte jede vorhandene telemetrie.json als veraltet und würde neu gemessen."""
-    import yaml
-    from pathlib import Path
-    cfg = yaml.safe_load((Path(__file__).resolve().parents[1] / "defaults.yaml").read_text())["telemetrie"]
-    vorher = T.config_hash({k: v for k, v in cfg.items()
-                            if k not in ("bewegung_rand_s", "bewegung_spitze_faktor")})
-    assert T.config_hash(cfg) == vorher
-
-
-def test_bewegung_grundniveau_nimmt_nur_entfernte_fenster():
-    rec = {"fenster": [[0.0, 0.1, 0.4, "fahrt", None],
-                       [1.0, 0.1, 0.6, "fahrt", None],
-                       [4.0, 0.1, 9.0, "schwenk_links", None],   # die Spitze selbst
-                       [8.0, 0.1, 0.5, "fahrt", None]]}
-    assert T.bewegung_grundniveau(rec, 4.0, 3.0) == 0.5          # Median von 0,4 / 0,6 / 0,5
-    assert T.bewegung_grundniveau({"fenster": []}, 4.0, 3.0) is None
-
-
-# --------------------------------------------------------------------------- #
-# Stabile Bereiche (Spec 2026-09-23)
-# --------------------------------------------------------------------------- #
-
-CFG_STABIL = {**CFG, "bewegung_max": 2.0, "stabil_min_s": 2.0}
-
-
-def _rec_fenster(fenster, ruhige=None, dauer_s=None, fenster_s=2.0):
-    """Datensatz mit Fenster-Reihe; ruhige_fenster sonst aus wackeln <= ruhig_max_px wie clip_messen()."""
-    if ruhige is None:
-        ruhige = [f[0] for f in fenster if f[1] <= CFG_STABIL["ruhig_max_px"]]
-    return {"clip": "FX3_1", "dauer_s": dauer_s, "fenster_s": fenster_s,
-            "fenster": fenster, "ruhige_fenster": ruhige}
-
-
-def test_bewegung_max_im_bereich():
-    rec = _rec_fenster([[0.0, 0.05, 0.1, "statisch", None], [1.0, 0.05, 2.4, "fahrt", None],
-                        [2.0, 0.05, 0.3, "statisch", None]], dauer_s=4.0)
-    assert T.bewegung_max_im_bereich(rec, 0.0, 4.0) == 2.4
-    assert T.bewegung_max_im_bereich(None, 0.0, 4.0) is None
-    assert T.bewegung_max_im_bereich({"fenster": []}, 0.0, 4.0) is None
-
-
 # --------------------------------------------------------------------------- #
 # Schnittkanten frame-genau (Spec 2026-09-25): Reihe je Frame, Brennweite je Frame, Messversion
 # --------------------------------------------------------------------------- #
@@ -1361,7 +1319,7 @@ def test_stabile_bereiche_ohne_reihe_leer():
 def test_config_hash_ignoriert_die_stabil_schwellen():
     # die Schlüssel ändern keine Messung, nur die Ableitung aus der Reihe → kein neuer Hash, kein Neumessen
     h = T.config_hash(CFG)
-    for k, wert in (("bewegung_max", 5.0), ("stabil_min_s", 3.0), ("glatt_s", 0.8)):
+    for k, wert in (("bewegung_max", 5.0), ("stabil_min_s", 3.0), ("glatt_s", 0.8), ("kante_s", 0.5)):
         assert T.config_hash({**CFG, k: wert}) == h, k
 
 
@@ -1369,3 +1327,35 @@ def test_defaults_haben_die_stabil_schwellen():
     cfg = load_config(Path("/nirgendwo"))["telemetrie"]
     assert cfg["bewegung_max"] == 2.0 and cfg["stabil_min_s"] == 2.0 and cfg["glatt_s"] == 0.4
     assert cfg["ruhig_max_px"] == 0.15
+    assert cfg["kante_s"] == 0.3 and "bewegung_rand_s" not in cfg and "bewegung_spitze_faktor" not in cfg
+
+
+def test_kanten_befunde_kante_mitte_und_ruhig():
+    rec = _rec_reihe((2.0, 0.0, 0.0), (2.0, 5.0, 0.0), (4.0, 0.0, 0.0))        # Schwenk 2,0–4,0 s
+    assert T.kanten_befunde(rec, CFG_FRAME, 5.0, 7.5) == []
+    assert T.kanten_befunde(rec, CFG_FRAME, 3.0, 6.0) == [
+        T.Kante("in", 3.0, 3.32, 0.0, 5.0), T.Kante("mitte", 3.32, 4.24, 0.25, 5.0)]
+    assert T.kanten_befunde(rec, CFG_FRAME, 0.5, 2.5) == [
+        T.Kante("out", 2.2, 2.52, 0.25, 5.0), T.Kante("mitte", 1.84, 2.2, 0.25, 4.5)]
+    assert T.kanten_befunde(rec, CFG_FRAME, 3.0, 6.0, faktor=0.25) == []          # tempo 4: sichtbar 1,25 px je Frame
+    assert T.kanten_befunde({"zooms": []}, CFG_FRAME, 0.0, 1.0) is None
+
+
+def test_kanten_befunde_kurzer_shot_und_kante_ohne_messung():
+    rec = _rec_reihe((2.0, 0.0, 0.0), (2.0, 5.0, 0.0), (4.0, 0.0, 0.0))
+    # 0,5 s: die Kanten sind je 0,25 s lang und stoßen aneinander, eine Mitte gibt es nicht
+    assert T.kanten_befunde(rec, CFG_FRAME, 3.6, 4.1) == [
+        T.Kante("in", 3.6, 3.88, 0.25, 5.0), T.Kante("out", 3.88, 4.12, 0.25, 4.0)]
+    kurz = _rec_reihe((2.0, 0.0, 0.0))                                           # Reihe endet bei 2,0 s
+    assert T.kanten_befunde(kurz, CFG_FRAME, 1.9, 2.4) == [T.Kante("out", 2.15, 2.4, 0.0, 0.0, gemessen=False)]
+
+
+def test_ruhige_lage_spaeter_frueher_zoom_und_keine():
+    spaeter = _rec_reihe((2.0, 5.0, 0.0), (6.0, 0.0, 0.0))                       # Schwenk am Anfang
+    assert T.ruhige_lage(spaeter, CFG_FRAME, 1.5, 3.5, 1.0, (0.0, 8.0)) == 0.72
+    assert T.ruhige_lage(spaeter, CFG_FRAME, 1.5, 3.5, 1.0, (0.0, 3.6)) is None     # erlaubter Bereich zu knapp
+    frueher = _rec_reihe((6.0, 0.0, 0.0), (2.0, 5.0, 0.0))                       # Schwenk am Ende
+    assert T.ruhige_lage(frueher, CFG_FRAME, 4.5, 6.5, 1.0, (0.0, 8.0)) == -0.68
+    zoom = _rec_reihe((8.0, 0.0, 0.0), zooms=[{"von_s": 3.0, "bis_s": 4.0, "urteil": "schnell"}])
+    assert T.ruhige_lage(zoom, CFG_FRAME, 3.2, 5.2, 1.0, (0.0, 8.0)) == 0.8        # hinter die schnelle Zoomfahrt
+    assert T.ruhige_lage({"zooms": []}, CFG_FRAME, 0.0, 2.0, 1.0, (0.0, 8.0)) is None

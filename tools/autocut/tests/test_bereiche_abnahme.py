@@ -105,3 +105,18 @@ def test_abnahme_klebl_shots_in_einem_lauf_unveraendert():
     assert len(shots) == 32
     drin = {s["clip"] for s in shots if _im_lauf(s["telemetrie"], s["von_s"], s["bis_s"])}
     assert drin == KLEBL_IM_LAUF                   # Änderungsmelder (bewegung_max 2,0)
+
+
+KLEBL_KANTENFEHLER = {"FX3_0260.MP4", "FX3_0252.MP4", "a7MK4_20260922_0317.MP4", "FX3_0675.MP4", "FX3_0710.MP4",
+                      "FX3_0700.MP4", "FX3_0267.MP4", "FX3_0705.MP4", "FX3_0653.MP4"}
+
+
+def test_abnahme_klebl_kantenpruefung_unveraendert():
+    """Die vier Wackler des Nachtlaufs und fünf weitere fallen an einer Schnittkante durch (Änderungsmelder,
+    bewegung_max 2,0); die übrigen 23 Shots bestehen."""
+    fehler = set()
+    for s in _json("bereiche-klebl.json"):
+        befunde = T.kanten_befunde(s["telemetrie"], CFG, s["von_s"], s["bis_s"], 1.0 / s["tempo"])
+        if any(k.seite != "mitte" and k.gemessen for k in befunde):
+            fehler.add(s["clip"])
+    assert fehler == KLEBL_KANTENFEHLER

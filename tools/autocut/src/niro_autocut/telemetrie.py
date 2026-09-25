@@ -405,10 +405,10 @@ def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samp
 
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------
 
-# Schlüssel ohne Einfluss auf die Messung: Parallelität, die Brennweitenfolge der Vorlagen 3a/6d und die
-# Ableitung der stabilen Läufe (Spec 2026-09-23/-25; sie rechnet auf der gemessenen Reihe)
+# Schlüssel ohne Einfluss auf die Messung: Parallelität, die Brennweitenfolge der Vorlagen 3a/6d und
+# die Ableitung der Läufe und Kanten aus der Reihe (Spec 2026-09-23/-25)
 OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max",
-                    "bewegung_rand_s", "bewegung_spitze_faktor", "bewegung_max", "stabil_min_s", "glatt_s")
+                    "bewegung_max", "stabil_min_s", "glatt_s", "kante_s")
 
 
 # Messversion, geht in den Config-Hash ein. 2 = Brennweite je Frame und Reihe ``verschiebung`` (Spec 2026-09-25):
@@ -728,13 +728,6 @@ def bewegung_spitzen(rec: dict | None, von_s: float, bis_s: float) -> list[list[
     return out
 
 
-def bewegung_grundniveau(rec: dict | None, t_s: float, abstand_s: float = 3.0) -> float | None:
-    """Median der ``bewegung`` aller Fenster, die mindestens ``abstand_s`` von ``t_s`` entfernt liegen — das
-    Grundniveau des Clips ohne die Spitze selbst. None ohne solche Fenster (Spec 2026-09-22)."""
-    fern = [float(f[2]) for f in ((rec or {}).get("fenster") or []) if abs(float(f[0]) - t_s) >= abstand_s]
-    return float(np.median(fern)) if fern else None
-
-
 # --- Bewegung je Frame, ruhige Frames, stabile Läufe (Spec 2026-09-25) ----------------------------------------------
 
 def _glatt(x: np.ndarray, breite: int) -> np.ndarray:
@@ -817,11 +810,69 @@ def stabile_bereiche(rec: dict | None, cfg: dict) -> list[list[float]]:
     return out
 
 
-def bewegung_max_im_bereich(rec: dict | None, von_s: float, bis_s: float, fenster_s: float = 2.0) -> float | None:
-    """Höchste ``bewegung`` der Fenster im Bereich; None ohne Fenster. Für die Meldung des Prüfers, wenn ein
-    Shot außerhalb jedes stabilen Bereichs liegt (Spec 2026-09-23)."""
-    fen = _fenster_im_bereich(rec, von_s, bis_s, fenster_s) if rec and rec.get("fenster") else []
-    return max((float(f[2]) for f in fen), default=None)
+class Kante(NamedTuple):
+    """Nicht ruhige Frames an einer Schnittkante (``in``/``out``) oder in der Mitte eines Shots (Spec 2026-09-25):
+    vom ersten bis nach dem letzten solchen Frame (Quellsekunden), Höchstwerte sichtbar (× Faktor), je 2 Stellen.
+    ``gemessen`` False = die Reihe reicht nicht bis an die Kante."""
+    seite: str
+    von_s: float
+    bis_s: float
+    wackeln: float
+    bewegung: float
+    gemessen: bool = True
+
+
+def _kanten(r: Ruhe, kante_s: float, von_s: float, bis_s: float) -> list[Kante]:
+    """Befunde in [von_s, bis_s]: Kanten je ``kante_s`` Quelle (bei kurzen Shots die Hälfte), dazwischen die Mitte."""
+    kante = min(kante_s, (bis_s - von_s) / 2)
+    out: list[Kante] = []
+    for seite, a, b in (("in", von_s, von_s + kante), ("out", bis_s - kante, bis_s),
+                        ("mitte", von_s + kante, bis_s - kante)):
+        if b - a <= 1e-9:
+            continue
+        s = r.frames(a, b)
+        if s.stop <= s.start:
+            if seite != "mitte":
+                out.append(Kante(seite, round(a, 2), round(b, 2), 0.0, 0.0, gemessen=False))
+            continue
+        unruhig = np.flatnonzero(~r.ruhig[s]) + s.start
+        if len(unruhig):
+            i, j = int(unruhig[0]), int(unruhig[-1]) + 1
+            out.append(Kante(seite, round(r.zeit(i), 2), round(r.zeit(j), 2),
+                             round(float(r.wackeln[i:j].max()), 2), round(float(r.bewegung[i:j].max()), 2)))
+    return out
+
+
+def kanten_befunde(rec: dict | None, cfg: dict, von_s: float, bis_s: float,
+                   faktor: float = 1.0) -> list[Kante] | None:
+    """Nicht ruhige Frames eines genutzten Quellbereichs [von_s, bis_s]: je Schnittkante (``kante_s``·faktor Quelle,
+    ``kante_s`` in Timeline-Sekunden) und in der Mitte (Spec 2026-09-25). ``faktor`` = 1 / tempo. Leer = alles ruhig;
+    None ohne Reihe."""
+    r = ruhe_je_frame(rec, cfg, faktor)
+    if r is None:
+        return None
+    return _kanten(r, float(cfg["kante_s"]) * float(faktor), von_s, bis_s)
+
+
+def ruhige_lage(rec: dict | None, cfg: dict, von_s: float, bis_s: float, faktor: float,
+                grenzen: tuple[float, float]) -> float | None:
+    """Kleinste Verschiebung (Frame-Schritte der Reihe, bei gleichem Abstand die spätere) des Bereichs [von_s, bis_s],
+    nach der beide Schnittkanten gemessen ruhig sind, keine schnelle Zoomfahrt darin liegt und der Bereich in
+    ``grenzen`` bleibt; None, wenn es keine gibt oder die Reihe fehlt (Spec 2026-09-25: Vorschlag, keine Automatik)."""
+    r = ruhe_je_frame(rec, cfg, faktor)
+    if r is None:
+        return None
+    a, z = grenzen
+    kante = float(cfg["kante_s"]) * float(faktor)
+    schritt = 1.0 / r.fps
+    for k in range(1, int(math.ceil((z - a) / schritt)) + 2):
+        for d in (k * schritt, -k * schritt):
+            x, y = von_s + d, bis_s + d
+            if x < a - 1e-6 or y > z + 1e-6 or zooms_im_bereich(rec, x, y):
+                continue
+            if not any(b.seite != "mitte" for b in _kanten(r, kante, x, y)):
+                return round(d, 2)
+    return None
 
 
 def genutzter_quellbereich_s(src_in_f: int, n_f: int, clip_fps: float, langsam: bool,

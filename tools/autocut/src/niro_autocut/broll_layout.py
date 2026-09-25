@@ -651,6 +651,42 @@ def _maengel_nur_clip_weit(c: dict, forbidden: set[str]) -> list[str]:
     return sorted((clip_weit & forbidden) - verortet)
 
 
+def _vorschlag(rec: dict, tcfg: dict, p: dict, von: float, bis: float, faktor: float,
+               spans: list[tuple[float, float]]) -> str:
+    """Text für die Kanten-Meldung: die nächste Lage gleicher Länge mit ruhigen Kanten im erlaubten Bereich des Shots,
+    als In-Punkt des Plans (``in_s``) — ein Vorschlag, keine Automatik (Spec 2026-09-25)."""
+    grenzen = next(((a, z) for a, z in spans if a - EPS <= p["in_s"] and p["out_s"] <= z + EPS), None)
+    if grenzen is None:
+        return "kein Vorschlag, der Shot liegt in keinem erlaubten Bereich"
+    d = TM.ruhige_lage(rec, tcfg, von, bis, faktor, grenzen)
+    if d is None:
+        return "im erlaubten Bereich keine ruhige Lage gleicher Länge — kürzer schneiden oder anderen Bereich"
+    return f"gleich lang passend ab {_z(round(p['in_s'] + d, 2))} s"
+
+
+def _kanten_pruefen(r: VerifyResult, tag: str, rec: dict, tcfg: dict, p: dict, von: float, bis: float,
+                    spans: list[tuple[float, float]]) -> None:
+    """Schnittkanten frame-genau (Spec 2026-09-25): nicht ruhige Frames in den ersten/letzten ``kante_s`` des Shots sind
+    ein Fehler mit Vorschlag, in der Mitte ein Hinweis, eine Kante ohne Messung ebenfalls. Ohne Reihe keine Prüfung
+    (alter Datensatz — die Hash-Prüfung meldet ihn). Bei Zeitlupe zählt die sichtbare Bewegung (Faktor 1 / tempo).
+    Ersetzt die Warnungen „Bewegungsspitze" und „Bereich nicht als stabil gemessen" der Spec 2026-09-23."""
+    faktor = 1.0 / float(p["tempo"] or 1)
+    vorschlag = None
+    for k in TM.kanten_befunde(rec, tcfg, von, bis, faktor) or []:
+        seite = "In" if k.seite == "in" else "Out"
+        if not k.gemessen:
+            r.warnings.append(f"{tag}: {seite}-Punkt ohne Messung (Telemetrie-Reihe zu kurz) — Kante nicht geprüft.")
+        elif k.seite == "mitte":
+            r.warnings.append(f"{tag}: Bewegung im Shot bei {_z(k.von_s)}–{_z(k.bis_s)} s (wackeln {_z(k.wackeln)}, "
+                              f"Bewegung {_z(k.bewegung)} px/Frame) — Hinweis.")
+        else:
+            if vorschlag is None:
+                vorschlag = _vorschlag(rec, tcfg, p, von, bis, faktor, spans)
+            r.errors.append(f"{tag}: {seite}-Punkt liegt in Bewegung ({_z(k.von_s)}–{_z(k.bis_s)} s: wackeln "
+                            f"{_z(k.wackeln)}, Bewegung {_z(k.bewegung)} px/Frame) — {vorschlag}. Shot verschieben, "
+                            f"anderen Bereich wählen oder `abweichung` mit Grund.")
+
+
 def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg: dict, fps: float,
                   tele: list[dict] | None = None) -> VerifyResult:
     """Harte Prüfung nach Spec v2 Abschnitt 3.3."""
@@ -673,7 +709,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     if not isinstance(tcfg, dict):
         r.errors.append("Config: telemetrie fehlt — defaults.yaml prüfen (der Block liegt neben broll:, nicht darunter).")
     else:
-        for key in ("brennweite_gleich_max", "bewegung_rand_s", "bewegung_spitze_faktor", "ruhig_max_px", "fenster_s"):
+        for key in ("brennweite_gleich_max", "ruhig_max_px", "bewegung_max", "glatt_s", "kante_s", "fenster_s"):
             if key not in tcfg:
                 r.errors.append(f"Config: telemetrie.{key} fehlt — defaults.yaml prüfen.")
     if r.errors:
@@ -783,48 +819,12 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         if veraltet:
             alte_schwellen += 1
         if rec is not None and not veraltet:
-            # außerhalb der abweichung-Bedingung: Regel 3c rechnet auf denselben Grenzen weiter
             von, bis = _quellbereich_s(p, fps)
             if not p["abweichung"]:
                 for z in TM.zooms_im_bereich(rec, von, bis):
                     r.errors.append(f"{tag}: schneller Zoom im genutzten Bereich ({z['von_mm']:g} → {z['bis_mm']:g} mm, "
                                     f"Spitze {z['tempo_max']:.0f} %/s) — anderen Bereich wählen oder `abweichung` mit Grund.")
-            rand = float(tcfg["bewegung_rand_s"])
-            faktor = float(tcfg["bewegung_spitze_faktor"])
-            ruhig = float(tcfg["ruhig_max_px"])
-            fen_s = float(rec.get("fenster_s") or tcfg["fenster_s"])
-            # Der geweitete Bereich ist nur lückenlos, solange schritt_s (1,0) <= 2 × bewegung_rand_s (1,0) gilt —
-            # aktuell exakt der Grenzfall. Ein kleineres bewegung_rand_s als schritt_s / 2 ließe zwischen zwei
-            # Fenster-Startzeiten stille Lücken, in denen eine Spitze nie geprüft würde.
-            for t_s, bw in TM.bewegung_spitzen(rec, von - rand, bis + rand):
-                if min(abs(t_s - von), abs(t_s - bis)) > rand:
-                    continue
-                grund_px = TM.bewegung_grundniveau(rec, t_s)
-                if grund_px is None:
-                    continue
-                # Untergrenze bei ruhig_max_px: VORLÄUFIGER SOCKEL OHNE EIGENEN BELEG, von der wackeln-Schwelle
-                # geborgt. ruhig_max_px ist überall sonst eine Schwelle für `wackeln` (Zittern), hier steht ihr
-                # aber `bewegung` (Schwenkweg) gegenüber — zwei verschiedene Größen. Auf bewegtem Material greift
-                # der Sockel deshalb kaum; er wirkt praktisch nur auf Stativmaterial, wo er den rein
-                # multiplikativen Vergleich davor bewahrt, schon bei winzigen Ausreißern zu feuern (Fix-Runde 1
-                # zu Task 5), und den Fall Grundniveau exakt 0,0 abfängt (der Faktor wäre unendlich).
-                # Wer das kalibriert, muss das wissen: der Wert 0,15 ist hier nicht hergeleitet.
-                basis = max(grund_px, ruhig)
-                if bw >= faktor * basis:
-                    schnittgrenze = von if abs(t_s - von) <= abs(t_s - bis) else bis
-                    r.warnings.append(f"{tag}: Schnittgrenze bei {schnittgrenze:g} s im Clip liegt in einer Bewegungsspitze — "
-                                      f"gemessen im Fenster {t_s:g}–{t_s + fen_s:g} s (Bewegung {bw:g} gegen Basis "
-                                      f"{basis:g}, Sockel ruhig_max_px {ruhig:g}) — Hinweis, Schwellen unkalibriert.")
-            # Spec 2026-09-23: der Abschnitt ist verwendbar, der genutzte Bereich aber nicht als ruhig gemessen.
-            # Bewusst nur eine Warnung — ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt. Nur in einem
-            # verwendbar-Abschnitt (Review-Fund I2): ein bereits verworfener Abschnitt ohne stabilen Bereich hat
-            # schon den Lage-Fehler und braucht diese zusätzliche Warnung nicht.
-            if (frisch and not stabil_ok
-                    and any(a.get("verwendbar") for a in _abschnitte_im_bereich(c, p["in_s"], p["out_s"]))):
-                bw = TM.bewegung_max_im_bereich(rec, von, bis, fen_s)
-                bw_txt = "–" if bw is None else f"{bw:.1f}".replace(".", ",")
-                r.warnings.append(f"{tag}: Bereich nicht als stabil gemessen (Bewegung max {bw_txt}) — "
-                                  f"für einen ruhigen Einsetzer einen `stabil`-Bereich wählen.")
+                _kanten_pruefen(r, tag, rec, tcfg, p, von, bis, spans)
         if not p["grund"].strip():
             r.warnings.append(f"{tag}: ohne grund.")
         if p["tempo"] == 4:
