@@ -41,7 +41,10 @@ def clip_kalibrieren(path: str | Path, cfg: dict, von_s: float, dauer_s: float =
         return None
     i0 = int(round(von_s * info.fps))
     i1 = int(round((von_s + dauer_s) * info.fps))
-    gyro = d.gyro[i0 * d.proben_je_sample:i1 * d.proben_je_sample]
+    # Proben je Sample aus der IMU-Rate: bei 59,94p/119,88p schwankt die Zahl je Sample (33/34, 16/17), proben_je_sample
+    # ist nur die des ersten — Sample-Index · proben_je_sample lag 1–4 % von von_s neben dem optischen Fenster
+    je = d.imu_hz / info.fps if d.imu_hz else d.proben_je_sample
+    gyro = d.gyro[int(round(i0 * je)):int(round(i1 * je))]
     rate = gyro_je_frame(gyro, d.proben_je_sample, info.fps, imu_hz=d.imu_hz)
     breite = int(cfg["optisch_breite"])
     opt = verschiebungen(graustufen(p, ZIEL_FPS, von_s, dauer_s, breite, int(round(breite * 9 / 16))))

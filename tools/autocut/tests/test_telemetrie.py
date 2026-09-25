@@ -157,9 +157,9 @@ def _kb(mm: float) -> bytes:
 
 
 def _rtmd_puffer(frames: int = 100, proben: int = 80, gyro_y: float = 0.0, acc=(0.0, 1.15, 0.0),
-                 kb: bytes | list[bytes] = bytes.fromhex("c2cc")) -> bytes:
+                 kb: bytes | list[bytes] = bytes.fromhex("c2cc"), imu_hz: int | None = 2000) -> bytes:
     """Synthetische Datenspur: je Frame ein Sample mit konstantem Gyro (°/s um y) und Schwerkraftvektor; ``kb`` als
-    Liste = KB-Brennweite je Frame (``_kb``)."""
+    Liste = KB-Brennweite je Frame (``_kb``); ``imu_hz`` None = ohne Tag 0xE435 (IMU-Rate unbekannt)."""
     def imu(v):
         out = struct.pack(">II", proben, 6)
         for _ in range(proben):
@@ -169,8 +169,10 @@ def _rtmd_puffer(frames: int = 100, proben: int = 80, gyro_y: float = 0.0, acc=(
     a = imu(tuple(int(round(x * 8192)) for x in acc))
     tags = {R.TAG_GYRO: g, R.TAG_GYRO_SKALA: struct.pack(">f", 65.5), R.TAG_ACC: a,
             R.TAG_ACC_SKALA: struct.pack(">f", 8192.0),
-            R.TAG_IMU_HZ: struct.pack(">I", 2000), R.TAG_KB_MM: kb if isinstance(kb, bytes) else kb[0],
+            R.TAG_IMU_HZ: struct.pack(">I", imu_hz or 0), R.TAG_KB_MM: kb if isinstance(kb, bytes) else kb[0],
             R.TAG_BRENNWEITE_MM: bytes.fromhex("c2a5"), R.TAG_FOKUS_M: bytes.fromhex("e62e")}
+    if imu_hz is None:
+        del tags[R.TAG_IMU_HZ]
     if isinstance(kb, bytes):
         return R.paket_bauen(tags) * frames
     return b"".join(R.paket_bauen({**tags, R.TAG_KB_MM: k}) for k in kb[:frames])

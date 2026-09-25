@@ -905,6 +905,9 @@ Clip-Medians. Die Klassen entfallen seit 21.09.2026 (Spec Zoomfahrten): Stufe 2b
 Seit 25.09.2026 rechnet auch `--kalibrieren` den Gyro mit der KB-Brennweite je Frame im gemessenen Fenster (wie die Reihe
 `verschiebung`; `kb_mm` je Clip = Median im Fenster). Die `px_faktor`-Werte 0,60/0,69 oben stammen noch aus dem Clip-Median,
 der die Steigung je Zoom-Clip verzerrt (der Median über die Clips dämpft das) — Neukalibrierung offen, Entscheidung des Users.
+Ebenfalls seit 25.09.2026 schneidet `--kalibrieren` das Gyro-Fenster über die IMU-Rate: bei 59,94p/119,88p schwankt die Probenzahl
+je Sample (33/34, 16/17), mit der des ersten Samples lag das Gyro-Fenster 1–4 % von `von_s` neben dem optischen (bei 5 s bis
+0,2 s, bei 0,5 s rund 20 ms) — ob HFR-Clips die Werte oben verzerrt haben, ist nicht gemessen.
 
 **Kalibrierwerte Umschwenken (22.09.2026, negatives Ergebnis):** gesucht war die Grenze für Umschwenken zwischen zwei
 Ausrichtungen (Ausschuss) gegenüber gewollter Bewegung, zwei Runden mit 12 und 18 Beispielen aus MEK, 30 Urteile des
