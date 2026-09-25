@@ -19,7 +19,7 @@ from scipy.stats import spearmanr
 from .charge import AutoCutError
 from .media import ffprobe
 from .rtmd import auswerten, datenspur_lesen, kamera_erkennen, samples, sidecar_modell
-from .telemetrie import ZIEL_FPS, f_px, gyro_je_frame, wackeln_bewegung
+from .telemetrie import ZIEL_FPS, _auf_laenge, f_px, gyro_je_frame, kb_je_frame, wackeln_bewegung
 from .telemetrie_optisch import graustufen, verschiebungen
 
 SAETTIGUNG_PX = 40.0
@@ -28,8 +28,9 @@ BELASTBAR_AB = 0.7
 
 
 def clip_kalibrieren(path: str | Path, cfg: dict, von_s: float, dauer_s: float = 4.0) -> dict | None:
-    """Gyro-Raten je 25-fps-Frame (roh, 3 Achsen) und optische Verschiebung über dasselbe Fenster; None ohne
-    Gyro/Brennweite."""
+    """Gyro-Raten je 25-fps-Frame (roh, 3 Achsen) und optische Verschiebung über dasselbe Fenster; ``k`` (°/s → px)
+    je Frame aus der KB-Brennweite im Fenster wie ``clip_messen`` (Spec 2026-09-25; mit dem Clip-Median war die
+    Steigung bei Zoom-Clips verzerrt), ``kb_mm`` = Median im Fenster. None ohne Gyro/Brennweite."""
     p = Path(path)
     info = ffprobe(p)
     buf = datenspur_lesen(p)
@@ -40,16 +41,22 @@ def clip_kalibrieren(path: str | Path, cfg: dict, von_s: float, dauer_s: float =
         return None
     i0 = int(round(von_s * info.fps))
     i1 = int(round((von_s + dauer_s) * info.fps))
-    gyro = d.gyro[i0 * d.proben_je_sample:i1 * d.proben_je_sample]
+    # Proben je Sample aus der IMU-Rate: bei 59,94p/119,88p schwankt die Zahl je Sample (33/34, 16/17), proben_je_sample
+    # ist nur die des ersten — Sample-Index · proben_je_sample lag 1–4 % von von_s neben dem optischen Fenster
+    je = d.imu_hz / info.fps if d.imu_hz else d.proben_je_sample
+    gyro = d.gyro[int(round(i0 * je)):int(round(i1 * je))]
     rate = gyro_je_frame(gyro, d.proben_je_sample, info.fps, imu_hz=d.imu_hz)
-    opt = verschiebungen(graustufen(p, ZIEL_FPS, von_s, dauer_s, int(cfg["optisch_breite"]),
-                                    int(round(int(cfg["optisch_breite"]) * 9 / 16))))
+    breite = int(cfg["optisch_breite"])
+    opt = verschiebungen(graustufen(p, ZIEL_FPS, von_s, dauer_s, breite, int(round(breite * 9 / 16))))
     m = min(len(rate) - 1, len(opt))
     if m < MIN_FRAMES:
         return None
-    kb = float(np.median(d.kb_mm))
-    return {"path": str(p), "clip": p.stem, "kamera": kamera_erkennen(p, sidecar_modell(p)), "kb_mm": round(kb, 1),
-            "k": math.pi / 180.0 * f_px(kb, int(cfg["optisch_breite"])) / ZIEL_FPS,
+    # kb_je_frame zählt 25-fps-Frames ab Clipbeginn, i0 zählt Samples (info.fps): Fensterbeginn umrechnen
+    kb25 = kb_je_frame(d.kb_mm, d.kb_index, info.fps, d.samples)
+    j0 = min(int(round(i0 * ZIEL_FPS / info.fps)), len(kb25) - 1)
+    kb = _auf_laenge(kb25[j0:j0 + m], m)
+    return {"path": str(p), "clip": p.stem, "kamera": kamera_erkennen(p, sidecar_modell(p)),
+            "kb_mm": round(float(np.median(kb)), 1), "k": [math.pi / 180.0 * f_px(x, breite) / ZIEL_FPS for x in kb],
             "rate": rate[:m].tolist(), "opt": opt[:m].tolist()}
 
 
@@ -70,7 +77,8 @@ def auswerten_kalibrierung(messungen: list[dict], cfg: dict, ruhe: dict | None =
             ok = (np.abs(opt) < SAETTIGUNG_PX).all(axis=1)
             if ok.sum() < MIN_FRAMES:
                 continue
-            rates.append(rate[ok] * m["k"])
+            k = np.broadcast_to(np.asarray(m["k"], float), len(rate))      # je Frame; eine Zahl gilt für alle Frames
+            rates.append(rate[ok] * k[ok, None])
             opts.append(opt[ok])
             clips.append(m)
         if not clips:

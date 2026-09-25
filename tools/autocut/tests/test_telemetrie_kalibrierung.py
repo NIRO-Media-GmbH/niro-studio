@@ -4,10 +4,11 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import pytest
 
 from niro_autocut import telemetrie_kalibrierung as K
 from niro_autocut.charge import Charge
-from test_telemetrie import CFG
+from test_telemetrie import CFG, _info, _kb, _rtmd_puffer, _zoomreihe
 
 
 def _messung(rng, kamera: str, faktor: float, n: int = 100, kb: float = 36.0, rauschen: float = 0.05,
@@ -61,6 +62,92 @@ def test_auswerten_klammert_saettigung_aus_und_vergleicht_cv2():
     assert erg["kameras"]["FX3"]["clips"] == 5 and abs(erg["kameras"]["FX3"]["px_faktor"] - 1.0) < 0.15
     assert (erg["cv2_vergleich"]["n"] == 5
            and abs(erg["cv2_vergleich"]["verhaeltnis_median"] - 1.02) < 0.01 and erg["cv2_vergleich"]["r"] > 0.99)
+
+
+def _zoom_im_fenster(monkeypatch, tmp_path, faktor: float = 0.6) -> dict | None:
+    """FX3-Clip 12 s in 50p: 7 s bei 24 mm, Zoom auf 72 mm in 7–8 s, danach 72 mm; Kalibrierfenster 7–11 s mit der
+    Zoomfahrt am Anfang (Sample 350 = 25-fps-Frame 175). Optisch = faktor · Schwenk (Gyro-y, Vorzeichen −), jede
+    rtmd-Probe über ihre eigene Brennweite gerechnet — unabhängig vom Code; der Clip-Median (24 mm) liegt neben dem
+    Fenster (72 mm)."""
+    fps, von_s = 50.0, 7.0
+    kb = np.array(_zoomreihe((7.0, 24, 24), (1.0, 24, 72), (4.0, 72, 72), fps=fps)[:600])
+    gyro_y = np.random.default_rng(11).integers(-400, 400, len(kb)) / 65.5         # Skala 65,5: genau darstellbar
+    beitrag = -faktor * gyro_y / fps * math.pi / 180.0 * 480.0 * kb / 36.0            # px je 50p-Sample
+    dx = beitrag[350:550].reshape(100, 2).sum(axis=1)                                 # 2 Samples je 25-fps-Frame
+    opt = np.stack([dx, np.zeros(100)], axis=1)
+    puffer = b"".join(_rtmd_puffer(frames=1, proben=40, gyro_y=w, kb=_kb(mm)) for w, mm in zip(gyro_y, kb))
+    clip = tmp_path / "FX3_0080.MP4"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(K, "ffprobe", lambda p: _info(str(p), fps=fps, dauer=12.0))
+    monkeypatch.setattr(K, "datenspur_lesen", lambda p: puffer)
+    monkeypatch.setattr(K, "graustufen", lambda *a: None)
+    monkeypatch.setattr(K, "verschiebungen", lambda bilder: opt)
+    return K.clip_kalibrieren(clip, CFG, von_s)
+
+
+def test_kalibrierung_rechnet_zoom_im_fenster_mit_der_brennweite_je_frame(monkeypatch, tmp_path):
+    """Spec 2026-09-25 für den Kalibrierweg: Gyro-px mit der Brennweite je Frame im Fenster wie ``clip_messen`` —
+    mit dem Clip-Median (eine Brennweite für den ganzen Clip) kam hier 1,59 statt 0,6 heraus."""
+    m = _zoom_im_fenster(monkeypatch, tmp_path, faktor=0.6)
+    erg = K.auswerten_kalibrierung([m], CFG)
+    assert erg["kameras"]["FX3"]["px_faktor"] == pytest.approx(0.6, abs=0.005)
+
+
+def test_kalibrierung_klammert_saettigung_aus_ohne_die_brennweiten_zu_verschieben(monkeypatch, tmp_path):
+    """Gesättigte Frames am Fensteranfang (in der Zoomfahrt) fallen raus; jeder übrige Frame behält sein ``k``."""
+    m = _zoom_im_fenster(monkeypatch, tmp_path, faktor=0.6)
+    opt = np.array(m["opt"])
+    opt[:10, 0] += 50.0                                                  # ≥ 40 px: Phasenkorrelation gesättigt
+    m["opt"] = opt.tolist()
+    fx = K.auswerten_kalibrierung([m], CFG)["kameras"]["FX3"]
+    assert fx["frames"] == 89 and fx["px_faktor"] == pytest.approx(0.6, abs=0.005)
+
+
+def test_kalibrierung_nennt_die_brennweite_im_fenster(monkeypatch, tmp_path):
+    """``kb_mm`` (Fortschritt, ``clips`` in telemetrie_kalibrierung.json) = Median im gemessenen Fenster."""
+    assert _zoom_im_fenster(monkeypatch, tmp_path)["kb_mm"] == 72.0
+
+
+def _clip_bei_fps(monkeypatch, tmp_path, zaehler: int, nenner: int, von_s: float, faktor: float = 0.6,
+                  imu_hz: int | None = 2000) -> dict | None:
+    """FX3-Clip 12 s bei zaehler/nenner fps, IMU mit 2000 Hz: Probe q liegt bei q / 2000 s, Sample i beginnt mit Probe
+    ⌊i · 2000 / fps⌋ — bei 119,88p 16/17 Proben je Sample, bei 59,94p 33/34 (das erste Sample 16 bzw. 33), bei 50p fest
+    40. Gyro-y je Sample zufällig. Optisch = faktor · Schwenk (Gyro-y, Vorzeichen −) über die 80 Proben je 25-fps-Frame
+    ab Probe von_s · 2000 — aus der Probenzeit gerechnet, unabhängig vom Code; ``von_s`` liegt auf einer Sample-Grenze.
+    ``info.fps`` auf 3 Stellen gerundet wie ``media.ffprobe``."""
+    n = 12 * zaehler // nenner
+    vor = [i * 2000 * nenner // zaehler for i in range(n + 1)]                  # Proben vor Sample i
+    proben = np.diff(vor)
+    gyro_y = np.random.default_rng(12).integers(-400, 400, n) / 65.5          # Skala 65,5: genau darstellbar
+    grad = np.repeat(gyro_y, proben) / 2000.0                                  # Drehung je Probe in °
+    a = int(round(von_s * 2000))
+    px_je_grad = math.pi / 180.0 * 480.0 * 71.6 / 36.0                         # KB 71,6 mm (_rtmd_puffer)
+    dx = -faktor * px_je_grad * grad[a:a + 8000].reshape(100, 80).sum(axis=1)
+    opt = np.stack([dx, np.zeros(100)], axis=1)
+    puffer = b"".join(_rtmd_puffer(frames=1, proben=int(p), gyro_y=w, imu_hz=imu_hz) for p, w in zip(proben, gyro_y))
+    clip = tmp_path / "FX3_0090.MP4"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(K, "ffprobe", lambda p: _info(str(p), fps=round(zaehler / nenner, 3), dauer=12.0))
+    monkeypatch.setattr(K, "datenspur_lesen", lambda p: puffer)
+    monkeypatch.setattr(K, "graustufen", lambda *a: None)
+    monkeypatch.setattr(K, "verschiebungen", lambda bilder: opt)
+    return K.clip_kalibrieren(clip, CFG, von_s)
+
+
+@pytest.mark.parametrize("zaehler", [60000, 120000], ids=["59,94p", "119,88p"])
+def test_kalibrierung_schneidet_das_gyro_fenster_nach_der_zeit(monkeypatch, tmp_path, zaehler):
+    """Bei 59,94p/119,88p schwankt die Probenzahl je Sample, ``proben_je_sample`` ist die des ersten Samples. Fenster
+    ab 5,005 s (Sample 300 bzw. 600 = Probe 10010): mit Sample-Index · proben_je_sample begann das Gyro-Fenster bei
+    Probe 9900 bzw. 9600, 55 bzw. 205 ms vor dem optischen — Korrelation und px_faktor ≈ 0 statt −1 und 0,6."""
+    fx = K.auswerten_kalibrierung([_clip_bei_fps(monkeypatch, tmp_path, zaehler, 1001, 5.005)], CFG)["kameras"]["FX3"]
+    assert fx["r_schwenk"] == pytest.approx(-1.0, abs=0.001) and fx["px_faktor"] == pytest.approx(0.6, abs=0.005)
+
+
+def test_kalibrierung_ohne_imu_rate_schneidet_nach_proben_je_sample(monkeypatch, tmp_path):
+    """Ohne Tag 0xE435 (IMU-Rate unbekannt) bleibt der Schnitt Sample-Index · proben_je_sample — bei fester Probenzahl
+    (50p: 40 je Sample) genau."""
+    m = _clip_bei_fps(monkeypatch, tmp_path, 50, 1, 7.0, imu_hz=None)
+    assert K.auswerten_kalibrierung([m], CFG)["kameras"]["FX3"]["px_faktor"] == pytest.approx(0.6, abs=0.005)
 
 
 def test_tabelle_und_leer():

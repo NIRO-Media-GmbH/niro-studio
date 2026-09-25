@@ -902,6 +902,12 @@ dämpfen), Spearman 0,76/0,71 → beide belastbar, `optisch_fuer` leer. Der opti
 (0,107) und P25 der a7-IV-Handclips (0,191). MEK (463 Clips) gegen den Stufe-2b-Index: Perspektive Höhe 76 % gleich (Pitch-Vorzeichen
 bestätigt), Brennweite nur 47 % — Claude nennt bis etwa 75 mm KB „normal", und Zoomfahrten (157 Clips) bekommen die Klasse des
 Clip-Medians. Die Klassen entfallen seit 21.09.2026 (Spec Zoomfahrten): Stufe 2b trägt `brennweite_mm` und `zoom`.
+Seit 25.09.2026 rechnet auch `--kalibrieren` den Gyro mit der KB-Brennweite je Frame im gemessenen Fenster (wie die Reihe
+`verschiebung`; `kb_mm` je Clip = Median im Fenster). Die `px_faktor`-Werte 0,60/0,69 oben stammen noch aus dem Clip-Median,
+der die Steigung je Zoom-Clip verzerrt (der Median über die Clips dämpft das) — Neukalibrierung offen, Entscheidung des Users.
+Ebenfalls seit 25.09.2026 schneidet `--kalibrieren` das Gyro-Fenster über die IMU-Rate: bei 59,94p/119,88p schwankt die Probenzahl
+je Sample (33/34, 16/17), mit der des ersten Samples lag das Gyro-Fenster 1–4 % von `von_s` neben dem optischen (bei 5 s bis
+0,2 s, bei 0,5 s rund 20 ms) — ob HFR-Clips die Werte oben verzerrt haben, ist nicht gemessen.
 
 **Kalibrierwerte Umschwenken (22.09.2026, negatives Ergebnis):** gesucht war die Grenze für Umschwenken zwischen zwei
 Ausrichtungen (Ausschuss) gegenüber gewollter Bewegung, zwei Runden mit 12 und 18 Beispielen aus MEK, 30 Urteile des
