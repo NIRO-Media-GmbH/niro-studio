@@ -408,6 +408,11 @@ class Aligner:
 # --------------------------------------------------------------------------- #
 
 _OMISSION = re.compile(r"\[\s*(?:…|\.{3}|\. \. \.)\s*\]|\(\s*(?:…|\.{3})\s*\)")
+# Einfache Anführungszeichen nur an Wortgrenzen entfernen — außer dem Apostroph vor einer Kurzform („'ne“, „’n“,
+# „'s“ …): Scribe schreibt ihn mit, und norm_tokens macht auf beiden Seiten erst mit ihm „eine“, „ein“, „es“ daraus.
+_KURZFORM = "|".join(sorted(CONTRACTIONS, key=len, reverse=True))
+_EINFACHE_ANF = re.compile(r"(?<![a-zäöüßA-ZÄÖÜ])[‚‘’'](?!(?i:%s)(?![a-zäöüßA-ZÄÖÜ]))|[‚‘’'](?![a-zäöüßA-ZÄÖÜ])"
+                           % _KURZFORM)
 
 
 def split_quote(quote: str) -> list[str]:
@@ -419,7 +424,7 @@ def split_quote(quote: str) -> list[str]:
     q = re.sub(r"\[[^\]]*\]", " ", q)                   # [redaktionell] → weg
     q = re.sub(r"\([^)]*\)", " ", q)                    # (lacht) → weg
     q = re.sub(r"[„“”\"«»]", " ", q)                    # doppelte Anführungszeichen
-    q = re.sub(r"(?<![a-zäöüßA-ZÄÖÜ])[‚‘’']|[‚‘’'](?![a-zäöüßA-ZÄÖÜ])", " ", q)  # einfache nur an Wortgrenzen
+    q = _EINFACHE_ANF.sub(" ", q)                       # einfache nur an Wortgrenzen, Kurzformen bleiben
     q = q.replace("…", " ")                             # freies „…" = Pause, kein Split
     return [f for f in (p.strip() for p in q.split("\x00")) if f]
 
