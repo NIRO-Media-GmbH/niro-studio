@@ -92,7 +92,8 @@ genutzten Quell-Frames (`_quellbereich_s()`):
 
 - **Schnittkanten — Fehler.** Die ersten und letzten `kante_s` (0,3 s Timeline) des Shots müssen ruhig sein. Kante =
   alle Frames der Reihe mit `q_von ≤ t < q_von + kante_s·f` bzw. `q_bis − kante_s·f ≤ t < q_bis`; ruhig heißt dort
-  `wackeln·f ≤ ruhig_max_px` und `bewegung·f ≤ bewegung_max`, mit `f = 1 / tempo` des Shots (Zeitlupe: sichtbare
+  `wackeln·f ≤ ruhig_max_px` und `bewegung·f ≤ bewegung_max`, außerhalb schneller Zoomfahrten (wie Abschnitt 2),
+  mit `f = 1 / tempo` des Shots (Zeitlupe: sichtbare
   Bewegung, 0,3 s Timeline = 0,3·f s Quelle). Die Glättung reicht 0,2 s über die Kante hinaus — ein Sicherheitsabstand
   zur Bewegung davor bzw. danach. Meldung mit Stelle, Werten und Vorschlag:
   „Strecke 4 Szene 1 Shot 1 (FX3_0700.MP4 7–9,64 s): In-Punkt liegt in Bewegung (7,0–7,3 s: wackeln 0,52, Bewegung
