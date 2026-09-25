@@ -16,6 +16,7 @@ from niro_autocut import rtmd as R
 from niro_autocut import telemetrie as T
 from niro_autocut.charge import Charge, load_config
 from niro_autocut.media import MediaInfo
+from reihen import rec as _rec_reihe
 
 CFG = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_max_px": 0.15, "stativ_max_grad_s": 0.3,
        "stativ_max_px": 0.02, "schwenk_min_grad_s": 3.0, "schwenk_min_px": 1.0, "hf_grenze_hz": 3.0,
@@ -1186,87 +1187,185 @@ def test_bewegung_spitzen_plateau_am_rand():
     assert T.bewegung_spitzen(rec2, 0.0, 4.0) == [[2.0, 2.5], [3.0, 2.5]]
 
 
-def test_neue_schluessel_aendern_den_config_hash_nicht():
-    """Sonst gälte jede vorhandene telemetrie.json als veraltet und würde neu gemessen."""
-    import yaml
-    from pathlib import Path
-    cfg = yaml.safe_load((Path(__file__).resolve().parents[1] / "defaults.yaml").read_text())["telemetrie"]
-    vorher = T.config_hash({k: v for k, v in cfg.items()
-                            if k not in ("bewegung_rand_s", "bewegung_spitze_faktor")})
-    assert T.config_hash(cfg) == vorher
-
-
-def test_bewegung_grundniveau_nimmt_nur_entfernte_fenster():
-    rec = {"fenster": [[0.0, 0.1, 0.4, "fahrt", None],
-                       [1.0, 0.1, 0.6, "fahrt", None],
-                       [4.0, 0.1, 9.0, "schwenk_links", None],   # die Spitze selbst
-                       [8.0, 0.1, 0.5, "fahrt", None]]}
-    assert T.bewegung_grundniveau(rec, 4.0, 3.0) == 0.5          # Median von 0,4 / 0,6 / 0,5
-    assert T.bewegung_grundniveau({"fenster": []}, 4.0, 3.0) is None
-
-
 # --------------------------------------------------------------------------- #
-# Stabile Bereiche (Spec 2026-09-23)
+# Schnittkanten frame-genau (Spec 2026-09-25): Reihe je Frame, Brennweite je Frame, Messversion
 # --------------------------------------------------------------------------- #
 
-CFG_STABIL = {**CFG, "bewegung_max": 2.0, "stabil_min_s": 2.0}
+def test_verschiebung_aus_rate_mit_brennweite_je_frame():
+    rate = np.zeros((4, 3))
+    rate[:, 1] = 10.0
+    fest = T.verschiebung_aus_rate(rate, 36.0, CFG)
+    je_frame = T.verschiebung_aus_rate(rate, np.array([36.0, 36.0, 72.0, 72.0]), CFG)
+    assert np.allclose(je_frame[:2], fest[:2]) and np.allclose(je_frame[2:], 2 * fest[2:])
 
 
-def _rec_fenster(fenster, ruhige=None, dauer_s=None, fenster_s=2.0):
-    """Datensatz mit Fenster-Reihe; ruhige_fenster sonst aus wackeln <= ruhig_max_px wie clip_messen()."""
-    if ruhige is None:
-        ruhige = [f[0] for f in fenster if f[1] <= CFG_STABIL["ruhig_max_px"]]
-    return {"clip": "FX3_1", "dauer_s": dauer_s, "fenster_s": fenster_s,
-            "fenster": fenster, "ruhige_fenster": ruhige}
+def test_auf_laenge_kuerzt_oder_haelt_den_letzten_wert():
+    assert T._auf_laenge(np.array([1.0, 2.0, 3.0]), 2).tolist() == [1.0, 2.0]
+    assert T._auf_laenge(np.array([1.0, 2.0]), 4).tolist() == [1.0, 2.0, 2.0, 2.0]
 
 
-def test_stabile_bereiche_fasst_benachbarte_ruhige_fenster_zusammen():
-    rec = _rec_fenster([[0.0, 0.05, 0.1, "statisch", None], [1.0, 0.06, 0.2, "statisch", None],
-                        [2.0, 0.40, 3.0, "schwenk_links", None], [3.0, 0.05, 0.3, "statisch", None],
-                        [4.0, 0.05, 0.3, "statisch", None]], dauer_s=6.0)
-    assert T.stabile_bereiche(rec, CFG_STABIL) == [[0.0, 3.0, 0.06, 0.2], [3.0, 6.0, 0.05, 0.3]]
+def test_verschiebung_reihe_rundet_auf_zwei_stellen():
+    r = T.verschiebung_reihe(np.array([[0.123, -1.0], [2.0049, 0.006], [-0.001, 0.0]]))
+    assert r == {"fps": 25.0, "t0_s": 0.0, "dx": [0.12, 2.0, 0.0], "dy": [-1.0, 0.01, 0.0]}
+    assert str(r["dx"][2]) == "0.0"                       # keine −0,0 in telemetrie.json
 
 
-def test_stabile_bereiche_deckelt_bewegung_und_kappt_an_der_clipdauer():
-    # t=1 ist nach wackeln ruhig, die Bewegung (3,5) liegt über bewegung_max → der Lauf beginnt erst bei t=2;
-    # das Ende 3,0 + fenster_s = 5,0 wird auf die Clipdauer 4,6 gekappt
-    rec = _rec_fenster([[0.0, 0.30, 0.4, "fahrt", None], [1.0, 0.05, 3.5, "schwenk_rechts", None],
-                        [2.0, 0.05, 0.4, "fahrt", None], [3.0, 0.05, 0.4, "fahrt", None]], dauer_s=4.6)
-    assert T.stabile_bereiche(rec, CFG_STABIL) == [[2.0, 4.6, 0.05, 0.4]]
+def test_clip_messen_schreibt_die_reihe_je_frame(monkeypatch, tmp_path):
+    clip = tmp_path / "FX3_0003.MP4"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=100, gyro_y=10.0))
+    rec = T.clip_messen(clip, CFG)
+    v = rec["verschiebung"]
+    assert v["fps"] == 25.0 and v["t0_s"] == 0.0 and len(v["dx"]) == len(v["dy"]) == 100
+    # Test-CFG (Vorzeichen Schwenk −1): 10 °/s bei 71,6 mm KB ≈ −6,66 px je Frame
+    assert v["dx"][0] == pytest.approx(-6.66, abs=0.01) and v["dy"][0] == 0.0
+    assert T._leer(clip, "FX3", None)["verschiebung"] is None
 
 
-def test_stabile_bereiche_folgt_ruhige_fenster_und_verwirft_zu_kurze_laeufe():
-    # ruhige_fenster ist die Quelle: t=2 fehlt dort (schnelle Zoomfahrt im Fenster), obwohl wackeln klein ist
-    rec = _rec_fenster([[0.0, 0.05, 0.1, "statisch", None], [1.0, 0.40, 0.1, "gemischt", None],
-                        [2.0, 0.05, 0.1, "statisch", None]], ruhige=[0.0], dauer_s=4.0)
-    assert T.stabile_bereiche(rec, CFG_STABIL) == [[0.0, 2.0, 0.05, 0.1]]
-    assert T.stabile_bereiche(rec, {**CFG_STABIL, "stabil_min_s": 2.5}) == []
+def test_clip_messen_optisch_schreibt_die_reihe(monkeypatch, tmp_path):
+    clip = tmp_path / "DJI_0073.MOV"
+    clip.write_bytes(b"x")
+    _optisch_fakes(monkeypatch, seed=22)
+    rec = T.clip_messen(clip, CFG)
+    assert rec["quelle"] == "optisch" and len(rec["verschiebung"]["dx"]) == 29      # 30 Bilder → 29 Verschiebungen
+    assert set(rec["verschiebung"]["dx"]) == {0.0}                                    # gleiche Bilder: keine Bewegung
 
 
-def test_stabile_bereiche_ohne_daten_leer():
-    assert T.stabile_bereiche(None, CFG_STABIL) == []
-    assert T.stabile_bereiche({"fenster": [], "ruhige_fenster": []}, CFG_STABIL) == []
-    # Fenster vorhanden, aber keins ruhig (Datensatz einer verwackelten Handkamera)
-    assert T.stabile_bereiche({"fenster": [[0.0, 2.0, 5.0, "gemischt", None]], "ruhige_fenster": [],
-                               "dauer_s": 3.0, "fenster_s": 2.0}, CFG_STABIL) == []
+def test_clip_messen_rechnet_den_gyro_mit_der_brennweite_je_frame(monkeypatch, tmp_path):
+    clip = tmp_path / "FX3_0074.MP4"
+    clip.write_bytes(b"x")
+    kb = _zoomreihe((2.0, 24, 24), (0.4, 24, 72), (2.0, 72, 72))             # 111 Samples, Zoom 24 → 72 mm
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p), dauer=4.44))
+    monkeypatch.setattr(T, "datenspur_lesen",
+                        lambda p: _rtmd_puffer(frames=len(kb), gyro_y=10.0, kb=[_kb(x) for x in kb]))
+    rec = T.clip_messen(clip, CFG)
+    dx = rec["verschiebung"]["dx"]
+    assert len(dx) == 111
+    # gleiche Drehung, dreifache Brennweite → dreifache Bildverschiebung (vorher überall der Median)
+    assert dx[-1] == pytest.approx(3 * dx[0], rel=0.02) and dx[0] == pytest.approx(-2.23, abs=0.01)
 
 
-def test_bewegung_max_im_bereich():
-    rec = _rec_fenster([[0.0, 0.05, 0.1, "statisch", None], [1.0, 0.05, 2.4, "fahrt", None],
-                        [2.0, 0.05, 0.3, "statisch", None]], dauer_s=4.0)
-    assert T.bewegung_max_im_bereich(rec, 0.0, 4.0) == 2.4
-    assert T.bewegung_max_im_bereich(None, 0.0, 4.0) is None
-    assert T.bewegung_max_im_bereich({"fenster": []}, 0.0, 4.0) is None
+def test_config_hash_traegt_die_messversion(monkeypatch):
+    h = T.config_hash(CFG)
+    monkeypatch.setattr(T, "MESS_VERSION", T.MESS_VERSION + 1)
+    assert T.config_hash(CFG) != h
+
+
+CFG_FRAME = {**CFG, "bewegung_max": 2.0, "stabil_min_s": 2.0, "glatt_s": 0.4, "kante_s": 0.3}
+
+
+def test_bewegung_je_frame_betrag_und_wackeln():
+    t0, fps, wk, bw = T.bewegung_je_frame(_rec_reihe((2.0, 3.0, 4.0)), 0.4)
+    assert (t0, fps, len(bw)) == (0.0, 25.0, 50)
+    assert np.allclose(bw, 5.0) and np.allclose(wk, 0.0)            # Betrag √(3² + 4²), keine Änderung je Frame
+    _, _, wk2, bw2 = T.bewegung_je_frame(_rec_reihe((2.0, 0.0, 0.0, 0.5)), 0.4)
+    assert np.allclose(wk2, 0.5) and np.allclose(bw2, 0.5)         # dx ±0,5 im Wechsel: |Δdx| 1,0, Achsmittel 0,5
+    assert T.bewegung_je_frame(_rec_reihe((1.0, 0.0, 0.0), t0_s=3.0), 0.4)[0] == 3.0
+    _, _, wk3, bw3 = T.bewegung_je_frame(_rec_reihe((0.12, 1.0, 0.0)), 0.4)   # 3 Frames, kürzer als die Glättung
+    assert len(wk3) == len(bw3) == 3 and np.allclose(bw3, 1.0)
+
+
+def test_bewegung_je_frame_ohne_reihe():
+    assert T.bewegung_je_frame(None, 0.4) is None
+    assert T.bewegung_je_frame({"verschiebung": None}, 0.4) is None
+    assert T.bewegung_je_frame({"verschiebung": {"fps": 25.0, "t0_s": 0.0, "dx": [], "dy": []}}, 0.4) is None
+
+
+def test_ruhe_je_frame_schwellen_zeitlupe_und_zoom():
+    rec = _rec_reihe((2.0, 0.0, 0.0), (2.0, 5.0, 0.0))                   # ab 2,0 s Bewegung 5 px je Frame
+    r = T.ruhe_je_frame(rec, CFG_FRAME)
+    # 0,4 s Glättung: der Sprung bei Frame 50 (wackeln 2,5) wirkt auf die Frames 46–55, die Bewegung ab Frame 50
+    assert np.flatnonzero(r.ruhig).tolist() == list(range(46))
+    assert T.ruhe_je_frame(rec, CFG_FRAME, faktor=0.25).ruhig.all()      # tempo 4: sichtbar 1,25 px je Frame
+    zoom = _rec_reihe((4.0, 0.0, 0.0), zooms=[{"von_s": 0.4, "bis_s": 0.8, "urteil": "schnell"},
+                                             {"von_s": 2.0, "bis_s": 3.0, "urteil": "langsam"}])
+    assert np.flatnonzero(~T.ruhe_je_frame(zoom, CFG_FRAME).ruhig).tolist() == list(range(10, 20))
+    assert T.ruhe_je_frame({"zooms": []}, CFG_FRAME) is None
+
+
+def test_ruhe_frames_und_zeit():
+    r = T.ruhe_je_frame(_rec_reihe((2.0, 0.0, 0.0), (2.0, 5.0, 0.0)), CFG_FRAME)
+    assert r.frames(0.5, 1.0) == slice(13, 25) and r.frames(-1.0, 0.1) == slice(0, 3)
+    assert r.frames(3.9, 9.0) == slice(98, 100) and r.zeit(10) == 0.4
+
+
+def test_stabile_bereiche_frame_genau():
+    rec = _rec_reihe((2.4, 0.0, 0.0), (0.8, 5.0, 0.0), (4.8, 0.0, 0.0), dauer_s=8.0)
+    # Schwenk 2,4–3,2 s: die Läufe enden 0,16 s davor und beginnen 0,24 s danach (Glättung 0,4 s, Sprung im wackeln)
+    assert T.stabile_bereiche(rec, CFG_FRAME) == [[0.0, 2.24, 0.0, 0.0], [3.44, 8.0, 0.0, 0.0]]
+    assert T.stabile_bereiche(rec, {**CFG_FRAME, "stabil_min_s": 2.5}) == [[3.44, 8.0, 0.0, 0.0]]
+    assert T.stabile_bereiche({**rec, "dauer_s": 7.9}, CFG_FRAME) == [[0.0, 2.24, 0.0, 0.0], [3.44, 7.9, 0.0, 0.0]]
+    versetzt = _rec_reihe((2.4, 0.0, 0.0), (0.8, 5.0, 0.0), (4.8, 0.0, 0.0), t0_s=10.0, dauer_s=18.0)
+    assert T.stabile_bereiche(versetzt, CFG_FRAME) == [[10.0, 12.24, 0.0, 0.0], [13.44, 18.0, 0.0, 0.0]]
+
+
+def test_stabile_bereiche_deckel_und_zoom():
+    langsam = _rec_reihe((2.4, 0.0, 0.0), (0.8, 1.2, 0.0), (4.8, 0.0, 0.0), dauer_s=8.0)   # Schwenk 1,2 px je Frame
+    assert T.stabile_bereiche(langsam, CFG_FRAME) == [[0.0, 8.0, 0.06, 1.2]]
+    assert T.stabile_bereiche(langsam, {**CFG_FRAME, "bewegung_max": 1.0}) == [[0.0, 2.56, 0.06, 0.96],
+                                                                                 [3.08, 8.0, 0.06, 0.96]]
+    zoom = _rec_reihe((6.0, 0.0, 0.0), zooms=[{"von_s": 2.0, "bis_s": 2.6, "urteil": "schnell"}], dauer_s=6.0)
+    assert T.stabile_bereiche(zoom, CFG_FRAME) == [[0.0, 2.0, 0.0, 0.0], [2.6, 6.0, 0.0, 0.0]]
+
+
+def test_stabile_bereiche_ohne_reihe_leer():
+    assert T.stabile_bereiche(None, CFG_FRAME) == []
+    # alter Datensatz: Fenster ja, Reihe nein → keine Läufe (er ist nach MESS_VERSION ohnehin veraltet)
+    assert T.stabile_bereiche({"fenster": [[0.0, 0.05, 0.1, "statisch", None]], "ruhige_fenster": [0.0],
+                               "dauer_s": 3.0, "fenster_s": 2.0}, CFG_FRAME) == []
 
 
 def test_config_hash_ignoriert_die_stabil_schwellen():
-    # beide Schlüssel ändern keine Messung, nur die Ableitung aus fenster → kein neuer Hash, kein Neumessen
+    # die Schlüssel ändern keine Messung, nur die Ableitung aus der Reihe → kein neuer Hash, kein Neumessen
     h = T.config_hash(CFG)
-    assert T.config_hash({**CFG, "bewegung_max": 5.0}) == h
-    assert T.config_hash({**CFG, "stabil_min_s": 3.0}) == h
+    for k, wert in (("bewegung_max", 5.0), ("stabil_min_s", 3.0), ("glatt_s", 0.8), ("kante_s", 0.5)):
+        assert T.config_hash({**CFG, k: wert}) == h, k
 
 
 def test_defaults_haben_die_stabil_schwellen():
     cfg = load_config(Path("/nirgendwo"))["telemetrie"]
-    assert cfg["bewegung_max"] == 2.0 and cfg["stabil_min_s"] == 2.0
+    assert cfg["bewegung_max"] == 3.0 and cfg["stabil_min_s"] == 2.0 and cfg["glatt_s"] == 0.4
     assert cfg["ruhig_max_px"] == 0.15
+    assert cfg["kante_s"] == 0.3 and "bewegung_rand_s" not in cfg and "bewegung_spitze_faktor" not in cfg
+
+
+def test_kanten_befunde_kante_mitte_und_ruhig():
+    rec = _rec_reihe((2.0, 0.0, 0.0), (2.0, 5.0, 0.0), (4.0, 0.0, 0.0))        # Schwenk 2,0–4,0 s
+    assert T.kanten_befunde(rec, CFG_FRAME, 5.0, 7.5) == []
+    assert T.kanten_befunde(rec, CFG_FRAME, 3.0, 6.0) == [
+        T.Kante("in", 3.0, 3.32, 0.0, 5.0), T.Kante("mitte", 3.32, 4.24, 0.25, 5.0)]
+    assert T.kanten_befunde(rec, CFG_FRAME, 0.5, 2.5) == [
+        T.Kante("out", 2.2, 2.52, 0.25, 5.0), T.Kante("mitte", 1.84, 2.2, 0.25, 4.5)]
+    assert T.kanten_befunde(rec, CFG_FRAME, 3.0, 6.0, faktor=0.25) == []          # tempo 4: sichtbar 1,25 px je Frame
+    assert T.kanten_befunde({"zooms": []}, CFG_FRAME, 0.0, 1.0) is None
+
+
+def test_kanten_befunde_kurzer_shot_und_kante_ohne_messung():
+    rec = _rec_reihe((2.0, 0.0, 0.0), (2.0, 5.0, 0.0), (4.0, 0.0, 0.0))
+    # 0,5 s: die Kanten sind je 0,25 s lang und stoßen aneinander, eine Mitte gibt es nicht
+    assert T.kanten_befunde(rec, CFG_FRAME, 3.6, 4.1) == [
+        T.Kante("in", 3.6, 3.88, 0.25, 5.0), T.Kante("out", 3.88, 4.12, 0.25, 4.0)]
+    kurz = _rec_reihe((2.0, 0.0, 0.0))                                           # Reihe endet bei 2,0 s
+    assert T.kanten_befunde(kurz, CFG_FRAME, 1.9, 2.4) == [T.Kante("out", 2.15, 2.4, 0.0, 0.0, gemessen=False)]
+
+
+def test_ruhige_lage_spaeter_frueher_zoom_und_keine():
+    spaeter = _rec_reihe((2.0, 5.0, 0.0), (6.0, 0.0, 0.0))                       # Schwenk am Anfang
+    assert T.ruhige_lage(spaeter, CFG_FRAME, 1.5, 3.5, 1.0, (0.0, 8.0)) == 0.72
+    assert T.ruhige_lage(spaeter, CFG_FRAME, 1.5, 3.5, 1.0, (0.0, 3.6)) is None     # erlaubter Bereich zu knapp
+    frueher = _rec_reihe((6.0, 0.0, 0.0), (2.0, 5.0, 0.0))                       # Schwenk am Ende
+    assert T.ruhige_lage(frueher, CFG_FRAME, 4.5, 6.5, 1.0, (0.0, 8.0)) == -0.68
+    zoom = _rec_reihe((8.0, 0.0, 0.0), zooms=[{"von_s": 3.0, "bis_s": 4.0, "urteil": "schnell"}])
+    assert T.ruhige_lage(zoom, CFG_FRAME, 3.2, 5.2, 1.0, (0.0, 8.0)) == 0.8        # hinter die schnelle Zoomfahrt
+    assert T.ruhige_lage({"zooms": []}, CFG_FRAME, 0.0, 2.0, 1.0, (0.0, 8.0)) is None
+
+
+# --------------------------------------------------------------------------- #
+# Gesamt-Review Punkt 5: telemetrie.json kompakt (Zahlenlisten in einer Zeile, NAS-Abgleich bis 20 MB)
+# --------------------------------------------------------------------------- #
+
+def test_json_kompakt_schreibt_zahlenlisten_in_eine_zeile():
+    daten = {"verschiebung": {"fps": 25.0, "dx": [1.0, -2.5, 0.0]}, "fenster": [[0.0, 0.1, 0.2, "statisch", None]]}
+    text = T.json_kompakt(daten)
+    assert '"dx": [1.0,-2.5,0.0]' in text and json.loads(text) == daten

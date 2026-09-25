@@ -3,6 +3,7 @@ Vergleich mit dem Index."""
 from __future__ import annotations
 
 from niro_autocut import telemetrie_bericht as B
+from reihen import reihe
 
 ZOOM_SCHNELL = {"von_s": 2.4, "bis_s": 3.1, "von_mm": 24.0, "bis_mm": 70.0, "tempo_max": 85.2, "tempo_mittel": 60.3,
                 "ruck": 0.2, "ruckartig": False, "urteil": "schnell"}
@@ -133,3 +134,11 @@ def test_bericht_schnelle_zoomfahrten_nennen_den_sprung():
     assert "| a7_1 | a7IV | 2,4–3,1 | 24,0 → 70,0 | 85/60 | nein | – |" in teil          # Datensatz ohne Sprung-Felder
     assert "| a7_1 | a7IV | 12,0–12,3 | 50,0 → 57,8 | 72/40 | nein | 14 % |" in teil
     assert "| a7_1 | a7IV | 20,0–22,0 | 24,0 → 70,0 | 20/8 | ja | – |" in teil
+
+
+def test_bericht_nennt_ruhige_laeufe_frame_genau():
+    tele = [{**TELE[0], "verschiebung": reihe((2.4, 0.0, 0.0), (0.8, 5.0, 0.0), (4.8, 0.0, 0.0)), "dauer_s": 8.0}]
+    tcfg = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "glatt_s": 0.4, "stabil_min_s": 2.0}
+    md = B.bericht_md(tele, "T", tcfg=tcfg)
+    assert "ruhige Läufe (s)" in md and "0,00–2,24; 3,44–8,00" in md
+    assert "ruhige Fenster" not in B.bericht_md(TELE, "T")

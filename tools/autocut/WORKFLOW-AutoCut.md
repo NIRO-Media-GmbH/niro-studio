@@ -285,16 +285,18 @@ API an — erst mit `--dry-run` Clipzahl und Schätzung holen und dem User nenne
    fehlgeschlagen (Lauf wiederholen; Cache hält Fertiges).
 
 Zusätzlich trägt der Nachlauf die gemessenen **stabilen Bereiche** ein, je
-`[von_s, bis_s, wackeln_max, bewegung_max]`: Läufe benachbarter ruhiger Fenster (`wackeln ≤ ruhig_max_px`, ohne
-schnelle Zoomfahrten, `bewegung ≤ bewegung_max`), je Lauf mindestens `stabil_min_s` lang. Je Clip steht
-`stabil_quelle` — die drei Schwellen, der Config-Hash der Messung, aus der die Bereiche stammen, und
+`[von_s, bis_s, wackeln_max, bewegung_max]`: Läufe ruhiger **Frames**, seit 25.09.2026 frame-genau aus der Reihe
+`verschiebung` (je Frame `wackeln ≤ ruhig_max_px` und Bewegung als Betrag `≤ bewegung_max`, beide über `glatt_s`
+0,4 s geglättet, ohne schnelle Zoomfahrten), je Lauf mindestens `stabil_min_s` lang, Grenzen auf den Frame
+(0,04 s) genau. Je Clip steht
+`stabil_quelle` — die Schwellen samt `glatt_s`, der Config-Hash der Messung, aus der die Bereiche stammen, und
 `stabil_quelle.laeufe`, die **ungeschnittenen Läufe** (seit 24.09.2026). Je Abschnitt steht `stabil`: die Stücke
 dieser Läufe, auf den Abschnitt geschnitten, **ohne Mindestlänge je Stück** — die gilt für den Lauf; ein kürzeres
 Stück entsteht nur an einer Abschnittsgrenze, wo sein Lauf im Nachbarabschnitt weitergeht (Lauf 12–18 s, Abschnitte
 8–13 und 13–20 s → Stücke 12–13 und 13–18 s). Das ist reine Rechnung auf vorhandenen Daten: Cache-Treffer bekommen
-die Felder ohne API-Aufruf, auch ein Index aus der Zeit vor den Läufen beim nächsten Lauf. Wer `bewegung_max` oder
-`stabil_min_s` ändert, lässt `autocut_index_sections.py` erneut laufen — kostenlos, die Telemetrie selbst bleibt
-gültig (beide Schlüssel stehen in `OHNE_MESSWIRKUNG`).
+die Felder ohne API-Aufruf, auch ein Index aus der Zeit vor den Läufen beim nächsten Lauf. Wer `bewegung_max`,
+`stabil_min_s` oder `glatt_s` ändert, lässt `autocut_index_sections.py` erneut laufen — kostenlos, die Telemetrie
+selbst bleibt gültig (alle drei stehen in `OHNE_MESSWIRKUNG`).
 
 Liegt `telemetrie.json` vor (`autocut_telemetrie.py`), bekommt der Abschnittsbogen eine Kontextzeile mit der
 KB-Brennweite in mm („KB 71,6 mm", bei Zoomfahrten „KB 24–70 mm, langsamer Zoom"), Pitch, Haltung und Bewegungsart je
@@ -327,15 +329,18 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    weil sie zur selben Strecke gehören: an echten Daten (Charge MEK, Abnahme 23.09.) lag in 8 von 24 Lücken
    zwischen aufeinanderfolgenden B-Roll-Shots A-Roll dazwischen, obwohl beide Shots derselben Strecke
    zugerechnet waren — dort ist es kein Schnitt, an Streckengrenzen sowieso nicht.
-   **Schneller Zoom im genutzten Bereich** (Fehler) — Ausweg `abweichung` mit Grund. **Schnittgrenze in einer
-   Bewegungsspitze** (nur Warnung) — die Spitze muss mindestens **das `bewegung_spitze_faktor`-Fache (3,0) der
-   Basis** erreichen (Basis = Grundniveau des Clips, nach unten gedeckelt bei `ruhig_max_px` 0,15). Dieser Sockel
-   ist **vorläufig und ohne eigenen Beleg**: `ruhig_max_px` ist überall sonst eine Schwelle für `wackeln`
-   (Zittern), verglichen wird hier aber `bewegung` (Schwenkweg) — zwei verschiedene Größen, der Sockel greift
-   praktisch nur auf Stativmaterial. Die Meldung nennt die Schnittgrenze und getrennt davon das Messfenster (die
-   Spitzen sind Fenster-Startzeiten, das Fenster deckt `fenster_s` ab). `bewegung_rand_s` (0,5) und
-   `bewegung_spitze_faktor` sind unkalibriert, die Regel blockiert deshalb nie. Ohne
-   Telemetrie entfallen alle drei, und der Bericht sagt das in **einer** Warnung mit der Zahl der Shots. Fehlt sie
+   **Schneller Zoom im genutzten Bereich** (Fehler) — Ausweg `abweichung` mit Grund. **Schnittkanten in Bewegung**
+   (Hinweis, seit 25.09.2026, Spec `docs/superpowers/specs/2026-09-25-autocut-schnittkanten-framegenau-design.md`) —
+   die ersten und letzten `kante_s` (0,3 s Timeline) jedes Shots müssen frame-genau ruhig sein (`wackeln ≤
+   ruhig_max_px`, Bewegung ≤ `bewegung_max`, geglättet über `glatt_s`; bei Zeitlupe zählt die sichtbare Bewegung,
+   Faktor 1/tempo). Die Meldung „In-/Out-Punkt liegt in Bewegung (…)" nennt Stelle, Werte und die nächste ruhige
+   Lage gleicher Länge im erlaubten Bereich („gleich lang passend ab … s") — ein Vorschlag, keine Automatik. Mit
+   `abweichung` und Grund entfallen die Hinweise (gewollter Schwenk). **Bewegung in der Mitte** des Shots ist ebenfalls
+   ein Hinweis („Bewegung im Shot bei …"), ebenso eine Kante, an die die Telemetrie-Reihe nicht reicht („ohne
+   Messung"). Die Review-Runde Schnittkanten (25.09.2026) hat gezeigt: der User akzeptiert Bewegung an der Kante
+   meist; gestört hat nur das Einschwingen in einen sonst ruhigen Shot — deshalb Hinweis statt Fehler. Bei einem
+   ruhigen Einsetzer den Vorschlag übernehmen. Ohne Telemetrie entfallen alle drei, und der Bericht sagt das in
+   **einer** Warnung mit der Zahl der Shots. Fehlt sie
    nur einzelnen Clips (Teil-Lauf, Material von NAS auf SSD gewandert, `telemetrie.json` unlesbar), nennt er
    getrennt, wie viele Shots ohne verwertbaren Datensatz blieben (Zoom- und Bewegungsregel) und wie viele Schnitte
    ohne Brennweitenverlauf (Brennweitenregel). Ist die Telemetrie **mit anderen Schwellen gemessen** (abweichender
@@ -361,10 +366,10 @@ gerettet ist.
   gemessenen Lauf liegt — die Messung überstimmt das Bildurteil, Schwelle ist `ruhig_max_px`.
 - **Lage**: der Shot muss in einem verwendbaren Abschnitt **oder** in einem stabilen Stück eines geretteten
   Abschnitts liegen. Stücke desselben Laufs legen sich über Abschnittsgrenzen zusammen, Stücke verschiedener Läufe
-  nie — auch nicht, wenn sich zwei Läufe genau an einer Abschnittsgrenze berühren (dazwischen lag ein unruhiges
-  Fenster). Verwendbare Abschnitte legen sich wie bisher an ihren Grenzen mit jedem Nachbarn zusammen.
-- **Warnung `Bereich nicht als stabil gemessen`**: der Abschnitt ist verwendbar, die gemessene Bewegung dort
-  aber hoch. Bewusst keine Sperre — ein gewollter Schwenk ist nicht ruhig und bleibt erlaubt.
+  nie — auch nicht, wenn sich zwei Läufe genau an einer Abschnittsgrenze berühren (dazwischen lagen unruhige
+  Frames). Verwendbare Abschnitte legen sich wie bisher an ihren Grenzen mit jedem Nachbarn zusammen.
+- **Hinweis `In-/Out-Punkt liegt in Bewegung`**: die Schnittkante liegt frame-genau in Bewegung, mit Stelle und
+  nächster ruhiger Lage (Schritt 4); Bewegung in der Mitte ebenso als Hinweis — ein gewollter Schwenk ist erlaubt.
 - **Warnung `nennt „…“ nur clip-weit, in keinem Abschnitt`**: ein gesperrter Mangel steht nur in der clip-weiten
   Liste (oder kommt aus `personen.blick_in_kamera`), kein Abschnitt führt ihn. Keine Sperre — verortet ist er
   nirgends —, aber das Bild prüfen; einmal je Clip.
@@ -374,10 +379,10 @@ Abschnittsgrenzen zusammen und überbrückt dabei einen Bruch zwischen zwei Läu
 `autocut_index_sections.py` trägt die Läufe kostenlos aus dem Cache nach.
 
 **Andere Schwellen**: stabile Bereiche aus einer Messung mit anderen Telemetrie-Schwellen (`ruhig_max_px`,
-`fenster_s`) zählen nicht: keine Rettung, keine Bewegungs-Warnung, und der kompakte Index gibt für diese Clips
-`stabil` (in allen Abschnitten) und `stabil_laeufe` leer aus; der Bericht und `--compact` nennen die Zahl der
-Clips. Abhilfe: erst `autocut_telemetrie.py`, dann `autocut_index_sections.py` (kostenlos aus dem Cache). Wurden nur
-`bewegung_max` oder `stabil_min_s` geändert, reicht `autocut_index_sections.py` — der Bericht sagt dann „mit anderen
+`fenster_s`) zählen nicht: keine Rettung, und der kompakte Index gibt für diese Clips `stabil` (in allen Abschnitten)
+und `stabil_laeufe` leer aus; der Bericht und `--compact` nennen die Zahl der Clips. Abhilfe: erst
+`autocut_telemetrie.py`, dann `autocut_index_sections.py` (kostenlos aus dem Cache). Wurden nur `bewegung_max`,
+`stabil_min_s` oder `glatt_s` geändert, reicht `autocut_index_sections.py` — der Bericht sagt dann „mit anderen
 Stabil-Schwellen abgeleitet — autocut_index_sections.py erneut laufen lassen".
 
 ## Ablauf Stufe 3a — „B-Roll aus Auswahl" (Vorlagen, Stand Taxodia 15.09.2026)
@@ -851,16 +856,19 @@ Clip-Quelle: `--ordner`, sonst `broll_index.json`, `inventar.json`, B-Roll-Wurze
 Cache je Clip unter `_intern/autocut/telemetrie/<fingerprint>.json`; Lesen der Datenspur kostet die ganze Datei (≈ 300 MB/s
 übers NAS). Nach einer Änderung unter `telemetrie:` (`defaults.yaml` oder Chargen-`config.yaml`) misst der nächste Lauf die
 betroffenen Clips neu (der Cache trägt je Clip einen Config-Hash, ohne `parallel`, ohne die Vorlagen-Schlüssel der
-Brennweitenfolge `brennweite_gleich_max`, `digitalzoom_faktor`, `digitalzoom_max` und ohne die unkalibrierten
-Bewegungsspitzen-Schwellen `bewegung_rand_s`, `bewegung_spitze_faktor` — keine dieser Schwellen ändert die Messung,
-nur die Regel darauf); `--force` misst alles neu.
+Brennweitenfolge `brennweite_gleich_max`, `digitalzoom_faktor`, `digitalzoom_max` und ohne die Ableitungs-Schwellen
+`bewegung_max`, `stabil_min_s`, `glatt_s`, `kante_s` — keine dieser Schwellen ändert die Messung, nur die Regel
+darauf; dazu eine Messversion: seit 25.09.2026 Version 2 mit Brennweite je Frame und Reihe `verschiebung`, ältere
+Datensätze gelten als veraltet und werden neu gemessen); `--force` misst alles neu.
 Felder je Clip: `quelle` (rtmd/optisch/keine), `kamera`, `kb_mm` (Median; Verlauf und Zoomfahrten unten),
 `pitch_grad`/`perspektive_hoehe`, `roll_grad`, `haltung` (stativ/gimbal/hand), `bewegungsart` (statisch, schwenk_links/rechts,
 tilt_auf/ab, fahrt, gemischt — `schwenk_links` = Kamera dreht nach links), `wackeln`, `bewegung`, `fenster` (2 s, Schritt 1 s),
-`ruhige_fenster` (wackeln ≤ `telemetrie.ruhig_max_px`). `ruhige_fenster` sind Fenster-Startzeiten in s (Fensterlänge `fenster_s`
+`ruhige_fenster` (wackeln ≤ `telemetrie.ruhig_max_px`), `verschiebung` (seit 25.09.2026: dx/dy je 25-fps-Frame in
+px @480, 2 Stellen, `t0_s` = Zeit des ersten Frames; der Gyro wird mit der KB-Brennweite **je Frame** umgerechnet,
+vorher mit dem Median des Clips). `ruhige_fenster` sind Fenster-Startzeiten in s (Fensterlänge `fenster_s`
 im Datensatz); das letzte Fenster kann kürzer sein. Schwellen und Kamerafaktoren in `defaults.yaml` unter `telemetrie:`.
 Abnehmer: Sonderfall Aftermovie (ersetzt `ruhe.py`/`ruhe_fenster.py`), Stufe 2b (Perspektive aus Metadaten, Brennweite in mm und Zoom je Abschnitt,
-`bewegungsart`/`haltung` je Abschnitt), Stufe 3 (Brennweitenfolge, Zoom, Bewegungsspitzen), 3a (Brennweitenregel) und 6d
+`bewegungsart`/`haltung` je Abschnitt), Stufe 3 (Brennweitenfolge, Zoom, Schnittkanten), 3a (Brennweitenregel) und 6d
 (Stabilisieren nur bei Bedarf, Brennweitenregel). Kalibrierung: `--kalibrieren` (unten, Kalibrierwerte).
 Spec: `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md`.
 
@@ -906,11 +914,17 @@ die Absicht hängt am Bildinhalt, nicht an der Bewegung. Folge: kein Vorfilter v
 B-Roll-Index — die Telemetrie liefert Bereichs-Hinweise, keine Urteile über Absicht. Die 30 Urteile liegen als
 Testsatz in `projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schwenks/`; jeder künftige Versuch muss 83 % schlagen.
 
-`bewegung_max` (2,0) und `stabil_min_s` (2,0) sind **unkalibrierte Startwerte** vom 23.09.2026. Die Abnahme
-läuft gegen die 30 Urteile vom 22.09. und die vier WLC-Clips aus dem Review
-(`tests/test_bereiche_abnahme.py`): kein Kandidat im Beispiel „komplett ungewollt", höchstens zwei der
-24 „ungewollt"-Beispiele mit Kandidat, und jeder vom User genannte Bereich liegt in einem Kandidaten.
-Wer eine Schwelle ändert, muss dort wieder antreten.
+`bewegung_max` ist seit 25.09.2026 die Bewegung **je Frame** als Betrag (px @480, über `glatt_s` 0,4 s
+geglättet) — die Ableitung aus 2-s-Fenstern (Achsmittel, Grenzen ±1 s; Klebl-Nachtlauf: vier Shots schnitten in
+Schwenk-Ausläufe und Nachwackeln) ist abgelöst. `bewegung_max` = 3,0 aus der Review-Runde Schnittkanten (25.09.2026,
+`projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schnittkanten/`): 13 Einsetzer, 12 × „ja"; einziges „nein" FX3_0260
+(Einschwingen), vom User bei 2,18 s als ruhig markiert, frame-genau gemessen ab 2,12 s. Keine Grenze trennt die
+Urteile (angenommen bis Bewegung 4,95 und wackeln 0,53 an der Kante; die a7-IV-Handkamera zittert laut Gyro 0,48,
+im Bild 0,04 — der Stabilisator nimmt es heraus) → Kanten sind Hinweise. 3,0 nimmt den WLC-Bereich FX3_8660
+12,5–15,5 s in einen Lauf. Abnahme `tests/test_bereiche_abnahme.py`: kein Lauf im Beispiel „komplett ungewollt",
+höchstens zwei der 24 „ungewollt"-Beispiele mit Lauf, alle fünf WLC-Bereiche des Users in einem Lauf, FX3_0260 wie
+gebaut in keinem Lauf und der Lauf beginnt höchstens 0,1 s neben der Stelle des Users. Wer eine Schwelle ändert,
+muss dort wieder antreten.
 
 ## Kantenprüfung — „Kanten" (seit 16.09.2026)
 

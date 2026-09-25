@@ -1,6 +1,8 @@
 """Kamera-Telemetrie je Clip (Spec 2026-09-19): Kennzahlen aus der Sony-rtmd-Datenspur (Gyro, Beschleunigung, Brennweite)
 oder aus der optischen Verschiebungsreihe, Clip-Messung mit Cache, Charge-Lauf, Abschnittswerte für Stufe 2b und der
 Stabilisierungs-Vorschlag für 6d; Zoomfahrten aus der KB-Brennweite und die Brennweitenregel für 3a/6d (Spec 2026-09-21).
+Seit Spec 2026-09-25 zusätzlich die Reihe ``verschiebung`` je Frame (Gyro mit der Brennweite je Frame; der optische
+Weg schreibt sie ebenso).
 
 Beide Messwege liefern dieselbe Größe: Verschiebung des Bildinhalts je 25-fps-Frame in px @480 (``dx`` > 0 nach rechts,
 ``dy`` > 0 nach unten). Der Gyro wird über die KB-Brennweite umgerechnet: ``f_px = 480 · kb_mm / 36``,
@@ -15,10 +17,12 @@ import hashlib
 import json
 import math
 import os
+import re
 import threading
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import NamedTuple
 
 import numpy as np
 
@@ -53,14 +57,33 @@ def gyro_je_frame(werte: np.ndarray, proben_je_sample: int, fps: float, ziel_fps
     return werte[: m * je].reshape(m, je, -1).mean(axis=1)
 
 
-def verschiebung_aus_rate(rate: np.ndarray, kb_mm: float, cfg: dict,
+def verschiebung_aus_rate(rate: np.ndarray, kb_mm, cfg: dict,
                           ziel_fps: float = ZIEL_FPS) -> np.ndarray:
-    """(m, 3) °/s je Frame → (m, 2) px: dx aus der Schwenk-Achse, dy aus der Tilt-Achse (Achsen/Vorzeichen aus cfg)."""
-    k = math.pi / 180.0 * f_px(kb_mm, int(cfg["optisch_breite"])) / ziel_fps
+    """(m, 3) °/s je Frame → (m, 2) px: dx aus der Schwenk-Achse, dy aus der Tilt-Achse (Achsen/Vorzeichen aus cfg).
+    ``kb_mm`` ist eine Zahl oder die KB-Brennweite je Frame (Länge m): seit Spec 2026-09-25 rechnet ``clip_messen``
+    jeden Frame mit seiner eigenen Brennweite — mit dem Median waren Zoom-Clips abschnittsweise falsch skaliert."""
+    kb = np.asarray(kb_mm, np.float64)
+    k = math.pi / 180.0 * float(cfg["optisch_breite"]) * kb / 36.0 / ziel_fps
     a, v = cfg["achsen"], cfg["vorzeichen"]
     dx = float(v["schwenk"]) * rate[:, int(a["schwenk"])] * k
     dy = float(v["tilt"]) * rate[:, int(a["tilt"])] * k
     return np.stack([dx, dy], axis=1)
+
+
+def _auf_laenge(x: np.ndarray, n: int) -> np.ndarray:
+    """Reihe auf ``n`` Werte bringen: kürzen oder mit dem letzten Wert verlängern (KB je Frame ↔ Gyro-Frames)."""
+    x = np.asarray(x, np.float64)
+    if len(x) >= n:
+        return x[:n]
+    return np.concatenate([x, np.full(n - len(x), x[-1])])
+
+
+def verschiebung_reihe(dxy: np.ndarray, t0_s: float = 0.0) -> dict:
+    """Reihe ``verschiebung`` für ``telemetrie.json`` (Spec 2026-09-25): dx/dy je 25-fps-Frame in px @480, auf 2 Stellen
+    gerundet (+ 0,0 macht aus −0,0 eine 0,0); Frame ``i`` liegt bei ``t0_s + i / fps``."""
+    d = np.asarray(dxy, np.float64).reshape(-1, 2)
+    return {"fps": ZIEL_FPS, "t0_s": float(t0_s), "dx": (np.round(d[:, 0], 2) + 0.0).tolist(),
+            "dy": (np.round(d[:, 1], 2) + 0.0).tolist()}
 
 
 def wackeln_bewegung(dxy: np.ndarray) -> tuple[float, float]:
@@ -384,17 +407,23 @@ def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samp
 
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------
 
-# Schlüssel ohne Einfluss auf die Messung: Parallelität, die Brennweitenfolge der Vorlagen 3a/6d und die
-# Ableitung der stabilen Bereiche (Spec 2026-09-23; sie rechnet auf fenster, das die Messung schon enthält)
+# Schlüssel ohne Einfluss auf die Messung: Parallelität, die Brennweitenfolge der Vorlagen 3a/6d und
+# die Ableitung der Läufe und Kanten aus der Reihe (Spec 2026-09-23/-25)
 OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max",
-                    "bewegung_rand_s", "bewegung_spitze_faktor", "bewegung_max", "stabil_min_s")
+                    "bewegung_max", "stabil_min_s", "glatt_s", "kante_s")
+
+
+# Messversion, geht in den Config-Hash ein. 2 = Brennweite je Frame und Reihe ``verschiebung`` (Spec 2026-09-25):
+# jeder ältere Datensatz gilt damit als veraltet und wird beim nächsten ``autocut_telemetrie.py`` neu gemessen.
+MESS_VERSION = 2
 
 
 def config_hash(cfg: dict) -> str:
-    """Kurzer Hash (12 Hex-Zeichen, sha1) der ``telemetrie:``-Config ohne ``OHNE_MESSWIRKUNG`` — Haltung, Bewegungsart,
-    Klassen, wackeln × px_faktor, ruhige Fenster, Fensterlänge und Zoomfahrten hängen an ihr; ein Cache-Datensatz mit
-    anderem Hash ist veraltet."""
-    text = json.dumps({k: v for k, v in cfg.items() if k not in OHNE_MESSWIRKUNG}, sort_keys=True, default=str)
+    """Kurzer Hash (12 Hex-Zeichen, sha1) der ``telemetrie:``-Config ohne ``OHNE_MESSWIRKUNG``, zusammen mit
+    ``MESS_VERSION`` — Haltung, Bewegungsart, Klassen, wackeln × px_faktor, ruhige Fenster, Fensterlänge, Zoomfahrten
+    und die Reihe je Frame hängen an ihr; ein Cache-Datensatz mit anderem Hash ist veraltet."""
+    text = json.dumps({"mess_version": MESS_VERSION, **{k: v for k, v in cfg.items() if k not in OHNE_MESSWIRKUNG}},
+                      sort_keys=True, default=str)
     return hashlib.sha1(text.encode("utf-8")).hexdigest()[:12]
 
 
@@ -404,8 +433,8 @@ def _leer(path: Path, kamera: str, modell: str | None) -> dict:
             "kb_max": None, "kb_verlauf": [], "zooms": [], "zoomfahrt": False, "fokus_m": None, "pitch_grad": None,
             "roll_grad": None, "lage_grund": None,
             "perspektive_hoehe": None, "haltung": None, "hf_anteil": None, "bewegungsart": None, "wackeln": None,
-            "bewegung": None, "fenster_s": None, "fenster": [], "ruhige_fenster": [], "schaerfe_p10": None,
-            "config_hash": None, "fehler": None}
+            "bewegung": None, "fenster_s": None, "fenster": [], "ruhige_fenster": [], "verschiebung": None,
+            "schaerfe_p10": None, "config_hash": None, "fehler": None}
 
 
 def _frames(p: Path, cfg: dict) -> np.ndarray:
@@ -429,12 +458,14 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
         if buf:
             daten = auswerten(samples(buf))
         kb = None
+        kb25 = np.zeros(0, np.float64)
         if daten is not None:
             out["samples"] = daten.samples
             if daten.kb_mm:
                 kb = float(np.median(daten.kb_mm))
                 out["kb_mm"], out["kb_min"], out["kb_max"] = (round(kb, 1), round(min(daten.kb_mm), 1),
                                                               round(max(daten.kb_mm), 1))
+                kb25 = kb_je_frame(daten.kb_mm, daten.kb_index, float(info.fps), daten.samples)
                 out.update(zoom_messen(daten.kb_mm, daten.kb_index, float(info.fps), daten.samples, cfg))
                 out["zoomfahrt"] = bool(out["zooms"])
             if daten.brennweite_mm:
@@ -451,16 +482,40 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
             out["imu_hz"] = float(daten.imu_hz or daten.proben_je_sample * info.fps)
             rate = gyro_je_frame(daten.gyro, daten.proben_je_sample, info.fps, imu_hz=daten.imu_hz)
             faktor = float((cfg.get("px_faktor") or {}).get(kamera, 1.0))
-            dxy = verschiebung_aus_rate(rate, kb, cfg) * faktor
+            # Brennweite je Frame (Spec 2026-09-25); ohne Brennweitenverlauf der Median wie bisher
+            kb_frames = _auf_laenge(kb25, len(rate)) if len(kb25) else kb
+            dxy = verschiebung_aus_rate(rate, kb_frames, cfg) * faktor
             s = schaerfe_frames(_frames(p, cfg)) if schaerfe else None
-            out.update(quelle="rtmd", **kennzahlen(dxy, cfg, kb, s))
+            out.update(quelle="rtmd", verschiebung=verschiebung_reihe(dxy), **kennzahlen(dxy, cfg, kb, s))
         elif not ohne_optisch:
             frames = _frames(p, cfg)
-            out.update(quelle="optisch", **kennzahlen(verschiebungen(frames), cfg, kb, schaerfe_frames(frames)))
+            dxy = verschiebungen(frames)
+            out.update(quelle="optisch", verschiebung=verschiebung_reihe(dxy),
+                       **kennzahlen(dxy, cfg, kb, schaerfe_frames(frames)))
         out["ruhige_fenster"] = ruhige_ohne_schnelle_zooms(out["ruhige_fenster"], out["zooms"], out["fenster_s"])
     except AutoCutError as e:
         out["fehler"] = str(e)
     return out
+
+
+def json_kompakt(daten) -> str:
+    """JSON mit Einrückung, reine Zahlenlisten (Reihe je Frame, Bereiche) aber in einer Zeile — sonst eine Zahl je Zeile
+    (Spec 2026-09-25: telemetrie.json bleibt klein genug für den NAS-Abgleich)."""
+    text = json.dumps(daten, ensure_ascii=False, indent=1)
+    return re.sub(r"\[\s+([-0-9.,\s]+?)\s+\]", lambda m: "[" + re.sub(r"\s+", "", m.group(1)) + "]", text)
+
+
+def _json_kompakt_schreiben(ch, name: str, daten) -> Path:
+    """Wie ``Charge.write_json`` (Schreibschutz-Prüfung, dann schreiben), aber atomar über ``.part`` + ``os.replace``
+    (wie der Cache oben) und mit dem kompakten Text aus ``json_kompakt`` — ``write_json`` selbst hat keinen Weg für
+    schon gerenderten Text und bleibt für die übrigen JSON-Dateien unverändert."""
+    p = Path(ch.autocut) / name
+    ch.assert_writable(p)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    part = p.with_name(f"{p.name}.{os.getpid()}-{threading.get_ident()}.part")
+    part.write_text(json_kompakt(daten), encoding="utf-8")
+    os.replace(part, p)
+    return p
 
 
 def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_optisch: bool = False,
@@ -491,7 +546,7 @@ def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_op
     # je Schreiber ein eindeutiger .part-Name (pid + Thread-Id): zwei Schreiber mit gleichem Fingerprint
     # (Dublette in der Clip-Liste oder zwei Pfade mit gleichem Name/Größe/mtime) kollidieren sonst im selben .part.
     part = cache.with_name(f"{cache.name}.{os.getpid()}-{threading.get_ident()}.part")
-    part.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    part.write_text(json_kompakt(rec), encoding="utf-8")
     os.replace(part, cache)
     return rec, False
 
@@ -628,7 +683,7 @@ def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None
     ex.shutdown(wait=True)
     liste = [ergebnisse[c["path"]] for c in todo if c["path"] in ergebnisse]
     gesamt = _zusammenfuehren(eindeutig, ergebnisse, laden(ch.autocut))
-    ch.write_json("telemetrie.json", gesamt)
+    _json_kompakt_schreiben(ch, "telemetrie.json", gesamt)
     return {"clips": liste, "fehler": fehler, "cache_treffer": treffer, "gemessen": gemessen, "gesamt": len(gesamt)}
 
 
@@ -695,61 +750,151 @@ def bewegung_spitzen(rec: dict | None, von_s: float, bis_s: float) -> list[list[
     return out
 
 
-def bewegung_grundniveau(rec: dict | None, t_s: float, abstand_s: float = 3.0) -> float | None:
-    """Median der ``bewegung`` aller Fenster, die mindestens ``abstand_s`` von ``t_s`` entfernt liegen — das
-    Grundniveau des Clips ohne die Spitze selbst. None ohne solche Fenster (Spec 2026-09-22)."""
-    fern = [float(f[2]) for f in ((rec or {}).get("fenster") or []) if abs(float(f[0]) - t_s) >= abstand_s]
-    return float(np.median(fern)) if fern else None
+# --- Bewegung je Frame, ruhige Frames, stabile Läufe (Spec 2026-09-25) ----------------------------------------------
+
+def _glatt(x: np.ndarray, breite: int) -> np.ndarray:
+    """Gleitendes Mittel einer 1-D-Reihe über ``breite`` Frames, Ränder normiert (wie ``_tiefpass``)."""
+    return _tiefpass(np.asarray(x, np.float64)[:, None], breite)[:, 0]
+
+
+def bewegung_je_frame(rec: dict | None, glatt_s: float) -> tuple[float, float, np.ndarray, np.ndarray] | None:
+    """(t0_s, fps, wackeln, bewegung) je Frame aus ``verschiebung``, beide über ``glatt_s`` gemittelt; None ohne Reihe.
+    ``wackeln`` = Mittel aus |Δdx| und |Δdy| zum Vorframe (dieselbe Größe wie in den Fenstern; Frame 0 übernimmt den Wert
+    von Frame 1), ``bewegung`` = Betrag √(dx² + dy²) — ein reiner Schwenk zählt voll (die Fenster mitteln die Achsen)."""
+    v = (rec or {}).get("verschiebung")
+    if not v or not v.get("dx") or not v.get("dy"):
+        return None
+    fps = float(v.get("fps") or ZIEL_FPS)
+    n = min(len(v["dx"]), len(v["dy"]))
+    dxy = np.stack([np.asarray(v["dx"][:n], np.float64), np.asarray(v["dy"][:n], np.float64)], axis=1)
+    wk = np.abs(np.diff(dxy, axis=0)).mean(axis=1)
+    wk = np.r_[wk[:1], wk] if len(wk) else np.zeros(n)
+    k = max(1, min(n, int(round(float(glatt_s) * fps))))
+    return float(v.get("t0_s") or 0.0), fps, _glatt(wk, k), _glatt(np.hypot(dxy[:, 0], dxy[:, 1]), k)
+
+
+class Ruhe(NamedTuple):
+    """Ruhige Frames eines Clips (Spec 2026-09-25); ``wackeln``/``bewegung`` geglättet und mit dem Zeitlupen-Faktor
+    skaliert. Frame ``i`` liegt bei ``t0_s + i / fps``."""
+    t0_s: float
+    fps: float
+    ruhig: np.ndarray
+    wackeln: np.ndarray
+    bewegung: np.ndarray
+
+    def frames(self, von_s: float, bis_s: float) -> slice:
+        """Frames mit ``von_s <= t < bis_s``, auf die Reihe gekappt (leer, wenn der Bereich außerhalb liegt)."""
+        n = len(self.ruhig)
+        a = min(n, max(0, math.ceil((von_s - self.t0_s) * self.fps - 1e-6)))
+        b = min(n, max(a, math.ceil((bis_s - self.t0_s) * self.fps - 1e-6)))
+        return slice(a, b)
+
+    def zeit(self, i: int) -> float:
+        return self.t0_s + i / self.fps
+
+
+def ruhe_je_frame(rec: dict | None, cfg: dict, faktor: float = 1.0) -> Ruhe | None:
+    """Ruhig = ``wackeln·faktor <= ruhig_max_px`` und ``bewegung·faktor <= bewegung_max`` und außerhalb jeder schnellen
+    Zoomfahrt ``[von_s, bis_s)``; ``faktor`` = 1 / tempo (Zeitlupe: sichtbare Bewegung). None ohne Reihe."""
+    b = bewegung_je_frame(rec, float(cfg["glatt_s"]))
+    if b is None:
+        return None
+    t0, fps, wk, bw = b
+    wk, bw = wk * float(faktor), bw * float(faktor)
+    ruhig = (wk <= float(cfg["ruhig_max_px"]) + 1e-9) & (bw <= float(cfg["bewegung_max"]) + 1e-9)
+    t = t0 + np.arange(len(ruhig)) / fps
+    for z in (rec or {}).get("zooms") or []:
+        if z.get("urteil") == "schnell":
+            ruhig &= ~((t >= float(z["von_s"])) & (t < float(z["bis_s"])))
+    return Ruhe(t0, fps, ruhig, wk, bw)
 
 
 def stabile_bereiche(rec: dict | None, cfg: dict) -> list[list[float]]:
-    """Bereiche, die ruhig genug zum Schneiden sind, als ``[von_s, bis_s, wackeln_max, bewegung_max]``
-    (Spec 2026-09-23). Reine Ableitung aus einem vorhandenen Datensatz — keine Messung, keine Mediendatei.
-
-    Grundlage sind die Fenster, deren Startzeit in ``ruhige_fenster`` steht: damit gilt ``wackeln <= ruhig_max_px``
-    **und** der Ausschluss schneller Zoomfahrten aus ``ruhige_ohne_schnelle_zooms`` ohne zweite Rechnung.
-    Zusätzlich muss ``bewegung`` des Fensters unter ``bewegung_max`` liegen — ``wackeln`` misst Zittern, nicht
-    Tempo, und ein glatter schneller Schwenk taugt als kurzer Einsetzer nicht. Benachbarte Fenster (Abstand
-    höchstens ``schritt_s``) bilden einen Lauf; er reicht bis zum Ende seines letzten Fensters, gekappt an
-    ``dauer_s``. Läufe unter ``stabil_min_s`` fallen weg. Ohne ``fenster`` oder ohne ruhige Fenster leer.
-
-    Die Bereichsgrenzen sind auf die Fensterauflösung genau (``fenster_s`` 2,0 / ``schritt_s`` 1,0 ⇒ ±1 s).
+    """Bereiche, die ruhig genug zum Schneiden sind, als ``[von_s, bis_s, wackeln_max, bewegung_max]`` (Spec 2026-09-25,
+    löst die Ableitung aus 2-s-Fenstern der Spec 2026-09-23 ab): maximale Folgen ruhiger Frames (``ruhe_je_frame``),
+    mindestens ``stabil_min_s`` lang, Grenzen auf den Frame genau, ``bis_s`` auf ``dauer_s`` gekappt; die Höchstwerte
+    sind die der geglätteten Reihen im Lauf. Reine Ableitung aus dem Datensatz — keine Messung. Ohne Reihe leer.
     Die Liste ist ein Vorschlag, nie eine Sperre: was davon geschnitten wird, entscheidet der Bildinhalt."""
-    fen = (rec or {}).get("fenster") or []
-    if not fen:
+    r = ruhe_je_frame(rec, cfg)
+    if r is None:
         return []
-    ruhig = {float(t) for t in (rec.get("ruhige_fenster") or [])}
-    bew_max = float(cfg["bewegung_max"])
-    schritt = float(cfg["schritt_s"])
-    w = float(rec.get("fenster_s") or cfg["fenster_s"])
-    dauer = rec.get("dauer_s")
-    laeufe: list[list[tuple[float, float, float]]] = []
-    for f in fen:
-        t, wk, bw = float(f[0]), float(f[1]), float(f[2])
-        if t not in ruhig or bw > bew_max:
-            continue
-        if laeufe and t - laeufe[-1][-1][0] <= schritt + 1e-6:
-            laeufe[-1].append((t, wk, bw))
-        else:
-            laeufe.append([(t, wk, bw)])
+    kanten = np.diff(np.concatenate([[0], r.ruhig.astype(np.int8), [0]]))
+    dauer = (rec or {}).get("dauer_s")
     out = []
-    for lauf in laeufe:
-        von = lauf[0][0]
-        bis = lauf[-1][0] + w
+    for a, b in zip(np.flatnonzero(kanten == 1).tolist(), np.flatnonzero(kanten == -1).tolist()):
+        von, bis = r.zeit(a), r.zeit(b)
         if dauer is not None:
             bis = min(bis, float(dauer))
         if bis - von < float(cfg["stabil_min_s"]) - 1e-6:
             continue
-        out.append([round(von, 2), round(bis, 2),
-                    round(max(x[1] for x in lauf), 3), round(max(x[2] for x in lauf), 3)])
+        out.append([round(von, 2), round(bis, 2), round(float(r.wackeln[a:b].max()), 3),
+                    round(float(r.bewegung[a:b].max()), 3)])
     return out
 
 
-def bewegung_max_im_bereich(rec: dict | None, von_s: float, bis_s: float, fenster_s: float = 2.0) -> float | None:
-    """Höchste ``bewegung`` der Fenster im Bereich; None ohne Fenster. Für die Meldung des Prüfers, wenn ein
-    Shot außerhalb jedes stabilen Bereichs liegt (Spec 2026-09-23)."""
-    fen = _fenster_im_bereich(rec, von_s, bis_s, fenster_s) if rec and rec.get("fenster") else []
-    return max((float(f[2]) for f in fen), default=None)
+class Kante(NamedTuple):
+    """Nicht ruhige Frames an einer Schnittkante (``in``/``out``) oder in der Mitte eines Shots (Spec 2026-09-25):
+    vom ersten bis nach dem letzten solchen Frame (Quellsekunden), Höchstwerte sichtbar (× Faktor), je 2 Stellen.
+    ``gemessen`` False = die Reihe reicht nicht bis an die Kante."""
+    seite: str
+    von_s: float
+    bis_s: float
+    wackeln: float
+    bewegung: float
+    gemessen: bool = True
+
+
+def _kanten(r: Ruhe, kante_s: float, von_s: float, bis_s: float) -> list[Kante]:
+    """Befunde in [von_s, bis_s]: Kanten je ``kante_s`` Quelle (bei kurzen Shots die Hälfte), dazwischen die Mitte."""
+    kante = min(kante_s, (bis_s - von_s) / 2)
+    out: list[Kante] = []
+    for seite, a, b in (("in", von_s, von_s + kante), ("out", bis_s - kante, bis_s),
+                        ("mitte", von_s + kante, bis_s - kante)):
+        if b - a <= 1e-9:
+            continue
+        s = r.frames(a, b)
+        if s.stop <= s.start:
+            if seite != "mitte":
+                out.append(Kante(seite, round(a, 2), round(b, 2), 0.0, 0.0, gemessen=False))
+            continue
+        unruhig = np.flatnonzero(~r.ruhig[s]) + s.start
+        if len(unruhig):
+            i, j = int(unruhig[0]), int(unruhig[-1]) + 1
+            out.append(Kante(seite, round(r.zeit(i), 2), round(r.zeit(j), 2),
+                             round(float(r.wackeln[i:j].max()), 2), round(float(r.bewegung[i:j].max()), 2)))
+    return out
+
+
+def kanten_befunde(rec: dict | None, cfg: dict, von_s: float, bis_s: float,
+                   faktor: float = 1.0) -> list[Kante] | None:
+    """Nicht ruhige Frames eines genutzten Quellbereichs [von_s, bis_s]: je Schnittkante (``kante_s``·faktor Quelle,
+    ``kante_s`` in Timeline-Sekunden) und in der Mitte (Spec 2026-09-25). ``faktor`` = 1 / tempo. Leer = alles ruhig;
+    None ohne Reihe."""
+    r = ruhe_je_frame(rec, cfg, faktor)
+    if r is None:
+        return None
+    return _kanten(r, float(cfg["kante_s"]) * float(faktor), von_s, bis_s)
+
+
+def ruhige_lage(rec: dict | None, cfg: dict, von_s: float, bis_s: float, faktor: float,
+                grenzen: tuple[float, float]) -> float | None:
+    """Kleinste Verschiebung (Frame-Schritte der Reihe, bei gleichem Abstand die spätere) des Bereichs [von_s, bis_s],
+    nach der beide Schnittkanten gemessen ruhig sind, keine schnelle Zoomfahrt darin liegt und der Bereich in
+    ``grenzen`` bleibt; None, wenn es keine gibt oder die Reihe fehlt (Spec 2026-09-25: Vorschlag, keine Automatik)."""
+    r = ruhe_je_frame(rec, cfg, faktor)
+    if r is None:
+        return None
+    a, z = grenzen
+    kante = float(cfg["kante_s"]) * float(faktor)
+    schritt = 1.0 / r.fps
+    for k in range(1, int(math.ceil((z - a) / schritt)) + 2):
+        for d in (k * schritt, -k * schritt):
+            x, y = von_s + d, bis_s + d
+            if x < a - 1e-6 or y > z + 1e-6 or zooms_im_bereich(rec, x, y):
+                continue
+            if not any(b.seite != "mitte" for b in _kanten(r, kante, x, y)):
+                return round(d, 2)
+    return None
 
 
 def genutzter_quellbereich_s(src_in_f: int, n_f: int, clip_fps: float, langsam: bool,

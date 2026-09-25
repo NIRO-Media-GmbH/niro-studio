@@ -7,7 +7,7 @@ import datetime as _dt
 from collections import Counter
 from statistics import median
 
-from .telemetrie import BEWEGUNGSARTEN, HALTUNGEN, finden
+from .telemetrie import BEWEGUNGSARTEN, HALTUNGEN, finden, stabile_bereiche
 
 TOP = 25
 SCHIEF_AB_GRAD = 2.0
@@ -52,8 +52,8 @@ def _verteilung(tele: list[dict]) -> list[str]:
     return zeilen
 
 
-def _unruhigste(tele: list[dict]) -> list[str]:
-    zeilen = ["| Clip | Kamera | Ordner | wackeln | bewegung | Haltung | Bewegungsart | ruhige Fenster (s) | Hinweis |",
+def _unruhigste(tele: list[dict], tcfg: dict | None = None) -> list[str]:
+    zeilen = ["| Clip | Kamera | Ordner | wackeln | bewegung | Haltung | Bewegungsart | ruhige Läufe (s) | Hinweis |",
               "|---|---|---|---|---|---|---|---|---|"]
     ok = [r for r in tele if r.get("wackeln") is not None]
     for r in sorted(ok, key=lambda r: -float(r["wackeln"]))[:TOP]:
@@ -63,11 +63,11 @@ def _unruhigste(tele: list[dict]) -> list[str]:
             hinweis.append(f"schief {_de(abs(float(roll)), 1)}°")
         if r.get("zoomfahrt"):
             hinweis.append("Zoomfahrt")
-        ruhig = r.get("ruhige_fenster") or []
+        laeufe = stabile_bereiche(r, tcfg) if tcfg else []
+        lauf_text = "; ".join(f"{_de(a)}–{_de(z)}" for a, z, *_ in laeufe[:4]) + (" …" if len(laeufe) > 4 else "")
         zeilen.append(f"| {_md(r.get('clip'))} | {_md(r.get('kamera'))} | {_md(r.get('ordner'))} | {_de(r['wackeln'])} | "
                       f"{_de(r.get('bewegung'))} | {_md(r.get('haltung'))} | {_md(r.get('bewegungsart'))} | "
-                      f"{', '.join(f'{t:g}' for t in ruhig[:12]) + (' …' if len(ruhig) > 12 else '') or '–'} | "
-                      f"{', '.join(hinweis) or '–'} |")
+                      f"{lauf_text or '–'} | {', '.join(hinweis) or '–'} |")
     return zeilen
 
 
@@ -146,8 +146,10 @@ def _ohne_kalibrierung(tele: list[dict], px_faktor: dict | None) -> list[str]:
             f"``autocut_telemetrie.py --kalibrieren``, Wert unter ``telemetrie.px_faktor``.", ""]
 
 
-def bericht_md(tele: list[dict], titel: str, index: dict | None = None, px_faktor: dict | None = None) -> str:
-    """Markdown-Bericht; ``px_faktor`` (``telemetrie.px_faktor``) → Hinweis auf rtmd-Kameras ohne Kalibrierung."""
+def bericht_md(tele: list[dict], titel: str, index: dict | None = None, px_faktor: dict | None = None,
+               tcfg: dict | None = None) -> str:
+    """Markdown-Bericht; ``px_faktor`` (``telemetrie.px_faktor``) → Hinweis auf rtmd-Kameras ohne Kalibrierung;
+    ``tcfg`` (``telemetrie:``) → ruhige Läufe frame-genau je Clip."""
     q = Counter(r.get("quelle") for r in tele)
     fehler = [r for r in tele if r.get("fehler") or r.get("quelle") in (None, "keine")]
     zeilen = [f"# Kamera-Telemetrie — {titel}", "",
@@ -156,7 +158,7 @@ def bericht_md(tele: list[dict], titel: str, index: dict | None = None, px_fakto
               f"Fehler {sum(1 for r in tele if r.get('fehler'))}). Werte in px @480 je 25-fps-Frame; "
               f"Quelle ``_intern/autocut/telemetrie.json``.", ""]
     zeilen += _ohne_kalibrierung(tele, px_faktor) + ["## Verteilung je Kamera", ""]
-    zeilen += _verteilung(tele) + ["", f"## Unruhigste Clips (bis {TOP}, nach wackeln)", ""] + _unruhigste(tele) + [""]
+    zeilen += _verteilung(tele) + ["", f"## Unruhigste Clips (bis {TOP}, nach wackeln)", ""] + _unruhigste(tele, tcfg) + [""]
     zeilen += [f"## Schnelle Zoomfahrten (bis {TOP}, nach Spitzentempo)", ""] + _schnelle_zooms(tele)
     unscharf = [(f[4], r.get("clip"), r.get("kamera"), f[0]) for r in tele
                 for f in (r.get("fenster") or []) if len(f) > 4 and f[4] is not None]
