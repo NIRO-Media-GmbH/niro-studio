@@ -907,8 +907,8 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     # Review-Fund I4 (Spec, Fehler und Randfälle + Konfiguration): stabil_quelle verortet, mit welchen Schwellen
     # ein Abschnitts stabil-Bereich abgeleitet wurde. Zwei getrennte Fälle je genutztem Clip (nicht je Shot —
     # ein Clip zählt nur einmal): der Config-Hash passt nicht mehr (ruhig_max_px/fenster_s geändert — dieselbe
-    # Prüfung wie 3b/3c, Meldung über HINWEIS_SCHWELLEN), oder der Hash passt, aber bewegung_max/stabil_min_s
-    # weichen ab (beide in OHNE_MESSWIRKUNG, ändern also den Hash nicht, machen stabil aber trotzdem veraltet —
+    # Prüfung wie 3b/3c, Meldung über HINWEIS_SCHWELLEN), oder der Hash passt, aber bewegung_max/stabil_min_s/glatt_s
+    # weichen ab (alle drei in OHNE_MESSWIRKUNG, ändern also den Hash nicht, machen stabil aber trotzdem veraltet —
     # kostenlos aus dem Cache behebbar, deshalb nur ein Hinweis, keine Sperre).
     stabil_ignoriert = 0
     andere_stabil_schwellen = 0
@@ -920,7 +920,8 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
         if not _stabil_frisch(c_clip, hash_heute):
             stabil_ignoriert += 1
         elif (float(sq.get("bewegung_max", tcfg["bewegung_max"])) != float(tcfg["bewegung_max"])
-              or float(sq.get("stabil_min_s", tcfg["stabil_min_s"])) != float(tcfg["stabil_min_s"])):
+              or float(sq.get("stabil_min_s", tcfg["stabil_min_s"])) != float(tcfg["stabil_min_s"])
+              or float(sq.get("glatt_s", tcfg["glatt_s"])) != float(tcfg["glatt_s"])):
             andere_stabil_schwellen += 1
     if stabil_ignoriert:
         # Ledger B2: ruhig_max_px/fenster_s stecken im Hash — erst die Telemetrie neu messen, dann den Nachlauf

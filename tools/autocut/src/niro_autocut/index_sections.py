@@ -197,8 +197,8 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0,
     wird gesichert. Idempotent. Liefert (Datensatz, geändert?); ohne Telemetrie unverändert.
 
     ``tcfg`` = der ``telemetrie:``-Config-Block (Spec 2026-09-23). Mit ihm bekommt der Datensatz ``stabil_quelle``
-    mit den drei Schwellen, dem Config-Hash der Messung und ``laeufe`` — den ungeschnittenen stabilen Läufen des
-    Clips aus ``stabile_bereiche()`` (Schluss-Review I3/M1: der Prüfer prüft gegen sie). Jeder Abschnitt bekommt
+    mit den vier Schwellen (samt ``glatt_s``), dem Config-Hash der Messung und ``laeufe`` — den ungeschnittenen stabilen
+    Läufen des Clips aus ``stabile_bereiche()`` (Schluss-Review I3/M1: der Prüfer prüft gegen sie). Jeder Abschnitt bekommt
     ``stabil`` — die Stücke dieser Läufe, auf den Abschnitt geschnitten, OHNE Mindestlänge je Stück: die gilt für den
     Lauf, und die garantiert ``stabile_bereiche()`` schon; ein kürzeres Stück entsteht nur am Schnitt mit einer
     Abschnittsgrenze, also genau dort, wo der Lauf im Nachbarabschnitt weitergeht. Nur Stücke ohne Länge fallen weg.
@@ -247,7 +247,8 @@ def telemetrie_anwenden(rec: dict, tele: dict | None, fenster_s: float = 2.0,
         out["felder_quelle"] = quelle
     if tcfg:
         sq = {"ruhig_max_px": float(tcfg["ruhig_max_px"]), "bewegung_max": float(tcfg["bewegung_max"]),
-              "stabil_min_s": float(tcfg["stabil_min_s"]), "config_hash": tele.get("config_hash"), "laeufe": laeufe}
+              "stabil_min_s": float(tcfg["stabil_min_s"]), "glatt_s": float(tcfg["glatt_s"]),
+              "config_hash": tele.get("config_hash"), "laeufe": laeufe}
         geaendert |= rec.get("stabil_quelle") != sq
         out["stabil_quelle"] = sq
     return out, geaendert

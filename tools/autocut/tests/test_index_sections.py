@@ -8,6 +8,7 @@ import pytest
 from PIL import Image
 
 from niro_autocut import index_sections as S
+from reihen import reihe as _reihe
 
 
 def _frames(tmp_path: Path, stem="FX3_1", fp12="abcdefabcdef", times=(0.5, 2.0, 4.0, 6.0, 7.5)) -> Path:
@@ -330,7 +331,7 @@ TELE = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd",
 _CFG_T = {"index": {"model": "claude-opus-5"},
           "index_sections": {"tile_px": 480, "per_section": 2, "max_sections": 5, "effort": "medium", "max_tokens": 2500},
           "telemetrie": {"fenster_s": 2.0, "schritt_s": 1.0, "ruhig_max_px": 0.15,
-                         "bewegung_max": 2.0, "stabil_min_s": 2.0}}
+                         "bewegung_max": 2.0, "stabil_min_s": 2.0, "glatt_s": 0.4}}
 
 
 def test_telemetrie_text_und_anwenden():
@@ -639,8 +640,11 @@ def test_telemetrie_anwenden_ohne_fenster_setzt_kein_feld():
 # Stabile Bereiche je Abschnitt (Spec 2026-09-23)
 # --------------------------------------------------------------------------- #
 
-_TCFG = {"fenster_s": 2.0, "schritt_s": 1.0, "ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0}
+_TCFG = {"fenster_s": 2.0, "schritt_s": 1.0, "ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+        "glatt_s": 0.4}
 # Telemetrie mit ruhigen Fenstern: 0–3 s ruhig, 4 s Ausreißer, 5–6 s wieder ruhig
+# Reihe je Frame: 0–4,6 s ruhig, 4,6–5,4 s Schwenk 5 px je Frame, 5,4–8 s ruhig → Läufe 0–4,44 s und
+# 5,64–8,0 s (Glättung 0,4 s, Spec 2026-09-25)
 _TELE_STABIL = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd", "fehler": None,
                 "dauer_s": 8.0, "fenster_s": 2.0, "haltung": "gimbal", "wackeln": 0.05,
                 "pitch_grad": -12.0, "perspektive_hoehe": "Aufsicht",
@@ -649,6 +653,7 @@ _TELE_STABIL = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle":
                             [4.0, 0.40, 4.0, "schwenk_links", None], [5.0, 0.05, 0.3, "statisch", None],
                             [6.0, 0.05, 0.3, "statisch", None]],
                 "ruhige_fenster": [0.0, 1.0, 2.0, 3.0, 5.0, 6.0],
+                "verschiebung": _reihe((4.6, 0.0, 0.0), (0.8, 5.0, 0.0), (2.6, 0.0, 0.0)), "zooms": [],
                 "config_hash": "abc123abc123"}
 
 
@@ -657,45 +662,47 @@ def test_telemetrie_anwenden_schreibt_stabil_je_abschnitt():
                           {"von_s": 4, "bis_s": 8, "verwendbar": False}]}
     neu, geaendert = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0, _TCFG)
     assert geaendert is True
-    # Clip-Läufe sind 0–5 s und 5–8 s (das unruhige Fenster bei 4 s trennt sie), auf die Abschnitte geschnitten
-    assert neu["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.05, 0.2]]
-    # 4,0–5,0 s ist nur 1,0 s lang, bleibt aber: der Lauf 0–5 s geht im Nachbarabschnitt weiter (Schluss-Review I3)
-    assert neu["abschnitte"][1]["stabil"] == [[4.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
-    assert neu["stabil_quelle"] == {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+    # Clip-Läufe 0–4,44 s und 5,64–8,0 s (der Schwenk 4,6–5,4 s trennt sie), auf die Abschnitte geschnitten
+    assert neu["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.0, 0.0]]
+    # 4,0–4,44 s ist nur 0,44 s lang, bleibt aber: der Lauf 0–4,44 s beginnt im Nachbarabschnitt (Schluss-Review I3)
+    assert neu["abschnitte"][1]["stabil"] == [[4.0, 4.44, 0.0, 0.0], [5.64, 8.0, 0.0, 0.0]]
+    assert neu["stabil_quelle"] == {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0, "glatt_s": 0.4,
                                     "config_hash": "abc123abc123",
-                                    "laeufe": [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]}
+                                    "laeufe": [[0.0, 4.44, 0.0, 0.0], [5.64, 8.0, 0.0, 0.0]]}
 
 
 def test_telemetrie_anwenden_laesst_nur_stuecke_ohne_laenge_weg():
-    """Schluss-Review I3 (Task 8): ein kurzes Stück bleibt — Abschnitt 3,5–4,5 s trifft den Lauf 0–5 s nur 1,0 s lang,
-    die Mindestlänge gilt aber für den Lauf, nicht für das Stück. Weg fällt nur ein Stück ohne Länge: der Abschnitt
-    5–7 s berührt den Lauf 0–5 s nur im Punkt 5,0."""
-    rec = {"abschnitte": [{"von_s": 3.5, "bis_s": 4.5, "verwendbar": False},
-                          {"von_s": 5.0, "bis_s": 7.0, "verwendbar": False}]}
+    """Schluss-Review I3 (Task 8): ein kurzes Stück bleibt — Abschnitt 3,5–4,44 s trifft den Lauf 0–4,44 s nur 0,94 s
+    lang, die Mindestlänge gilt aber für den Lauf, nicht für das Stück. Weg fällt nur ein Stück ohne Länge: der
+    Abschnitt 4,44–7 s berührt den Lauf 0–4,44 s nur im Punkt 4,44."""
+    rec = {"abschnitte": [{"von_s": 3.5, "bis_s": 4.44, "verwendbar": False},
+                          {"von_s": 4.44, "bis_s": 7.0, "verwendbar": False}]}
     neu, _ = S.telemetrie_anwenden(rec, _TELE_STABIL, 2.0, _TCFG)
-    assert neu["abschnitte"][0]["stabil"] == [[3.5, 4.5, 0.05, 0.2]]
-    assert neu["abschnitte"][1]["stabil"] == [[5.0, 7.0, 0.05, 0.3]]
+    assert neu["abschnitte"][0]["stabil"] == [[3.5, 4.44, 0.0, 0.0]]
+    assert neu["abschnitte"][1]["stabil"] == [[5.64, 7.0, 0.0, 0.0]]
 
 
-# Schluss-Review I3 (Task 8): EIN gemessener Lauf 12–18 s — Fenster 12 … 16 s ruhig, alle anderen unruhig
+# Schluss-Review I3 (Task 8): EIN gemessener Lauf 12,24–17,84 s
 _TELE_LAUF = {"path": "/nas/B-Roll/Flur/FX3_1.MP4", "clip": "FX3_1", "quelle": "rtmd", "fehler": None,
               "dauer_s": 20.0, "fenster_s": 2.0, "haltung": "gimbal", "wackeln": 0.1,
               "fenster": [[float(t), 0.05 if 12 <= t <= 16 else 0.4, 0.3 if 12 <= t <= 16 else 3.0, "statisch", None]
                           for t in range(19)],
-              "ruhige_fenster": [12.0, 13.0, 14.0, 15.0, 16.0], "config_hash": "abc123abc123"}
+              "ruhige_fenster": [12.0, 13.0, 14.0, 15.0, 16.0],
+              "verschiebung": _reihe((12.0, 5.0, 0.0), (6.0, 0.0, 0.0), (2.0, 5.0, 0.0)), "zooms": [],
+              "config_hash": "abc123abc123"}
 
 
 def test_telemetrie_anwenden_randstueck_bleibt_und_laeufe_ungeschnitten():
-    """Schluss-Review I3 (Task 8): Abschnitte 8–13 und 13–20 s, EIN Lauf 12–18 s. Das Stück 12–13 s (1,0 s, unter
-    stabil_min_s) fiel bisher weg, obwohl sein Lauf im Nachbarabschnitt weitergeht — der Prüfer ließ dann einen Shot
-    12,5–15,5 s durchfallen. Jetzt bleibt es, und stabil_quelle hält den ungeschnittenen Lauf für den Prüfer."""
+    """Schluss-Review I3 (Task 8): Abschnitte 8–13 und 13–20 s, EIN Lauf 12,24–17,84 s. Das Stück 12,24–13 s (0,76 s,
+    unter stabil_min_s) fiel bisher weg, obwohl sein Lauf im Nachbarabschnitt weitergeht — der Prüfer ließ dann einen
+    Shot 12,5–15,5 s durchfallen. Jetzt bleibt es, und stabil_quelle hält den ungeschnittenen Lauf für den Prüfer."""
     rec = {"abschnitte": [{"von_s": 8, "bis_s": 13, "verwendbar": False},
                           {"von_s": 13, "bis_s": 20, "verwendbar": False}]}
     neu, geaendert = S.telemetrie_anwenden(rec, _TELE_LAUF, 2.0, _TCFG)
     assert geaendert is True
-    assert neu["abschnitte"][0]["stabil"] == [[12.0, 13.0, 0.05, 0.3]]
-    assert neu["abschnitte"][1]["stabil"] == [[13.0, 18.0, 0.05, 0.3]]
-    assert neu["stabil_quelle"]["laeufe"] == [[12.0, 18.0, 0.05, 0.3]]
+    assert neu["abschnitte"][0]["stabil"] == [[12.24, 13.0, 0.0, 0.0]]
+    assert neu["abschnitte"][1]["stabil"] == [[13.0, 17.84, 0.0, 0.0]]
+    assert neu["stabil_quelle"]["laeufe"] == [[12.24, 17.84, 0.0, 0.0]]
     wieder, geaendert2 = S.telemetrie_anwenden(neu, _TELE_LAUF, 2.0, _TCFG)
     assert geaendert2 is False and wieder == neu
 
@@ -736,11 +743,11 @@ def test_index_sections_clip_traegt_stabil_bei_cache_treffer_nach(tmp_path):
         raise AssertionError("kein API-Aufruf bei Cache-Treffer")
 
     out = S.index_sections_clip(ch, rec, None, _CFG_T, "prompt", describe=kein_api, telemetrie=_TELE_STABIL)
-    assert out["_cache"] is True and out["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.05, 0.2]]
+    assert out["_cache"] is True and out["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.0, 0.0]]
     cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
-    assert cached["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.05, 0.2]]
+    assert cached["abschnitte"][0]["stabil"] == [[0.0, 4.0, 0.0, 0.0]]
     assert cached["stabil_quelle"]["config_hash"] == "abc123abc123"
-    assert cached["stabil_quelle"]["laeufe"] == [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+    assert cached["stabil_quelle"]["laeufe"] == [[0.0, 4.44, 0.0, 0.0], [5.64, 8.0, 0.0, 0.0]]
 
 
 def test_index_sections_clip_traegt_laeufe_bei_altem_datensatz_nach(tmp_path):
@@ -764,7 +771,7 @@ def test_index_sections_clip_traegt_laeufe_bei_altem_datensatz_nach(tmp_path):
 
     out = S.index_sections_clip(ch, alt, None, _CFG_T, "prompt", describe=kein_api, telemetrie=_TELE_STABIL)
     assert out["_cache"] is True
-    assert out["abschnitte"][0]["stabil"] == [[4.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+    assert out["abschnitte"][0]["stabil"] == [[4.0, 4.44, 0.0, 0.0], [5.64, 8.0, 0.0, 0.0]]
     cached = json.loads((ch.autocut / "broll_index" / "abcdefabcdef0000.json").read_text())
-    assert cached["stabil_quelle"]["laeufe"] == [[0.0, 5.0, 0.05, 0.2], [5.0, 8.0, 0.05, 0.3]]
+    assert cached["stabil_quelle"]["laeufe"] == [[0.0, 4.44, 0.0, 0.0], [5.64, 8.0, 0.0, 0.0]]
     assert cached["abschnitte"][0]["stabil"] == out["abschnitte"][0]["stabil"]

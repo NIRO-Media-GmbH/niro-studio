@@ -20,6 +20,7 @@ import threading
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import NamedTuple
 
 import numpy as np
 
@@ -405,9 +406,9 @@ def zoom_messen(kb_mm: list[float], kb_index: list[int] | None, fps: float, samp
 # --- Clip-Messung ---------------------------------------------------------------------------------------------------------
 
 # Schlüssel ohne Einfluss auf die Messung: Parallelität, die Brennweitenfolge der Vorlagen 3a/6d und die
-# Ableitung der stabilen Bereiche (Spec 2026-09-23; sie rechnet auf fenster, das die Messung schon enthält)
+# Ableitung der stabilen Läufe (Spec 2026-09-23/-25; sie rechnet auf der gemessenen Reihe)
 OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "digitalzoom_max",
-                    "bewegung_rand_s", "bewegung_spitze_faktor", "bewegung_max", "stabil_min_s")
+                    "bewegung_rand_s", "bewegung_spitze_faktor", "bewegung_max", "stabil_min_s", "glatt_s")
 
 
 # Messversion, geht in den Config-Hash ein. 2 = Brennweite je Frame und Reihe ``verschiebung`` (Spec 2026-09-25):
@@ -734,46 +735,85 @@ def bewegung_grundniveau(rec: dict | None, t_s: float, abstand_s: float = 3.0) -
     return float(np.median(fern)) if fern else None
 
 
+# --- Bewegung je Frame, ruhige Frames, stabile Läufe (Spec 2026-09-25) ----------------------------------------------
+
+def _glatt(x: np.ndarray, breite: int) -> np.ndarray:
+    """Gleitendes Mittel einer 1-D-Reihe über ``breite`` Frames, Ränder normiert (wie ``_tiefpass``)."""
+    return _tiefpass(np.asarray(x, np.float64)[:, None], breite)[:, 0]
+
+
+def bewegung_je_frame(rec: dict | None, glatt_s: float) -> tuple[float, float, np.ndarray, np.ndarray] | None:
+    """(t0_s, fps, wackeln, bewegung) je Frame aus ``verschiebung``, beide über ``glatt_s`` gemittelt; None ohne Reihe.
+    ``wackeln`` = Mittel aus |Δdx| und |Δdy| zum Vorframe (dieselbe Größe wie in den Fenstern; Frame 0 übernimmt den Wert
+    von Frame 1), ``bewegung`` = Betrag √(dx² + dy²) — ein reiner Schwenk zählt voll (die Fenster mitteln die Achsen)."""
+    v = (rec or {}).get("verschiebung")
+    if not v or not v.get("dx") or not v.get("dy"):
+        return None
+    fps = float(v.get("fps") or ZIEL_FPS)
+    n = min(len(v["dx"]), len(v["dy"]))
+    dxy = np.stack([np.asarray(v["dx"][:n], np.float64), np.asarray(v["dy"][:n], np.float64)], axis=1)
+    wk = np.abs(np.diff(dxy, axis=0)).mean(axis=1)
+    wk = np.r_[wk[:1], wk] if len(wk) else np.zeros(n)
+    k = max(1, min(n, int(round(float(glatt_s) * fps))))
+    return float(v.get("t0_s") or 0.0), fps, _glatt(wk, k), _glatt(np.hypot(dxy[:, 0], dxy[:, 1]), k)
+
+
+class Ruhe(NamedTuple):
+    """Ruhige Frames eines Clips (Spec 2026-09-25); ``wackeln``/``bewegung`` geglättet und mit dem Zeitlupen-Faktor
+    skaliert. Frame ``i`` liegt bei ``t0_s + i / fps``."""
+    t0_s: float
+    fps: float
+    ruhig: np.ndarray
+    wackeln: np.ndarray
+    bewegung: np.ndarray
+
+    def frames(self, von_s: float, bis_s: float) -> slice:
+        """Frames mit ``von_s <= t < bis_s``, auf die Reihe gekappt (leer, wenn der Bereich außerhalb liegt)."""
+        n = len(self.ruhig)
+        a = min(n, max(0, math.ceil((von_s - self.t0_s) * self.fps - 1e-6)))
+        b = min(n, max(a, math.ceil((bis_s - self.t0_s) * self.fps - 1e-6)))
+        return slice(a, b)
+
+    def zeit(self, i: int) -> float:
+        return self.t0_s + i / self.fps
+
+
+def ruhe_je_frame(rec: dict | None, cfg: dict, faktor: float = 1.0) -> Ruhe | None:
+    """Ruhig = ``wackeln·faktor <= ruhig_max_px`` und ``bewegung·faktor <= bewegung_max`` und außerhalb jeder schnellen
+    Zoomfahrt ``[von_s, bis_s)``; ``faktor`` = 1 / tempo (Zeitlupe: sichtbare Bewegung). None ohne Reihe."""
+    b = bewegung_je_frame(rec, float(cfg["glatt_s"]))
+    if b is None:
+        return None
+    t0, fps, wk, bw = b
+    wk, bw = wk * float(faktor), bw * float(faktor)
+    ruhig = (wk <= float(cfg["ruhig_max_px"]) + 1e-9) & (bw <= float(cfg["bewegung_max"]) + 1e-9)
+    t = t0 + np.arange(len(ruhig)) / fps
+    for z in (rec or {}).get("zooms") or []:
+        if z.get("urteil") == "schnell":
+            ruhig &= ~((t >= float(z["von_s"])) & (t < float(z["bis_s"])))
+    return Ruhe(t0, fps, ruhig, wk, bw)
+
+
 def stabile_bereiche(rec: dict | None, cfg: dict) -> list[list[float]]:
-    """Bereiche, die ruhig genug zum Schneiden sind, als ``[von_s, bis_s, wackeln_max, bewegung_max]``
-    (Spec 2026-09-23). Reine Ableitung aus einem vorhandenen Datensatz — keine Messung, keine Mediendatei.
-
-    Grundlage sind die Fenster, deren Startzeit in ``ruhige_fenster`` steht: damit gilt ``wackeln <= ruhig_max_px``
-    **und** der Ausschluss schneller Zoomfahrten aus ``ruhige_ohne_schnelle_zooms`` ohne zweite Rechnung.
-    Zusätzlich muss ``bewegung`` des Fensters unter ``bewegung_max`` liegen — ``wackeln`` misst Zittern, nicht
-    Tempo, und ein glatter schneller Schwenk taugt als kurzer Einsetzer nicht. Benachbarte Fenster (Abstand
-    höchstens ``schritt_s``) bilden einen Lauf; er reicht bis zum Ende seines letzten Fensters, gekappt an
-    ``dauer_s``. Läufe unter ``stabil_min_s`` fallen weg. Ohne ``fenster`` oder ohne ruhige Fenster leer.
-
-    Die Bereichsgrenzen sind auf die Fensterauflösung genau (``fenster_s`` 2,0 / ``schritt_s`` 1,0 ⇒ ±1 s).
+    """Bereiche, die ruhig genug zum Schneiden sind, als ``[von_s, bis_s, wackeln_max, bewegung_max]`` (Spec 2026-09-25,
+    löst die Ableitung aus 2-s-Fenstern der Spec 2026-09-23 ab): maximale Folgen ruhiger Frames (``ruhe_je_frame``),
+    mindestens ``stabil_min_s`` lang, Grenzen auf den Frame genau, ``bis_s`` auf ``dauer_s`` gekappt; die Höchstwerte
+    sind die der geglätteten Reihen im Lauf. Reine Ableitung aus dem Datensatz — keine Messung. Ohne Reihe leer.
     Die Liste ist ein Vorschlag, nie eine Sperre: was davon geschnitten wird, entscheidet der Bildinhalt."""
-    fen = (rec or {}).get("fenster") or []
-    if not fen:
+    r = ruhe_je_frame(rec, cfg)
+    if r is None:
         return []
-    ruhig = {float(t) for t in (rec.get("ruhige_fenster") or [])}
-    bew_max = float(cfg["bewegung_max"])
-    schritt = float(cfg["schritt_s"])
-    w = float(rec.get("fenster_s") or cfg["fenster_s"])
-    dauer = rec.get("dauer_s")
-    laeufe: list[list[tuple[float, float, float]]] = []
-    for f in fen:
-        t, wk, bw = float(f[0]), float(f[1]), float(f[2])
-        if t not in ruhig or bw > bew_max:
-            continue
-        if laeufe and t - laeufe[-1][-1][0] <= schritt + 1e-6:
-            laeufe[-1].append((t, wk, bw))
-        else:
-            laeufe.append([(t, wk, bw)])
+    kanten = np.diff(np.concatenate([[0], r.ruhig.astype(np.int8), [0]]))
+    dauer = (rec or {}).get("dauer_s")
     out = []
-    for lauf in laeufe:
-        von = lauf[0][0]
-        bis = lauf[-1][0] + w
+    for a, b in zip(np.flatnonzero(kanten == 1).tolist(), np.flatnonzero(kanten == -1).tolist()):
+        von, bis = r.zeit(a), r.zeit(b)
         if dauer is not None:
             bis = min(bis, float(dauer))
         if bis - von < float(cfg["stabil_min_s"]) - 1e-6:
             continue
-        out.append([round(von, 2), round(bis, 2),
-                    round(max(x[1] for x in lauf), 3), round(max(x[2] for x in lauf), 3)])
+        out.append([round(von, 2), round(bis, 2), round(float(r.wackeln[a:b].max()), 3),
+                    round(float(r.bewegung[a:b].max()), 3)])
     return out
 
 

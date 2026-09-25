@@ -143,13 +143,14 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   digitalzoom_max: 1.5          # Obergrenze für das Produkt aller Zooms eines Shots (4K: bewusst leicht hochskaliert)
   bewegung_rand_s: 0.5          # Abstand einer Schnittgrenze zu einer Bewegungsspitze (UNKALIBRIERT, nur Warnung)
   bewegung_spitze_faktor: 3.0   # ab dem Vielfachen des Grundniveaus zählt eine Spitze (UNKALIBRIERT, nur Warnung)
-  # Stabile Bereiche für die B-Roll-Auswahl (Spec 2026-09-23): Läufe benachbarter ruhiger Fenster, in denen ein
-  # Shot liegen darf, auch wenn der Index den Abschnitt verworfen hat. Beide Schlüssel ändern keine Messung,
-  # nur die Ableitung aus fenster → OHNE_MESSWIRKUNG, ein Neusetzen erzwingt kein Neumessen.
-  bewegung_max: 2.0         # Obergrenze der Bewegung je Fenster eines stabilen Bereichs (UNKALIBRIERT, Startwert
-                            # 23.09.2026: die vier vom User zurückgeholten Bereiche liegen bei max. 1,64, der
-                            # einzige Fehlalarm im 30er-Testsatz bei 3,1–5,3 — je ein Datenpunkt pro Seite)
-  stabil_min_s: 2.0         # kürzester stabiler Bereich = kürzester Shot aus broll.shot_len_s
+  # Stabile Läufe und Schnittkanten (Spec 2026-09-25, löst die 2-s-Fenster der Spec 2026-09-23 ab): ruhige Frames
+  # aus der Reihe ``verschiebung``. Die Schlüssel ändern keine Messung, nur die Ableitung → OHNE_MESSWIRKUNG,
+  # ein Neusetzen erzwingt kein Neumessen (danach autocut_index_sections.py, kostenlos aus dem Cache).
+  bewegung_max: 2.0         # Obergrenze der Bewegung je Frame (Betrag √(dx²+dy²), px @480, über glatt_s geglättet)
+                            # für ruhige Frames — UNKALIBRIERT bis zur Review-Runde Schnittkanten (Klebl 25.09.:
+                            # die vier Wackler fallen bei 1,0–2,0 raus; WLC FX3_8660, vom User „gut", hat 2,9)
+  stabil_min_s: 2.0         # kürzester stabiler Lauf = kürzester Shot aus broll.shot_len_s
+  glatt_s: 0.4              # Glättung der Reihen je Frame (wackeln, Bewegung) für Läufe und Kantenprüfung
 gyroflow:                   # Gyroflow-Stabilisierung für B-Roll (Spec 2026-09-22): Sidecar neben der Mediendatei,
                             # angewendet per OFX im Schnitt — kein Render, keine zweite Medienhaltung.
   cli: "/Applications/Gyroflow.app/Contents/MacOS/gyroflow"

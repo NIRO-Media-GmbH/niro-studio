@@ -22,7 +22,7 @@ CFG_TELEMETRIE = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_
                   "zoom_schnell_proz_s": 100.0, "zoom_ruck_max": 1.0, "zoom_stocken_anteil": 0.0, "zoom_sprung_proz": 12.0,
                   "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20, "digitalzoom_faktor": 1.25, "digitalzoom_max": 1.5,
                   "bewegung_rand_s": 0.5, "bewegung_spitze_faktor": 3.0,
-                  "bewegung_max": 2.0, "stabil_min_s": 2.0}
+                  "bewegung_max": 2.0, "stabil_min_s": 2.0, "glatt_s": 0.4}
 CFG = {"face_share": [0.15, 0.20], "face_share_hard": [0.12, 0.23], "window_first_s": 2.5, "window_s": 2.0, "window_min_s": 1.5,
        "window_max_s": 4.0, "full_face_beat_max_s": 3.0, "full_face_keywords": ["Gehaltenes Gesicht", "Bookend"],
        "shot_len_s": [2.0, 5.0], "shot_len_slow_max_s": 6.0, "montage_len_s": [1.5, 3.0], "fast_cuts_len_s": [1.0, 2.0],
@@ -1102,6 +1102,16 @@ def test_verify_layout_warnt_bei_anderen_stabil_schwellen():
     assert any("anderen Stabil-Schwellen abgeleitet" in w for w in res.warnings)
 
 
+def test_verify_layout_warnt_bei_anderer_glaettung():
+    """glatt_s steht wie bewegung_max in OHNE_MESSWIRKUNG: der Hash bleibt, die Läufe sind trotzdem veraltet."""
+    idx = _idx_abschnitts_maengel([], [])
+    idx["clips"][0]["stabil_quelle"]["glatt_s"] = 0.4
+    cfg = {**CFG, "telemetrie": {**CFG_TELEMETRIE, "glatt_s": 0.8}}
+    plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    res = L.verify_layout(plan, TP, idx, CL, cfg, 25, [_tele("FX3_1.MP4", 25.0)])
+    assert any("anderen Stabil-Schwellen abgeleitet" in w for w in res.warnings)
+
+
 # --------------------------------------------------------------------------- #
 # Fix-Runde 2 (Re-Review gegen die Spec, Fund B1: nur an Abschnittsgrenzen zusammenlegen)
 # --------------------------------------------------------------------------- #
@@ -1184,10 +1194,10 @@ def test_verify_layout_i3_shot_ueber_die_grenze_in_einem_lauf():
 
 
 def test_verify_layout_i3_ende_zu_ende_an_fx3_8660():
-    """Schluss-Review I3 an echten Werten: FX3_8660 (WLC, tests/fixtures/bereiche-wlc.json) hat die Läufe 0–11 s und
-    12–18,72 s; der User hat 12,5–15,5 s zurückgeholt. Mit verworfenen Abschnitten 8–13 und 13–18,72 s (Grenzen für
-    diesen Fall gewählt) verwarf Stufe 2b bisher das 1-s-Randstück 12–13 s, und der Prüfer ließ den Shot durchfallen,
-    obwohl EIN gemessener Lauf ihn deckt. Hier läuft der Weg ohne Handarbeit: Stufe 2b schreibt, der Prüfer liest."""
+    """Schluss-Review I3 an echten Werten, seit Spec 2026-09-25 frame-genau: FX3_8660 (WLC,
+    tests/fixtures/bereiche-wlc.json) hat bei bewegung_max 2,0 die Läufe 7,16–10,24 s und 13,76–18,36 s. Mit
+    verworfenen Abschnitten 8–15 und 15–18,72 s (Grenze mitten im zweiten Lauf) schreibt Stufe 2b die Stücke, und der
+    Prüfer lässt den Shot 14,0–17,0 s über die Abschnittsgrenze durch — er liegt in EINEM gemessenen Lauf."""
     e = next(x for x in json.loads(WLC_FIXTURE.read_text(encoding="utf-8")) if x["clip"] == "FX3_8660")
     idx = _idx()
     c = idx["clips"][0]
@@ -1195,11 +1205,13 @@ def test_verify_layout_i3_ende_zu_ende_an_fx3_8660():
             "config_hash": TM.config_hash(CFG_TELEMETRIE)}
     vorlage = dict(c["abschnitte"][0])
     c.update(dauer_s=18.72, maengel=["Wackler"],
-             abschnitte=[{**vorlage, "von_s": 8.0, "bis_s": 13.0, "verwendbar": False, "maengel": ["Wackler"]},
-                         {**vorlage, "von_s": 13.0, "bis_s": 18.72, "verwendbar": False, "maengel": ["Wackler"]}])
+             abschnitte=[{**vorlage, "von_s": 8.0, "bis_s": 15.0, "verwendbar": False, "maengel": ["Wackler"]},
+                         {**vorlage, "von_s": 15.0, "bis_s": 18.72, "verwendbar": False, "maengel": ["Wackler"]}])
     idx["clips"][0], _ = S.telemetrie_anwenden(c, tele, 2.0, CFG_TELEMETRIE)
-    assert idx["clips"][0]["stabil_quelle"]["laeufe"] == [[0.0, 11.0, 0.128, 1.664], [12.0, 18.72, 0.08, 1.635]]
-    plan = _plan({1: [("Flur/FX3_1.MP4", 12.5, 15.5), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    # Höchstwerte weichen von der Referenzrechnung des Task-Briefs um 0,001 ab (dritte Stelle, Rundung der Reihe);
+    # die Bereichsgrenzen selbst (7,16/10,24/13,76/18,36) treffen exakt — Wert aus dem neu erzeugten Fixture verwendet.
+    assert idx["clips"][0]["stabil_quelle"]["laeufe"] == [[7.16, 10.24, 0.125, 1.893], [13.76, 18.36, 0.141, 1.984]]
+    plan = _plan({1: [("Flur/FX3_1.MP4", 14.0, 17.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     res = L.verify_layout(plan, TP, idx, CL, WACKLER_GESPERRT, 25, [tele])
     assert _fehler_fx3_1(res, "verwendbaren Abschnitt", "Mangel") == [], res.errors
 
