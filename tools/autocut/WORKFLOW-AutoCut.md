@@ -903,11 +903,14 @@ dämpfen), Spearman 0,76/0,71 → beide belastbar, `optisch_fuer` leer. Der opti
 bestätigt), Brennweite nur 47 % — Claude nennt bis etwa 75 mm KB „normal", und Zoomfahrten (157 Clips) bekommen die Klasse des
 Clip-Medians. Die Klassen entfallen seit 21.09.2026 (Spec Zoomfahrten): Stufe 2b trägt `brennweite_mm` und `zoom`.
 Seit 25.09.2026 rechnet auch `--kalibrieren` den Gyro mit der KB-Brennweite je Frame im gemessenen Fenster (wie die Reihe
-`verschiebung`; `kb_mm` je Clip = Median im Fenster). Die `px_faktor`-Werte 0,60/0,69 oben stammen noch aus dem Clip-Median,
-der die Steigung je Zoom-Clip verzerrt (der Median über die Clips dämpft das) — Neukalibrierung offen, Entscheidung des Users.
-Ebenfalls seit 25.09.2026 schneidet `--kalibrieren` das Gyro-Fenster über die IMU-Rate: bei 59,94p/119,88p schwankt die Probenzahl
-je Sample (33/34, 16/17), mit der des ersten Samples lag das Gyro-Fenster 1–4 % von `von_s` neben dem optischen (bei 5 s bis
-0,2 s, bei 0,5 s rund 20 ms) — ob HFR-Clips die Werte oben verzerrt haben, ist nicht gemessen.
+`verschiebung`; `kb_mm` je Clip = Median im Fenster, vorher Clip-Median) und schneidet das Gyro-Fenster über die IMU-Rate: bei
+59,94p/119,88p schwankt die Probenzahl je Sample (33/34, 16/17), mit der des ersten Samples lag das Gyro-Fenster 1–4 % von
+`von_s` neben dem optischen (bei 5 s bis 0,2 s, bei 0,5 s rund 20 ms). **Nachkalibrierung 25.09.2026** mit beiden Korrekturen auf
+denselben 355 Clips (alle 25p/50p, HFR spielte hier keine Rolle): FX3 `px_faktor` 0,597 → 0,605, Spearman 0,76 → 0,78; a7 IV
+0,689 → 0,689, Spearman 0,71 → 0,79; Achsen, Vorzeichen und cv2-Gegenprobe unverändert. Nur 15 FX3- und 6 a7-IV-Fenster lagen
+mehr als 5 % neben dem Clip-Median der Brennweite — die Brennweite je Frame hebt vor allem die Rangkorrelation. `defaults.yaml`
+bleibt bei 0,60/0,69 (Messung FX3 0,005 höher, < 1 %; a7 IV gleich); die Messung vom 21.09. liegt als
+`telemetrie_kalibrierung_2026-09-21.json` neben der neuen im `_intern/autocut/` der Charge.
 
 **Kalibrierwerte Umschwenken (22.09.2026, negatives Ergebnis):** gesucht war die Grenze für Umschwenken zwischen zwei
 Ausrichtungen (Ausschuss) gegenüber gewollter Bewegung, zwei Runden mit 12 und 18 Beispielen aus MEK, 30 Urteile des
