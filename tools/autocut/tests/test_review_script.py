@@ -83,13 +83,56 @@ def _lauf(w, *extra):
     return review.main([str(w["charge"]), "--project", PROJEKT, *extra])
 
 
+def _timeline_mit_clip(w, name: str):
+    fr = w["fake"]
+    t = fr.p.mp.CreateEmptyTimeline(name)
+    item = FakeItem("/nas/FX3_1.MP4")
+    fr.p.mp.AppendToTimeline([{"mediaPoolItem": item, "startFrame": 0, "endFrame": 99, "recordFrame": 90000,
+                               "trackIndex": 1, "mediaType": 1}])
+    fr.p.SetCurrentTimeline(w["user"])
+    return t
+
+
+def _review_versionen(w, titel: str, n: int) -> Path:
+    """V1…Vn eines Videos liegen schon im Review (frühere Ablagen)."""
+    ordner = w["review"] / "Kunde A" / "Projekt B" / titel
+    for nr in range(1, n + 1):
+        (ordner / f"V{nr}").mkdir(parents=True)
+        (ordner / f"V{nr}" / "version.json").write_text(json.dumps({"nr": nr}), encoding="utf-8")
+    (ordner / "video.json").write_text(json.dumps({"titel": titel, "kunde": "Kunde A", "projekt": "Projekt B"}), encoding="utf-8")
+    return ordner
+
+
 def test_vorschau_rendert_nichts(welt, capsys):
     assert _lauf(welt, "--vorschau") == 0
     out = capsys.readouterr().out
-    assert "Review „video-1“ nächste Version (Rohschnitt (roh))" in out and "3840×2160 → 1920×1080" in out
+    assert "Review „video-1“ V1 (nächste Version) · Stufe „Rohschnitt (roh)“" in out and "3840×2160 → 1920×1080" in out
     assert "00:00:04:00 (100 Frames @ 25 fps)" in out
     assert "nichts gerendert" in out and not (welt["charge"] / "Ergebnisse" / "Export" / "Review").exists()
     assert welt["fake"].p.renders == []
+
+
+def test_vorschau_nennt_naechste_review_version_nicht_die_timeline_version(welt, capsys):
+    # Klebl 25.09.: Timeline „01 - Tiefbau_V3“, im Review lagen V1–V8 → abgelegt wurde V9, die Vorschau zeigte „(V3)“
+    _timeline_mit_clip(welt, "video-1_V3")
+    _review_versionen(welt, "video-1", 8)
+    assert _lauf(welt, "--timeline", "video-1_V3", "--vorschau") == 0
+    out = capsys.readouterr().out
+    assert "„video-1_V3“ → Review „video-1“ V9 (nächste Version) · Stufe „Stand“" in out and "(V3)" not in out
+    # zwei Timelines desselben Videos in einem Lauf → fortlaufend
+    assert _lauf(welt, "--timeline", "video-1_V3", "--timeline", NAME, "--vorschau") == 0
+    out = capsys.readouterr().out
+    assert "Review „video-1“ V9 (nächste Version)" in out and "Review „video-1“ V10 (nächste Version)" in out
+
+
+@ffmpeg
+def test_ablage_ohne_version_nimmt_naechste_review_version(welt, capsys):
+    _timeline_mit_clip(welt, "video-1_V3")
+    ordner = _review_versionen(welt, "video-1", 8)
+    assert _lauf(welt, "--timeline", "video-1_V3") == 0
+    assert "„video-1_V3“ → Review „video-1“ V9" in capsys.readouterr().out
+    v9 = json.loads((ordner / "V9" / "version.json").read_text(encoding="utf-8"))
+    assert v9["nr"] == 9 and v9["notiz"] == f"Stand · Timeline „video-1_V3“ · Projekt „{PROJEKT}“"
 
 
 def test_falsches_projekt_und_marken(welt, capsys):
@@ -159,7 +202,7 @@ def test_datei_ohne_resolve(welt, monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "→ Review „01 - Vorstellung Wurst & Liebe“ V1 (Kopie" in out and "Wurst%20%26%20Liebe" in out
     v1 = json.loads((welt["review"] / "Kunde A" / "Projekt B" / "01 - Vorstellung Wurst & Liebe" / "V1" / "version.json").read_text(encoding="utf-8"))
-    assert v1["notiz"].startswith("V1 · ") and v1["notiz"].endswith("vom MacBook")
+    assert v1["notiz"].startswith("Stand · Timeline „01 - Vorstellung Wurst & Liebe_V1“") and v1["notiz"].endswith("vom MacBook")
     assert review.main([str(welt["charge"]), "--datei", str(welt["charge"] / "fehlt.mp4")]) == 1
 
 

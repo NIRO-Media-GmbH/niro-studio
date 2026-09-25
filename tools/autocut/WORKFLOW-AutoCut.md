@@ -988,7 +988,9 @@ Export, der blieb am 18.09. bei 4K-Hochkant bei 0 fps stehen und ließ Resolve a
 3. **Titel und Version:** Ein Video = ein Review-Titel über alle Stufen: aus dem Timeline-Namen ohne „AutoCut ", Zeitstempel,
    „(roh)", Versionsmarke, Stufenwort (`AutoCut video-1-taxodia-weg 2026-09-15 0941 (roh)` → „video-1-taxodia-weg";
    `AutoCut Aftermovie 2026-09-18 1220 Feinschnitt` → „Aftermovie"); `--video` setzt ihn fest (Pflicht, wenn der Name
-   nicht stabil ist). Version = nächste freie; die Notiz trägt Stufe · Timeline · Projekt (+ `--notiz`: was ist neu).
+   nicht stabil ist). Version = nächste freie im Review (die Vorschau-Zeile nennt sie, z. B. „V9 (nächste Version)“);
+   die Notiz trägt Stufe · Timeline · Projekt (+ `--notiz`: was ist neu). Eine Versionsmarke im Timeline-Namen
+   („01 - Tiefbau_V3“) ist die Resolve-Zählung: Sie zählt nicht für die Review-Version und erscheint nicht als Stufe.
 4. **Nach dem User-Feedback:** Kommentare holen mit `python3 tools/review/review.py kommentare "$CHARGE"` (Export in
    `Material/Feedback/<Datum> Review <Titel> V<n>/`), umsetzen nach `tools/review/WORKFLOW-Review.md` („Umsetzen"), neue
    Version mit `--umsetzung umsetzung.json` ablegen (Status/Antwort/tc_neu je Kommentar-ID).

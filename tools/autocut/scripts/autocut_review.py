@@ -11,6 +11,8 @@ Ohne --timeline nimmt es die zuletzt gebaute Timeline (feinschnitt.json, finaliz
 (Resolve nur lesend) und zeigt Titel, Version, Format, Zielpfad. --datei legt einen vorhandenen Render ab, ohne Resolve.
 Render: <Charge>/Ergebnisse/Export/Review/<Timeline>.mp4. Video-Titel (ein Titel über alle Stufen desselben Videos):
 --video, sonst aus dem Timeline-Namen ohne Präfix/Zeitstempel/„(roh)“/Stufenwort. Notiz: Stufe · Timeline · Projekt · --notiz.
+Version: ohne --version die nächste freie des Videos im Review (die Vorschau nennt sie); eine Versionsmarke im
+Timeline-Namen („…_V3“) ist die Resolve-Zählung und zählt dafür nicht.
 Exit 0 = abgelegt, 1 = Eingabe/Freigabe/Timeline, 2 = Voraussetzung (Resolve, NAS, ffmpeg, Render gescheitert).
 """
 from __future__ import annotations
@@ -31,6 +33,7 @@ from niro_autocut import wiedergabe as W  # noqa: E402
 from niro_autocut.charge import AutoCutError, Charge, append_protokoll, letzte_timeline  # noqa: E402
 from niro_review import ablage as RV_ABLAGE  # noqa: E402
 from niro_review import cli as RV  # noqa: E402
+from niro_review import modell as RV_MODELL  # noqa: E402
 from niro_review.ablage import ReviewFehler  # noqa: E402
 
 
@@ -54,6 +57,22 @@ def _umsetzung(pfad: str | None) -> dict | None:
     if not isinstance(daten, dict):
         raise AutoCutError(f"--umsetzung: {pfad} fehlt oder ist kein JSON-Objekt.")
     return daten
+
+
+def naechste_nummern(ch: Charge, titel: list[str]) -> list[int]:
+    """Nummern, die die Ablage ohne --version vergibt (version_anlegen): die nächste freie Version des Videos im
+    Review, bei mehreren Timelines desselben Titels fortlaufend. Die Versionsmarke im Timeline-Namen zählt nicht."""
+    out, weiter = [], {}
+    for t in titel:
+        if t not in weiter:
+            weiter[t] = RV_MODELL.naechste_version(RV_MODELL.video_ordner(ch.kunde, ch.projekt, t))
+        out.append(weiter[t])
+        weiter[t] += 1
+    return out
+
+
+def _version_text(nr: int | None, naechste: int) -> str:
+    return f"V{nr}" if nr else f"V{naechste} (nächste Version)"
 
 
 def ablegen(ch: Charge, titel: str, datei: Path, notiz: str, nr: int | None, umsetzung: dict | None) -> dict:
@@ -87,11 +106,11 @@ def _pruefen_resolve(session, project: str, namen: list[str]):
     return tls, dicts, status
 
 
-def _zeile_vorschau(ch: Charge, name: str, d: dict, titel: str, stufe: str, nr, ziel: Path) -> str:
+def _zeile_vorschau(ch: Charge, name: str, d: dict, titel: str, stufe: str, nr, naechste: int, ziel: Path) -> str:
     snap = K.snapshot_from_readback(d, d.get("name") or "")
     b, h = RR.zielformat(d.get("width"), d.get("height"))
-    v = f"V{nr}" if nr else "nächste Version"
-    return (f"· „{name}“ → Review „{titel}“ {v} ({stufe}) · {K.timecode(snap['laenge'], snap['fps'], '00:00:00:00')} "
+    return (f"· „{name}“ → Review „{titel}“ {_version_text(nr, naechste)} · Stufe „{stufe}“ · "
+            f"{K.timecode(snap['laenge'], snap['fps'], '00:00:00:00')} "
             f"({snap['laenge']} Frames @ {snap['fps']:g} fps) · {d.get('width')}×{d.get('height')} → {b}×{h} · "
             f"{ziel / (RR.render_dateiname(name) + '.mp4')}")
 
@@ -121,7 +140,8 @@ def main(argv: list[str] | None = None) -> int:
             titel = args.video or RR.titel_aus_timeline(datei.stem)
             notiz = RR.notiz_bauen(RR.stufe_aus_timeline(datei.stem), datei.stem, "Datei", args.notiz)
             if args.vorschau:
-                print(f"· {datei.name} → Review „{titel}“ ({'V' + str(args.nr) if args.nr else 'nächste Version'}) — Vorschau, nichts abgelegt.")
+                print(f"· {datei.name} → Review „{titel}“ {_version_text(args.nr, naechste_nummern(ch, [titel])[0])} "
+                      f"— Vorschau, nichts abgelegt.")
                 return 0
             e = ablegen(ch, titel, datei, notiz, args.nr, umsetzung)
             link = RV.link(ch.kunde, ch.projekt, e["titel"])
@@ -145,9 +165,10 @@ def main(argv: list[str] | None = None) -> int:
         ziel = ch.root / "Ergebnisse" / "Export" / "Review"
         titel = {n: (args.video or RR.titel_aus_timeline(n)) for n in namen}
         stufen = {n: RR.stufe_aus_timeline(n) for n in namen}
+        naechste = dict(zip(namen, naechste_nummern(ch, [titel[n] for n in namen])))
         print(f"Resolve {session.version}, Projekt '{session.project_name}'")
         for n in namen:
-            print(_zeile_vorschau(ch, n, dicts[n], titel[n], stufen[n], args.nr, ziel))
+            print(_zeile_vorschau(ch, n, dicts[n], titel[n], stufen[n], args.nr, naechste[n], ziel))
         if status == "unklar":
             print("Wiedergabe nicht prüfbar (Bildschirmaufnahme-Recht?) — während des Renders bitte nicht abspielen.")
         if args.vorschau:
