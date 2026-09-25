@@ -714,8 +714,8 @@ def test_verify_layout_brennweitenfolge_tempo_4_liest_das_wirkliche_shot_ende():
 def test_verify_layout_alte_schwellen_ueberspringt_zoom_und_bewegung_nicht_die_brennweite():
     """Fix-Welle, Fund I4 (Entscheidung des Users): Datensätze mit anderem ``config_hash`` tragen Zoom-Urteile
     und Fenster aus den Schwellen zur Messzeit — ``zoom_schnell_proz_s`` und Verwandte stehen NICHT in
-    ``OHNE_MESSWIRKUNG``. Zoom- und Kantenregel würden damit Fehler melden, die die heutige Konfiguration gar nicht
-    erzeugt: beide entfallen für solche Clips und werden gezählt. Die Brennweitenregel läuft weiter (``kb_verlauf``
+    ``OHNE_MESSWIRKUNG``. Zoom- und Kantenregel würden damit Fehler bzw. Hinweise melden, die die heutige
+    Konfiguration gar nicht erzeugt: beide entfallen für solche Clips und werden gezählt. Die Brennweitenregel läuft weiter (``kb_verlauf``
     ist roh, ``brennweite_gleich_max`` steht in ``OHNE_MESSWIRKUNG``).
 
     FX3_1 trägt beides: eine schnelle Zoomfahrt im genutzten Bereich (0,0-3,0 s) UND dieselbe KB wie FX3_2 am
