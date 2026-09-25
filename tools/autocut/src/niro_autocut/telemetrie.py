@@ -1,6 +1,7 @@
 """Kamera-Telemetrie je Clip (Spec 2026-09-19): Kennzahlen aus der Sony-rtmd-Datenspur (Gyro, Beschleunigung, Brennweite)
 oder aus der optischen Verschiebungsreihe, Clip-Messung mit Cache, Charge-Lauf, Abschnittswerte für Stufe 2b und der
 Stabilisierungs-Vorschlag für 6d; Zoomfahrten aus der KB-Brennweite und die Brennweitenregel für 3a/6d (Spec 2026-09-21).
+Seit Spec 2026-09-25 zusätzlich die Reihe ``verschiebung`` je Frame (Gyro mit der Brennweite je Frame).
 
 Beide Messwege liefern dieselbe Größe: Verschiebung des Bildinhalts je 25-fps-Frame in px @480 (``dx`` > 0 nach rechts,
 ``dy`` > 0 nach unten). Der Gyro wird über die KB-Brennweite umgerechnet: ``f_px = 480 · kb_mm / 36``,
@@ -53,14 +54,33 @@ def gyro_je_frame(werte: np.ndarray, proben_je_sample: int, fps: float, ziel_fps
     return werte[: m * je].reshape(m, je, -1).mean(axis=1)
 
 
-def verschiebung_aus_rate(rate: np.ndarray, kb_mm: float, cfg: dict,
+def verschiebung_aus_rate(rate: np.ndarray, kb_mm, cfg: dict,
                           ziel_fps: float = ZIEL_FPS) -> np.ndarray:
-    """(m, 3) °/s je Frame → (m, 2) px: dx aus der Schwenk-Achse, dy aus der Tilt-Achse (Achsen/Vorzeichen aus cfg)."""
-    k = math.pi / 180.0 * f_px(kb_mm, int(cfg["optisch_breite"])) / ziel_fps
+    """(m, 3) °/s je Frame → (m, 2) px: dx aus der Schwenk-Achse, dy aus der Tilt-Achse (Achsen/Vorzeichen aus cfg).
+    ``kb_mm`` ist eine Zahl oder die KB-Brennweite je Frame (Länge m): seit Spec 2026-09-25 rechnet ``clip_messen``
+    jeden Frame mit seiner eigenen Brennweite — mit dem Median waren Zoom-Clips abschnittsweise falsch skaliert."""
+    kb = np.asarray(kb_mm, np.float64)
+    k = math.pi / 180.0 * float(cfg["optisch_breite"]) * kb / 36.0 / ziel_fps
     a, v = cfg["achsen"], cfg["vorzeichen"]
     dx = float(v["schwenk"]) * rate[:, int(a["schwenk"])] * k
     dy = float(v["tilt"]) * rate[:, int(a["tilt"])] * k
     return np.stack([dx, dy], axis=1)
+
+
+def _auf_laenge(x: np.ndarray, n: int) -> np.ndarray:
+    """Reihe auf ``n`` Werte bringen: kürzen oder mit dem letzten Wert verlängern (KB je Frame ↔ Gyro-Frames)."""
+    x = np.asarray(x, np.float64)
+    if len(x) >= n:
+        return x[:n]
+    return np.concatenate([x, np.full(n - len(x), x[-1])])
+
+
+def verschiebung_reihe(dxy: np.ndarray, t0_s: float = 0.0) -> dict:
+    """Reihe ``verschiebung`` für ``telemetrie.json`` (Spec 2026-09-25): dx/dy je 25-fps-Frame in px @480, auf 2 Stellen
+    gerundet (+ 0,0 macht aus −0,0 eine 0,0); Frame ``i`` liegt bei ``t0_s + i / fps``."""
+    d = np.asarray(dxy, np.float64).reshape(-1, 2)
+    return {"fps": ZIEL_FPS, "t0_s": float(t0_s), "dx": (np.round(d[:, 0], 2) + 0.0).tolist(),
+            "dy": (np.round(d[:, 1], 2) + 0.0).tolist()}
 
 
 def wackeln_bewegung(dxy: np.ndarray) -> tuple[float, float]:
@@ -390,11 +410,17 @@ OHNE_MESSWIRKUNG = ("parallel", "brennweite_gleich_max", "digitalzoom_faktor", "
                     "bewegung_rand_s", "bewegung_spitze_faktor", "bewegung_max", "stabil_min_s")
 
 
+# Messversion, geht in den Config-Hash ein. 2 = Brennweite je Frame und Reihe ``verschiebung`` (Spec 2026-09-25):
+# jeder ältere Datensatz gilt damit als veraltet und wird beim nächsten ``autocut_telemetrie.py`` neu gemessen.
+MESS_VERSION = 2
+
+
 def config_hash(cfg: dict) -> str:
-    """Kurzer Hash (12 Hex-Zeichen, sha1) der ``telemetrie:``-Config ohne ``OHNE_MESSWIRKUNG`` — Haltung, Bewegungsart,
-    Klassen, wackeln × px_faktor, ruhige Fenster, Fensterlänge und Zoomfahrten hängen an ihr; ein Cache-Datensatz mit
-    anderem Hash ist veraltet."""
-    text = json.dumps({k: v for k, v in cfg.items() if k not in OHNE_MESSWIRKUNG}, sort_keys=True, default=str)
+    """Kurzer Hash (12 Hex-Zeichen, sha1) der ``telemetrie:``-Config ohne ``OHNE_MESSWIRKUNG``, zusammen mit
+    ``MESS_VERSION`` — Haltung, Bewegungsart, Klassen, wackeln × px_faktor, ruhige Fenster, Fensterlänge, Zoomfahrten
+    und die Reihe je Frame hängen an ihr; ein Cache-Datensatz mit anderem Hash ist veraltet."""
+    text = json.dumps({"mess_version": MESS_VERSION, **{k: v for k, v in cfg.items() if k not in OHNE_MESSWIRKUNG}},
+                      sort_keys=True, default=str)
     return hashlib.sha1(text.encode("utf-8")).hexdigest()[:12]
 
 
@@ -404,8 +430,8 @@ def _leer(path: Path, kamera: str, modell: str | None) -> dict:
             "kb_max": None, "kb_verlauf": [], "zooms": [], "zoomfahrt": False, "fokus_m": None, "pitch_grad": None,
             "roll_grad": None, "lage_grund": None,
             "perspektive_hoehe": None, "haltung": None, "hf_anteil": None, "bewegungsart": None, "wackeln": None,
-            "bewegung": None, "fenster_s": None, "fenster": [], "ruhige_fenster": [], "schaerfe_p10": None,
-            "config_hash": None, "fehler": None}
+            "bewegung": None, "fenster_s": None, "fenster": [], "ruhige_fenster": [], "verschiebung": None,
+            "schaerfe_p10": None, "config_hash": None, "fehler": None}
 
 
 def _frames(p: Path, cfg: dict) -> np.ndarray:
@@ -429,12 +455,14 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
         if buf:
             daten = auswerten(samples(buf))
         kb = None
+        kb25 = np.zeros(0, np.float64)
         if daten is not None:
             out["samples"] = daten.samples
             if daten.kb_mm:
                 kb = float(np.median(daten.kb_mm))
                 out["kb_mm"], out["kb_min"], out["kb_max"] = (round(kb, 1), round(min(daten.kb_mm), 1),
                                                               round(max(daten.kb_mm), 1))
+                kb25 = kb_je_frame(daten.kb_mm, daten.kb_index, float(info.fps), daten.samples)
                 out.update(zoom_messen(daten.kb_mm, daten.kb_index, float(info.fps), daten.samples, cfg))
                 out["zoomfahrt"] = bool(out["zooms"])
             if daten.brennweite_mm:
@@ -451,12 +479,16 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
             out["imu_hz"] = float(daten.imu_hz or daten.proben_je_sample * info.fps)
             rate = gyro_je_frame(daten.gyro, daten.proben_je_sample, info.fps, imu_hz=daten.imu_hz)
             faktor = float((cfg.get("px_faktor") or {}).get(kamera, 1.0))
-            dxy = verschiebung_aus_rate(rate, kb, cfg) * faktor
+            # Brennweite je Frame (Spec 2026-09-25); ohne Brennweitenverlauf der Median wie bisher
+            kb_frames = _auf_laenge(kb25, len(rate)) if len(kb25) else kb
+            dxy = verschiebung_aus_rate(rate, kb_frames, cfg) * faktor
             s = schaerfe_frames(_frames(p, cfg)) if schaerfe else None
-            out.update(quelle="rtmd", **kennzahlen(dxy, cfg, kb, s))
+            out.update(quelle="rtmd", verschiebung=verschiebung_reihe(dxy), **kennzahlen(dxy, cfg, kb, s))
         elif not ohne_optisch:
             frames = _frames(p, cfg)
-            out.update(quelle="optisch", **kennzahlen(verschiebungen(frames), cfg, kb, schaerfe_frames(frames)))
+            dxy = verschiebungen(frames)
+            out.update(quelle="optisch", verschiebung=verschiebung_reihe(dxy),
+                       **kennzahlen(dxy, cfg, kb, schaerfe_frames(frames)))
         out["ruhige_fenster"] = ruhige_ohne_schnelle_zooms(out["ruhige_fenster"], out["zooms"], out["fenster_s"])
     except AutoCutError as e:
         out["fehler"] = str(e)

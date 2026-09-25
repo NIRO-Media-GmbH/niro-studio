@@ -1270,3 +1270,68 @@ def test_defaults_haben_die_stabil_schwellen():
     cfg = load_config(Path("/nirgendwo"))["telemetrie"]
     assert cfg["bewegung_max"] == 2.0 and cfg["stabil_min_s"] == 2.0
     assert cfg["ruhig_max_px"] == 0.15
+
+
+# --------------------------------------------------------------------------- #
+# Schnittkanten frame-genau (Spec 2026-09-25): Reihe je Frame, Brennweite je Frame, Messversion
+# --------------------------------------------------------------------------- #
+
+def test_verschiebung_aus_rate_mit_brennweite_je_frame():
+    rate = np.zeros((4, 3))
+    rate[:, 1] = 10.0
+    fest = T.verschiebung_aus_rate(rate, 36.0, CFG)
+    je_frame = T.verschiebung_aus_rate(rate, np.array([36.0, 36.0, 72.0, 72.0]), CFG)
+    assert np.allclose(je_frame[:2], fest[:2]) and np.allclose(je_frame[2:], 2 * fest[2:])
+
+
+def test_auf_laenge_kuerzt_oder_haelt_den_letzten_wert():
+    assert T._auf_laenge(np.array([1.0, 2.0, 3.0]), 2).tolist() == [1.0, 2.0]
+    assert T._auf_laenge(np.array([1.0, 2.0]), 4).tolist() == [1.0, 2.0, 2.0, 2.0]
+
+
+def test_verschiebung_reihe_rundet_auf_zwei_stellen():
+    r = T.verschiebung_reihe(np.array([[0.123, -1.0], [2.0049, 0.006], [-0.001, 0.0]]))
+    assert r == {"fps": 25.0, "t0_s": 0.0, "dx": [0.12, 2.0, 0.0], "dy": [-1.0, 0.01, 0.0]}
+    assert str(r["dx"][2]) == "0.0"                       # keine −0,0 in telemetrie.json
+
+
+def test_clip_messen_schreibt_die_reihe_je_frame(monkeypatch, tmp_path):
+    clip = tmp_path / "FX3_0003.MP4"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p)))
+    monkeypatch.setattr(T, "datenspur_lesen", lambda p: _rtmd_puffer(frames=100, gyro_y=10.0))
+    rec = T.clip_messen(clip, CFG)
+    v = rec["verschiebung"]
+    assert v["fps"] == 25.0 and v["t0_s"] == 0.0 and len(v["dx"]) == len(v["dy"]) == 100
+    # Test-CFG (Vorzeichen Schwenk −1): 10 °/s bei 71,6 mm KB ≈ −6,66 px je Frame
+    assert v["dx"][0] == pytest.approx(-6.66, abs=0.01) and v["dy"][0] == 0.0
+    assert T._leer(clip, "FX3", None)["verschiebung"] is None
+
+
+def test_clip_messen_optisch_schreibt_die_reihe(monkeypatch, tmp_path):
+    clip = tmp_path / "DJI_0073.MOV"
+    clip.write_bytes(b"x")
+    _optisch_fakes(monkeypatch, seed=22)
+    rec = T.clip_messen(clip, CFG)
+    assert rec["quelle"] == "optisch" and len(rec["verschiebung"]["dx"]) == 29      # 30 Bilder → 29 Verschiebungen
+    assert set(rec["verschiebung"]["dx"]) == {0.0}                                    # gleiche Bilder: keine Bewegung
+
+
+def test_clip_messen_rechnet_den_gyro_mit_der_brennweite_je_frame(monkeypatch, tmp_path):
+    clip = tmp_path / "FX3_0074.MP4"
+    clip.write_bytes(b"x")
+    kb = _zoomreihe((2.0, 24, 24), (0.4, 24, 72), (2.0, 72, 72))             # 111 Samples, Zoom 24 → 72 mm
+    monkeypatch.setattr(T, "ffprobe", lambda p: _info(str(p), dauer=4.44))
+    monkeypatch.setattr(T, "datenspur_lesen",
+                        lambda p: _rtmd_puffer(frames=len(kb), gyro_y=10.0, kb=[_kb(x) for x in kb]))
+    rec = T.clip_messen(clip, CFG)
+    dx = rec["verschiebung"]["dx"]
+    assert len(dx) == 111
+    # gleiche Drehung, dreifache Brennweite → dreifache Bildverschiebung (vorher überall der Median)
+    assert dx[-1] == pytest.approx(3 * dx[0], rel=0.02) and dx[0] == pytest.approx(-2.23, abs=0.01)
+
+
+def test_config_hash_traegt_die_messversion(monkeypatch):
+    h = T.config_hash(CFG)
+    monkeypatch.setattr(T, "MESS_VERSION", T.MESS_VERSION + 1)
+    assert T.config_hash(CFG) != h
