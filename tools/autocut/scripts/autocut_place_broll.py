@@ -45,7 +45,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from niro_autocut.broll_layout import (LayoutPlan, build_v3_items_v2, compact_index_v2, effective_windows,  # noqa: E402
                                        place_shots, raster, render_layout_md, render_raster_md,
-                                       stabil_quelle_veraltet, stretches, verify_layout, window_frames)
+                                       stabil_quelle_veraltet, stretches, verify_layout, warnungen_fuer_protokoll,
+                                       window_frames)
 from niro_autocut.broll_plan import load_profile  # noqa: E402
 from niro_autocut.charge import DEFAULTS_FILE, AutoCutError, Charge, append_protokoll  # noqa: E402
 from niro_autocut.cutlist import Cutlist, cutlist_hash  # noqa: E402
@@ -385,7 +386,7 @@ def main(argv: list[str] | None = None) -> int:
             zeilen = [f"B-Roll-Layout v2 auf V3: Timeline „{name}“, {len(items)} Shots in {n_szenen} Szenen, {n_zeitlupen} "
                       f"Zeitlupen, Gesicht {r_bericht['gesicht_anteil'] * 100:.1f} % (Profil {args.profile})",
                       f"Dateien: {ch.autocut / PLAN_FILE}, {ch.autocut / BUILD_FILE}, {md_path}"]
-            zeilen += [f"Warnung: {w}" for w in (res.warnings + out["warnings"])[:10]]
+            zeilen += warnungen_fuer_protokoll(res.warnings + out["warnings"])
             append_protokoll(ch, "B-Roll auf V3", zeilen)
         finally:
             session.restore_user_timeline()

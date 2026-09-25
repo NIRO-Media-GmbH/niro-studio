@@ -1,8 +1,9 @@
 # AutoCut — Schnittkanten frame-genau (Spec)
 
-Datum: 2026-09-25 · Status: entworfen, nicht umgesetzt. Folgeschritt von
+Datum: 2026-09-25 · Status: umgesetzt auf Branch `worktree-autocut-schnittkanten` (25.09.2026), mit Nachtrag Review-Runde. Folgeschritt von
 `docs/superpowers/specs/2026-09-23-autocut-broll-bereichsauswahl-design.md`; löst dort Abschnitt 2 (stabile Bereiche aus
-2-s-Fenstern, „±1 s reicht für Shots von 2–5 s") und die beiden Bewegungs-Warnungen aus Abschnitt 5 ab.
+2-s-Fenstern, „±1 s reicht für Shots von 2–5 s") und die Bewegungs-Warnungen ab (Regel 3c „Bewegungsspitze" der Spec
+2026-09-22, „Bereich nicht als stabil gemessen" aus Abschnitt 5 der Spec 2026-09-23).
 
 **Nachtrag 25.09.2026 — Review-Runde Schnittkanten** (`projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schnittkanten/`):
 13 Einsetzer, 12 × „ja", einziges „nein" FX3_0260 (Einschwingen, User: ruhig ab 2,18 s, gemessen 2,12 s). Keine
@@ -48,7 +49,8 @@ liegt erst ab 2,9 in einem Lauf. Die Grenze ist damit Sache des Users, nicht der
 ## Entscheidungen des Users (25.09.2026)
 
 - **Ansatz:** Bewegung je Frame in der Telemetrie speichern; Läufe und Prüfung rechnen daraus, ohne Mediendatei.
-- **Strenge:** Schnittkanten hart (Fehler, der Bau stoppt), Bewegung in der Mitte des Shots nur Warnung.
+- **Strenge:** Schnittkanten hart (Fehler, der Bau stoppt), Bewegung in der Mitte des Shots nur Warnung. — nach der
+  Review-Runde geändert: Hinweis statt Fehler (Nachtrag).
 - **Grenze:** kurze Review-Runde (ca. 10 Einsetzer), parallel zur Umsetzung; am Ende ändert sich nur `bewegung_max`.
 - Handkamera-Clips unterliegen derselben Kantenregel (im Entwurf genannt, kein Widerspruch).
 
@@ -65,11 +67,12 @@ liegt erst ab 2,9 in einem Lauf. Die Grenze ist damit Sache des Users, nicht der
 - **Neu messen erzwingen.** `MESS_VERSION = 2` geht in `config_hash()` ein. Jeder alte Datensatz trägt damit einen anderen
   Hash, gilt im Cache als veraltet und wird beim nächsten `autocut_telemetrie.py` neu gemessen. Bis dahin greifen die
   bestehenden Hinweise (`HINWEIS_SCHWELLEN`, „erst `autocut_telemetrie.py`, dann `autocut_index_sections.py`").
-- **Größe:** ≈ 250 Zeichen je Sekunde Material; `telemetrie.json` einer Charge wächst um ≈ 1–2 MB (MEK, 464 Clips).
+- **Größe:** ≈ 300 Zeichen je Sekunde Material (Zahlenlisten kompakt in einer Zeile); `telemetrie.json` einer Charge
+  wächst um ≈ 1–3 MB (MEK, 464 Clips).
 
 ## 2 — Bewegung je Frame und stabile Läufe (`telemetrie.py`)
 
-- `bewegung_je_frame(rec, glatt_s)` → `(t0_s, wackeln, bewegung)` als numpy-Reihen je Frame, beide zentriert über
+- `bewegung_je_frame(rec, glatt_s)` → `(t0_s, fps, wackeln, bewegung)` als numpy-Reihen je Frame, beide zentriert über
   `glatt_s` gemittelt (Ränder normiert wie `_tiefpass`):
   - `wackeln[i]` = Mittel aus |dx[i] − dx[i−1]| und |dy[i] − dy[i−1]| — dieselbe Größe wie `wackeln` der Fenster;
     Frame 0 übernimmt den Wert von Frame 1.
@@ -135,7 +138,7 @@ genutzten Quell-Frames (`_quellbereich_s()`):
 | Schlüssel | Wert | Bedeutung |
 |---|---|---|
 | `ruhig_max_px` | 0,15 (unverändert) | jetzt auch je Frame, geglättet über `glatt_s` |
-| `bewegung_max` | 3,0 (Review-Runde 25.09.2026) | **neu gedeutet:** Bewegung (Betrag, px/Frame) je Frame, geglättet — UNKALIBRIERT, Wert aus der Review-Runde |
+| `bewegung_max` | 3,0 (Review-Runde 25.09.2026) | **neu gedeutet:** Bewegung (Betrag, px/Frame) je Frame, geglättet — kalibriert in der Review-Runde 25.09.2026 (Kanten: Hinweis) |
 | `glatt_s` | 0,4 (neu) | Glättung der Reihen je Frame |
 | `kante_s` | 0,3 (neu) | Länge einer Schnittkante (Timeline-Sekunden) |
 | `stabil_min_s` | 2,0 (unverändert) | kürzester Lauf |
@@ -179,22 +182,24 @@ setzen würde.
 
 - **Unit-Tests zuerst (TDD):** Reihe und `t0_s`, Brennweite je Frame in `verschiebung_aus_rate()`, `MESS_VERSION` im Hash,
   `bewegung_je_frame()` (Achsbetrag, Glättung, Ränder), `ruhe_je_frame()` inkl. Zoom-Ausschluss, `stabile_bereiche()`
-  (frame-genaue Grenzen, Mindestlänge, `[]` ohne Reihe), Kantenprüfung (Fehler an der Kante, Warnung in der Mitte,
+  (frame-genaue Grenzen, Mindestlänge, `[]` ohne Reihe), Kantenprüfung (Hinweis an der Kante und in der Mitte,
   `abweichung`, Zeitlupe, kurzer Shot, Kante ohne Messung), Vorschlag (früher/später, Grenzen des erlaubten Bereichs,
   keiner möglich), `stabil_quelle.glatt_s`, entfallene Warnungen und Config-Schlüssel.
 - **Fixtures neu vom NAS** (`tests/fixtures/gen_bereiche_fixture.py`, einmalig von Hand): der Generator misst die 30
   Urteils-Clips (MEK) und die 4 WLC-Clips direkt mit `clip_messen()` (Pfad-Umleitung SSD → NAS) statt `telemetrie.json`
   der Chargen zu lesen — die Chargen bleiben unberührt. Neu: `bereiche-klebl.json` mit den 32 gebauten Shots (Bereich,
-  `tempo`, Reihe ± 3 s) und nach der Review-Runde den Urteilen. Reihen werden auf den Bereich ± 10 s bzw. ± 3 s beschnitten
-  (`t0_s`).
-- **Abnahme:** R2#12 ohne Lauf; höchstens 2 der 24 „ungewollt"-Beispiele mit Lauf; jede Review-Nummer mit „ja" besteht
-  die Kantenprüfung, jede mit „nein" fällt durch; die frame-genauen Läufe der vier WLC-Clips als Änderungsmelder.
+  `tempo`, Reihe ± 3 s). Reihen werden auf den Bereich ± 3 s beschnitten (`t0_s`); die Urteile der Review-Runde stehen im
+  Protokoll der Kalibrier-Charge.
+- **Abnahme:** R2#12 ohne Lauf; höchstens 2 der 24 „ungewollt"-Beispiele mit Lauf; alle fünf WLC-Bereiche des Users
+  liegen in einem Lauf; FX3_0260 wie gebaut liegt in keinem Lauf, hat am In-Punkt einen Kantenbefund, und der Lauf
+  beginnt höchstens 0,1 s neben der Stelle des Users (2,18 s); die frame-genauen Läufe der vier WLC-Clips als
+  Änderungsmelder.
 
 ## Umstieg
 
 Je Charge beim nächsten AutoCut-Lauf: `autocut_telemetrie.py` (misst alles neu, ≈ 2 s je Clip übers NAS, Klebl 181
 Clips ≈ 3–6 min), dann `autocut_index_sections.py` (aus dem Cache, keine API-Kosten). Der bezahlte Index bleibt.
-Fertige Timelines und Pläne werden nicht angefasst; ein alter Plan meldet beim nächsten Prüfen die neuen Fehler.
+Fertige Timelines und Pläne werden nicht angefasst; ein alter Plan meldet beim nächsten Prüfen die neuen Hinweise.
 
 ## Doku
 

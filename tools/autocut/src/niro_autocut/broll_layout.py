@@ -926,7 +926,7 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
     if stabil_ignoriert:
         # Ledger B2: ruhig_max_px/fenster_s stecken im Hash — erst die Telemetrie neu messen, dann den Nachlauf
         r.warnings.append(f"{stabil_ignoriert} {'Clip' if stabil_ignoriert == 1 else 'Clips'}: stabile Bereiche "
-                          f"{TM.HINWEIS_SCHWELLEN} — keine Rettung, keine Bewegungs-Warnung dort; erst "
+                          f"{TM.HINWEIS_SCHWELLEN} — keine Rettung; erst "
                           f"autocut_telemetrie.py, dann autocut_index_sections.py laufen lassen.")
     if andere_stabil_schwellen:
         r.warnings.append(f"{andere_stabil_schwellen} {'Clip' if andere_stabil_schwellen == 1 else 'Clips'} mit "
@@ -955,6 +955,22 @@ def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg
                 continue        # derselbe Sachverhalt — oben schon mit Shots und übersprungenen Regeln genannt
             r.warnings.append(hinweis)
     return r
+
+
+KANTEN_HINWEISE = ("Punkt liegt in Bewegung", "Bewegung im Shot bei", "Punkt ohne Messung")
+
+
+def warnungen_fuer_protokoll(warnungen: list[str], hoechstens: int = 10) -> list[str]:
+    """Protokoll-Zeilen zu den Warnungen: die übrigen zuerst (höchstens ``hoechstens``), die Bewegungs-Hinweise je Shot
+    nur gezählt — sonst verdrängen sie wichtige Meldungen (Spec 2026-09-25; alle stehen im B-Roll-Bericht)."""
+    hinweise = [w for w in warnungen if any(m in w for m in KANTEN_HINWEISE)]
+    andere = [w for w in warnungen if not any(m in w for m in KANTEN_HINWEISE)]
+    zeilen = [f"Warnung: {w}" for w in andere[:hoechstens]]
+    if hinweise:
+        zeilen.append(f"Bewegungs-Hinweise: {sum('Punkt liegt in Bewegung' in w for w in hinweise)} Schnittkanten, "
+                      f"{sum('Bewegung im Shot bei' in w for w in hinweise)} Mitte, "
+                      f"{sum('Punkt ohne Messung' in w for w in hinweise)} ohne Messung (Details im B-Roll-Bericht)")
+    return zeilen
 
 
 def _hamming(a: str, b: str) -> int:

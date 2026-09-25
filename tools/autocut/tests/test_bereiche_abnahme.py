@@ -114,9 +114,9 @@ KLEBL_KANTENBEFUNDE = {"FX3_0252.MP4", "FX3_0260.MP4", "FX3_0267.MP4", "FX3_0653
 def test_abnahme_klebl_kantenpruefung_unveraendert():
     """Kantenbefunde (Hinweise) der 32 Shots bei bewegung_max 3,0 — Änderungsmelder; der User hat in der
     Review-Runde nur FX3_0260 abgelehnt."""
-    fehler = set()
+    mit_befund = set()
     for s in _json("bereiche-klebl.json"):
         befunde = T.kanten_befunde(s["telemetrie"], CFG, s["von_s"], s["bis_s"], 1.0 / s["tempo"])
         if any(k.seite != "mitte" and k.gemessen for k in befunde):
-            fehler.add(s["clip"])
-    assert fehler == KLEBL_KANTENBEFUNDE
+            mit_befund.add(s["clip"])
+    assert mit_befund == KLEBL_KANTENBEFUNDE

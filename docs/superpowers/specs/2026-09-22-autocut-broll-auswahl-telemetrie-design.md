@@ -4,6 +4,10 @@ Datum: 2026-09-22 · Status: entworfen, nicht umgesetzt. Folgeschritt von
 `docs/superpowers/specs/2026-09-19-autocut-telemetrie-design.md` (Telemetrie) und
 `docs/superpowers/specs/2026-09-21-autocut-zoom-brennweite-design.md` (Zoomfahrten, kalibriert 21.09.).
 
+**Abgelöst 25.09.2026:** Regel 3c (Bewegungsspitze an der Schnittgrenze) samt `bewegung_rand_s` und
+`bewegung_spitze_faktor` ist durch `2026-09-25-autocut-schnittkanten-framegenau-design.md` ersetzt — Schnittkanten
+werden frame-genau aus dem Gyro geprüft und als Hinweis gemeldet.
+
 ## Anlass
 
 Der User will, dass die automatische B-Roll-Auswahl (Stufe 3 v2) gut genug wird, um die Auswahl-Timeline von Hand

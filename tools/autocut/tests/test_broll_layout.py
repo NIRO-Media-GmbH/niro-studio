@@ -714,9 +714,9 @@ def test_verify_layout_brennweitenfolge_tempo_4_liest_das_wirkliche_shot_ende():
 def test_verify_layout_alte_schwellen_ueberspringt_zoom_und_bewegung_nicht_die_brennweite():
     """Fix-Welle, Fund I4 (Entscheidung des Users): Datensätze mit anderem ``config_hash`` tragen Zoom-Urteile
     und Fenster aus den Schwellen zur Messzeit — ``zoom_schnell_proz_s`` und Verwandte stehen NICHT in
-    ``OHNE_MESSWIRKUNG``. Regel 3b und 3c würden damit Fehler melden, die die heutige Konfiguration gar nicht
-    erzeugt: beide entfallen für solche Clips und werden gezählt. Regel 3a läuft weiter (``kb_verlauf`` ist roh,
-    ``brennweite_gleich_max`` steht in ``OHNE_MESSWIRKUNG``).
+    ``OHNE_MESSWIRKUNG``. Zoom- und Kantenregel würden damit Fehler melden, die die heutige Konfiguration gar nicht
+    erzeugt: beide entfallen für solche Clips und werden gezählt. Die Brennweitenregel läuft weiter (``kb_verlauf``
+    ist roh, ``brennweite_gleich_max`` steht in ``OHNE_MESSWIRKUNG``).
 
     FX3_1 trägt beides: eine schnelle Zoomfahrt im genutzten Bereich (0,0-3,0 s) UND dieselbe KB wie FX3_2 am
     Schnitt. Mit veraltetem Hash muss genau der Zoomfehler verschwinden und der KB-Fehler bleiben."""
@@ -1305,10 +1305,11 @@ def test_verify_layout_zeitbereiche_mit_dezimalkomma():
     assert any("(erlaubt: 0–4,8s)" in e for e in res.errors), res.errors
 
 
-def test_verify_layout_veraltete_messung_ueberstimmt_nichts_und_warnt_nicht():
-    """Schluss-Review M10: stabile Bereiche aus einer Messung mit anderen Schwellen zählen nicht — „Wackler" bleibt
-    gesperrt, obwohl der alte Bereich den Shot deckt, und die Bewegungs-Warnung entfällt (frisch käme sie, siehe
-    test_verify_layout_warnt_bei_shot_ausserhalb_jedes_stabilen_bereichs)."""
+def test_verify_layout_veraltete_stabil_quelle_rettet_nicht_aber_kanten_melden_weiter():
+    """Schluss-Review M10 + Gesamt-Review Punkt 1: stabile Bereiche aus einer Messung mit anderen Schwellen zählen
+    nicht — „Wackler" bleibt gesperrt, obwohl der alte Bereich den Shot deckt. Die Kantenhinweise hängen aber am
+    Telemetrie-Datensatz, nicht an stabil_quelle — mit frischer Telemetrie kommen sie auch bei veraltetem
+    stabil_quelle weiter, neben dem Hinweis auf die nötige Neumessung (Review-Runde 25.09.2026)."""
     plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     idx = _idx_abschnitts_maengel(["Wackler"], [])
     idx["clips"][0]["stabil_quelle"]["config_hash"] = "000000000000"
@@ -1316,10 +1317,11 @@ def test_verify_layout_veraltete_messung_ueberstimmt_nichts_und_warnt_nicht():
     assert _fehler_fx3_1(res, "„Wackler“"), res.errors
     unruhig = _idx_abschnitts_maengel([], [], stabil_a=[])
     unruhig["clips"][0]["stabil_quelle"]["config_hash"] = "000000000000"
-    fenster = [[0.0, 0.5, 10.3, "tilt_auf", None], [1.0, 0.5, 8.8, "tilt_auf", None],
-               [2.0, 0.5, 9.1, "tilt_auf", None], [3.0, 0.5, 7.4, "tilt_auf", None]]
-    res = L.verify_layout(plan, TP, unruhig, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0, fenster=fenster)])
-    assert not any("nicht als stabil gemessen" in w for w in res.warnings), res.warnings
+    res = L.verify_layout(plan, TP, unruhig, CL, CFG, 25, [_tele_reihe("FX3_1.MP4", (12.0, 8.0, 0.0))])
+    assert any("FX3_1.MP4" in w and "In-Punkt liegt in Bewegung" in w for w in res.warnings), res.warnings
+    schwellen = [w for w in res.warnings if TM.HINWEIS_SCHWELLEN in w]
+    assert schwellen, res.warnings
+    assert not any("keine Bewegungs-Warnung" in w for w in schwellen), schwellen
 
 
 def test_verify_layout_shot_ueber_echte_abschnittsgrenze_muss_beide_erfuellen():
@@ -1356,3 +1358,19 @@ def test_verify_layout_alter_index_nennt_den_nachlauf_nach_force():
     res = L.verify_layout(plan, TP, _idx(), CL, CFG, 25, None)
     w = next(w for w in res.warnings if "Clips ohne Abschnitts-Mängel" in w)
     assert w.index("autocut_index_broll.py --force") < w.index("autocut_index_sections.py") and "API" in w, w
+
+
+# --------------------------------------------------------------------------- #
+# Gesamt-Review Punkt 4: Protokoll zählt die Bewegungs-Hinweise statt sie zu verdrängen
+# --------------------------------------------------------------------------- #
+
+def test_warnungen_fuer_protokoll_zaehlt_die_bewegungs_hinweise():
+    w = ["Strecke 1 Szene 1 Shot 1 (a): In-Punkt liegt in Bewegung (0–0,32 s: …) — Hinweis.",
+         "Strecke 1 Szene 1 Shot 1 (a): Bewegung im Shot bei 0,32–2,24 s (…) — Hinweis.",
+         "Strecke 1 Szene 1 Shot 2 (b): Out-Punkt ohne Messung (Telemetrie-Reihe zu kurz) — Kante nicht geprüft.",
+         "Gesichtsanteil 33,1 % außerhalb des Ziels 20–30 %."] + [f"Andere {i}" for i in range(12)]
+    zeilen = L.warnungen_fuer_protokoll(w)
+    assert zeilen[0] == "Warnung: Gesichtsanteil 33,1 % außerhalb des Ziels 20–30 %."
+    assert len(zeilen) == 11 and zeilen[-1] == ("Bewegungs-Hinweise: 1 Schnittkanten, 1 Mitte, 1 ohne Messung "
+                                                "(Details im B-Roll-Bericht)")
+    assert L.warnungen_fuer_protokoll(["x"]) == ["Warnung: x"]

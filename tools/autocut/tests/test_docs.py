@@ -265,6 +265,7 @@ def test_doku_erklaert_die_kantenregel():
     wf = _flach(_text(WORKFLOW))
     for needle in ("kante_s", "glatt_s", "verschiebung", "frame-genau", "Punkt liegt in Bewegung", "gleich lang passend ab"):
         assert needle in wf, f"WORKFLOW-AutoCut.md: „{needle}“ fehlt"
+    assert "Schnittkanten in Bewegung** (Hinweis" in wf, "WORKFLOW-AutoCut.md nennt die Kanten nicht als Hinweis"
     for alt in ("bewegung_rand_s", "bewegung_spitze_faktor", "nicht als stabil gemessen"):
         assert alt not in wf, f"WORKFLOW-AutoCut.md nennt noch „{alt}“"
     prompt = _flach(_text(PLACE_PROMPT))

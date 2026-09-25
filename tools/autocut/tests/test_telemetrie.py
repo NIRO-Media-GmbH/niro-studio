@@ -1359,3 +1359,13 @@ def test_ruhige_lage_spaeter_frueher_zoom_und_keine():
     zoom = _rec_reihe((8.0, 0.0, 0.0), zooms=[{"von_s": 3.0, "bis_s": 4.0, "urteil": "schnell"}])
     assert T.ruhige_lage(zoom, CFG_FRAME, 3.2, 5.2, 1.0, (0.0, 8.0)) == 0.8        # hinter die schnelle Zoomfahrt
     assert T.ruhige_lage({"zooms": []}, CFG_FRAME, 0.0, 2.0, 1.0, (0.0, 8.0)) is None
+
+
+# --------------------------------------------------------------------------- #
+# Gesamt-Review Punkt 5: telemetrie.json kompakt (Zahlenlisten in einer Zeile, NAS-Abgleich bis 20 MB)
+# --------------------------------------------------------------------------- #
+
+def test_json_kompakt_schreibt_zahlenlisten_in_eine_zeile():
+    daten = {"verschiebung": {"fps": 25.0, "dx": [1.0, -2.5, 0.0]}, "fenster": [[0.0, 0.1, 0.2, "statisch", None]]}
+    text = T.json_kompakt(daten)
+    assert '"dx": [1.0,-2.5,0.0]' in text and json.loads(text) == daten

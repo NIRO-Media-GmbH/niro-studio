@@ -103,6 +103,7 @@ telemetrie:                 # Kamera-Telemetrie je Clip (Spec 2026-09-19): Gyro/
   schritt_s: 1.0
   tiefpass_s: 0.5           # gleitendes Mittel vor der Richtungsentscheidung
   ruhig_max_px: 0.15        # Fenster gilt als ruhig (Startwert = optische Faustregel 18.09.: ruhige Handkamera 0,05–0,15)
+                            # — seit Spec 2026-09-25 auch je Frame (über `glatt_s` geglättet) für Läufe und Kantenhinweise
   stativ_max_grad_s: 0.3    # darunter Stativ/statisch (Gyro-Weg; über f_px in px je Frame umgerechnet)
   stativ_max_px: 0.02       # … optischer Weg ohne Brennweite
   schwenk_min_grad_s: 3.0   # dominante Drehung ab hier Schwenk/Tilt

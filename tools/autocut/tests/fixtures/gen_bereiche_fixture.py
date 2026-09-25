@@ -21,7 +21,6 @@ Datei auf dem NAS.
 from __future__ import annotations
 
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -30,7 +29,7 @@ HIER = Path(__file__).resolve().parent
 sys.path.insert(0, str(HIER.parents[1] / "src"))
 
 from niro_autocut.charge import load_config  # noqa: E402
-from niro_autocut.telemetrie import clip_messen  # noqa: E402
+from niro_autocut.telemetrie import clip_messen, json_kompakt  # noqa: E402
 
 
 def studio_wurzel() -> Path:
@@ -136,10 +135,9 @@ def klebl() -> list[dict]:
 
 
 def _schreiben(p: Path, daten: list[dict]) -> None:
-    """JSON mit Einrückung, Zahlenlisten (Reihen, Bereiche) aber je in einer Zeile — sonst eine Zahl je Zeile."""
-    text = json.dumps(daten, ensure_ascii=False, indent=1)
-    text = re.sub(r"\[\s+([-0-9.,\s]+?)\s+\]", lambda m: "[" + re.sub(r"\s+", "", m.group(1)) + "]", text)
-    p.write_text(text + "\n", encoding="utf-8")
+    """JSON mit Einrückung, Zahlenlisten (Reihen, Bereiche) aber je in einer Zeile — sonst eine Zahl je Zeile
+    (``json_kompakt`` aus telemetrie.py, Spec 2026-09-25)."""
+    p.write_text(json_kompakt(daten) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

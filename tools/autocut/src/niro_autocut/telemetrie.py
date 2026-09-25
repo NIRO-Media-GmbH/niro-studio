@@ -1,7 +1,8 @@
 """Kamera-Telemetrie je Clip (Spec 2026-09-19): Kennzahlen aus der Sony-rtmd-Datenspur (Gyro, Beschleunigung, Brennweite)
 oder aus der optischen Verschiebungsreihe, Clip-Messung mit Cache, Charge-Lauf, Abschnittswerte für Stufe 2b und der
 Stabilisierungs-Vorschlag für 6d; Zoomfahrten aus der KB-Brennweite und die Brennweitenregel für 3a/6d (Spec 2026-09-21).
-Seit Spec 2026-09-25 zusätzlich die Reihe ``verschiebung`` je Frame (Gyro mit der Brennweite je Frame).
+Seit Spec 2026-09-25 zusätzlich die Reihe ``verschiebung`` je Frame (Gyro mit der Brennweite je Frame; der optische
+Weg schreibt sie ebenso).
 
 Beide Messwege liefern dieselbe Größe: Verschiebung des Bildinhalts je 25-fps-Frame in px @480 (``dx`` > 0 nach rechts,
 ``dy`` > 0 nach unten). Der Gyro wird über die KB-Brennweite umgerechnet: ``f_px = 480 · kb_mm / 36``,
@@ -16,6 +17,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import threading
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -496,6 +498,26 @@ def clip_messen(path: str | Path, cfg: dict, ohne_optisch: bool = False, schaerf
     return out
 
 
+def json_kompakt(daten) -> str:
+    """JSON mit Einrückung, reine Zahlenlisten (Reihe je Frame, Bereiche) aber in einer Zeile — sonst eine Zahl je Zeile
+    (Spec 2026-09-25: telemetrie.json bleibt klein genug für den NAS-Abgleich)."""
+    text = json.dumps(daten, ensure_ascii=False, indent=1)
+    return re.sub(r"\[\s+([-0-9.,\s]+?)\s+\]", lambda m: "[" + re.sub(r"\s+", "", m.group(1)) + "]", text)
+
+
+def _json_kompakt_schreiben(ch, name: str, daten) -> Path:
+    """Wie ``Charge.write_json`` (Schreibschutz-Prüfung, dann schreiben), aber atomar über ``.part`` + ``os.replace``
+    (wie der Cache oben) und mit dem kompakten Text aus ``json_kompakt`` — ``write_json`` selbst hat keinen Weg für
+    schon gerenderten Text und bleibt für die übrigen JSON-Dateien unverändert."""
+    p = Path(ch.autocut) / name
+    ch.assert_writable(p)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    part = p.with_name(f"{p.name}.{os.getpid()}-{threading.get_ident()}.part")
+    part.write_text(json_kompakt(daten), encoding="utf-8")
+    os.replace(part, p)
+    return p
+
+
 def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_optisch: bool = False,
                    schaerfe: bool = False) -> tuple[dict, bool]:
     """Datensatz aus ``_intern/autocut/telemetrie/<fingerprint>.json`` oder neu messen (atomar geschrieben).
@@ -524,7 +546,7 @@ def clip_mit_cache(ch, path: str | Path, cfg: dict, force: bool = False, ohne_op
     # je Schreiber ein eindeutiger .part-Name (pid + Thread-Id): zwei Schreiber mit gleichem Fingerprint
     # (Dublette in der Clip-Liste oder zwei Pfade mit gleichem Name/Größe/mtime) kollidieren sonst im selben .part.
     part = cache.with_name(f"{cache.name}.{os.getpid()}-{threading.get_ident()}.part")
-    part.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    part.write_text(json_kompakt(rec), encoding="utf-8")
     os.replace(part, cache)
     return rec, False
 
@@ -661,7 +683,7 @@ def telemetrie_charge(ch, clips: list[dict], cfg: dict, limit: int | None = None
     ex.shutdown(wait=True)
     liste = [ergebnisse[c["path"]] for c in todo if c["path"] in ergebnisse]
     gesamt = _zusammenfuehren(eindeutig, ergebnisse, laden(ch.autocut))
-    ch.write_json("telemetrie.json", gesamt)
+    _json_kompakt_schreiben(ch, "telemetrie.json", gesamt)
     return {"clips": liste, "fehler": fehler, "cache_treffer": treffer, "gemessen": gemessen, "gesamt": len(gesamt)}
 
 
