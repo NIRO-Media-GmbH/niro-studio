@@ -667,9 +667,10 @@ def _vorschlag(rec: dict, tcfg: dict, p: dict, von: float, bis: float, faktor: f
 def _kanten_pruefen(r: VerifyResult, tag: str, rec: dict, tcfg: dict, p: dict, von: float, bis: float,
                     spans: list[tuple[float, float]]) -> None:
     """Schnittkanten frame-genau (Spec 2026-09-25): nicht ruhige Frames in den ersten/letzten ``kante_s`` des Shots sind
-    ein Fehler mit Vorschlag, in der Mitte ein Hinweis, eine Kante ohne Messung ebenfalls. Ohne Reihe keine Prüfung
-    (alter Datensatz — die Hash-Prüfung meldet ihn). Bei Zeitlupe zählt die sichtbare Bewegung (Faktor 1 / tempo).
-    Ersetzt die Warnungen „Bewegungsspitze" und „Bereich nicht als stabil gemessen" der Spec 2026-09-23."""
+    ein Hinweis mit Vorschlag (Review-Runde 25.09.2026: der User akzeptiert Bewegung an der Kante meist — nur das
+    Einschwingen in einen ruhigen Shot störte), in der Mitte ein Hinweis, eine Kante ohne Messung ebenfalls. Ohne Reihe
+    keine Prüfung (alter Datensatz — die Hash-Prüfung meldet ihn). Bei Zeitlupe zählt die sichtbare Bewegung (Faktor
+    1 / tempo). Ersetzt die Warnungen „Bewegungsspitze" und „Bereich nicht als stabil gemessen" der Spec 2026-09-23."""
     faktor = 1.0 / float(p["tempo"] or 1)
     vorschlag = None
     for k in TM.kanten_befunde(rec, tcfg, von, bis, faktor) or []:
@@ -682,9 +683,8 @@ def _kanten_pruefen(r: VerifyResult, tag: str, rec: dict, tcfg: dict, p: dict, v
         else:
             if vorschlag is None:
                 vorschlag = _vorschlag(rec, tcfg, p, von, bis, faktor, spans)
-            r.errors.append(f"{tag}: {seite}-Punkt liegt in Bewegung ({_z(k.von_s)}–{_z(k.bis_s)} s: wackeln "
-                            f"{_z(k.wackeln)}, Bewegung {_z(k.bewegung)} px/Frame) — {vorschlag}. Shot verschieben, "
-                            f"anderen Bereich wählen oder `abweichung` mit Grund.")
+            r.warnings.append(f"{tag}: {seite}-Punkt liegt in Bewegung ({_z(k.von_s)}–{_z(k.bis_s)} s: wackeln "
+                              f"{_z(k.wackeln)}, Bewegung {_z(k.bewegung)} px/Frame) — {vorschlag} — Hinweis.")
 
 
 def verify_layout(plan: LayoutPlan, tp_dict: dict, index: dict, cl: Cutlist, cfg: dict, fps: float,

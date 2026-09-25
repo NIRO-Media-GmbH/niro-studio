@@ -23,7 +23,7 @@ CFG_TELEMETRIE = {"fenster_s": 2.0, "schritt_s": 1.0, "tiefpass_s": 0.5, "ruhig_
                   "zoom_schnell_proz_s": 100.0, "zoom_ruck_max": 1.0, "zoom_stocken_anteil": 0.0, "zoom_sprung_proz": 12.0,
                   "zoom_verlauf_hz": 5, "brennweite_gleich_max": 0.20, "digitalzoom_faktor": 1.25, "digitalzoom_max": 1.5,
                   "kante_s": 0.3,
-                  "bewegung_max": 2.0, "stabil_min_s": 2.0, "glatt_s": 0.4}
+                  "bewegung_max": 3.0, "stabil_min_s": 2.0, "glatt_s": 0.4}
 CFG = {"face_share": [0.15, 0.20], "face_share_hard": [0.12, 0.23], "window_first_s": 2.5, "window_s": 2.0, "window_min_s": 1.5,
        "window_max_s": 4.0, "full_face_beat_max_s": 3.0, "full_face_keywords": ["Gehaltenes Gesicht", "Bookend"],
        "shot_len_s": [2.0, 5.0], "shot_len_slow_max_s": 6.0, "montage_len_s": [1.5, 3.0], "fast_cuts_len_s": [1.0, 2.0],
@@ -729,13 +729,13 @@ def test_verify_layout_alte_schwellen_ueberspringt_zoom_und_bewegung_nicht_die_b
               _tele("FX3_2.MP4", 25.0), _tele("FX3_3.MP4", 70.0)]
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, frisch)
     assert any("schneller Zoom" in e and "FX3_1" in e for e in r.errors), r.errors
-    assert any("Punkt liegt in Bewegung" in e and "FX3_1" in e for e in r.errors), r.errors
+    assert any("Punkt liegt in Bewegung" in w and "FX3_1" in w for w in r.warnings), r.warnings
     assert any("KB" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors
 
     alt = [{**frisch[0], "config_hash": "aaaaaaaaaaaa"}, frisch[1], frisch[2]]
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, alt)
     assert not any("schneller Zoom" in e for e in r.errors), r.errors          # 3b übersprungen
-    assert not any("Punkt liegt in Bewegung" in e for e in r.errors), r.errors     # Kantenregel übersprungen
+    assert not any("Punkt liegt in Bewegung" in w for w in r.warnings), r.warnings     # Kantenregel übersprungen
     assert any("KB" in e and "FX3_1" in e and "FX3_2" in e for e in r.errors), r.errors   # 3a läuft weiter
     hinweis = [w for w in r.warnings if "anderen Schwellen gemessen" in w]
     assert len(hinweis) == 1 and hinweis[0].startswith("1 von 3 Shots"), r.warnings
@@ -792,7 +792,8 @@ def _idx_gerettet(maengel, stabil=None, hash_=None):
     idx = _idx(1)
     c = idx["clips"][0]
     c["maengel"] = list(maengel)
-    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": CFG_TELEMETRIE["bewegung_max"],
+                          "stabil_min_s": 2.0, "glatt_s": CFG_TELEMETRIE["glatt_s"],
                           "config_hash": hash_ if hash_ is not None else TM.config_hash(CFG_TELEMETRIE)}
     a = c["abschnitte"][0]
     a["verwendbar"] = False
@@ -853,7 +854,8 @@ def test_compact_index_v2_reicht_maengel_und_stabil_bei_verwendbaren_abschnitten
     a = idx["clips"][0]["abschnitte"][0]
     a["maengel"] = ["Unschärfe"]
     a["stabil"] = [[0.0, 6.0, 0.05, 0.4]]
-    idx["clips"][0]["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+    idx["clips"][0]["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": CFG_TELEMETRIE["bewegung_max"],
+                                        "stabil_min_s": 2.0, "glatt_s": CFG_TELEMETRIE["glatt_s"],
                                         "config_hash": TM.config_hash(CFG_TELEMETRIE)}
     ab = L.compact_index_v2(idx, CFG)[0]["abschnitte"][0]
     assert ab["maengel"] == ["Unschärfe"] and ab["stabil"] == [[0.0, 6.0, 0.05, 0.4]]
@@ -874,7 +876,8 @@ def _idx_abschnitts_maengel(maengel_a, maengel_b, stabil_a=None, stabil_b=None):
     idx = _idx()
     c = idx["clips"][0]
     c["maengel"] = sorted(set(maengel_a) | set(maengel_b))
-    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": CFG_TELEMETRIE["bewegung_max"],
+                          "stabil_min_s": 2.0, "glatt_s": CFG_TELEMETRIE["glatt_s"],
                           "config_hash": TM.config_hash(CFG_TELEMETRIE)}
     vorlage = dict(c["abschnitte"][0])
     c["abschnitte"] = [{**vorlage, "von_s": 0, "bis_s": 6, "maengel": list(maengel_a),
@@ -927,49 +930,54 @@ def _tele_reihe(datei, *stuecke, dauer_s=12.0, fps=25.0):
     return {**_tele(datei, 25.0, dauer_s=dauer_s), "fps": fps, "verschiebung": _reihe(*stuecke)}
 
 
-def test_verify_layout_verwendbarer_abschnitt_in_bewegung_ist_an_der_kante_ein_fehler():
+def test_verify_layout_verwendbarer_abschnitt_in_bewegung_gibt_an_der_kante_einen_hinweis():
     """FX3_8663-Fall (Spec 2026-09-23: nur Warnung) nach der Spec 2026-09-25: der Abschnitt ist verwendbar, die Kamera
-    bewegt sich dort aber durchgehend (8 px je Frame) — beide Schnittkanten liegen in Bewegung, das ist ein Fehler."""
+    bewegt sich dort aber durchgehend (8 px je Frame) — beide Schnittkanten liegen in Bewegung — seit der Review-Runde
+    25.09. ein Hinweis, kein Fehler."""
     idx = _idx_abschnitts_maengel([], [], stabil_a=[])
     plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele_reihe("FX3_1.MP4", (12.0, 8.0, 0.0))])
-    assert any("FX3_1.MP4" in e and "In-Punkt liegt in Bewegung" in e for e in res.errors), res.errors
-    assert any("FX3_1.MP4" in e and "Out-Punkt liegt in Bewegung" in e for e in res.errors), res.errors
+    assert any("FX3_1.MP4" in w and "In-Punkt liegt in Bewegung" in w for w in res.warnings), res.warnings
+    assert any("FX3_1.MP4" in w and "Out-Punkt liegt in Bewegung" in w for w in res.warnings), res.warnings
+    assert not any("Punkt liegt in Bewegung" in e for e in res.errors), res.errors
 
 
-def test_verify_layout_kante_in_bewegung_ist_fehler_mit_vorschlag():
+def test_verify_layout_kante_in_bewegung_ist_hinweis_mit_vorschlag():
     idx = _idx()
     plan = _plan({1: [("Flur/FX3_1.MP4", 0.0, 3.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     tele = [_tele_reihe("FX3_1.MP4", (2.0, 5.0, 0.0), (10.0, 0.0, 0.0))]      # Schwenk bis 2,0 s
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
-    fehler = [e for e in r.errors if "FX3_1.MP4" in e and "Punkt liegt in Bewegung" in e]
-    assert len(fehler) == 1 and fehler[0].startswith(
+    hinweis = [w for w in r.warnings if "FX3_1.MP4" in w and "Punkt liegt in Bewegung" in w]
+    assert len(hinweis) == 1 and hinweis[0].startswith(
         "Strecke 1 Szene 1 Shot 1 (FX3_1.MP4 0–3s): In-Punkt liegt in Bewegung (0–0,32 s: wackeln 0, "
-        "Bewegung 5 px/Frame) — gleich lang passend ab 2,24 s."), fehler
+        "Bewegung 5 px/Frame) — gleich lang passend ab 2,24 s — Hinweis."), hinweis
+    assert not any("Punkt liegt in Bewegung" in e for e in r.errors), r.errors
     assert any("FX3_1.MP4" in w and "Bewegung im Shot bei 0,32–2,24 s" in w for w in r.warnings), r.warnings
 
 
-def test_verify_layout_kante_mit_abweichung_ohne_fehler():
+def test_verify_layout_kante_mit_abweichung_ohne_hinweis():
     idx = _idx()
     plan = L.LayoutPlan("v.md", [], [L.Strecke(1, [L.Szene("Standort 1/Flur", [
         L.Shot("Flur/FX3_1.MP4", 0.0, 3.0, abweichung=True, abweichung_grund="gewollter Reißschwenk"),
         L.Shot("Flur/FX3_2.MP4", 1.0, 4.0), L.Shot("Flur/FX3_3.MP4", 0.0, 2.0)])])])
     tele = [_tele_reihe("FX3_1.MP4", (2.0, 5.0, 0.0), (10.0, 0.0, 0.0))]
     r = L.verify_layout(plan, TP, idx, CL, CFG, 25, tele)
-    assert not any("Punkt liegt in Bewegung" in e for e in r.errors), r.errors
-    assert not any("Bewegung im Shot" in w for w in r.warnings), r.warnings
+    for x in r.errors + r.warnings:
+        assert "Punkt liegt in Bewegung" not in x and "Bewegung im Shot" not in x, x
 
 
 def test_verify_layout_zeitlupe_zaehlt_die_sichtbare_bewegung():
     idx = _idx()
-    tele = [_tele_reihe("FX3_5.MP4", (12.0, 3.0, 0.0), fps=50.0)]           # gleichmäßig 3 px je 25-fps-Frame
+    tele = [_tele_reihe("FX3_5.MP4", (12.0, 4.0, 0.0), fps=50.0)]           # gleichmäßig 4 px je 25-fps-Frame
     langsam = _plan({1: [("Flur/FX3_5.MP4", 0.0, 2.0, 2), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     r = L.verify_layout(langsam, TP, idx, CL, CFG, 25, tele)
-    assert not any("FX3_5" in e and "Punkt liegt in Bewegung" in e for e in r.errors), r.errors   # sichtbar 1,5
+    assert not any("FX3_5" in w and "Punkt liegt in Bewegung" in w for w in r.warnings), r.warnings   # sichtbar 2,0
+    assert not any("FX3_5" in e and "Punkt liegt in Bewegung" in e for e in r.errors), r.errors
     normal = _plan({1: [("Flur/FX3_5.MP4", 0.0, 2.0), ("Flur/FX3_1.MP4", 0.0, 2.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     r2 = L.verify_layout(normal, TP, idx, CL, CFG, 25, tele)
-    fehler = [e for e in r2.errors if "FX3_5" in e and "Punkt liegt in Bewegung" in e]
-    assert len(fehler) == 2 and all("keine ruhige Lage gleicher Länge" in e for e in fehler), fehler
+    hinweis = [w for w in r2.warnings if "FX3_5" in w and "Punkt liegt in Bewegung" in w]
+    assert len(hinweis) == 2 and all("keine ruhige Lage gleicher Länge" in w for w in hinweis), hinweis
+    assert not any("FX3_5" in e and "Punkt liegt in Bewegung" in e for e in r2.errors), r2.errors
 
 
 def test_verify_layout_kante_ohne_messung_warnt_nur():
@@ -1055,7 +1063,8 @@ def test_verify_layout_rettet_nicht_ohne_maengel_schluessel_am_abschnitt():
     c = idx["clips"][0]
     c["abschnitte"][0]["verwendbar"] = False
     c["abschnitte"][0]["stabil"] = [[0.0, 12.0, 0.05, 0.4]]         # kein "maengel"-Schlüssel am Abschnitt
-    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": CFG_TELEMETRIE["bewegung_max"],
+                          "stabil_min_s": 2.0, "glatt_s": CFG_TELEMETRIE["glatt_s"],
                           "config_hash": TM.config_hash(CFG_TELEMETRIE)}
     plan = _plan({1: [("Flur/FX3_1.MP4", 1.0, 4.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     res = L.verify_layout(plan, TP, idx, CL, CFG, 25, [_tele("FX3_1.MP4", 25.0)])
@@ -1096,7 +1105,8 @@ def _idx_luecke_innerhalb_des_abschnitts(verwendbar: bool) -> dict:
     c["abschnitte"][0]["verwendbar"] = verwendbar
     c["abschnitte"][0]["maengel"] = ["Wackler"]
     c["abschnitte"][0]["stabil"] = [[0.0, 4.0, 0.05, 0.3], [4.0, 12.0, 0.05, 0.3]]
-    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": CFG_TELEMETRIE["bewegung_max"],
+                          "stabil_min_s": 2.0, "glatt_s": CFG_TELEMETRIE["glatt_s"],
                           "config_hash": TM.config_hash(CFG_TELEMETRIE)}
     return idx
 
@@ -1140,7 +1150,8 @@ def _idx_laeufe(abschnitte, laeufe, dauer_s=12.0):
     c["abschnitte"] = [{**vorlage, "von_s": von, "bis_s": bis, "verwendbar": verwendbar, "maengel": list(maengel),
                         "stabil": stabil} for von, bis, verwendbar, maengel, stabil in abschnitte]
     c["maengel"] = sorted({m for _, _, _, maengel, _ in abschnitte for m in maengel})
-    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": 2.0, "stabil_min_s": 2.0,
+    c["stabil_quelle"] = {"ruhig_max_px": 0.15, "bewegung_max": CFG_TELEMETRIE["bewegung_max"],
+                          "stabil_min_s": 2.0, "glatt_s": CFG_TELEMETRIE["glatt_s"],
                           "config_hash": TM.config_hash(CFG_TELEMETRIE), "laeufe": laeufe}
     return idx
 
@@ -1163,10 +1174,10 @@ def test_verify_layout_i3_shot_ueber_die_grenze_in_einem_lauf():
 
 
 def test_verify_layout_i3_ende_zu_ende_an_fx3_8660():
-    """Schluss-Review I3 an echten Werten, seit Spec 2026-09-25 frame-genau: FX3_8660 (WLC,
-    tests/fixtures/bereiche-wlc.json) hat bei bewegung_max 2,0 die Läufe 7,16–10,24 s und 13,76–18,36 s. Mit
-    verworfenen Abschnitten 8–15 und 15–18,72 s (Grenze mitten im zweiten Lauf) schreibt Stufe 2b die Stücke, und der
-    Prüfer lässt den Shot 14,0–17,0 s über die Abschnittsgrenze durch — er liegt in EINEM gemessenen Lauf."""
+    """Schluss-Review I3 an echten Werten, seit Spec 2026-09-25 frame-genau: FX3_8660 (WLC) hat bei bewegung_max 3,0
+    die Läufe 1,2–3,36, 7,12–10,36 und 12,04–18,36 s; der User hat 12,5–15,5 s zurückgeholt (Review 23.09.) und in der
+    Review-Runde Schnittkanten (25.09.) bestätigt. Mit verworfenen Abschnitten 8–13 und 13–18,72 s liegt der Shot über
+    die Abschnittsgrenze in EINEM Lauf — kein Lage-Fehler, keine Wackler-Sperre."""
     e = next(x for x in json.loads(WLC_FIXTURE.read_text(encoding="utf-8")) if x["clip"] == "FX3_8660")
     idx = _idx()
     c = idx["clips"][0]
@@ -1174,13 +1185,12 @@ def test_verify_layout_i3_ende_zu_ende_an_fx3_8660():
             "config_hash": TM.config_hash(CFG_TELEMETRIE)}
     vorlage = dict(c["abschnitte"][0])
     c.update(dauer_s=18.72, maengel=["Wackler"],
-             abschnitte=[{**vorlage, "von_s": 8.0, "bis_s": 15.0, "verwendbar": False, "maengel": ["Wackler"]},
-                         {**vorlage, "von_s": 15.0, "bis_s": 18.72, "verwendbar": False, "maengel": ["Wackler"]}])
+             abschnitte=[{**vorlage, "von_s": 8.0, "bis_s": 13.0, "verwendbar": False, "maengel": ["Wackler"]},
+                         {**vorlage, "von_s": 13.0, "bis_s": 18.72, "verwendbar": False, "maengel": ["Wackler"]}])
     idx["clips"][0], _ = S.telemetrie_anwenden(c, tele, 2.0, CFG_TELEMETRIE)
-    # Höchstwerte weichen von der Referenzrechnung des Task-Briefs um 0,001 ab (dritte Stelle, Rundung der Reihe);
-    # die Bereichsgrenzen selbst (7,16/10,24/13,76/18,36) treffen exakt — Wert aus dem neu erzeugten Fixture verwendet.
-    assert idx["clips"][0]["stabil_quelle"]["laeufe"] == [[7.16, 10.24, 0.125, 1.893], [13.76, 18.36, 0.141, 1.984]]
-    plan = _plan({1: [("Flur/FX3_1.MP4", 14.0, 17.0), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
+    assert idx["clips"][0]["stabil_quelle"]["laeufe"] == [[1.2, 3.36, 0.145, 2.961], [7.12, 10.36, 0.146, 2.342],
+                                                          [12.04, 18.36, 0.142, 2.926]]
+    plan = _plan({1: [("Flur/FX3_1.MP4", 12.5, 15.5), ("Flur/FX3_2.MP4", 1.0, 4.0), ("Flur/FX3_3.MP4", 0.0, 2.0)]})
     res = L.verify_layout(plan, TP, idx, CL, WACKLER_GESPERRT, 25, [tele])
     assert _fehler_fx3_1(res, "verwendbaren Abschnitt", "Mangel") == [], res.errors
 

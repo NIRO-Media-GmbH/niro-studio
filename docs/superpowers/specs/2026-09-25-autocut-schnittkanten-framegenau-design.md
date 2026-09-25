@@ -4,6 +4,12 @@ Datum: 2026-09-25 · Status: entworfen, nicht umgesetzt. Folgeschritt von
 `docs/superpowers/specs/2026-09-23-autocut-broll-bereichsauswahl-design.md`; löst dort Abschnitt 2 (stabile Bereiche aus
 2-s-Fenstern, „±1 s reicht für Shots von 2–5 s") und die beiden Bewegungs-Warnungen aus Abschnitt 5 ab.
 
+**Nachtrag 25.09.2026 — Review-Runde Schnittkanten** (`projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schnittkanten/`):
+13 Einsetzer, 12 × „ja", einziges „nein" FX3_0260 (Einschwingen, User: ruhig ab 2,18 s, gemessen 2,12 s). Keine
+Grenze trennt die Urteile. Entscheidung des Users: **Kantenbefunde sind Hinweise statt Fehler** (Abschnitt 4);
+`bewegung_max` **3,0** (Konfiguration). Die Abnahme prüft statt „jede Nummer ja besteht / nein fällt" die Ortung des
+Einschwingens und die fünf WLC-Bereiche des Users.
+
 ## Anlass
 
 Der erste Praxislauf der Bereichsauswahl (Klebl, Nachtlauf 24./25.09.) hat 32 B-Roll-Shots gesetzt; 97 % lagen in
@@ -90,7 +96,7 @@ der Prüfer meldet eine Abweichung wie heute bei `bewegung_max`/`stabil_min_s` (
 Für jeden Shot mit frischem Telemetrie-Datensatz (Hash wie heute) und `verschiebung` misst der Prüfer die tatsächlich
 genutzten Quell-Frames (`_quellbereich_s()`):
 
-- **Schnittkanten — Fehler.** Die ersten und letzten `kante_s` (0,3 s Timeline) des Shots müssen ruhig sein. Kante =
+- **Schnittkanten — Hinweis** (bis zur Review-Runde als Fehler geplant). Die ersten und letzten `kante_s` (0,3 s Timeline) des Shots müssen ruhig sein. Kante =
   alle Frames der Reihe mit `q_von ≤ t < q_von + kante_s·f` bzw. `q_bis − kante_s·f ≤ t < q_bis`; ruhig heißt dort
   `wackeln·f ≤ ruhig_max_px` und `bewegung·f ≤ bewegung_max`, außerhalb schneller Zoomfahrten (wie Abschnitt 2),
   mit `f = 1 / tempo` des Shots (Zeitlupe: sichtbare
@@ -129,7 +135,7 @@ genutzten Quell-Frames (`_quellbereich_s()`):
 | Schlüssel | Wert | Bedeutung |
 |---|---|---|
 | `ruhig_max_px` | 0,15 (unverändert) | jetzt auch je Frame, geglättet über `glatt_s` |
-| `bewegung_max` | 2,0 bis zur Kalibrierung | **neu gedeutet:** Bewegung (Betrag, px/Frame) je Frame, geglättet — UNKALIBRIERT, Wert aus der Review-Runde |
+| `bewegung_max` | 3,0 (Review-Runde 25.09.2026) | **neu gedeutet:** Bewegung (Betrag, px/Frame) je Frame, geglättet — UNKALIBRIERT, Wert aus der Review-Runde |
 | `glatt_s` | 0,4 (neu) | Glättung der Reihen je Frame |
 | `kante_s` | 0,3 (neu) | Länge einer Schnittkante (Timeline-Sekunden) |
 | `stabil_min_s` | 2,0 (unverändert) | kürzester Lauf |

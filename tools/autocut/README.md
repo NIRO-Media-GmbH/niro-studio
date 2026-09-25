@@ -26,7 +26,7 @@ Trigger im Chat: **„AutoCut: <Kunde>/<Projekt>[/<Charge>]"** + „Rohschnitt" 
 | „Rohschnitt" | 1 | roh-Timeline V1/V2/A1 (V3 leer) mit O-Tönen, Pausen, Platzhaltern, Markern + Bericht |
 | „B-Roll-Index" | 2 | `broll_index.json` + `broll-index.md`: Beschreibung aller B-Roll-Clips, Mängel je Abschnitt |
 | „Nachlauf" | 2b | Abschnittsfelder je Clip (Einstellung, Perspektive, Brennweite, Bewegungsrichtung, Hauptmotiv, `setup_hash`), **stabile Bereiche** (frame-genau): `stabil` je Abschnitt (die Stücke der Läufe), `stabil_quelle` je Clip (Schwellen, Config-Hash und die ungeschnittenen Läufe `laeufe`) |
-| „B-Roll" | 3 | V3 in der roh-Timeline gefüllt nach Plan v2 (Fenster/Strecken/Szenen/Shots), Index und Profil, mit Telemetrie geprüft auf Brennweitenfolge/Zoom und Schnittkanten in Bewegung (Fehler, frame-genau) sowie Bewegung im Shot (Hinweis) + Bericht — ausgesetzt seit 09.09. |
+| „B-Roll" | 3 | V3 in der roh-Timeline gefüllt nach Plan v2 (Fenster/Strecken/Szenen/Shots), Index und Profil, mit Telemetrie geprüft auf Brennweitenfolge/Zoom und Schnittkanten und Bewegung im Shot frame-genau (Hinweise mit Lage-Vorschlag) + Bericht — ausgesetzt seit 09.09. |
 | „B-Roll aus Auswahl" | 3a | V3 aus der Auswahl-Timeline des Users, nur deren In/Out-Bereiche (Vorlage) |
 | „Profil" | 4 | Schnitt-Profil aus den Cloud-Timelines des Users (noch nicht gebaut, siehe `WORKFLOW-AutoCut.md`) |
 | „Finalisieren" | 5 | End-Timeline mit Pegel/Zeitlupe aus der roh-Timeline |

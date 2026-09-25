@@ -1325,7 +1325,7 @@ def test_config_hash_ignoriert_die_stabil_schwellen():
 
 def test_defaults_haben_die_stabil_schwellen():
     cfg = load_config(Path("/nirgendwo"))["telemetrie"]
-    assert cfg["bewegung_max"] == 2.0 and cfg["stabil_min_s"] == 2.0 and cfg["glatt_s"] == 0.4
+    assert cfg["bewegung_max"] == 3.0 and cfg["stabil_min_s"] == 2.0 and cfg["glatt_s"] == 0.4
     assert cfg["ruhig_max_px"] == 0.15
     assert cfg["kante_s"] == 0.3 and "bewegung_rand_s" not in cfg and "bewegung_spitze_faktor" not in cfg
 

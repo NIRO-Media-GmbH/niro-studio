@@ -330,14 +330,17 @@ und Stufe 2b gelaufen (Abschnittsfelder je Clip in `broll_index.json`).
    zwischen aufeinanderfolgenden B-Roll-Shots A-Roll dazwischen, obwohl beide Shots derselben Strecke
    zugerechnet waren — dort ist es kein Schnitt, an Streckengrenzen sowieso nicht.
    **Schneller Zoom im genutzten Bereich** (Fehler) — Ausweg `abweichung` mit Grund. **Schnittkanten in Bewegung**
-   (Fehler, seit 25.09.2026, Spec `docs/superpowers/specs/2026-09-25-autocut-schnittkanten-framegenau-design.md`) —
+   (Hinweis, seit 25.09.2026, Spec `docs/superpowers/specs/2026-09-25-autocut-schnittkanten-framegenau-design.md`) —
    die ersten und letzten `kante_s` (0,3 s Timeline) jedes Shots müssen frame-genau ruhig sein (`wackeln ≤
    ruhig_max_px`, Bewegung ≤ `bewegung_max`, geglättet über `glatt_s`; bei Zeitlupe zählt die sichtbare Bewegung,
    Faktor 1/tempo). Die Meldung „In-/Out-Punkt liegt in Bewegung (…)" nennt Stelle, Werte und die nächste ruhige
-   Lage gleicher Länge im erlaubten Bereich („gleich lang passend ab … s") — ein Vorschlag, keine Automatik. Ausweg
-   für einen gewollten Schwenk: `abweichung` mit Grund. **Bewegung in der Mitte** des Shots ist nur ein Hinweis
-   („Bewegung im Shot bei …"), ebenso eine Kante, an die die Telemetrie-Reihe nicht reicht („ohne Messung"). Ohne
-   Telemetrie entfallen alle drei, und der Bericht sagt das in **einer** Warnung mit der Zahl der Shots. Fehlt sie
+   Lage gleicher Länge im erlaubten Bereich („gleich lang passend ab … s") — ein Vorschlag, keine Automatik. Mit
+   `abweichung` und Grund entfallen die Hinweise (gewollter Schwenk). **Bewegung in der Mitte** des Shots ist ebenfalls
+   ein Hinweis („Bewegung im Shot bei …"), ebenso eine Kante, an die die Telemetrie-Reihe nicht reicht („ohne
+   Messung"). Die Review-Runde Schnittkanten (25.09.2026) hat gezeigt: der User akzeptiert Bewegung an der Kante
+   meist; gestört hat nur das Einschwingen in einen sonst ruhigen Shot — deshalb Hinweis statt Fehler. Bei einem
+   ruhigen Einsetzer den Vorschlag übernehmen. Ohne Telemetrie entfallen alle drei, und der Bericht sagt das in
+   **einer** Warnung mit der Zahl der Shots. Fehlt sie
    nur einzelnen Clips (Teil-Lauf, Material von NAS auf SSD gewandert, `telemetrie.json` unlesbar), nennt er
    getrennt, wie viele Shots ohne verwertbaren Datensatz blieben (Zoom- und Bewegungsregel) und wie viele Schnitte
    ohne Brennweitenverlauf (Brennweitenregel). Ist die Telemetrie **mit anderen Schwellen gemessen** (abweichender
@@ -365,9 +368,8 @@ gerettet ist.
   Abschnitts liegen. Stücke desselben Laufs legen sich über Abschnittsgrenzen zusammen, Stücke verschiedener Läufe
   nie — auch nicht, wenn sich zwei Läufe genau an einer Abschnittsgrenze berühren (dazwischen lagen unruhige
   Frames). Verwendbare Abschnitte legen sich wie bisher an ihren Grenzen mit jedem Nachbarn zusammen.
-- **Fehler `In-/Out-Punkt liegt in Bewegung`**: auch in verwendbaren Abschnitten müssen die Schnittkanten ruhig
-  sein (Schritt 4); Bewegung in der Mitte bleibt ein Hinweis — ein gewollter Schwenk zwischen zwei ruhigen Kanten
-  ist erlaubt.
+- **Hinweis `In-/Out-Punkt liegt in Bewegung`**: die Schnittkante liegt frame-genau in Bewegung, mit Stelle und
+  nächster ruhiger Lage (Schritt 4); Bewegung in der Mitte ebenso als Hinweis — ein gewollter Schwenk ist erlaubt.
 - **Warnung `nennt „…“ nur clip-weit, in keinem Abschnitt`**: ein gesperrter Mangel steht nur in der clip-weiten
   Liste (oder kommt aus `personen.blick_in_kamera`), kein Abschnitt führt ihn. Keine Sperre — verortet ist er
   nirgends —, aber das Bild prüfen; einmal je Clip.
@@ -909,10 +911,15 @@ Testsatz in `projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schwenks/`; jeder künf
 
 `bewegung_max` ist seit 25.09.2026 die Bewegung **je Frame** als Betrag (px @480, über `glatt_s` 0,4 s
 geglättet) — die Ableitung aus 2-s-Fenstern (Achsmittel, Grenzen ±1 s; Klebl-Nachtlauf: vier Shots schnitten in
-Schwenk-Ausläufe und Nachwackeln) ist abgelöst. Startwert 2,0, **unkalibriert**; die Review-Runde Schnittkanten
-(`projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schnittkanten/`) läuft. Abnahme `tests/test_bereiche_abnahme.py`:
-kein Lauf im Beispiel „komplett ungewollt", höchstens zwei der 24 „ungewollt"-Beispiele mit Lauf, die vier
-Klebl-Wackler liegen in keinem Lauf. Wer eine Schwelle ändert, muss dort wieder antreten.
+Schwenk-Ausläufe und Nachwackeln) ist abgelöst. `bewegung_max` = 3,0 aus der Review-Runde Schnittkanten (25.09.2026,
+`projects/NIRO/Werkzeug-Kalibrierung/2026-09 Schnittkanten/`): 13 Einsetzer, 12 × „ja"; einziges „nein" FX3_0260
+(Einschwingen), vom User bei 2,18 s als ruhig markiert, frame-genau gemessen ab 2,12 s. Keine Grenze trennt die
+Urteile (angenommen bis Bewegung 4,95 und wackeln 0,53 an der Kante; die a7-IV-Handkamera zittert laut Gyro 0,48,
+im Bild 0,04 — der Stabilisator nimmt es heraus) → Kanten sind Hinweise. 3,0 nimmt den WLC-Bereich FX3_8660
+12,5–15,5 s in einen Lauf. Abnahme `tests/test_bereiche_abnahme.py`: kein Lauf im Beispiel „komplett ungewollt",
+höchstens zwei der 24 „ungewollt"-Beispiele mit Lauf, alle fünf WLC-Bereiche des Users in einem Lauf, FX3_0260 wie
+gebaut in keinem Lauf und der Lauf beginnt höchstens 0,1 s neben der Stelle des Users. Wer eine Schwelle ändert,
+muss dort wieder antreten.
 
 ## Kantenprüfung — „Kanten" (seit 16.09.2026)
 

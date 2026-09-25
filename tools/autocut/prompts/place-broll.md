@@ -41,10 +41,10 @@ Gilt für „AutoCut: <Kunde>/<Projekt>[/<Charge>] B-Roll" nach `autocut_build.p
   erlaubt — **außer** die Charge sperrt „Wackler" (`broll.forbidden_maengel`) und der Abschnitt nennt ihn in
   `maengel`: dann muss auch dort der Shot vollständig in einem Lauf liegen. `maengel` gilt je Abschnitt, die clip-weite
   Liste darunter ist nur die Vereinigung.
-- **Schnittkanten (Pflicht, jeder Shot):** die ersten und letzten 0,3 s jedes Shots (Timeline, `kante_s`) müssen
-  ruhig sein — am sichersten liegt der ganze Shot in einem Lauf aus `stabil_laeufe`. Bewegung zwischen den Kanten
-  ist erlaubt (nur Hinweis); ein Shot, der in einen Schwenk hinein oder aus ihm heraus schneidet, nicht. Nicht um
-  Zehntelsekunden schieben, bis die Prüfung schweigt — die Meldung nennt die nächste ruhige Lage gleicher Länge.
+- **Schnittkanten (Hinweis):** liegen die ersten oder letzten 0,3 s eines Shots (Timeline, `kante_s`) frame-genau in
+  Bewegung, meldet die Prüfung das mit Stelle und der nächsten ruhigen Lage gleicher Länge. Für einen ruhigen
+  Einsetzer den Vorschlag übernehmen — vor allem, wenn die Kamera am Anfang noch einschwingt und danach still steht;
+  ein gewollter Schwenk darf bleiben. Nicht um Zehntelsekunden schieben, bis die Meldung schweigt.
 
 ## Aufbau von broll_plan.json (v2)
 
@@ -115,7 +115,7 @@ erster Auftritt 2,5 s; sonst 2,0 s).
 | `Abschnittsfelder fehlen` | `autocut_index_sections.py` laufen lassen |
 | `wird zweimal verwendet` / `verwendbar` / `Mangel` / `Sperre` / `Nur S1` | wie bisher: anderer Clip/Bereich |
 | `liegt in keinem verwendbaren Abschnitt` / `Abschnitt … hat den Mangel` | Shot vollständig in einen Lauf aus `stabil_laeufe` legen oder anderen Abschnitt wählen |
-| `In-/Out-Punkt liegt in Bewegung` | Shot auf die vorgeschlagene Lage schieben („gleich lang passend ab … s"), kürzer schneiden oder anderen Bereich; gewollter Schwenk: `abweichung` + Grund |
+| `In-/Out-Punkt liegt in Bewegung` (Hinweis) | Bild ansehen; ruhiger Einsetzer → auf die vorgeschlagene Lage schieben („gleich lang passend ab … s"), gewollter Schwenk → bleibt (mit `abweichung` + Grund ohne Hinweis) |
 | `Bewegung im Shot bei …` / `… ohne Messung` (Hinweis) | Bild ansehen; gewollte Bewegung zwischen ruhigen Kanten darf bleiben |
 | `nennt „…“ nur clip-weit, in keinem Abschnitt` (Warnung) | kein Abschnitt verortet den gesperrten Mangel — Abschnittsbogen/Kontaktbogen ansehen; ist er im genutzten Bereich zu sehen, anderen Bereich oder Clip wählen |
 
