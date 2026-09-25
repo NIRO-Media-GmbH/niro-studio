@@ -84,3 +84,33 @@ Resolve. Resolve-Regeln: `tools/resolve/WORKFLOW-Resolve.md`.
   `raster_erzeugen.py`, `pruefung_auswerten.py`, `kopf_oben_messen.py`.
 - **SFX-Pegel:** Die Vorlage rechnet noch mit dem ersten, zu leisen Standard (Spitze ≤ −26 dBFS unter Sprache).
   Richtwert seit der Taxodia-Korrektur ist momentan nicht unter −30 LUFS — siehe Workflow 6g.
+
+## Offene Befunde
+
+**A1-Pegel nach True Peak je Clip (Klebl Recruiting, 25.09.2026).** Nur notiert, die Vorlagen sind nicht geändert.
+
+- **Befund:** `NormalizeAudioLevel` mit True Peak −3 dBTP je A1-Clip (6a, 6d) richtet jeden Satz an seiner lautesten
+  Spitze aus, nicht an seiner Lautheit.
+  - Ein Satz mit einer Einzelspitze bekommt dadurch zu wenig Gain. Beispiel: Jonas „für einen Freund“, Spitze
+    −10,9 dBFS, lag nach dem Bau 7,7 LU unter den anderen Beats.
+  - Die Spitze begrenzt dann auch den Gesamtpegel: Der Export von Video 03 kam auf −20,2 LUFS, die anderen auf
+    −17,1 bis −18,9 LUFS.
+  - Dieselbe Regel gilt in Stufe 5 (`ton.py`/`finalize.py`).
+- **Umgangen** in der Charge-Kopie `projects/Klebl/Recruiting-Videos/2026-09 Dreh Edeka Baustelle 22.09/_intern/feinschnitt_bauen.py`
+  (Abschnitt nach `NormalizeAudioLevel`):
+  - Plan-Schlüssel `a1_pegel` (dB je Beat, zusätzlich zur Normalisierung): Beat 3 +4 dB, Beat 5 +3 dB.
+  - `ton_gesamt_db` (−2,6 dB auf A1; die Musik-/SFX-Pegel im Plan enthalten den Versatz schon) hält den True Peak
+    der Mischung unter −1,5 dBTP (gemessen −1,6 dBTP).
+  - Readback je Item in `feinschnitt.json` → `a1_pegel_korrektur`.
+- **Vorschlag für `feinschnitt/feinschnitt_bauen.py`** (6d, sinngemäß auch `audio_normalisieren.py`, 6a):
+  1. Im ANPASSEN-Block `A1_PEGEL: dict[str, float] = {}` (Beat → dB) und `TON_GESAMT_DB = 0.0` ergänzen.
+  2. Nach `NormalizeAudioLevel` je A1-Item `AudioVolume` um `A1_PEGEL[beat] + TON_GESAMT_DB` erhöhen. Den
+     Readback wie in der Klebl-Kopie in `feinschnitt.json` schreiben.
+  3. `musik/mischung_pruefen.py` um die Sprachlautheit je Beat erweitern (Stem wie bisher, BS.1770 je A1-Item).
+     Beats, die deutlich unter dem Median liegen (etwa mehr als 3 LU), als Vorschlag für `A1_PEGEL` melden:
+     Anhebung bis zum Median, begrenzt durch die Beat-Spitze.
+  4. Den nötigen Gesamtversatz, damit die Mischung höchstens −1,5 dBTP erreicht, als Vorschlag für `TON_GESAMT_DB`
+     melden. Die Musik-/SFX-Pegel im Plan um denselben Wert verschieben.
+  5. Weiter gedacht, ohne Spec-Entscheidung: je Clip auf Lautheit normalisieren (Modus „ITU-R BS.1770-4“ statt
+     „True Peak“) und True Peak nur als Obergrenze prüfen. Das betrifft auch Stufe 5 und den User-Standard vom
+     04./15.09. („True Peak −3 je FX3-Clip“), also nur mit dem User entscheiden.

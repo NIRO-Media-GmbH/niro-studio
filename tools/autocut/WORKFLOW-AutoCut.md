@@ -496,6 +496,11 @@ Transform-Änderung. Jeder Baustein bekommt einen Protokoll-Eintrag; die Vorlage
 `feinschnitt_bauen.py` macht dasselbe auf der Feinschnitt-Timeline selbst. 6a braucht es nur für die roh-Timeline
 oder einen Zwischenstand.
 
+**Befund (Klebl 25.09.2026, noch nicht in den Vorlagen):** True Peak je Clip richtet einen Satz an seiner lautesten
+Spitze aus. Ein Satz mit einer Einzelspitze bleibt deshalb leise (Jonas „für einen Freund“, Spitze −10,9 dBFS:
+7,7 LU unter den anderen Beats). Nach dem Bau die Sprache je Beat messen und Ausreißer nachpegeln. Wie das geht und
+der Vorschlag für die Vorlage: `vorlagen/README.md`, „Offene Befunde“.
+
 ### 6b Grafik
 1. **Grafikebene in „Animation:"**:
    - Eine Komposition als **eine Alpha-Spur** über die ganze Timeline (ProRes 4444).

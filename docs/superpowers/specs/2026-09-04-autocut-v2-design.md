@@ -264,3 +264,14 @@ Abnahme: Gesicht 15–20 %, Schwarz 0 s, Pegel im Re-Export, Slow-Mo-Längen, Sz
   Einzel-Einschübe mit Ausnahme; der Bericht listet Ordner ohne Szene.
 - Brennweitenklasse ist Schätzung; Fehlurteile führen höchstens zu einem falschen Cut-Flow-Fehler,
   den Claude mit anderem Shot auflöst.
+
+## Nachtrag 25.09.2026 — Befund zur Normalisierung (nicht umgesetzt)
+
+„Independent je Timeline-Clip, Ziel −3,0 dBTP“ (Entscheidungen, Abschnitt 1) gleicht Spitzen an, nicht die Lautheit.
+Ein Satz mit einer Einzelspitze bekommt deshalb zu wenig Gain. Klebl Recruiting, Video 03: Jonas „für einen Freund“,
+Spitze −10,9 dBFS, lag nach dem Bau 7,7 LU unter den anderen Beats, und der Export blieb mit −20,2 LUFS leiser als die
+anderen drei Videos (−17,1 bis −18,9 LUFS). Die Regel gilt in Stufe 5 (`ton.py`) und in den Feinschnitt-Vorlagen
+(6a/6d). In der Charge wurde nach der Normalisierung je Beat nachgepegelt (`a1_pegel`, `ton_gesamt_db` in der
+Charge-Kopie von `feinschnitt_bauen.py`). Befund und Vorschlag für die Vorlage: `tools/autocut/vorlagen/README.md`,
+„Offene Befunde“. Eine Änderung der Regel selbst (Lautheit je Clip, True Peak nur als Obergrenze) braucht eine
+Entscheidung des Users.
