@@ -9,6 +9,9 @@ im Scripting-Ordner — Probe der neuen Funktionen: scripts/resolve_probe_api.py
 - ``endFrame`` gilt als inklusiv (``END_FRAME_INCLUSIVE``); die tatsächliche Semantik misst ``scripts/resolve_probe.py``
   und legt sie in ``probe.json`` ab (``end_frame_inclusive``) — ``ResolveSession(resolve, probe=…)`` übernimmt sie.
   Readback nach jedem Append nur über ``GetStart()``/``GetDuration()`` (``GetEnd()`` ist uneinheitlich).
+- Clip-Bildrate ≠ Timeline-Bildrate: Resolve rechnet die Timeline-Dauer als abgerundet(Quellframes · tl_fps / clip_fps)
+  (Klebl-Readback 25.09.2026: 115 Quellframes @ 119,88 fps → 23 statt 24 Frames) → ``append_items`` bestimmt die
+  Quellframes solcher Clips selbst aus der Soll-Dauer (``quellframes``, aufgerundet).
 - Alle clipInfos in EINEM ``AppendToTimeline``-Aufruf; davor ``SetSelectedClip`` (Workaround CHANGELOG 20.3.2)
   und ``SetCurrentTimeline`` (Append schreibt nur in die aktuelle Timeline).
 - ``useCustomSettings='1'`` setzt Color-Management-Keys zurück (BMD-Bug, Forum t=212784) → vorher sichern, danach
@@ -19,6 +22,7 @@ im Scripting-Ordner — Probe der neuen Funktionen: scripts/resolve_probe_api.py
 from __future__ import annotations
 
 import datetime as _dt
+import math
 import os
 import re
 import sys
@@ -113,6 +117,34 @@ def _fps_matches(setting, fps: float) -> bool:
         return abs(float(str(setting).replace("DF", "").strip()) - float(fps)) < 0.01
     except (TypeError, ValueError):
         return False
+
+
+def _fps_wert(setting) -> float | None:
+    """Bildrate aus einem Resolve-Wert („25“, „119.88“, „29.97 DF“); None, wenn leer oder unlesbar."""
+    try:
+        v = float(str(setting).replace("DF", "").strip())
+    except (TypeError, ValueError):
+        return None
+    return v if v > 0 else None
+
+
+def _clip_fps(mi) -> float | None:
+    return _fps_wert(_safe(getattr(mi, "GetClipProperty", None), None, "FPS"))
+
+
+def _fps_exakt(fps: float) -> float:
+    """NTSC-Raten nennt Resolve gerundet („119.88“); exakt sind sie k·1000/1001."""
+    k = round(fps * 1.001)
+    return k * 1000 / 1001 if k in (24, 30, 48, 60, 120, 240) and abs(fps - k * 1000 / 1001) < 0.01 else fps
+
+
+def quellframes(n_tl: int, clip_fps: float, tl_fps: float) -> int:
+    """Quellframes, die in der Timeline genau ``n_tl`` Frames ergeben, für einen Clip mit fremder Bildrate.
+
+    Resolve rundet die Timeline-Dauer ab (Modul-Doku), gerundete Quellframes verlieren deshalb einen Frame. Aufrunden
+    mit der exakten NTSC-Rate trifft jede Dauer — gleich, ob Resolve dezimal oder exakt rechnet —, solange die Quelle
+    mindestens die Timeline-Bildrate hat."""
+    return math.ceil(n_tl * _fps_exakt(clip_fps) / _fps_exakt(tl_fps) - 1e-9)
 
 
 def timeline_name(prefix: str, video_kurz: str, now: _dt.datetime | None = None) -> str:
@@ -340,7 +372,7 @@ class ResolveSession:
                 continue
         return False
 
-    def _clip_info(self, it: Item, media_items: dict, start_frame: int) -> dict:
+    def _clip_info(self, it: Item, media_items: dict, start_frame: int, tl_fps: float | None = None) -> dict:
         mi = media_items.get(it.clip)
         if mi is None:
             norm = _norm(it.clip)
@@ -351,7 +383,11 @@ class ResolveSession:
             raise AutoCutError(f"Unbekannte Spur '{it.track}' für {Path(it.clip).name}.")
         if it.src_out_f <= it.src_in_f:
             raise AutoCutError(f"{Path(it.clip).name} auf {it.track}: leerer Bereich {it.src_in_f}–{it.src_out_f}.")
-        end = int(it.src_out_f) - 1 if self.end_frame_inclusive else int(it.src_out_f)
+        src_out = int(it.src_out_f)
+        clip_fps, rec_n = _clip_fps(mi), int(it.rec_out_f) - int(it.rec_in_f)
+        if tl_fps and clip_fps and not _fps_matches(clip_fps, tl_fps) and rec_n > 0:
+            src_out = int(it.src_in_f) + quellframes(rec_n, clip_fps, tl_fps)   # fremde Bildrate: Dauer muss stimmen
+        end = src_out - 1 if self.end_frame_inclusive else src_out
         return {"mediaPoolItem": mi, "startFrame": int(it.src_in_f), "endFrame": end,
                 "recordFrame": int(start_frame + it.rec_in_f), "trackIndex": TRACK_INDEX[it.track],
                 "mediaType": 1 if it.track.startswith("V") else 2}
@@ -361,7 +397,9 @@ class ResolveSession:
         deaktivierte Items stummschalten, Video/Audio eines Cuts best effort verknüpfen."""
         if not items:
             return []
-        infos = [self._clip_info(it, media_items, start_frame) for it in items]
+        tl_fps = (_fps_wert(_safe(timeline.GetSetting, None, "timelineFrameRate"))
+                  or _fps_wert(_safe(self.project.GetSetting, None, "timelineFrameRate")))
+        infos = [self._clip_info(it, media_items, start_frame, tl_fps) for it in items]
         self.project.SetCurrentTimeline(timeline)
         _safe(self.media_pool.SetSelectedClip, None, infos[0]["mediaPoolItem"])   # Workaround 20.3.2
         added = self.media_pool.AppendToTimeline(infos) or []
@@ -376,10 +414,13 @@ class ResolveSession:
             soll_start, soll_dur = info["recordFrame"], int(it.rec_out_f) - int(it.rec_in_f)
             ist_start, ist_dur = int(tl.GetStart()), int(tl.GetDuration())
             if (ist_start, ist_dur) != (soll_start, soll_dur):
+                clip_fps = _clip_fps(info["mediaPoolItem"])
+                rate = (f" Clip {_fps_str(clip_fps)} fps ≠ Timeline {_fps_str(tl_fps)} fps: Quellframes aus der Soll-Dauer "
+                        f"aufgerundet (quellframes)." if clip_fps and tl_fps and not _fps_matches(clip_fps, tl_fps) else "")
                 raise AutoCutError(
                     f"Readback weicht ab für {Path(it.clip).name} auf {it.track}: Soll Start {soll_start} / Dauer "
                     f"{soll_dur}, Ist Start {ist_start} / Dauer {ist_dur} (endFrame {'inklusiv' if self.end_frame_inclusive else 'exklusiv'} "
-                    f"angenommen). scripts/resolve_probe.py ausführen und probe.json prüfen.")
+                    f"angenommen). scripts/resolve_probe.py ausführen und probe.json prüfen.{rate}")
         self.disable_items([tl for it, tl in zip(items, added) if not it.enabled])
         self._link_pairs(timeline, items, added)
         return list(added)

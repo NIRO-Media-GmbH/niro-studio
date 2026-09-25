@@ -3,6 +3,7 @@ recordFrame absolut / Marker relativ, endFrame-Semantik aus der Probe, Readback,
 from __future__ import annotations
 
 import datetime as _dt
+import math
 
 import pytest
 
@@ -71,6 +72,35 @@ def test_append_items_uses_absolute_record_frames_and_disables_a2():
     assert infos[1]["mediaType"] == 2 and infos[2]["trackIndex"] == 2
     assert infos[3]["mediaType"] == 1 and infos[3]["trackIndex"] == 3 and infos[3]["recordFrame"] == 90100
     assert tl[2].enabled is False
+
+
+def test_quellframes_treffen_die_timeline_dauer_exakt():
+    """Resolve rechnet die Dauer als abgerundet(Quellframes · 25 / Clip-fps). Die Quellframes müssen für jede Länge
+    genau die Soll-Dauer liefern — auch wenn Resolve NTSC-Raten intern exakt (k·1000/1001) statt dezimal rechnet."""
+    exakt = {119.88: 120000 / 1001, 59.94: 60000 / 1001, 29.97: 30000 / 1001}
+    for fps in (119.88, 59.94, 29.97, 30.0, 50.0, 100.0):
+        for n in range(1, 1500):
+            q = R.quellframes(n, fps, 25.0)
+            for rate in {fps, exakt.get(fps, fps)}:
+                assert math.floor(q * 25 / rate + 1e-9) == n, (fps, n, q, rate)
+    assert R.quellframes(24, 119.88, 25.0) == 116 and R.quellframes(24, 50.0, 25.0) == 48
+
+
+def test_append_items_fremde_bildrate_trifft_slot_dauer():
+    """Klebl 25.09.: Actioncam 119,88 fps in 25p, 24-Frame-Slot. Die Vorlage rechnet round(24 · 4,7952) = 115
+    Quellframes, Resolve macht daraus 23 Frames, und der Readback bricht ab. append_items rundet selbst passend."""
+    s = ResolveSession(FakeResolve())
+    t = s.create_timeline("T", 25.0, 2160, 3840, "01:00:00:00")
+    cam, broll = "/nas/Actioncam/DJI_0012_D.MP4", "/nas/B-Roll/FX3_9.MP4"
+    s.media_pool.fps_by_path.update({cam: "119.88", broll: "50"})
+    f = s.ensure_bin(["AutoCut"]); mi = s.import_media([cam, broll], f)
+    items = [Item("V3", cam, 43157, 43157 + round(n * 119.88 / 25), rec, rec + n, True, "4", "broll", True)
+             for rec, n in ((0, 24), (24, 25), (49, 26))]
+    items.append(Item("V3", broll, 100, 148, 75, 99, True, "4", "broll", True))       # 50p: 48 Quellframes = 24
+    tl = s.append_items(t, items, mi, 90000)
+    assert [int(x.GetDuration()) for x in tl] == [24, 25, 26, 24]
+    assert t.items[0]["endFrame"] == 43157 + 116 - 1                                    # 116 statt 115 Quellframes
+    assert t.items[3]["endFrame"] == 147                                                # ganzzahliges Verhältnis bleibt
 
 
 def test_markers_are_relative_to_timeline_start():

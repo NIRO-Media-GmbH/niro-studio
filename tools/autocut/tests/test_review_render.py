@@ -31,8 +31,11 @@ def test_titel_aus_timeline(name, titel):
     ("AutoCut x 2026-09-18 1220 Feinschnitt", "Feinschnitt"),
     ("AutoCut x 2026-09-18 1220 Finalisiert", "Finalisiert"),
     ("Dold 02 – Entwurf v1", "Entwurf"),
-    ("03_Viele Sprachen, ein Team_V6", "V6"),
-    ("Taxodia-Weg Messe V2", "V2"),
+    # Versionsmarke im Timeline-Namen = Resolve-Zählung, keine Stufe: „V3“ vorn in der Notiz las sich als Review-Version
+    # (Klebl 25.09.: „01 - Tiefbau_V3“ lag als V9 im Review)
+    ("03_Viele Sprachen, ein Team_V6", "Stand"),
+    ("Taxodia-Weg Messe V2", "Stand"),
+    ("01 - Tiefbau_V3", "Stand"),
     ("Hochformat_Timeline_01", "Stand"),
 ])
 def test_stufe(name, stufe):

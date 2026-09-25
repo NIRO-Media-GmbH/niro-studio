@@ -43,6 +43,8 @@ def titel_aus_timeline(name: str, prefix: str = "AutoCut") -> str:
 
 
 def stufe_aus_timeline(name: str) -> str:
+    """Bau-Stufe für die Notiz. Eine Versionsmarke im Namen („01 - Tiefbau_V3“) ist die Resolve-Zählung, keine Stufe:
+    als „V3“ vorn in der Notiz las sie sich wie die Review-Version (Klebl 25.09.2026: abgelegt als V9)."""
     n = name.lower()
     if _ROH_RE.search(name):
         return "Rohschnitt (roh)"
@@ -52,9 +54,6 @@ def stufe_aus_timeline(name: str) -> str:
         return "Finalisiert"
     if "entwurf" in n:
         return "Entwurf"
-    m = re.search(r"(?:^|[\s_\-–])v(\d+)\s*$", n)
-    if m:
-        return f"V{m.group(1)}"
     return "Stand"
 
 

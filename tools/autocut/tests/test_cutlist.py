@@ -129,6 +129,16 @@ def test_verify_text_mismatch():
     assert any("stimmt nicht" in e for e in r.errors)
 
 
+def test_verify_kurzform_mit_apostroph():
+    # Klebl 25.09.: Scribe schreibt „'ne“; derselbe Wortlaut im Cut-Text scorte 0,625 und wurde als Fehler gemeldet
+    words = {"/nas/FX3_1.MP4": [{"text": t, "start": 1 + i * 0.4, "end": 1.3 + i * 0.4, "speaker": "s1"}
+                                for i, t in enumerate("wie 'ne eigene Familie.".split())]}
+    cl = _cl(beats=[Beat(nr="1", szene="Hook", typ="oton", person="Jonas", clip="/nas/FX3_1.MP4",
+                         cuts=[Cut(in_s=1.0, out_s=2.5, text="wie 'ne eigene Familie.")], plan_dauer_s=2)])
+    r = verify_cutlist(cl, None, words, DUR, CFG)
+    assert r.ok and r.errors == []
+
+
 def test_verify_extra_words_in_interval_warns():
     cl = _cl(); cl.beats[0].cuts[0].text = "Weil das mein Job ist."   # Intervall reicht bis „meins"
     r = verify_cutlist(cl, None, WORDS, DUR, CFG)

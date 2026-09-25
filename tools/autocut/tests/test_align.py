@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from niro_autocut import align
 
 W: list[dict] = []
@@ -33,6 +35,26 @@ def test_normalize():
 def test_split_fragments():
     assert align.split_fragments("„Also unser Haus bezahlt, äh, die ganze Weiterbildung. […] hundert Prozent von dem Haus getragen.\"") == \
         ["Also unser Haus bezahlt, äh, die ganze Weiterbildung.", "hundert Prozent von dem Haus getragen."]
+
+
+def test_split_fragments_behaelt_apostroph_der_kurzformen():
+    frag, = align.split_fragments("„So 'ne Sache, sagt er: ‚nein‘ – gibt's ’n Grund?“")
+    assert "'ne" in frag and "gibt's" in frag and "’n" in frag       # Kurzformen und Binnen-Apostroph bleiben
+    assert not any(z in frag for z in "‚‘„“")                         # Anführungszeichen fallen weiter weg
+
+
+@pytest.mark.parametrize("scribe,zitat", [
+    ("wie 'ne eigene Familie.", "wie 'ne eigene Familie."),       # Klebl 25.09.: Score 0,625 → Verify-Fehler
+    ("wie 'ne eigene Familie.", "wie ’ne eigene Familie."),       # typografischer Apostroph im Plan
+    ("Hast du 'n Beispiel von 'nem Kollegen?", "Hast du 'n Beispiel von 'nem Kollegen?"),
+    ("über so 'nen Wechsel", "über so 'nen Wechsel"),
+    ("wie geht 's dir", "wie geht 's dir"),
+])
+def test_kurzformen_mit_apostroph_erreichen_verify_schwelle(scribe, zitat):
+    """Scribe schreibt Kurzformen mit Apostroph; Zitat- und Transkriptseite müssen sie gleich normalisieren."""
+    words = [{"text": t, "start": i * 0.4, "end": i * 0.4 + 0.3, "speaker": "speaker_1"} for i, t in enumerate(scribe.split())]
+    m = align.find_quote(words, zitat, min_score=0.0)
+    assert m is not None and m.score >= 0.8
 
 
 def test_find_quote_with_elision():
