@@ -6,11 +6,13 @@ Nachgebildete Eigenheiten (Recherche 03.09. + README/CHANGELOG):
 - ``useCustomSettings='1'`` setzt die Color-Management-Keys zurück (BMD-Bug, Forum t=212784).
 - ``AddMarker`` erlaubt nur einen Marker pro Frame; mit ``reject_beyond_end`` auch keinen hinter dem letzten Clip.
 - ``recordFrame`` ist absolut (Startframe 90000 bei 01:00:00:00 @ 25 fps), ``AddMarker(frameId)`` relativ.
+- Clip-Bildrate ≠ 25: Timeline-Dauer = abgerundet(Quellframes · 25 / Clip-FPS) (Klebl-Readback 25.09.2026, 119,88 fps).
 - 21.1: Properties/Speed/Fades/Transition/Normalize/AutoAlign/QuickExport (Semantiken per Klassen-Flags, siehe Probe resolve_probe_api.py).
 - Gemessene Werte je Flag stehen in <Charge>/_intern/autocut/probe_api.json (resolve_probe_api.py) — Flags nur mit Beleg ändern.
 """
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -106,12 +108,13 @@ class FakeTLItem:
         self.kind, self.index = kind, index
         self.start = int(info["recordFrame"])
         # Resolve konformiert Quellframes auf die Timeline-Bildrate (25p): 50p-Quellmaterial liefert die
-        # halbe Framezahl. mediaPoolItem ist normalerweise ein FakeItem; in seltenen Fällen (Import) auch
-        # eine FakeTimeline ohne .props — dann gilt die Standard-FPS 25.
+        # halbe Framezahl. Die Dauer wird ABGERUNDET (Klebl-Readback 25.09.2026: 115 Quellframes @ 119,88 fps →
+        # 23 Frames, 120 → 25, 235 → 49). mediaPoolItem ist normalerweise ein FakeItem; in seltenen Fällen
+        # (Import) auch eine FakeTimeline ohne .props — dann gilt die Standard-FPS 25.
         mpi = info["mediaPoolItem"]
         src_n = int(info["endFrame"]) - int(info["startFrame"]) + (1 if inclusive else 0)
         fps = float(getattr(mpi, "props", {}).get("FPS", 25))
-        self.dur = int(round(src_n * 25 / fps))
+        self.dur = math.floor(src_n * 25 / fps + 1e-9)
         self.refuse_disable = False
         self.level = 1.0
         self.speed = 100.0
