@@ -4,10 +4,11 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import pytest
 
 from niro_autocut import telemetrie_kalibrierung as K
 from niro_autocut.charge import Charge
-from test_telemetrie import CFG
+from test_telemetrie import CFG, _info, _kb, _rtmd_puffer, _zoomreihe
 
 
 def _messung(rng, kamera: str, faktor: float, n: int = 100, kb: float = 36.0, rauschen: float = 0.05,
@@ -61,6 +62,50 @@ def test_auswerten_klammert_saettigung_aus_und_vergleicht_cv2():
     assert erg["kameras"]["FX3"]["clips"] == 5 and abs(erg["kameras"]["FX3"]["px_faktor"] - 1.0) < 0.15
     assert (erg["cv2_vergleich"]["n"] == 5
            and abs(erg["cv2_vergleich"]["verhaeltnis_median"] - 1.02) < 0.01 and erg["cv2_vergleich"]["r"] > 0.99)
+
+
+def _zoom_im_fenster(monkeypatch, tmp_path, faktor: float = 0.6) -> dict | None:
+    """FX3-Clip 12 s in 50p: 7 s bei 24 mm, Zoom auf 72 mm in 7–8 s, danach 72 mm; Kalibrierfenster 7–11 s mit der
+    Zoomfahrt am Anfang (Sample 350 = 25-fps-Frame 175). Optisch = faktor · Schwenk (Gyro-y, Vorzeichen −), jede
+    rtmd-Probe über ihre eigene Brennweite gerechnet — unabhängig vom Code; der Clip-Median (24 mm) liegt neben dem
+    Fenster (72 mm)."""
+    fps, von_s = 50.0, 7.0
+    kb = np.array(_zoomreihe((7.0, 24, 24), (1.0, 24, 72), (4.0, 72, 72), fps=fps)[:600])
+    gyro_y = np.random.default_rng(11).integers(-400, 400, len(kb)) / 65.5         # Skala 65,5: genau darstellbar
+    beitrag = -faktor * gyro_y / fps * math.pi / 180.0 * 480.0 * kb / 36.0            # px je 50p-Sample
+    dx = beitrag[350:550].reshape(100, 2).sum(axis=1)                                 # 2 Samples je 25-fps-Frame
+    opt = np.stack([dx, np.zeros(100)], axis=1)
+    puffer = b"".join(_rtmd_puffer(frames=1, proben=40, gyro_y=w, kb=_kb(mm)) for w, mm in zip(gyro_y, kb))
+    clip = tmp_path / "FX3_0080.MP4"
+    clip.write_bytes(b"x")
+    monkeypatch.setattr(K, "ffprobe", lambda p: _info(str(p), fps=fps, dauer=12.0))
+    monkeypatch.setattr(K, "datenspur_lesen", lambda p: puffer)
+    monkeypatch.setattr(K, "graustufen", lambda *a: None)
+    monkeypatch.setattr(K, "verschiebungen", lambda bilder: opt)
+    return K.clip_kalibrieren(clip, CFG, von_s)
+
+
+def test_kalibrierung_rechnet_zoom_im_fenster_mit_der_brennweite_je_frame(monkeypatch, tmp_path):
+    """Spec 2026-09-25 für den Kalibrierweg: Gyro-px mit der Brennweite je Frame im Fenster wie ``clip_messen`` —
+    mit dem Clip-Median (eine Brennweite für den ganzen Clip) kam hier 1,59 statt 0,6 heraus."""
+    m = _zoom_im_fenster(monkeypatch, tmp_path, faktor=0.6)
+    erg = K.auswerten_kalibrierung([m], CFG)
+    assert erg["kameras"]["FX3"]["px_faktor"] == pytest.approx(0.6, abs=0.005)
+
+
+def test_kalibrierung_klammert_saettigung_aus_ohne_die_brennweiten_zu_verschieben(monkeypatch, tmp_path):
+    """Gesättigte Frames am Fensteranfang (in der Zoomfahrt) fallen raus; jeder übrige Frame behält sein ``k``."""
+    m = _zoom_im_fenster(monkeypatch, tmp_path, faktor=0.6)
+    opt = np.array(m["opt"])
+    opt[:10, 0] += 50.0                                                  # ≥ 40 px: Phasenkorrelation gesättigt
+    m["opt"] = opt.tolist()
+    fx = K.auswerten_kalibrierung([m], CFG)["kameras"]["FX3"]
+    assert fx["frames"] == 89 and fx["px_faktor"] == pytest.approx(0.6, abs=0.005)
+
+
+def test_kalibrierung_nennt_die_brennweite_im_fenster(monkeypatch, tmp_path):
+    """``kb_mm`` (Fortschritt, ``clips`` in telemetrie_kalibrierung.json) = Median im gemessenen Fenster."""
+    assert _zoom_im_fenster(monkeypatch, tmp_path)["kb_mm"] == 72.0
 
 
 def test_tabelle_und_leer():
