@@ -9,6 +9,10 @@ legen sich nur innerhalb desselben Laufs zusammen (Abschnitt 3, „Fehler und Ra
 Nachlauf braucht nach `--force` die API). Ein gesperrter Mangel, den ein Clip nur clip-weit nennt und kein Abschnitt
 führt, sperrt nicht — `verify_layout()` warnt dann einmal je Clip („Bild prüfen").
 
+**Abgelöst 25.09.2026** (Klebl-Praxislauf): Abschnitt 2 (Läufe aus 2-s-Fenstern, „±1 s reicht") und die
+Bewegungs-Warnungen in Abschnitt 5 sind durch `2026-09-25-autocut-schnittkanten-framegenau-design.md` ersetzt —
+Läufe und Prüfung rechnen frame-genau aus dem Gyro.
+
 ## Anlass
 
 Beim WLC-Test am 23.09. (`projects/WLC/Recruiting/2026-07 Erster Dreh/Protokoll.md`, Abschnitt „Nachtrag gleicher

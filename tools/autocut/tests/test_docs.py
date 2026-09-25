@@ -198,7 +198,7 @@ def test_replay_plan_kopie_test_deckt_zusatzmessungen_ab():
 def test_workflow_erklaert_die_bereichsauswahl():
     text = _text(WORKFLOW)
     for needle in ("stabile Bereiche", "abschnitte[].maengel", "stabil_quelle", "gerettet",
-                   "bewegung_max", "stabil_min_s", "nicht als stabil gemessen"):
+                   "bewegung_max", "stabil_min_s", "Punkt liegt in Bewegung"):
         assert needle in text, f"WORKFLOW-AutoCut.md: „{needle}“ fehlt"
 
 
@@ -258,3 +258,17 @@ def test_spec_bereichsauswahl_passt_zu_den_ungeschnittenen_laeufen():
     assert "zum selben gemessenen Lauf" in randfaelle and "berichtigt 24.09.2026, Task 8" in randfaelle
     probe = _flach(_abschnitt(spec, "## Erste Probe"))
     assert "ohne API-Kosten" not in probe and "--dry-run" in probe and "berichtigt 24.09.2026, Task 8" in probe
+
+
+def test_doku_erklaert_die_kantenregel():
+    """Spec 2026-09-25: Workflow, Prompt und README nennen die frame-genaue Kantenregel."""
+    wf = _flach(_text(WORKFLOW))
+    for needle in ("kante_s", "glatt_s", "verschiebung", "frame-genau", "Punkt liegt in Bewegung", "gleich lang passend ab"):
+        assert needle in wf, f"WORKFLOW-AutoCut.md: „{needle}“ fehlt"
+    for alt in ("bewegung_rand_s", "bewegung_spitze_faktor", "nicht als stabil gemessen"):
+        assert alt not in wf, f"WORKFLOW-AutoCut.md nennt noch „{alt}“"
+    prompt = _flach(_text(PLACE_PROMPT))
+    for needle in ("Punkt liegt in Bewegung", "0,3 s", "frame-genau"):
+        assert needle in prompt, f"place-broll.md: „{needle}“ fehlt"
+    assert "nicht als stabil gemessen" not in prompt
+    assert "Schnittkanten" in _flach(_text(README))

@@ -26,7 +26,8 @@ Gilt für „AutoCut: <Kunde>/<Projekt>[/<Charge>] B-Roll" nach `autocut_build.p
   lokalen Bewegungs-Maxima, `t_s` = Fenster-Start); ohne Telemetrie `None`/leer, Claudes Klasse `brennweite` bleibt
   daneben bestehen), `profile/default.md` + `.yaml`, Plankopf.
 - `stabil_laeufe` (je Clip) = die **ungeschnittenen** gemessenen ruhigen Läufe `[von_s, bis_s, wackeln_max,
-  bewegung_max]`; dort ist das Bild ruhig genug für einen kurzen Einsetzer. `stabil` (je Abschnitt) sind ihre Stücke,
+  bewegung_max]`, **frame-genau** (seit 25.09.2026, Grenzen auf 0,04 s; Bewegung = Betrag je Frame); dort ist das Bild
+  ruhig genug für einen kurzen Einsetzer. `stabil` (je Abschnitt) sind ihre Stücke,
   auf den Abschnitt geschnitten — ein Stück kann kürzer als ein Shot sein, wenn sein Lauf im Nachbarabschnitt
   weitergeht. Zwei Läufe, die sich nur berühren, sind zwei (dazwischen war es unruhig). Ohne frische Messung sind beide
   leer.
@@ -40,6 +41,10 @@ Gilt für „AutoCut: <Kunde>/<Projekt>[/<Charge>] B-Roll" nach `autocut_build.p
   erlaubt — **außer** die Charge sperrt „Wackler" (`broll.forbidden_maengel`) und der Abschnitt nennt ihn in
   `maengel`: dann muss auch dort der Shot vollständig in einem Lauf liegen. `maengel` gilt je Abschnitt, die clip-weite
   Liste darunter ist nur die Vereinigung.
+- **Schnittkanten (Pflicht, jeder Shot):** die ersten und letzten 0,3 s jedes Shots (Timeline, `kante_s`) müssen
+  ruhig sein — am sichersten liegt der ganze Shot in einem Lauf aus `stabil_laeufe`. Bewegung zwischen den Kanten
+  ist erlaubt (nur Hinweis); ein Shot, der in einen Schwenk hinein oder aus ihm heraus schneidet, nicht. Nicht um
+  Zehntelsekunden schieben, bis die Prüfung schweigt — die Meldung nennt die nächste ruhige Lage gleicher Länge.
 
 ## Aufbau von broll_plan.json (v2)
 
@@ -109,7 +114,9 @@ erster Auftritt 2,5 s; sonst 2,0 s).
 | `Shots aus verschiedenen Ordnern` | Szene teilen oder `ausnahme` (Wechselschnitt) |
 | `Abschnittsfelder fehlen` | `autocut_index_sections.py` laufen lassen |
 | `wird zweimal verwendet` / `verwendbar` / `Mangel` / `Sperre` / `Nur S1` | wie bisher: anderer Clip/Bereich |
-| `liegt in keinem verwendbaren Abschnitt` / `Abschnitt … hat den Mangel` / `Bereich nicht als stabil gemessen` | Shot vollständig in einen Lauf aus `stabil_laeufe` legen oder anderen Abschnitt wählen |
+| `liegt in keinem verwendbaren Abschnitt` / `Abschnitt … hat den Mangel` | Shot vollständig in einen Lauf aus `stabil_laeufe` legen oder anderen Abschnitt wählen |
+| `In-/Out-Punkt liegt in Bewegung` | Shot auf die vorgeschlagene Lage schieben („gleich lang passend ab … s"), kürzer schneiden oder anderen Bereich; gewollter Schwenk: `abweichung` + Grund |
+| `Bewegung im Shot bei …` / `… ohne Messung` (Hinweis) | Bild ansehen; gewollte Bewegung zwischen ruhigen Kanten darf bleiben |
 | `nennt „…“ nur clip-weit, in keinem Abschnitt` (Warnung) | kein Abschnitt verortet den gesperrten Mangel — Abschnittsbogen/Kontaktbogen ansehen; ist er im genutzten Bereich zu sehen, anderen Bereich oder Clip wählen |
 
 ## Eiserne Regeln

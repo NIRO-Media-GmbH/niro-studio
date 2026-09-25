@@ -68,7 +68,7 @@ def main(argv: list[str] | None = None) -> int:
                                 parallel=args.parallel, schaerfe=args.schaerfe)
         # Bericht aus der ganzen telemetrie.json, nicht nur aus diesem (Teil-)Lauf; Hinweis auf Kameras ohne px_faktor
         md = bericht_md(laden(ch.autocut), f"{ch.kunde} / {ch.projekt} / {ch.root.name}", ch.read_json("broll_index.json"),
-                        px_faktor=cfg.get("px_faktor") or {})
+                        px_faktor=cfg.get("px_faktor") or {}, tcfg=cfg)
         ziel = ch.ergebnisse / "telemetrie.md"
         ch.assert_writable(ziel)
         ziel.parent.mkdir(parents=True, exist_ok=True)
